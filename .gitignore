@@ -1,0 +1,7 @@
+/inner.config.json
+/inner_server/inner.config.json
+/outer.config.json
+/outer_server/outer.config.json
+/outer.exe
+/outer.exe~
+/.idea
