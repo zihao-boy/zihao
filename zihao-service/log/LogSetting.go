@@ -1,14 +1,13 @@
-package config
+package log
 
 import (
-	"fmt"
-"github.com/kataras/golog"
-"github.com/kataras/iris/v12"
-"github.com/kataras/iris/v12/middleware/logger"
-"log"
-"os"
-"strings"
-"time"
+	"github.com/kataras/golog"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/middleware/logger"
+	"log"
+	"os"
+	"strings"
+	"time"
 )
 
 const (
@@ -69,7 +68,7 @@ func NewRequestLogger() (h iris.Handler, close func() error) {
 		IP:      true,
 		Method:  true,
 		Path:    true,
-		Columns: true,
+		//Columns: true,
 	}
 
 	close = func() error {
@@ -80,9 +79,9 @@ func NewRequestLogger() (h iris.Handler, close func() error) {
 		return err
 	}
 	conf.LogFunc = func(now time.Time, latency time.Duration, status, ip, method, path string, message interface{}, headerMessage interface{}) {
-		var output = logger.Columnize(now.Format(sysTimeform), latency, status, ip, method, path, message, headerMessage)
-		fmt.Println(output)
-		logFile.Write([]byte(output))
+		//var output = logger.Columnize(now.Format(sysTimeform), latency, status, ip, method, path, message, headerMessage)
+		//fmt.Println(output)
+		//logFile.Write([]byte(output))
 	}
 	// 不想使用记录器，一些静态请求等
 	conf.AddSkipper(func(ctx iris.Context) bool {

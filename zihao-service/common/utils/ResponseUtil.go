@@ -24,7 +24,7 @@ func Ok(ctx iris.Context, code constants.Code, data interface{}) {
 }
 
 // 401 error define
-func Unauthorized(ctx iris.Context, code constants.Code) {
+func Unauthorized(ctx context.Context, code constants.Code) {
 	ctx.StatusCode(iris.StatusUnauthorized)
 	ctx.JSON(json(code, nil))
 }

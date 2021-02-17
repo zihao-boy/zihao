@@ -12,12 +12,12 @@ import (
 )
 
 // Middleware the middleware for JSON Web tokens authentication method
-type Jwt struct {
+type IJwt struct {
 	Config Config
 }
 
 // CheckJWT the main functionality, checks for token
-func (j *Jwt) Check(ctx context.Context) (*jwt.Token, error) {
+func (j *IJwt) Check(ctx context.Context) (*jwt.Token, error) {
 	var (
 		code        constants.Code
 		err         error
@@ -48,7 +48,7 @@ FAIL:
 	return nil, err
 }
 
-func (j *Jwt) CheckTokenString(token string) (*jwt.Token, constants.Code, error) {
+func (j *IJwt) CheckTokenString(token string) (*jwt.Token, constants.Code, error) {
 	var (
 		code        constants.Code
 		err         error
@@ -101,12 +101,12 @@ FAIL:
 }
 
 // Get returns the user (&token) information for this client/request
-func (j *Jwt) GetToken(ctx context.Context) *jwt.Token {
+func (j *IJwt) GetToken(ctx context.Context) *jwt.Token {
 	return ctx.Values().Get(j.Config.ContextKey).(*jwt.Token)
 }
 
 // ---------------------------------------------------------
-func (j *Jwt) InitJwtConfig() *Jwt {
+func (j *IJwt) InitIJwtConfig() *IJwt {
 	c := Config{
 		ContextKey: DefaultContextKey,
 		//这个方法将验证jwt的token
@@ -131,6 +131,6 @@ func (j *Jwt) InitJwtConfig() *Jwt {
 		Debug:               true,
 		EnableAuthOnOptions: false,
 	}
-	return &Jwt{Config: c}
+	return &IJwt{Config: c}
 }
 

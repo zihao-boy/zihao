@@ -1,11 +1,13 @@
 package main
 
-
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/zihao-boy/zihao/zihao-service/app/router"
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
-	"github.com/zihao-boy/zihao/zihao-service/config"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/mysql"
+	"github.com/zihao-boy/zihao/zihao-service/common/jwt"
+	"github.com/zihao-boy/zihao/zihao-service/config"
+
 )
 /**
  * 项目地址：https://github.com/zihao-boy/zihao.git
@@ -18,13 +20,13 @@ func main() {
 	mysql.InitGorm()
 	redis.InitRedis()
 	//auth.InitAuth()
-	//jwt.InitJWT()
+	jwt.InitJWT()
 	app := iris.New()
-
+	router.Hub(app)
 
 	app.Get("/", func(ctx iris.Context) {
 		ctx.HTML("<h1>Hello World!</h1>")
 		app.Logger().Info("我在学习Iris噢")
 	})
-	app.Run(iris.Addr(":8009"))
+	app.Run(iris.Addr(":7000"))
 }
