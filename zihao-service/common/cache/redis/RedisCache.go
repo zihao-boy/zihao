@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/kataras/golog"
-	"github.com/zihao-boy/zihao/zihao-service/common/config"
+	"github.com/zihao-boy/zihao/zihao-service/config"
 	"time"
 )
 

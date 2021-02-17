@@ -1,14 +1,14 @@
 package jwt
 
 import (
-"github.com/dgrijalva/jwt-go"
-"github.com/kataras/golog"
-"github.com/kataras/iris/v12"
-"github.com/kataras/iris/v12/context"
-"github.com/zihao-boy/zihao/zihao-service/common/config"
-"github.com/zihao-boy/zihao/zihao-service/common/constants"
-"github.com/zihao-boy/zihao/zihao-service/common/utils"
-"time"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/kataras/golog"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
+	"github.com/zihao-boy/zihao/zihao-service/common/constants"
+	"github.com/zihao-boy/zihao/zihao-service/common/utils"
+	"github.com/zihao-boy/zihao/zihao-service/config"
+	"time"
 )
 
 // Middleware the middleware for JSON Web tokens authentication method
