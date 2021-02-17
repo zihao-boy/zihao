@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/v12"
-	"gopkg.in/yaml.v2"
 	"gopkg.in/yaml.v3"
 )
 

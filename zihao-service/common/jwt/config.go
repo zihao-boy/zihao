@@ -3,7 +3,7 @@ package jwt
 import (
 "github.com/dgrijalva/jwt-go"
 "github.com/kataras/iris/v12/context"
-"goiris/common/support"
+"github.com/zihao-boy/zihao/zihao-service/common/constants"
 )
 
 const (
@@ -22,7 +22,7 @@ type Config struct {
 	ContextKey string
 	// The function that will be called when there's an error validating the token
 	// Default value:
-	ErrorHandler func(context.Context, support.Code)
+	ErrorHandler func(context.Context, constants.Code)
 	// A boolean indicating if the credentials are required or not
 	// Default value: false
 	CredentialsOptional bool

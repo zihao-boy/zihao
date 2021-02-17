@@ -3,8 +3,8 @@ package jwt
 // 提供jwt的基础工具方法
 import (
 "github.com/kataras/iris/v12/context"
-"goiris/common/support"
-"strings"
+	"github.com/zihao-boy/zihao/zihao-service/common/sysError"
+	"strings"
 )
 
 type (
@@ -28,7 +28,7 @@ func fromAuthHeader(ctx context.Context) (string, error) {
 	// TODO: Make this a bit more robust, parsing-wise
 	authHeaderParts := strings.Split(authHeader, " ")
 	if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer" {
-		return "", support.ERR_HEADER_NON_BEARER
+		return "", sysError.ERR_HEADER_NON_BEARER
 	}
 
 	return authHeaderParts[1], nil

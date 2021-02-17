@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/kataras/golog"
-	"goiris/common"
+	"github.com/zihao-boy/zihao/zihao-service/common/config"
 	"time"
 )
 
@@ -16,7 +16,7 @@ type Redis struct {
 
 func (r *Redis) SetToken(format, id string, token string) (err error) {
 	err = r.client.Set(fmt.Sprintf(format, id), token,
-		time.Duration(common.G_AppConfig.JWTTimeout)*time.Minute).Err()
+		time.Duration(config.G_AppConfig.JWTTimeout)*time.Minute).Err()
 	return
 }
 
@@ -33,10 +33,10 @@ func (r *Redis) DelToken(format, id string) (result int64, err error) {
 // Init
 func InitRedis() {
 	client := redis.NewClient(&redis.Options{
-		Addr:     common.G_DBConfig.Redis.Addr,
-		Password: common.G_DBConfig.Redis.Password,
-		DB:       common.G_DBConfig.Redis.DB, // 连接的库位
-		PoolSize: common.G_DBConfig.Redis.PoolSize,
+		Addr:     config.G_DBConfig.Redis.Addr,
+		Password: config.G_DBConfig.Redis.Password,
+		DB:       config.G_DBConfig.Redis.DB, // 连接的库位
+		PoolSize: config.G_DBConfig.Redis.PoolSize,
 	})
 	if _, err := client.Ping().Result(); err != nil {
 		golog.Fatalf("~~> Redis初始化错误,原因:%s", err.Error())
