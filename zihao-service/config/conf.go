@@ -77,7 +77,7 @@ func InitConfig(asset func(name string) ([]byte, error)) {
 		err  error
 	)
 	// app
-	data, err = asset("../resources/app.yaml")
+	data, err = asset("resources/app.yaml")
 	if err != nil {
 		goto ERR
 	}
@@ -88,7 +88,7 @@ func InitConfig(asset func(name string) ([]byte, error)) {
 	golog.Infof("[app config]=> %v", G_AppConfig)
 
 	// db
-	data, err = asset("../resources/db.yaml")
+	data, err = asset("resources/db.yaml")
 	if err != nil {
 		goto ERR
 	}

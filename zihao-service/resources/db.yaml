@@ -1,16 +1,16 @@
 redis:
-  addr: redis.dev.java110.com:6379
-  password: 123
+  addr: dev.redis.java110.com:6379
+  password: hc
   db: 1
   poolSize: 100
 
 
 mysql:
   dialect: mysql
-  host: db.dev.java110.com
+  host: dev.db.java110.com
   port: 3306
-  user: root
-  password: root
+  user: zihao
+  password: zihao@12345678
   database: zihao
   charset: utf8
   showSql: true
