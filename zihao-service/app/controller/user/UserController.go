@@ -16,7 +16,7 @@ func UserControllerRouter(party iris.Party) {
 		adinUser = party.Party("/user")
 		aus      = UserController{userService: service.UserService{}}
 	)
-	adinUser.Post("/login", hero.Handler(aus.login))
+	adinUser.Get("/login", hero.Handler(aus.login))
 }
 
 func (aus *UserController) login(ctx iris.Context) {
