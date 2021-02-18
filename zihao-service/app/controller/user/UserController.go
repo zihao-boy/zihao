@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/hero"
 	"github.com/zihao-boy/zihao/zihao-service/user/service"
@@ -20,5 +21,6 @@ func UserControllerRouter(party iris.Party) {
 }
 
 func (aus *UserController) login(ctx iris.Context) {
-	aus.userService.Login("","")
+	aus.userService.Login("","");
+	fmt.Print("进入登录方法")
 }
