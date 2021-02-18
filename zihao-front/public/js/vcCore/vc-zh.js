@@ -3,18 +3,16 @@
  */
 (function (window) {
     window.lang = {
-        "systemName": "HC小区管理系统",
-        "systemSimpleName": "HC",
-        "subSystemName": "小区管理系统",
-        "companyTeam": "java110 团队",
-        "welcome": "欢迎访问HC小区管理系统",
+        "systemName": "梓豪平台",
+        "systemSimpleName": "ZH",
+        "subSystemName": "梓豪平台",
+        "companyTeam": "梓豪 团队",
+        "welcome": "欢迎访问梓豪平台",
         "signOut": "退出",
         "signIn":"登录",
         "register":"注册",
         "moreCommunity":"更多小区",
         "moreMsg":"查看全部消息",
-        "title":"HC小区管理系统|java110",
-        "noAccount":"还没有账号？ ",
-        "areyouhasaccount":"已经有账户了？" 
+        "title":"梓豪平台"
     }
 })(window)

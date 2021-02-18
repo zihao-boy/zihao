@@ -941,7 +941,7 @@
                             window.location.href = _header['location'];
                             return;
                         }
-                        if (res.status == 404) {
+                        if (res.status == 401) {
                             window.location.href = '/user.html#/pages/frame/login';
                             return;
                         }
@@ -991,7 +991,7 @@
                             return;
 
                         }
-                        if (res.status == 404) {
+                        if (res.status == 401) {
                             window.location.href = '/user.html#/pages/frame/login';
                             return;
                         }
@@ -1039,7 +1039,7 @@
                             window.location.href = _header['location'];
                             return;
                         }
-                        if (res.status == 404) {
+                        if (res.status == 401) {
                             window.location.href = '/user.html#/pages/frame/login';
                             return;
                         }
@@ -1107,7 +1107,7 @@
                             return;
 
                         }
-                        if (res.status == 404) {
+                        if (res.status == 401) {
                             window.location.href = '/user.html#/pages/frame/login';
                             return;
                         }

@@ -4,6 +4,7 @@ import (
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 	rcover "github.com/kataras/iris/v12/middleware/recover"
+	"github.com/zihao-boy/zihao/zihao-service/app/controller/menu"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/system"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/user"
 	"github.com/zihao-boy/zihao/zihao-service/common/aop"
@@ -15,6 +16,9 @@ func Hub(app *iris.Application) {
 
 	//系统信息
 	system.SystemControllerRouter(party)
+
+	//菜单信息
+	menu.MenuControllerRouter(party)
 
 	//用户类控制类
 	user.UserControllerRouter(party)
@@ -57,7 +61,7 @@ func preSettring(app *iris.Application) (party iris.Party) {
 		AllowedHeaders: []string{"*"},
 		//Debug:            true,
 	})
-	party = app.Party("/api", crs).AllowMethods(iris.MethodOptions)
+	party = app.Party("/app", crs).AllowMethods(iris.MethodOptions)
 	party.Use(aop.ServeHTTP)
 	return party
 }

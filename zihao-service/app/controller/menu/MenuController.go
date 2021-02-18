@@ -1,4 +1,4 @@
-package system
+package menu
 
 import (
 	"github.com/kataras/iris/v12"
@@ -7,22 +7,20 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/system/service"
 )
 
-
-
-type SystemController struct{
+type MenuController struct{
 	systenInfoService service.SystemInfoService
 }
 
 
-func SystemControllerRouter(party iris.Party) {
+func MenuControllerRouter(party iris.Party) {
 	var (
-		adinUser = party.Party("/system")
-		aus      = SystemController{systenInfoService: service.SystemInfoService{}}
+		adinUser = party.Party("/menu")
+		aus      = MenuController{systenInfoService: service.SystemInfoService{}}
 	)
-	adinUser.Get("/info", hero.Handler(aus.info))
+	adinUser.Get("/getMenus", hero.Handler(aus.info))
 }
 
-func (aus *SystemController) info(ctx iris.Context) {
+func (aus *MenuController) info(ctx iris.Context) {
 	relustDto := result.SuccessData(aus.systenInfoService.Info(ctx))
 	ctx.JSON(relustDto)
 }

@@ -6,18 +6,14 @@ require (
 	github.com/CloudyKit/jet/v3 v3.0.0 // indirect
 	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/ajg/form v1.5.1 // indirect
-	github.com/dgraph-io/badger v1.6.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/etcd-io/bbolt v1.3.3 // indirect
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
 	github.com/gavv/httpexpect v2.0.0+incompatible // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/go-xorm/xorm v0.7.9
-	github.com/gomodule/redigo v1.7.1-0.20190724094224-574c33c3df38 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/uuid v1.1.2
-	github.com/hashicorp/go-version v1.2.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
 	github.com/iris-contrib/blackfriday v2.0.0+incompatible // indirect
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d

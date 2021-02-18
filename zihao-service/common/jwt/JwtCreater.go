@@ -7,8 +7,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
 	"github.com/zihao-boy/zihao/zihao-service/config"
-	"github.com/zihao-boy/zihao/zihao-service/entity/user"
-	"strconv"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
 	"time"
 )
 
@@ -19,7 +18,8 @@ type (
 		*IJwt
 	}
 	Claims struct {
-		Id     int64  `json:"id"`
+		Id     string  `json:"id"`
+		RealName string `json:"realName"`
 		Phone  string `json:"phone"`
 		Enable bool   `json:"enable"`
 		jwt.StandardClaims
@@ -45,11 +45,11 @@ func (j *JWT) ServeHTTP(ctx context.Context) (err error) {
 		return err
 	}
 	// 检查redis缓存
-	if _, err = redis.G_Redis.GetToken(constants.REDIS_ADMIN_FORMAT, strconv.FormatInt(user.Id, 10)); err != nil {
+	if _, err = redis.G_Redis.GetToken(constants.REDIS_ADMIN_FORMAT, user.UserId); err != nil {
 		return err
 	}
 	// token校验通过，设置当前用户id到上下文
-	ctx.Values().Set(constants.UID, user.Id)
+	ctx.Values().Set(constants.UID, user.UserId)
 	return nil
 }
 
@@ -67,7 +67,7 @@ func (j *JWT) ServeWebsocket(ctx context.Context) {
 	if user, err = j.Token2Model(token); err != nil {
 		return
 	}
-	if _, err = redis.G_Redis.GetToken(constants.REDIS_ADMIN_FORMAT, strconv.FormatInt(user.Id, 10)); err != nil {
+	if _, err = redis.G_Redis.GetToken(constants.REDIS_ADMIN_FORMAT, user.UserId); err != nil {
 		return
 	}
 	// If everything ok then call next.
@@ -78,9 +78,10 @@ func (j *JWT) ServeWebsocket(ctx context.Context) {
 func (j *JWT) GenerateToken(user *user.UserDto) (string, error) {
 	expireTime := time.Now().Add(time.Duration(config.G_AppConfig.JWTTimeout) * time.Minute)
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
-		user.Id,
+		user.UserId,
+		user.RealName,
 		user.Phone,
-		user.Enable,
+		true,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "zihao-jwt",
@@ -94,21 +95,21 @@ func (j *JWT) Token2Model(token *jwt.Token) (*user.UserDto, error) {
 	//mapClaims := (jwt.Get(ctx).Claims).(jwt.MapClaims)
 	var (
 		mapClaims, ok = token.Claims.(jwt.MapClaims)
-		id            int64
+		id            string
 		phone         string
-		enable        bool
+		realName      string
 	)
 	if !ok {
 		return nil, fmt.Errorf("%s", constants.CODE_TOKEN_INVALID.String())
 	}
 
-	id = int64(mapClaims["id"].(float64))
+	id = mapClaims["userId"].(string)
 	phone = mapClaims["phone"].(string)
-	enable = mapClaims["enable"].(bool)
+	realName = mapClaims["realName"].(string)
 	return &user.UserDto{
-		Id:     id,
+		UserId:     id,
 		Phone:  phone,
-		Enable: enable,
+		RealName:realName,
 	}, nil
 }
 

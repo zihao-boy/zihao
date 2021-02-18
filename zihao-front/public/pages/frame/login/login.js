@@ -3,8 +3,8 @@
         data: {
             loginInfo: {
                 logo: '',
-                username: 'wuxw',
-                passwd: 'admin',
+                username: 'zihao',
+                passwd: 'zihao',
             }
         },
         _initMethod: function () {
@@ -36,9 +36,8 @@
                     vc.toast('密码不能为空');
                     return;
                 }
-                vc.http.post(
-                    'login',
-                    'doLogin?version=2.0',
+                vc.http.apiPost(
+                    '/user/login',
                     JSON.stringify(vc.component.loginInfo),
                     {
                         emulateJSON: true

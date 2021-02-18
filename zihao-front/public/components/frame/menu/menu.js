@@ -52,8 +52,7 @@
 
                 }
                 //发送get请求
-                vc.http.get('menu',
-                    'getMenus',
+                vc.http.apiGet('/menu/getMenus',
                     param,
                     function (json, res) {
                         var _menus = JSON.parse(json);

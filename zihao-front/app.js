@@ -31,7 +31,7 @@ let opts = {
 }
 
 
-app.use('/api',proxy('http://127.0.0.1:7000',opts));
+app.use('/app',proxy('http://127.0.0.1:7000',opts));
 
 app.listen(7001);
 app.use(express.json());

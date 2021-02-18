@@ -2,9 +2,7 @@ package jwt
 
 // 提供jwt的基础工具方法
 import (
-"github.com/kataras/iris/v12/context"
-	"github.com/zihao-boy/zihao/zihao-service/common/sysError"
-	"strings"
+	"github.com/kataras/iris/v12/context"
 )
 
 type (
@@ -16,22 +14,28 @@ type (
 	TokenExtractor func(context.Context) (string, error)
 )
 
+const(
+	DEFAULT_TOKEN string = "zihaotoken"
+)
+
 // below 3 method is get token from url
 // FromAuthHeader is a "TokenExtractor" that takes a give context and extracts
 // the JWT token from the Authorization header.
 func fromAuthHeader(ctx context.Context) (string, error) {
-	authHeader := ctx.GetHeader("Authorization")
-	if authHeader == "" {
-		return "", nil // No error, just no token
-	}
+	//authHeader := ctx.GetHeader("Authorization")
+	authHeader := ctx.GetCookie(DEFAULT_TOKEN)
+	//if authHeader == "" {
+	//	return "", nil // No error, just no token
+	//}
+	//
+	//// TODO: Make this a bit more robust, parsing-wise
+	//authHeaderParts := strings.Split(authHeader, " ")
+	//if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer" {
+	//	return "", sysError.ERR_HEADER_NON_BEARER
+	//}
 
-	// TODO: Make this a bit more robust, parsing-wise
-	authHeaderParts := strings.Split(authHeader, " ")
-	if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer" {
-		return "", sysError.ERR_HEADER_NON_BEARER
-	}
-
-	return authHeaderParts[1], nil
+	//return authHeaderParts[1], nil
+	return authHeader,nil
 }
 
 // below 3 method is get token from url

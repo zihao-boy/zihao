@@ -1,9 +1,9 @@
 package user
 
 import (
-	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/hero"
+	"github.com/zihao-boy/zihao/zihao-service/common/jwt"
 	"github.com/zihao-boy/zihao/zihao-service/user/service"
 )
 
@@ -17,10 +17,19 @@ func UserControllerRouter(party iris.Party) {
 		adinUser = party.Party("/user")
 		aus      = UserController{userService: service.UserService{}}
 	)
-	adinUser.Get("/login", hero.Handler(aus.login))
+	adinUser.Post("/login", hero.Handler(aus.login))
 }
 
+/**
+登录处理类
+ */
 func (aus *UserController) login(ctx iris.Context) {
-	aus.userService.Login("","");
-	fmt.Print("进入登录方法")
+	 resultDto,userDto := aus.userService.Login(ctx);
+
+	 if userDto != nil{
+		 token, _ := jwt.G_JWT.GenerateToken(userDto)
+		 ctx.SetCookieKV(jwt.DEFAULT_TOKEN,token);
+	 }
+
+	ctx.JSON(resultDto)
 }

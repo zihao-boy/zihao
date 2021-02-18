@@ -4,7 +4,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/zihao-service/common/date"
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
-	"github.com/zihao-boy/zihao/zihao-service/entity/system"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/system"
 )
 
 const(
