@@ -15,4 +15,5 @@ type UserDto struct {
 	CreateTime time.Time     `json:"createTime" form:"createTime" sql:"-"`
 	StatusCd   string 		 `json:"statusCd" form:"statusCd"`
 	State string `json:"state" form:"state"`
+	TenantId string `json:"tenantId" sql:"-"`
 }
