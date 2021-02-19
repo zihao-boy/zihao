@@ -4,6 +4,7 @@ import (
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 	rcover "github.com/kataras/iris/v12/middleware/recover"
+	"github.com/zihao-boy/zihao/zihao-service/app/controller/host"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/menu"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/system"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/user"
@@ -22,10 +23,9 @@ func Hub(app *iris.Application) {
 
 	//用户类控制类
 	user.UserControllerRouter(party)
-	//menuRouter(party)
-	//roleRouter(party)
-	//policyRouter(party)
-	//departmentRouter(party)
+
+	//主机信息
+	host.HostControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {
