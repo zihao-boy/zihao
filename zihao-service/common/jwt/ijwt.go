@@ -41,7 +41,8 @@ func (j *IJwt) Check(ctx context.Context) (*jwt.Token, error) {
 	if parsedToken, code, err = j.CheckTokenString(token); err != nil {
 		goto FAIL
 	}
-	ctx.Values().Set(j.Config.ContextKey, parsedToken) // 设置mapclaims到request的上下文中
+	//ctx.Values().Set(j.Config.ContextKey, parsedToken) // 设置mapclaims到request的上下文中
+	ctx.Values().Set(DefaultContextKey, parsedToken) // 设置mapclaims到request的上下文中
 	return parsedToken, nil
 FAIL:
 	j.Config.ErrorHandler(ctx, constants.CODE_TOKEN_EXPIRE)

@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/zihao-service/common/jwt"
 	"github.com/zihao-boy/zihao/zihao-service/config"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
 	"strings"
 )
 
@@ -31,8 +32,10 @@ func ServeHTTP(ctx iris.Context) {
 		return
 	}
 	// 检查回话
-	if err = jwt.G_JWT.ServeHTTP(*ctx); err != nil {
+	if err = jwt.G_JWT.ServeHTTP(ctx); err != nil {
 		golog.Errorf("中间件token检验失败，错误：%s", err)
+		ctx.StatusCode(401)
+		ctx.JSON(result.Error("回话失效"))
 		return
 	}
 	// 验证权限

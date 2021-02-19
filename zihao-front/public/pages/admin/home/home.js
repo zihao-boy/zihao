@@ -10,7 +10,7 @@
         _initMethod:function(){
         },
         _initEvent:function(){
-            vc.on('enterCommunity','listMyCommunity',function(_param){
+            vc.on('home','listMyCommunity',function(_param){
                   vc.component.listMyCommunity();
             });
         },

@@ -18,7 +18,7 @@ type (
 		*IJwt
 	}
 	Claims struct {
-		Id     string  `json:"id"`
+		UserId     string  `json:"userId"`
 		RealName string `json:"realName"`
 		Phone  string `json:"phone"`
 		Enable bool   `json:"enable"`
@@ -32,12 +32,12 @@ func InitJWT() {
 }
 
 // Serve the middleware's action
-func (j *JWT) ServeHTTP(ctx context.Context) (err error) {
+func (j *JWT) ServeHTTP(ctx *context.Context) (err error) {
 	var (
 		token *jwt.Token
 		user  *user.UserDto
 	)
-	if token, err = j.Check(ctx); err != nil {
+	if token, err = j.Check(*ctx); err != nil {
 		return err
 	}
 
