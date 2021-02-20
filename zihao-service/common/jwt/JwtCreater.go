@@ -6,6 +6,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
+	"github.com/zihao-boy/zihao/zihao-service/common/sysError"
 	"github.com/zihao-boy/zihao/zihao-service/config"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
 	"time"
@@ -22,6 +23,7 @@ type (
 		RealName string `json:"realName"`
 		Phone  string `json:"phone"`
 		Enable bool   `json:"enable"`
+		TenantId string `json:"tenantId"`
 		jwt.StandardClaims
 	}
 )
@@ -41,6 +43,10 @@ func (j *JWT) ServeHTTP(ctx *context.Context) (err error) {
 		return err
 	}
 
+	if token == nil {
+		return sysError.TOKEN_PARSE_IS_EMPTY
+	}
+
 	if user, err = j.Token2Model(token); err != nil {
 		return err
 	}
@@ -50,6 +56,7 @@ func (j *JWT) ServeHTTP(ctx *context.Context) (err error) {
 	}
 	// token校验通过，设置当前用户id到上下文
 	ctx.Values().Set(constants.UID, user.UserId)
+	ctx.Values().Set(constants.UINFO, user)
 	return nil
 }
 
@@ -82,6 +89,7 @@ func (j *JWT) GenerateToken(user *user.UserDto) (string, error) {
 		user.RealName,
 		user.Phone,
 		true,
+		user.TenantId,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "zihao-jwt",
@@ -98,6 +106,7 @@ func (j *JWT) Token2Model(token *jwt.Token) (*user.UserDto, error) {
 		id            string
 		phone         string
 		realName      string
+		tenantId      string
 	)
 	if !ok {
 		return nil, fmt.Errorf("%s", constants.CODE_TOKEN_INVALID.String())
@@ -106,10 +115,12 @@ func (j *JWT) Token2Model(token *jwt.Token) (*user.UserDto, error) {
 	id = mapClaims["userId"].(string)
 	phone = mapClaims["phone"].(string)
 	realName = mapClaims["realName"].(string)
+	tenantId = mapClaims["tenantId"].(string)
 	return &user.UserDto{
 		UserId:     id,
 		Phone:  phone,
 		RealName:realName,
+		TenantId: tenantId,
 	}, nil
 }
 

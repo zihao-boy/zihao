@@ -63,8 +63,7 @@
                     msg: 123
                 };
                 //发送get请求
-                vc.http.post('nav',
-                    'logout',
+                vc.http.apiPost('/user/logout',
                     JSON.stringify(param),
                     {
                         emulateJSON: true

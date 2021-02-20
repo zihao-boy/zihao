@@ -35,6 +35,8 @@ const IMAGE_PREFIX = "http://pxjp230z7.bkt.clouddn.com/"
 
 const UID = "uid"
 
+const UINFO = "uinfo"
+
 // resid
 const (
 	REDIS_ADMIN_FORMAT = "admin.token.id:%s"

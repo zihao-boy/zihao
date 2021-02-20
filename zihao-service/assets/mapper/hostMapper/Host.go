@@ -7,8 +7,15 @@ const (
 						1=1
 	`
 	//查询主机组 sql
-	QueryHostGroups = `select * count from host_group t
+	QueryHostGroups = `select * from host_group t
 						where 
 						1=1
+						$if Name != '' then
+						and t.name = #Name#
+						$endif
+						$if TenantId != '' then
+						and t.tenant_id = #TenantId#
+						$endif
+						
 	`
 )

@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
 	"github.com/zihao-boy/zihao/zihao-service/common/jwt"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
 	"github.com/zihao-boy/zihao/zihao-service/user/service"
 )
 
@@ -19,7 +20,11 @@ func UserControllerRouter(party iris.Party) {
 		adinUser = party.Party("/user")
 		aus      = UserController{userService: service.UserService{}}
 	)
+	//登录
 	adinUser.Post("/login", hero.Handler(aus.login))
+
+	//退出登录
+	adinUser.Post("/logout", hero.Handler(aus.logout))
 }
 
 /**
@@ -36,4 +41,15 @@ func (aus *UserController) login(ctx iris.Context) {
 	 }
 
 	ctx.JSON(resultDto)
+}
+
+
+/**
+退出登录处理类
+*/
+func (aus *UserController) logout(ctx iris.Context) {
+
+	ctx.RemoveCookie(jwt.DEFAULT_TOKEN);
+
+	ctx.JSON(result.Success())
 }

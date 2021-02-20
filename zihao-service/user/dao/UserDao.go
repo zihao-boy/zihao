@@ -8,7 +8,7 @@ import (
 )
 
 const(
-	query_user string = "select t.user_id ,t.username,t.real_name ,\nt.phone,t.email,t.state,t.create_time \nfrom u_user t\nwhere t.username = ? and t.passwd = ?\nand t.state = '100201'\nlimit 1"
+	query_user string = "select t.user_id ,t.username,t.real_name ,\nt.phone,t.email,t.state,t.create_time,t.tenant_id \nfrom u_user t\nwhere t.username = ? and t.passwd = ?\nand t.state = '100201'\nlimit 1"
 )
 
 type UserDao struct {
