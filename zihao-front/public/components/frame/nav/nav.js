@@ -20,7 +20,6 @@
         },
         mounted: function () {
             this._initSysInfo();
-            this.getNavCommunity(1, 3);
             this.getNavData();
             //this.getUserInfo();
         },
@@ -106,65 +105,8 @@
                     }
                 );
             },
-            getNavCommunity: function (_page, _row) {
-                var _tmpCurrentCommunity = vc.getCurrentCommunity();
-                //浏览器缓存中能获取到
-                if (_tmpCurrentCommunity != null && _tmpCurrentCommunity != undefined) {
-                    this.nav._currentCommunity = _tmpCurrentCommunity;
-                    this.nav.communityInfos = vc.getCommunitys();
-
-                    return;
-                }
-
-                //说明缓存中没有数据
-                //发送get请求
-                /**
-                 [{community:"123123",name:"测试1小区"},{community:"223123",name:"测试2小区"}]
-                 **/
-                var param = {
-                    params: {
-                        _uid: '123mlkdinkldldijdhuudjdjkkd',
-                        page: _page,
-                        row: _row
-                    }
-                };
-                vc.http.get('nav',
-                    'getCommunitys',
-                    param,
-                    function (json, res) {
-                        if (res.status == 200) {
-                            vm.nav.communityInfos = JSON.parse(json).communitys;
-
-                            if (vm.nav.communityInfos == null || vm.nav.communityInfos.length == 0) {
-                                vm.nav._currentCommunity = {
-                                    name: "还没有入驻小区"
-                                };
-                                return;
-                            }
-
-                            vm.nav._currentCommunity = vm.nav.communityInfos[0];
-                            vc.setCurrentCommunity(vm.nav._currentCommunity);
-                            vc.setCommunitys(vm.nav.communityInfos);
-
-                            //对首页做特殊处理，因为首页在加载数据时还没有小区信息 会报错
-                            if (vm.nav.communityInfos != null && vm.nav.communityInfos.length > 0) {
-                                vc.emit("indexContext", "_queryIndexContextData", {});
-                                vc.emit("indexArrears", "_listArrearsData", {});
-                            }
-
-                        }
-                    }, function () {
-                        console.log('请求失败处理');
-                    }
-                );
-
-            },
-            changeCommunity: function (_community) {
-                vc.setCurrentCommunity(_community);
-                vm.nav._currentCommunity = _community;
-                //中心加载当前页
-                location.reload();
-            },
+            
+        
             _noticeDetail: function (_msg) {
                 //console.log(_notice.noticeId);
                 //vc.jumpToPage("/admin.html#/noticeDetail?noticeId="+_notice.noticeId);
