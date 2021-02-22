@@ -2,7 +2,7 @@
 
     vc.extends({
         data:{
-            deleteServiceSqlInfo:{
+            deleteHostInfo:{
 
             }
         },
@@ -10,18 +10,19 @@
 
          },
          _initEvent:function(){
-             vc.on('deleteServiceSql','openDeleteServiceSqlModal',function(_params){
+             vc.on('deleteHost','openDeleteHostModal',function(_params){
 
-                vc.component.deleteServiceSqlInfo = _params;
-                $('#deleteServiceSqlModel').modal('show');
+                vc.component.deleteHostInfo = _params;
+                $('#deleteHostModel').modal('show');
 
             });
         },
         methods:{
-            deleteServiceSql:function(){
+            deleteHost:function(){
+                vc.component.deleteHostInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    '/system/deleteServiceSql',
-                    JSON.stringify(vc.component.deleteServiceSqlInfo),
+                    'host.deleteHost',
+                    JSON.stringify(vc.component.deleteHostInfo),
                     {
                         emulateJSON:true
                      },
@@ -30,20 +31,20 @@
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
-                            $('#deleteServiceSqlModel').modal('hide');
-                            vc.emit('serviceSqlManage','listServiceSql',{});
+                            $('#deleteHostModel').modal('hide');
+                            vc.emit('hostManage','listHost',{});
                             return ;
                         }
-                        vc.toast(_json.msg);
+                        vc.message(_json.msg);
                      },
                      function(errInfo,error){
                         console.log('请求失败处理');
-                        vc.toast(json);
+                        vc.message(json);
 
                      });
             },
-            closeDeleteServiceSqlModel:function(){
-                $('#deleteServiceSqlModel').modal('hide');
+            closeDeleteHostModel:function(){
+                $('#deleteHostModel').modal('hide');
             }
         }
     });

@@ -17,6 +17,13 @@ func HostControllerRouter(party iris.Party) {
 		aus      = HostController{hostService: service.HostService{}}
 	)
 	adinMenu.Get("/getHostGroup", hero.Handler(aus.getHostGroup))
+
+	adinMenu.Post("/saveHostGroup", hero.Handler(aus.saveHostGroup))
+
+	adinMenu.Post("/updateHostGroup", hero.Handler(aus.updateHostGroup))
+
+	adinMenu.Post("/deleteHostGroup", hero.Handler(aus.deleteHostGroup))
+
 }
 
 /**
@@ -24,6 +31,35 @@ func HostControllerRouter(party iris.Party) {
  */
 func (aus *HostController) getHostGroup(ctx iris.Context) {
 	reslut := aus.hostService.GetHostGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *HostController) saveHostGroup(ctx iris.Context) {
+	reslut := aus.hostService.SaveHostGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+修改 主机组
+*/
+func (aus *HostController) updateHostGroup(ctx iris.Context) {
+	reslut := aus.hostService.UpdateHostGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+删除 主机组
+*/
+func (aus *HostController) deleteHostGroup(ctx iris.Context) {
+	reslut := aus.hostService.DeleteHostGroups(ctx)
 
 	ctx.JSON(reslut)
 }

@@ -19,9 +19,9 @@
         },
         methods:{
             deleteHostGroup:function(){
-                vc.component.deleteHostGroupInfo.communityId=vc.getCurrentCommunity().communityId;
+               
                 vc.http.apiPost(
-                    'hostGroup.deleteHostGroup',
+                    '/host/deleteHostGroup',
                     JSON.stringify(vc.component.deleteHostGroupInfo),
                     {
                         emulateJSON:true

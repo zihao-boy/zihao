@@ -24,6 +24,15 @@ func SystemControllerRouter(party iris.Party) {
 
 	//查询sql
 	adinUser.Get("/getServiceSqls", hero.Handler(aus.getServiceSqls))
+
+	//保存sql
+	adinUser.Post("/saveServiceSql", hero.Handler(aus.saveServiceSql))
+
+	//保存sql
+	adinUser.Post("/updateServiceSql", hero.Handler(aus.updateServiceSql))
+
+	//保存sql
+	adinUser.Post("/deleteServiceSql", hero.Handler(aus.deleteServiceSql))
 }
 
 func (aus *SystemController) info(ctx iris.Context) {
@@ -34,5 +43,30 @@ func (aus *SystemController) info(ctx iris.Context) {
 
 func (aus *SystemController) getServiceSqls(ctx iris.Context) {
 	relustDto := aus.serviceSqlService.GetServiceSqls(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+ */
+func (aus *SystemController) saveServiceSql(ctx iris.Context) {
+	relustDto := aus.serviceSqlService.SaveServiceSqls(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *SystemController) updateServiceSql(ctx iris.Context) {
+	relustDto := aus.serviceSqlService.UpdateServiceSqls(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+/**
+保存sql信息
+*/
+func (aus *SystemController) deleteServiceSql(ctx iris.Context) {
+	relustDto := aus.serviceSqlService.DeleteServiceSqls(ctx)
 	ctx.JSON(relustDto)
 }

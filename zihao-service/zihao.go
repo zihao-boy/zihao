@@ -21,6 +21,10 @@ func main() {
 	redis.InitRedis()
 	//auth.InitAuth()
 	jwt.InitJWT()
+
+	//初始化缓存信息
+	redis.InitServiceSql()
+
 	app := iris.New()
 	router.Hub(app)
 

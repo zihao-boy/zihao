@@ -25,6 +25,9 @@ func UserControllerRouter(party iris.Party) {
 
 	//退出登录
 	adinUser.Post("/logout", hero.Handler(aus.logout))
+
+	//修改密码
+	adinUser.Post("/changePwd", hero.Handler(aus.changePwd))
 }
 
 /**
@@ -52,4 +55,15 @@ func (aus *UserController) logout(ctx iris.Context) {
 	ctx.RemoveCookie(jwt.DEFAULT_TOKEN);
 
 	ctx.JSON(result.Success())
+}
+
+/**
+登录处理类
+*/
+func (aus *UserController) changePwd(ctx iris.Context) {
+	resultDto := aus.userService.ChangePwd(ctx);
+
+
+
+	ctx.JSON(resultDto)
 }

@@ -10,6 +10,7 @@ const (
 	QueryHostGroups = `select * from host_group t
 						where 
 						1=1
+						and t.status_cd = '0'
 						$if Name != '' then
 						and t.name = #Name#
 						$endif

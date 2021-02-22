@@ -63,7 +63,6 @@
                     return;
                 }
 
-                vc.component.addServiceSqlInfo.communityId = vc.getCurrentCommunity().communityId;
                 //不提交数据将数据 回调给侦听处理
                 if (vc.notNull($props.callBackListener)) {
                     vc.emit($props.callBackListener, $props.callBackFunction, vc.component.addServiceSqlInfo);
@@ -72,7 +71,7 @@
                 }
 
                 vc.http.apiPost(
-                    'serviceSql.saveServiceSql',
+                    '/system/saveServiceSql',
                     JSON.stringify(vc.component.addServiceSqlInfo),
                     {
                         emulateJSON: true
@@ -88,13 +87,13 @@
 
                             return;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
 
                     },
                     function (errInfo, error) {
                         console.log('请求失败处理');
 
-                        vc.message(errInfo);
+                        vc.toast(errInfo);
 
                     });
             },

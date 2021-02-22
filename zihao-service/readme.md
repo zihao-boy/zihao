@@ -2,6 +2,8 @@
 
 参考文档： https://gitee.com/yhm_my/go-iris/tree/master
 
+webshell  https://github.com/shibingli/webconsole
+
 #### 1.0 创建数据库和用户
 
 ```sql

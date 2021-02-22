@@ -1,110 +1,110 @@
-(function(vc,vm){
+(function (vc, vm) {
 
     vc.extends({
-        data:{
-            editServiceSqlInfo:{
-                sqlId:'',
-sqlCode:'',
-remark:'',
-sqlText:'',
+        data: {
+            editServiceSqlInfo: {
+                sqlId: '',
+                sqlCode: '',
+                remark: '',
+                sqlText: '',
 
             }
         },
-         _initMethod:function(){
+        _initMethod: function () {
 
-         },
-         _initEvent:function(){
-             vc.on('editServiceSql','openEditServiceSqlModal',function(_params){
+        },
+        _initEvent: function () {
+            vc.on('editServiceSql', 'openEditServiceSqlModal', function (_params) {
                 vc.component.refreshEditServiceSqlInfo();
                 $('#editServiceSqlModel').modal('show');
-                vc.copyObject(_params, vc.component.editServiceSqlInfo );
+                vc.copyObject(_params, vc.component.editServiceSqlInfo);
                 vc.component.editServiceSqlInfo.communityId = vc.getCurrentCommunity().communityId;
             });
         },
-        methods:{
-            editServiceSqlValidate:function(){
-                        return vc.validate.validate({
-                            editServiceSqlInfo:vc.component.editServiceSqlInfo
-                        },{
-                            'editServiceSqlInfo.sqlCode':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"sql编码不能为空"
+        methods: {
+            editServiceSqlValidate: function () {
+                return vc.validate.validate({
+                    editServiceSqlInfo: vc.component.editServiceSqlInfo
+                }, {
+                    'editServiceSqlInfo.sqlCode': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "sql编码不能为空"
                         },
- {
-                            limit:"maxLength",
-                            param:"128",
-                            errInfo:"sql编码格式错误"
-                        },
-                    ],
-'editServiceSqlInfo.remark':[
- {
-                            limit:"maxLength",
-                            param:"512",
-                            errInfo:"备注太长"
+                        {
+                            limit: "maxLength",
+                            param: "128",
+                            errInfo: "sql编码格式错误"
                         },
                     ],
-'editServiceSqlInfo.sqlText':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"sql语句不能为空"
-                        },
- {
-                            limit:"maxLength",
-                            param:"512",
-                            errInfo:"sql语句格式错误"
+                    'editServiceSqlInfo.remark': [
+                        {
+                            limit: "maxLength",
+                            param: "512",
+                            errInfo: "备注太长"
                         },
                     ],
-'editServiceSqlInfo.sqlId':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"Sql ID不能为空"
+                    'editServiceSqlInfo.sqlText': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "sql语句不能为空"
+                        },
+                        {
+                            limit: "maxLength",
+                            param: "512",
+                            errInfo: "sql语句格式错误"
+                        },
+                    ],
+                    'editServiceSqlInfo.sqlId': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "Sql ID不能为空"
                         }]
 
-                        });
-             },
-            editServiceSql:function(){
-                if(!vc.component.editServiceSqlValidate()){
+                });
+            },
+            editServiceSql: function () {
+                if (!vc.component.editServiceSqlValidate()) {
                     vc.toast(vc.validate.errInfo);
-                    return ;
+                    return;
                 }
 
                 vc.http.apiPost(
-                    'serviceSql.updateServiceSql',
+                    '/system/updateServiceSql',
                     JSON.stringify(vc.component.editServiceSqlInfo),
                     {
-                        emulateJSON:true
-                     },
-                     function(json,res){
+                        emulateJSON: true
+                    },
+                    function (json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
                             $('#editServiceSqlModel').modal('hide');
-                             vc.emit('serviceSqlManage','listServiceSql',{});
-                            return ;
+                            vc.emit('serviceSqlManage', 'listServiceSql', {});
+                            return;
                         }
-                        vc.message(_json.msg);
-                     },
-                     function(errInfo,error){
+                        vc.toast(_json.msg);
+                    },
+                    function (errInfo, error) {
                         console.log('请求失败处理');
 
-                        vc.message(errInfo);
-                     });
+                        vc.toast(errInfo);
+                    });
             },
-            refreshEditServiceSqlInfo:function(){
-                vc.component.editServiceSqlInfo= {
-                  sqlId:'',
-sqlCode:'',
-remark:'',
-sqlText:'',
+            refreshEditServiceSqlInfo: function () {
+                vc.component.editServiceSqlInfo = {
+                    sqlId: '',
+                    sqlCode: '',
+                    remark: '',
+                    sqlText: '',
 
                 }
             }
         }
     });
 
-})(window.vc,window.vc.component);
+})(window.vc, window.vc.component);
