@@ -1,9 +1,12 @@
 package host
 
+import "github.com/zihao-boy/zihao/zihao-service/entity/dto"
+
 /**
 主机组实体
  */
 type HostGroupDto struct {
+	dto.PageDto
 	GroupId string `json:"groupId" sql:"-"`
 	Name string `json:"name" `
 	Description string `json:"description" `

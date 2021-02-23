@@ -5,6 +5,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/assets/mapper/hostMapper"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/host"
 )
 
@@ -23,7 +24,22 @@ const(
 type HostDao struct {
 
 }
+/**
+查询用户
+*/
+func (*HostDao) GetHostGroupCount(hostGropDto host.HostGroupDto) (int64,error){
+	var (
+		pageDto dto.PageDto
+		err error
+	)
 
+	sqlTemplate.SelectOne(hostMapper.QueryHostGroupCount,objectConvert.Struct2Map(hostGropDto), func(db *gorm.DB) {
+		err  = db.Scan(&pageDto).Error
+	},false)
+
+
+	return pageDto.Total,err
+}
 /**
 查询用户
 */
@@ -62,7 +78,22 @@ func (*HostDao) DeleteHostGroup(hostGroupDto host.HostGroupDto) error{
 	return sqlTemplate.Delete(delete_service_sql,objectConvert.Struct2Map(hostGroupDto),true)
 }
 
+/**
+查询用户
+*/
+func (*HostDao) GetHostCount(hostDto host.HostDto) (int64,error){
+	var (
+		pageDto dto.PageDto
+		err error
+	)
 
+	sqlTemplate.SelectOne(get_host_count,objectConvert.Struct2Map(hostDto), func(db *gorm.DB) {
+		err  = db.Scan(&pageDto).Error
+	},true)
+
+
+	return pageDto.Total,err
+}
 
 /**
 查询用户

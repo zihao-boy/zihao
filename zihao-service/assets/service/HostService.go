@@ -2,12 +2,13 @@ package service
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/zihao-boy/zihao/zihao-service/assets/dao"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/host"
-	"github.com/zihao-boy/zihao/zihao-service/assets/dao"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
+	"strconv"
 )
 
 type HostService struct {
@@ -23,15 +24,44 @@ func (hostService *HostService) GetHostGroups(ctx iris.Context)  result.ResultDt
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	var (
 		err       error
+		page int64
+		row int64
+		total int64
 		hostGroupDto = host.HostGroupDto{TenantId: user.TenantId}
 		hostGroupDtos []*host.HostGroupDto
 	)
+
+	page,err =  strconv.ParseInt(ctx.URLParam("page"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	row,err =  strconv.ParseInt(ctx.URLParam("row"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	hostGroupDto.Row = row * page
+
+	hostGroupDto.Page = (page -1) * row
+
+	total,err = hostService.hostDao.GetHostGroupCount(hostGroupDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if total < 1{
+		return result.Success()
+	}
 	hostGroupDtos,err = hostService.hostDao.GetHostGroups(hostGroupDto)
 	if(err != nil){
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(hostGroupDtos)
+	return result.SuccessData(hostGroupDtos,total,row)
 
 }
 
@@ -117,15 +147,45 @@ func (hostService *HostService) GetHosts(ctx iris.Context)  result.ResultDto {
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	var (
 		err       error
+		page int64
+		row int64
+		total int64
 		hostDto = host.HostDto{TenantId: user.TenantId}
 		hostDtos []*host.HostDto
 	)
+
+
+	page,err =  strconv.ParseInt(ctx.URLParam("page"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	row,err =  strconv.ParseInt(ctx.URLParam("row"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	hostDto.Row = row * page
+
+	hostDto.Page = (page -1) * row
+
+	total,err = hostService.hostDao.GetHostCount(hostDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if total < 1{
+		return result.Success()
+	}
 	hostDtos,err = hostService.hostDao.GetHosts(hostDto)
 	if(err != nil){
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(hostDtos)
+	return result.SuccessData(hostDtos,total,row)
 
 }
 

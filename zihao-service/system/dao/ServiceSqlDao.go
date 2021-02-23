@@ -4,10 +4,24 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/serviceSql"
 )
 
 const(
+	query_service_sql_count string = `
+		select count(1) total from service_sql t
+		where 1=1
+		  $if SqlId != '' then
+			and t.sql_id = #SqlId#
+		  $endif
+		  $if SqlCode != '' then
+			and t.sql_code = #SqlCode#
+		  $endif
+          and t.status_cd = '0'
+		  order by t.create_time desc
+    	
+	`
 	query_service_sql string = `
 		select * from service_sql t
 		where 1=1
@@ -19,6 +33,9 @@ const(
 		  $endif
           and t.status_cd = '0'
 		  order by t.create_time desc
+    	$if Page != -1 then
+			limit #Page#,#Row#
+		$endif
 	`
 
 	insert_service_sql string = `
@@ -40,6 +57,22 @@ type ServiceSqlDao struct {
 
 }
 
+/**
+查询用户
+*/
+func (*ServiceSqlDao) GetServiceSqlCount(serviceSqlDto serviceSql.ServiceSqlDto) (int64,error){
+	var (
+		pageDto dto.PageDto
+		err error
+	)
+
+	sqlTemplate.SelectOne(query_service_sql_count,objectConvert.Struct2Map(serviceSqlDto), func(db *gorm.DB) {
+		err  = db.Scan(&pageDto).Error
+	},false)
+
+
+	return pageDto.Total,err
+}
 /**
 查询用户
 */

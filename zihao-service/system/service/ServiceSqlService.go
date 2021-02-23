@@ -5,6 +5,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/serviceSql"
 	"github.com/zihao-boy/zihao/zihao-service/system/dao"
+	"strconv"
 )
 
 type ServiceSqlService struct {
@@ -17,16 +18,47 @@ type ServiceSqlService struct {
 func (serviceSqlService *ServiceSqlService) GetServiceSqls(ctx iris.Context)  (result.ResultDto) {
 	var (
 		err       error
-		serviceSqlDto = serviceSql.ServiceSqlDto{SqlCode: ctx.URLParam("sqlCode")}
+		page int64
+		row int64
+		total int64
+		serviceSqlDto = serviceSql.ServiceSqlDto{SqlCode: ctx.URLParam("sqlCode"),
+			SqlId: ctx.URLParam("sqlId"),Remark: ctx.URLParam("remark")}
 		serviceSqlDtos []*serviceSql.ServiceSqlDto
 	)
+
+
+	page,err =  strconv.ParseInt(ctx.URLParam("page"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	row,err =  strconv.ParseInt(ctx.URLParam("row"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	serviceSqlDto.Row = row * page
+
+	serviceSqlDto.Page = (page -1) * row
+
+	total,err = serviceSqlService.serviceSqlDao.GetServiceSqlCount(serviceSqlDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if total < 1{
+		return result.Success()
+	}
 
 	serviceSqlDtos,err = serviceSqlService.serviceSqlDao.GetServiceSqls(serviceSqlDto)
 	if(err != nil){
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(serviceSqlDtos)
+	return result.SuccessData(serviceSqlDtos,total,row)
 
 }
 
