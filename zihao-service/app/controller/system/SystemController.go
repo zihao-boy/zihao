@@ -12,13 +12,16 @@ import (
 type SystemController struct{
 	systenInfoService service.SystemInfoService
 	serviceSqlService service.ServiceSqlService
+	mappingService service.MappingService
 }
 
 
 func SystemControllerRouter(party iris.Party) {
 	var (
 		adinUser = party.Party("/system")
-		aus      = SystemController{systenInfoService: service.SystemInfoService{},serviceSqlService: service.ServiceSqlService{}}
+		aus      = SystemController{systenInfoService: service.SystemInfoService{},
+			serviceSqlService: service.ServiceSqlService{},
+		mappingService: service.MappingService{}}
 	)
 	adinUser.Get("/info", hero.Handler(aus.info))
 
@@ -33,6 +36,18 @@ func SystemControllerRouter(party iris.Party) {
 
 	//保存sql
 	adinUser.Post("/deleteServiceSql", hero.Handler(aus.deleteServiceSql))
+
+	//查询sql
+	adinUser.Get("/getMappings", hero.Handler(aus.getMappings))
+
+	//保存sql
+	adinUser.Post("/saveMapping", hero.Handler(aus.saveMapping))
+
+	//保存sql
+	adinUser.Post("/updateMapping", hero.Handler(aus.updateMapping))
+
+	//保存sql
+	adinUser.Post("/deleteMapping", hero.Handler(aus.deleteMapping))
 }
 
 func (aus *SystemController) info(ctx iris.Context) {
@@ -68,5 +83,36 @@ func (aus *SystemController) updateServiceSql(ctx iris.Context) {
 */
 func (aus *SystemController) deleteServiceSql(ctx iris.Context) {
 	relustDto := aus.serviceSqlService.DeleteServiceSqls(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+func (aus *SystemController) getMappings(ctx iris.Context) {
+	relustDto := aus.mappingService.GetMappings(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *SystemController) saveMapping(ctx iris.Context) {
+	relustDto := aus.mappingService.SaveMappings(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *SystemController) updateMapping(ctx iris.Context) {
+	relustDto := aus.mappingService.UpdateMappings(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+/**
+保存sql信息
+*/
+func (aus *SystemController) deleteMapping(ctx iris.Context) {
+	relustDto := aus.mappingService.DeleteMappings(ctx)
 	ctx.JSON(relustDto)
 }
