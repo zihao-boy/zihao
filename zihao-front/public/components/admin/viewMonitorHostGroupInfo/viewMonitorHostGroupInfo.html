@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>主机监控组信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewMonitorHostGroupInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectMonitorHostGroupInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择主机监控组</button>
+
+                    <button type="button" v-if="viewMonitorHostGroupInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddMonitorHostGroupInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加主机监控组</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >名称：</label>
+                            <label class="">{{viewMonitorHostGroupInfo.name}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >监控频率：</label>
+                            <label class="">{{viewMonitorHostGroupInfo.monCron}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >告警类型：</label>
+                            <label class="">{{viewMonitorHostGroupInfo.noticeType}}</label>
+                        </div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >备注：</label>
+                            <label class="">{{viewMonitorHostGroupInfo.remark}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addMonitorHostGroup"
+               callBackListener="viewMonitorHostGroupInfo"
+               callBackFunction="chooseMonitorHostGroup"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseMonitorHostGroup"
+               emitChooseMonitorHostGroup="viewMonitorHostGroupInfo"
+               emitLoadData="viewMonitorHostGroupInfo"
+    ></vc:create>
+</div>

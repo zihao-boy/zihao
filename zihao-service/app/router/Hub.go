@@ -6,7 +6,9 @@ import (
 	rcover "github.com/kataras/iris/v12/middleware/recover"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/host"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/menu"
+	"github.com/zihao-boy/zihao/zihao-service/app/controller/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/system"
+	"github.com/zihao-boy/zihao/zihao-service/app/controller/tenant"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/user"
 	"github.com/zihao-boy/zihao/zihao-service/common/aop"
 )
@@ -26,6 +28,12 @@ func Hub(app *iris.Application) {
 
 	//主机信息
 	host.HostControllerRouter(party)
+
+	//租户控制类
+	tenant.TenantControllerRouter(party)
+
+	//监控控制类
+	monitor.MonitorControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {

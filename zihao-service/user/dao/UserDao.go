@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/privilege"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
 	"github.com/zihao-boy/zihao/zihao-service/entity/vo"
 )
@@ -11,6 +12,8 @@ import (
 const(
 	query_user string = "userDao.GetUser"
 	update_user string ="userDao.UpdateUser"
+	save_user string ="userDao.SaveUser"
+	save_user_privilege string ="userDao.SaveUserPrivilege"
 	)
 
 type UserDao struct {
@@ -37,4 +40,19 @@ func (*UserDao) GetUser(userVo vo.LoginUserVo) (*user.UserDto,error){
 */
 func (*UserDao) UpdateUser(userDto user.UserDto) error{
 	return sqlTemplate.Update(update_user,objectConvert.Struct2Map(userDto),true)
+}
+
+
+/**
+查询用户
+*/
+func (*UserDao) SaveUser(userDto user.UserDto) error{
+	return sqlTemplate.Insert(save_user,objectConvert.Struct2Map(userDto),true)
+}
+
+/**
+查询用户
+*/
+func (*UserDao) SaveUserPrivilege(privilegeUserDto privilege.PrivilegeUserDto) error{
+	return sqlTemplate.Insert(save_user_privilege,objectConvert.Struct2Map(privilegeUserDto),true)
 }
