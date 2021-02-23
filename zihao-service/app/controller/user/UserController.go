@@ -28,6 +28,10 @@ func UserControllerRouter(party iris.Party) {
 
 	//修改密码
 	adinUser.Post("/changePwd", hero.Handler(aus.changePwd))
+
+	//修改密码
+	adinUser.Get("/getUserInfo", hero.Handler(aus.getUserInfo))
+
 }
 
 /**
@@ -62,8 +66,13 @@ func (aus *UserController) logout(ctx iris.Context) {
 */
 func (aus *UserController) changePwd(ctx iris.Context) {
 	resultDto := aus.userService.ChangePwd(ctx);
+	ctx.JSON(resultDto)
+}
 
-
-
+/**
+登录处理类
+*/
+func (aus *UserController) getUserInfo(ctx iris.Context) {
+	resultDto := aus.userService.GetUserInfo(ctx);
 	ctx.JSON(resultDto)
 }

@@ -20,7 +20,7 @@
         },
         mounted: function () {
             this._initSysInfo();
-            this.getNavData();
+            //this.getNavData();
             //this.getUserInfo();
         },
         methods: {
@@ -37,8 +37,7 @@
                 var param = {
                     params: {
                         page: 1,
-                        row: 3,
-                        communityId: vc.getCurrentCommunity().communityId
+                        row: 3
                     }
 
                 };
@@ -78,28 +77,24 @@
                 );
             },
             getUserInfo: function () {
-                //                var _userInfo = vc.getData("_userInfo");
-                //                //浏览器缓存中能获取到
-                //                if(_userInfo != null && _userInfo != undefined){
-                //                    vm.userName = _userInfo.name;
-                //                    return ;
-                //                }
                 //获取用户名
                 var param = {
                     msg: '123',
                 };
 
                 //发送get请求
-                vc.http.get('nav',
-                    'getUserInfo',
+                vc.http.apiGet('/user/getUserInfo',
                     param,
                     function (json, res) {
-                        if (res.status == 200) {
-                            var tmpUserInfo = JSON.parse(json);
-                            console.log(vm, tmpUserInfo);
-                            vm.userName = tmpUserInfo.name;
-                            //                                   vc.saveData("_userInfo",tmpUserInfo);
+                    
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            vm.userName = _json.data.realName;
+                            vc.saveData('/nav/getUserInfo',_json.data)
+                            return;
                         }
+                        vc.toast(_json.msg);
                     }, function () {
                         console.log('请求失败处理');
                     }

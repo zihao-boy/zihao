@@ -68,4 +68,26 @@ func (userService *UserService) ChangePwd(ctx iris.Context) result.ResultDto {
 	return result.Success()
 }
 
+/**
+  用户登录处理
+*/
+func (userService *UserService) GetUserInfo(ctx iris.Context) result.ResultDto {
+	var userInfo *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	var (
+		err       error
+		userDto *user.UserDto
+
+	)
+	userVo := vo.LoginUserVo{UserId: userInfo.UserId}
+	userDto,err =userService.userDao.GetUser(userVo)
+
+	if err != nil{
+		return result.Error("用户不存在")
+	}
+
+	return result.SuccessData(userDto)
+}
+
+
+
 

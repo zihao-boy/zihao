@@ -49,6 +49,7 @@
                             vc.toast(_data.msg);
                             return;
                         }
+                        vc.saveData('/nav/getUserInfo',_data.data)
                         vc.jumpToPage("/index.html")
                     },
                     function (errInfo, error) {

@@ -24,6 +24,14 @@ func HostControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteHostGroup", hero.Handler(aus.deleteHostGroup))
 
+	adinMenu.Get("/getHosts", hero.Handler(aus.getHosts))
+
+	adinMenu.Post("/saveHost", hero.Handler(aus.saveHost))
+
+	adinMenu.Post("/updateHost", hero.Handler(aus.updateHost))
+
+	adinMenu.Post("/deleteHost", hero.Handler(aus.deleteHost))
+
 }
 
 /**
@@ -60,6 +68,46 @@ func (aus *HostController) updateHostGroup(ctx iris.Context) {
 */
 func (aus *HostController) deleteHostGroup(ctx iris.Context) {
 	reslut := aus.hostService.DeleteHostGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+/**
+查询 主机组
+*/
+func (aus *HostController) getHosts(ctx iris.Context) {
+	reslut := aus.hostService.GetHosts(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *HostController) saveHost(ctx iris.Context) {
+	reslut := aus.hostService.SaveHost(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+修改 主机组
+*/
+func (aus *HostController) updateHost(ctx iris.Context) {
+	reslut := aus.hostService.UpdateHost(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+删除 主机组
+*/
+func (aus *HostController) deleteHost(ctx iris.Context) {
+	reslut := aus.hostService.DeleteHost(ctx)
 
 	ctx.JSON(reslut)
 }

@@ -29,8 +29,8 @@ func main() {
 	router.Hub(app)
 
 	app.Get("/", func(ctx iris.Context) {
-		ctx.HTML("<h1>Hello World!</h1>")
-		app.Logger().Info("我在学习Iris噢")
+		ctx.HTML("<h1>欢迎访问梓豪平台，这个是后台服务，请直接访问前段服务！</h1>")
+		app.Logger().Info("欢迎访问梓豪平台，这个是后台服务，请直接访问前段服务！")
 	})
 	app.Run(iris.Addr(":7000"))
 }

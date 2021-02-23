@@ -19,9 +19,8 @@
         },
         methods:{
             deleteHost:function(){
-                vc.component.deleteHostInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'host.deleteHost',
+                    '/host/deleteHost',
                     JSON.stringify(vc.component.deleteHostInfo),
                     {
                         emulateJSON:true
@@ -35,11 +34,11 @@
                             vc.emit('hostManage','listHost',{});
                             return ;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
                      },
                      function(errInfo,error){
                         console.log('请求失败处理');
-                        vc.message(json);
+                        vc.toast(json);
 
                      });
             },

@@ -6,6 +6,7 @@ package host
 type HostDto struct {
 	HostId string `json:"hostId" sql:"-"`
 	GroupId string `json:"groupId" sql:"-"`
+	GroupName string `json:"groupName" sql:"-"`
 	Name string `json:"name" `
 	Ip string `json:"ip" `
 	Username string `json:"username" `
