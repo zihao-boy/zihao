@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"strconv"
 )
@@ -24,6 +25,10 @@ func ParseStringValueFromInterface(param map[string]interface{},name string) str
 	}
 	if name == "Row" {
 		return strconv.FormatInt(param["PageDto"].(dto.PageDto).Row,10)
+	}
+	if param[name] == nil{
+		fmt.Print("对象中未找到name",name)
+		return ""
 	}
 	return param[name].(string)
 

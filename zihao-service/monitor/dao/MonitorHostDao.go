@@ -10,43 +10,37 @@ import (
 
 const(
 	query_monitorHost_count string = `
-		select count(1) total from monitorHost t
+		select count(1) total from monitor_host t
 					where t.status_cd = '0'
-					$if MonitorHostId != '' then
-					and t.monitorHost_id = #MonitorHostId#
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
 					$endif
-					$if MonitorHostName != '' then
-					and t.monitorHost_name = #MonitorHostName#
+					$if MhgId != '' then
+					and t.mhg_id = #MhgId#
 					$endif
-					$if MonitorHostType != '' then
-					and t.monitorHost_type = #MonitorHostType#
+					$if HostId != '' then
+					and t.host_id = #HostId#
 					$endif
-					$if Phone != '' then
-					and t.phone = #Phone#
-					$endif
-					$if State != '' then
-					and t.state = #State#
+					$if MhId != '' then
+					and t.mh_id = #MhId#
 					$endif
     	
 	`
 	query_monitorHost string = `
-		select t.*,uu.username from monitorHost t
-				left join u_user uu on t.monitorHost_id = uu.monitorHost_id and uu.user_role = '1001'
+		select t.*,h.name,h.ip from monitor_host t
+					inner join host h on t.host_id = h.host_id and h.status_cd = '0'
 					where t.status_cd = '0'
-					$if MonitorHostId != '' then
-					and t.monitorHost_id = #MonitorHostId#
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
 					$endif
-					$if MonitorHostName != '' then
-					and t.monitorHost_name = #MonitorHostName#
+					$if MhgId != '' then
+					and t.mhg_id = #MhgId#
 					$endif
-					$if MonitorHostType != '' then
-					and t.monitorHost_type = #MonitorHostType#
+					$if HostId != '' then
+					and t.host_id = #HostId#
 					$endif
-					$if Phone != '' then
-					and t.phone = #Phone#
-					$endif
-					$if State != '' then
-					and t.state = #State#
+					$if MhId != '' then
+					and t.mh_id = #MhId#
 					$endif
 					order by t.create_time desc
 					$if Page != -1 then
@@ -55,44 +49,67 @@ const(
 	`
 
 	insert_monitorHost string = `
-insert into monitorHost(monitorHost_id, monitorHost_name, address, person_name, phone, remark) 
-VALUES(#MonitorHostId#, #MonitorHostName#, #Address#, #PersonName#, #Phone#, #Remark#) 
+insert into monitor_host(mh_id, mhg_id, host_id, tenant_id, cpu_rate, mem_rate, disk_rate, free_mem, free_disk, 
+                         cpu_threshold, mem_threshold, disk_threshold, mon_disk, mon_date) 
+                         values(#MhId#, #MhgId#, #HostId#, #TenantId#, #CpuRate#, #MemRate#, #DiskRate#, 
+                         #FreeMem#, #FreeDisk#,#CpuThreshold#, #MemThreshold#, #DiskThreshold#, #MonDisk#, #MonDate#) 
 `
 
 	update_monitorHost string = `
-	update monitorHost t set
-			$if MonitorHostName != '' then
-			 t.monitorHost_name = #MonitorHostName#,
-			$endif
-			$if MonitorHostType != '' then
-			 t.monitorHost_type = #MonitorHostType#,
-			$endif
-			$if Phone != '' then
-			 t.phone = #Phone#,
-			$endif
-			$if State != '' then
-			 t.state = #State#,
-			$endif
-			$if Address != '' then
-			 t.address = #Address#,
-			$endif
-			$if PersonName != '' then
-			 t.person_name = #PersonName#,
-			$endif
-			$if Remark != '' then
-			 t.remark = #Remark#,
-			$endif
-			t.status_cd = '0'
-			where t.status_cd = '0'
-			$if MonitorHostId != '' then
-			and t.monitorHost_id = #MonitorHostId#
-			$endif
+	update monitor_host t set
+    $if CpuRate != '' then
+                          t.cpu_rate = #CpuRate#,
+                          $endif
+					$if CpuThreshold != '' then
+                          t.cpu_threshold=#CpuThreshold#,
+                          $endif
+					$if DiskRate != '' then
+                          t.disk_rate=#DiskRate#,
+                          $endif
+					$if DiskThreshold != '' then
+                          t.disk_threshold=#DiskThreshold#,
+                          $endif
+					$if FreeDisk != '' then
+                          t.free_disk = #FreeDisk#,
+                          $endif
+					$if FreeMem != '' then
+                          t.free_mem=#FreeMem#,
+                          $endif
+					$if MemRate != '' then
+                          t.mem_rate = #MemRate#,
+                          $endif
+					$if MemThreshold != '' then
+                          t.mem_threshold=#MemThreshold#,
+                          $endif
+					$if MonDate != '' then
+                          t.mon_date=#MonDate#,
+                          $endif
+					$if MonDisk != '' then
+                          t.mon_disk=#MonDisk#,
+                          $endif
+                          t.status_cd = '0'
+                          where t.status_cd = '0'
+    $if TenantId != '' then
+					and t.tenant_id = #TenantId#
+					$endif
+					$if MhgId != '' then
+					and t.mhg_id = #MhgId#
+					$endif
+					$if HostId != '' then
+					and t.host_id = #HostId#
+					$endif
+					$if MhId != '' then
+					and t.mh_id = #MhId#
+					$endif
 	`
 	delete_monitorHost string = `
-	update monitorHost t set
-			t.status_cd = '1'
-			where t.status_cd = '0'
-			and t.monitorHost_id = #MonitorHostId#
+	update monitor_host t set
+                          t.status_cd = '1'
+                          where t.status_cd = '0'
+
+					$if MhId != '' then
+					and t.mh_id = #MhId#
+					$endif
 	`
 )
 

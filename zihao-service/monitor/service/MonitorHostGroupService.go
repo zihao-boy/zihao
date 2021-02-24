@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
+	"github.com/zihao-boy/zihao/zihao-service/common/date"
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
@@ -20,12 +21,14 @@ type MonitorHostGroupService struct {
 查询 系统信息
 */
 func (monitorHostGroupService *MonitorHostGroupService) GetMonitorHostGroups(ctx iris.Context)  (result.ResultDto) {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
 	var (
 		err       error
 		page int64
 		row int64
 		total int64
-		monitorHostGroupDto = monitor.MonitorHostGroupDto{}
+		monitorHostGroupDto = monitor.MonitorHostGroupDto{TenantId: user.TenantId}
 		monitorHostGroupDtos []*monitor.MonitorHostGroupDto
 	)
 
@@ -81,6 +84,8 @@ func (monitorHostGroupService *MonitorHostGroupService) SaveMonitorHostGroups(ct
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	monitorHostGroupDto.TenantId = user.TenantId
 	monitorHostGroupDto.MhgId = seq.Generator()
+	monitorHostGroupDto.State = "3302"
+	monitorHostGroupDto.MonDate = date.GetNowTimeString()
 
 	err = monitorHostGroupService.monitorHostGroupDao.SaveMonitorHostGroup(monitorHostGroupDto)
 	if(err != nil){

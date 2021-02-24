@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
+	"github.com/zihao-boy/zihao/zihao-service/common/date"
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
@@ -81,6 +82,12 @@ func (monitorHostService *MonitorHostService) SaveMonitorHosts(ctx iris.Context)
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	monitorHostDto.TenantId = user.TenantId
 	monitorHostDto.MhId = seq.Generator()
+	monitorHostDto.MonDate = date.GetNowTimeString()
+	monitorHostDto.CpuRate = "0"
+	monitorHostDto.DiskRate="0"
+	monitorHostDto.FreeDisk="0"
+	monitorHostDto.FreeMem="0"
+	monitorHostDto.MemRate="0"
 
 	err = monitorHostService.monitorHostDao.SaveMonitorHost(monitorHostDto)
 	if(err != nil){

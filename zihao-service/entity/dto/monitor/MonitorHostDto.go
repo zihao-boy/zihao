@@ -20,4 +20,6 @@ type MonitorHostDto struct {
 	CpuThreshold string `json:"cpuThreshold" sql:"-"`
 	MemThreshold string `json:"memThreshold" sql:"-"`
 	DiskThreshold string `json:"diskThreshold" sql:"-"`
+	Name string `json:"name"`
+	Ip string `json:"ip"`
 }

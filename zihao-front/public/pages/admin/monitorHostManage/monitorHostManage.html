@@ -1,0 +1,79 @@
+<div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>监控主机</h5>
+                    <div class="ibox-tools" style="top:10px;">
+                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_goBack()">
+                            
+                            返回
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddMonitorHostModal()">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            添加
+                        </button>
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+                        <thead>
+                            <tr>
+
+                                <th class="text-center">主机</th>
+                                <th class="text-center">ip</th>
+                                <th class="text-center">监控目录</th>
+                                <th class="text-center">cpu阈值</th>
+                                <th class="text-center">内存阈值</th>
+                                <th class="text-center">磁盘阈值</th>
+                                <th class="text-center">操作</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="monitorHost in monitorHostManageInfo.monitorHosts">
+
+                                <td class="text-center">{{monitorHost.name}}</td>
+                                <td class="text-center">{{monitorHost.ip}}</td>
+                                <td class="text-center">{{monitorHost.monDisk}}</td>
+                                <td class="text-center">{{monitorHost.cpuThreshold}}</td>
+                                <td class="text-center">{{monitorHost.memThreshold}}</td>
+                                <td class="text-center">{{monitorHost.diskThreshold}}</td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs"
+                                            v-on:click="_openEditMonitorHostModel(monitorHost)">修改</button>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs"
+                                            v-on:click="_openDeleteMonitorHostModel(monitorHost)">删除</button>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <ul class="pagination float-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- 分页 -->
+                    <vc:create path="frame/pagination"></vc:create>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <vc:create path="admin/addMonitorHost" callBackListener="" callBackFunction=""></vc:create>
+    <vc:create path="admin/editMonitorHost"></vc:create>
+    <vc:create path="admin/deleteMonitorHost"></vc:create>
+
+</div>

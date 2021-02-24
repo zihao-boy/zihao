@@ -10,89 +10,95 @@ import (
 
 const(
 	query_monitorHostGroup_count string = `
-		select count(1) total from monitorHostGroup t
-					where t.status_cd = '0'
-					$if MonitorHostGroupId != '' then
-					and t.monitorHostGroup_id = #MonitorHostGroupId#
+		select count(1) total  from monitor_host_group t
+				where t.status_cd = '0'
+				$if TenantId != '' then
+				and t.tenant_id = #TenantId#
+				$endif
+				$if State != '' then
+				and t.state = #State#
+				$endif
+				$if Name != '' then
+				and t.name = #Name#
+				$endif
+					$if MhgId != '' then
+				and t.mhg_id = #MhgId#
 					$endif
-					$if MonitorHostGroupName != '' then
-					and t.monitorHostGroup_name = #MonitorHostGroupName#
+					$if MonCron != '' then
+				and t.mon_cron = #MonCron#
 					$endif
-					$if MonitorHostGroupType != '' then
-					and t.monitorHostGroup_type = #MonitorHostGroupType#
-					$endif
-					$if Phone != '' then
-					and t.phone = #Phone#
-					$endif
-					$if State != '' then
-					and t.state = #State#
+					$if NoticeType != '' then
+				and t.notice_type = #NoticeType#
 					$endif
     	
 	`
 	query_monitorHostGroup string = `
-		select t.*,uu.username from monitorHostGroup t
-				left join u_user uu on t.monitorHostGroup_id = uu.monitorHostGroup_id and uu.user_role = '1001'
-					where t.status_cd = '0'
-					$if MonitorHostGroupId != '' then
-					and t.monitorHostGroup_id = #MonitorHostGroupId#
+		select t.*,td.name state_name, td1.name notice_type_name from monitor_host_group t
+left join t_dict td on t.state = td.status_cd and td.table_name = 'monitor_host_group' and td.table_columns = 'state'
+left join t_dict td1 on t.notice_type = td1.status_cd and td1.table_name = 'monitor_host_group' and td1.table_columns = 'notice_type'
+where  t.status_cd = '0'
+				$if TenantId != '' then
+				and t.tenant_id = #TenantId#
+				$endif
+				$if State != '' then
+				and t.state = #State#
+				$endif
+				$if Name != '' then
+				and t.name = #Name#
+				$endif
+					$if MhgId != '' then
+				and t.mhg_id = #MhgId#
 					$endif
-					$if MonitorHostGroupName != '' then
-					and t.monitorHostGroup_name = #MonitorHostGroupName#
+					$if MonCron != '' then
+				and t.mon_cron = #MonCron#
 					$endif
-					$if MonitorHostGroupType != '' then
-					and t.monitorHostGroup_type = #MonitorHostGroupType#
+					$if NoticeType != '' then
+				and t.notice_type = #NoticeType#
 					$endif
-					$if Phone != '' then
-					and t.phone = #Phone#
-					$endif
-					$if State != '' then
-					and t.state = #State#
-					$endif
-					order by t.create_time desc
-					$if Page != -1 then
-						limit #Page#,#Row#
-					$endif
+				order by t.create_time desc
+				$if Page != -1 then
+					limit #Page#,#Row#
+				$endif
 	`
 
 	insert_monitorHostGroup string = `
-insert into monitorHostGroup(monitorHostGroup_id, monitorHostGroup_name, address, person_name, phone, remark) 
-VALUES(#MonitorHostGroupId#, #MonitorHostGroupName#, #Address#, #PersonName#, #Phone#, #Remark#) 
+insert into monitor_host_group(mhg_id, name, mon_cron, mon_date, notice_type, remark, tenant_id) 
+VALUES (#MhgId#, #Name#, #MonCron#, #MonDate#, #NoticeType#, #Remark#, #TenantId#)
 `
 
 	update_monitorHostGroup string = `
-	update monitorHostGroup t set
-			$if MonitorHostGroupName != '' then
-			 t.monitorHostGroup_name = #MonitorHostGroupName#,
-			$endif
-			$if MonitorHostGroupType != '' then
-			 t.monitorHostGroup_type = #MonitorHostGroupType#,
-			$endif
-			$if Phone != '' then
-			 t.phone = #Phone#,
-			$endif
-			$if State != '' then
-			 t.state = #State#,
-			$endif
-			$if Address != '' then
-			 t.address = #Address#,
-			$endif
-			$if PersonName != '' then
-			 t.person_name = #PersonName#,
-			$endif
-			$if Remark != '' then
-			 t.remark = #Remark#,
-			$endif
-			t.status_cd = '0'
-			where t.status_cd = '0'
-			$if MonitorHostGroupId != '' then
-			and t.monitorHostGroup_id = #MonitorHostGroupId#
-			$endif
+	update monitor_host_group t set
+					$if State != '' then
+					 t.state = #State#,
+					$endif
+					$if Name != '' then
+					 t.name = #Name#,
+					$endif
+					$if MonCron != '' then
+					 t.mon_cron = #MonCron#,
+					$endif
+					$if NoticeType != '' then
+					t.notice_type = #NoticeType#,
+					$endif
+					t.status_cd = '0'
+					where  t.status_cd = '0'
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
+					$endif
+					$if MhgId != '' then
+					and t.mhg_id = #MhgId#
+					$endif
 	`
 	delete_monitorHostGroup string = `
-	update monitorHostGroup t set
-			t.status_cd = '1'
-			where t.status_cd = '0'
-			and t.monitorHostGroup_id = #MonitorHostGroupId#
+	update monitor_host_group t set
+					t.status_cd = '1'
+					where  t.status_cd = '0'
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
+					$endif
+					$if MhgId != '' then
+					and t.mhg_id = #MhgId#
+					$endif
 	`
 )
 

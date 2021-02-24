@@ -61,20 +61,32 @@
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                         <thead>
                             <tr>
-                                <th class="text-center">组ID</th>
+                                
                                 <th class="text-center">名称</th>
                                 <th class="text-center">监控频率</th>
                                 <th class="text-center">告警类型</th>
+                                <th class="text-center">状态</th>
+
                                 <th class="text-center">操作</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="monitorHostGroup in monitorHostGroupManageInfo.monitorHostGroups">
-                                <td class="text-center">{{monitorHostGroup.mhgId}}</td>
+                                
                                 <td class="text-center">{{monitorHostGroup.name}}</td>
                                 <td class="text-center">{{monitorHostGroup.monCron}}</td>
-                                <td class="text-center">{{monitorHostGroup.noticeType}}</td>
+                                <td class="text-center">{{monitorHostGroup.noticeTypeName}}</td>
+                                <td class="text-center">{{monitorHostGroup.stateName}}</td>
+
                                 <td class="text-center">
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs"
+                                            v-on:click="_openEditMonitorHostGroupModel(monitorHostGroup)">启动</button>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs"
+                                            v-on:click="_toMonitorHosts(monitorHostGroup)">主机</button>
+                                    </div>
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs"
                                             v-on:click="_openEditMonitorHostGroupModel(monitorHostGroup)">修改</button>

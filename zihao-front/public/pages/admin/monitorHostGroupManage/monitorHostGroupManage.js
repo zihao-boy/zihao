@@ -42,7 +42,7 @@
                 };
 
                 //发送get请求
-                vc.http.apiGet('/monitor/getMonitorHosts',
+                vc.http.apiGet('/monitor/getMonitorHostGroups',
                     param,
                     function (json, res) {
                         var _monitorHostGroupManageInfo = JSON.parse(json);
@@ -77,6 +77,9 @@
                 } else {
                     vc.component.monitorHostGroupManageInfo.moreCondition = true;
                 }
+            },
+            _toMonitorHosts:function(_monitorHostGroup){
+                vc.jumpToPage('/index.html#/pages/admin/monitorHostManage?mhgId='+_monitorHostGroup.mhgId)
             }
 
 

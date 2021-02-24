@@ -1,0 +1,64 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>监控主机信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewMonitorHostInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectMonitorHostInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择监控主机</button>
+
+                    <button type="button" v-if="viewMonitorHostInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddMonitorHostInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加监控主机</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >主机：</label>
+                            <label class="">{{viewMonitorHostInfo.hostId}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >监控目录：</label>
+                            <label class="">{{viewMonitorHostInfo.monDisk}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >cpu阈值：</label>
+                            <label class="">{{viewMonitorHostInfo.cpuThreshold}}</label>
+                        </div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >内存阈值：</label>
+                            <label class="">{{viewMonitorHostInfo.memThreshold}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >磁盘阈值：</label>
+                            <label class="">{{viewMonitorHostInfo.diskThreshold}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addMonitorHost"
+               callBackListener="viewMonitorHostInfo"
+               callBackFunction="chooseMonitorHost"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseMonitorHost"
+               emitChooseMonitorHost="viewMonitorHostInfo"
+               emitLoadData="viewMonitorHostInfo"
+    ></vc:create>
+</div>
