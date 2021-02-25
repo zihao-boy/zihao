@@ -28,6 +28,11 @@
                                 <th class="text-center">cpu阈值</th>
                                 <th class="text-center">内存阈值</th>
                                 <th class="text-center">磁盘阈值</th>
+                                <th class="text-center">cpu使用率</th>
+                                <th class="text-center">内存使用率</th>
+                                <th class="text-center">磁盘使用率</th>
+                                <th class="text-center">空闲内存</th>
+                                <th class="text-center">空闲磁盘</th>
                                 <th class="text-center">操作</th>
 
 
@@ -42,6 +47,11 @@
                                 <td class="text-center">{{monitorHost.cpuThreshold}}</td>
                                 <td class="text-center">{{monitorHost.memThreshold}}</td>
                                 <td class="text-center">{{monitorHost.diskThreshold}}</td>
+                                <td class="text-center">{{monitorHost.cpuRate}}</td>
+                                <td class="text-center">{{monitorHost.memRate}}</td>
+                                <td class="text-center">{{monitorHost.diskRate}}</td>
+                                <td class="text-center">{{monitorHost.freeMem}}</td>
+                                <td class="text-center">{{monitorHost.freeDisk}}</td>
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs"
