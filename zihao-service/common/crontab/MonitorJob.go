@@ -29,6 +29,10 @@ func (task *MonitorJob)Start() error{
 	 if err != nil{
 	 	return err
 	 }
+	 //没有任务时不启动
+	 if len(hostGroups) < 1{
+	 	return nil
+	 }
 
 	 c := cron.New()
 
@@ -51,6 +55,9 @@ func (task *MonitorJob)Start() error{
 
 //启动多个任务
 func (task *MonitorJob)Stop(_time string) {
+	//停止 所有定时器
 	task.cron.Stop()
+	//启动还没有停止的任务
+	task.cron.Start()
 	select{}
 }
