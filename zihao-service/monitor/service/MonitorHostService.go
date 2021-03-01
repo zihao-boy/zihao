@@ -20,6 +20,24 @@ type MonitorHostService struct {
 /**
 查询 系统信息
 */
+func (monitorHostService *MonitorHostService) GetMonitorHostAll(monitorHostDto monitor.MonitorHostDto)  ([]*monitor.MonitorHostDto,error) {
+	var (
+		err       error
+		monitorHostDtos []*monitor.MonitorHostDto
+	)
+
+	monitorHostDtos,err = monitorHostService.monitorHostDao.GetMonitorHosts(monitorHostDto)
+	if(err != nil){
+		return nil,err
+	}
+
+	return monitorHostDtos,nil
+
+}
+
+/**
+查询 系统信息
+*/
 func (monitorHostService *MonitorHostService) GetMonitorHosts(ctx iris.Context)  (result.ResultDto) {
 	var (
 		err       error

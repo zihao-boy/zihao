@@ -27,9 +27,10 @@ const(
     	
 	`
 	query_monitorHost string = `
-		select t.*,h.name,h.ip from monitor_host t
-					inner join host h on t.host_id = h.host_id and h.status_cd = '0'
-					where t.status_cd = '0'
+		
+				select t.*,h.name,h.ip,h.passwd,h.username from monitor_host t
+				inner join host h on t.host_id = h.host_id and h.status_cd = '0'
+				where t.status_cd = '0'
 					$if TenantId != '' then
 					and t.tenant_id = #TenantId#
 					$endif
