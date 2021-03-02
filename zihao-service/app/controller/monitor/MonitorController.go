@@ -3,6 +3,7 @@ package monitor
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/hero"
+	"github.com/zihao-boy/zihao/zihao-service/common/crontab"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/service"
 )
 
@@ -46,6 +47,13 @@ func MonitorControllerRouter(party iris.Party) {
 
 	//保存sql
 	adinUser.Post("/deleteMonitorHostGroup", hero.Handler(aus.deleteMonitorHostGroup))
+
+	//保存sql
+	adinUser.Post("/startMonitorHostGroup", hero.Handler(aus.startMonitorHostGroup))
+
+
+	//保存sql
+	adinUser.Post("/stopMonitorHostGroup", hero.Handler(aus.stopMonitorHostGroup))
 }
 
 
@@ -110,3 +118,29 @@ func (aus *MonitorController) deleteMonitorHostGroup(ctx iris.Context) {
 	relustDto := aus.monitorHostGroupService.DeleteMonitorHostGroups(ctx)
 	ctx.JSON(relustDto)
 }
+
+/**
+保存sql信息
+*/
+func (aus *MonitorController) startMonitorHostGroup(ctx iris.Context) {
+	relustDto := aus.monitorHostGroupService.StartMonitorHostGroups(ctx)
+	var (
+		monitorJob = crontab.MonitorJob{}
+	)
+	monitorJob.Restart()
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *MonitorController) stopMonitorHostGroup(ctx iris.Context) {
+	relustDto := aus.monitorHostGroupService.StopMonitorHostGroups(ctx)
+
+	var (
+		monitorJob = crontab.MonitorJob{}
+	)
+	monitorJob.Restart()
+	ctx.JSON(relustDto)
+}
+

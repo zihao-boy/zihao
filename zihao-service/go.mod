@@ -20,6 +20,7 @@ require (
 	github.com/robfig/cron v1.2.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 	xorm.io/core v0.7.3
 )

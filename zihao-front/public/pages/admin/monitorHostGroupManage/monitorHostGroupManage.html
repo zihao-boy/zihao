@@ -79,9 +79,13 @@
                                 <td class="text-center">{{monitorHostGroup.stateName}}</td>
 
                                 <td class="text-center">
-                                    <div class="btn-group">
+                                    <div class="btn-group" v-if="monitorHostGroup.state == '3302'">
                                         <button class="btn-white btn btn-xs"
-                                            v-on:click="_openEditMonitorHostGroupModel(monitorHostGroup)">启动</button>
+                                            v-on:click="_startMonitorHostGroupModel(monitorHostGroup)">启动</button>
+                                    </div>
+                                    <div class="btn-group" v-else>
+                                        <button class="btn-white btn btn-xs"
+                                            v-on:click="_stopMonitorHostGroupModel(monitorHostGroup)">停止</button>
                                     </div>
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs"

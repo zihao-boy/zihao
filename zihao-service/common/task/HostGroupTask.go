@@ -1,4 +1,4 @@
-package crontab
+package task
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type HostGroupTask struct {
 	MonitorHostGroupDto *monitor.MonitorHostGroupDto
 }
 
-func (h *HostGroupTask) Run() {
+func (h HostGroupTask) Run() {
 	var (
 		group *monitor.MonitorHostGroupDto
 		hostService service.MonitorHostService
@@ -54,7 +54,7 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 	})
 
 	if err != nil{
-		fmt.Print("连接"+host.Ip+"出错")
+		fmt.Print("连接"+host.Ip+"出错"+err.Error())
 		return;
 	}
 
@@ -62,12 +62,18 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 
 	defer session.Close()
 	if err != nil{
-		fmt.Print("连接"+host.Ip+"出错")
+		fmt.Print("连接"+host.Ip+"出错+err.Error()")
 		return;
 	}
 
-	result, err := session.Output("ls")
-	fmt.Print(result)
+	//总内存
+	//totalMem, _ := session.Output("free -m | sed -n '2p' | awk '{print $2}'")
+	// 使用内存
+	userMem, _ := session.Output("free -m | sed -n '2p' | awk '{print $3}'")
+
+	fmt.Print(string(userMem))
+
+
 
 }
 

@@ -80,9 +80,67 @@
             },
             _toMonitorHosts:function(_monitorHostGroup){
                 vc.jumpToPage('/index.html#/pages/admin/monitorHostManage?mhgId='+_monitorHostGroup.mhgId)
+            },
+            _startMonitorHostGroupModel:function(_monitorHostGroup){
+
+                let _data = {
+                    mhgId:_monitorHostGroup.mhgId,
+                    state:'3301'
+                }
+                vc.http.apiPost(
+                    '/monitor/startMonitorHostGroup',
+                    JSON.stringify(_data),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            vc.toast('操作成功')
+                            $that._listMonitorHostGroups(DEFAULT_PAGE, DEFAULT_ROWS);
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+
+                        vc.toast(errInfo);
+
+                    });
+            },
+            _stopMonitorHostGroupModel:function(_monitorHostGroup){
+
+                let _data = {
+                    mhgId:_monitorHostGroup.mhgId,
+                    state:'3302'
+                }
+                vc.http.apiPost(
+                    '/monitor/stopMonitorHostGroup',
+                    JSON.stringify(_data),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            vc.toast('操作成功')
+                            $that._listMonitorHostGroups(DEFAULT_PAGE, DEFAULT_ROWS);
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+
+                        vc.toast(errInfo);
+
+                    });
             }
-
-
         }
     });
 })(window.vc);

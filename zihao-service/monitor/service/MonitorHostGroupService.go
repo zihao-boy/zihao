@@ -141,3 +141,54 @@ func (monitorHostGroupService *MonitorHostGroupService) DeleteMonitorHostGroups(
 	return result.SuccessData(monitorHostGroupDto)
 
 }
+
+
+/**
+启动组
+*/
+func (monitorHostGroupService *MonitorHostGroupService) StartMonitorHostGroups(ctx iris.Context)  (result.ResultDto) {
+	var (
+		err       error
+		monitorHostGroupDto monitor.MonitorHostGroupDto
+
+	)
+
+	if err = ctx.ReadJSON(&monitorHostGroupDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	monitorHostGroupDto.State= "3301"
+	err = monitorHostGroupService.monitorHostGroupDao.UpdateMonitorHostGroup(monitorHostGroupDto)
+	if(err != nil){
+		return result.Error(err.Error())
+	}
+
+
+	return result.SuccessData(monitorHostGroupDto)
+
+}
+
+
+/**
+停止组
+*/
+func (monitorHostGroupService *MonitorHostGroupService) StopMonitorHostGroups(ctx iris.Context)  (result.ResultDto) {
+	var (
+		err       error
+		monitorHostGroupDto monitor.MonitorHostGroupDto
+	)
+
+	if err = ctx.ReadJSON(&monitorHostGroupDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	monitorHostGroupDto.State= "3302"
+
+	err = monitorHostGroupService.monitorHostGroupDao.UpdateMonitorHostGroup(monitorHostGroupDto)
+	if(err != nil){
+		return result.Error(err.Error())
+	}
+
+
+	return result.SuccessData(monitorHostGroupDto)
+
+}

@@ -44,7 +44,7 @@ const(
 					and t.mh_id = #MhId#
 					$endif
 					order by t.create_time desc
-					$if Page != -1 then
+					$if Page != 0 then
 						limit #Page#,#Row#
 					$endif
 	`

@@ -2,28 +2,47 @@ package crontab
 
 import (
 	"github.com/robfig/cron"
+	task2 "github.com/zihao-boy/zihao/zihao-service/common/task"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/dao"
+	"sync"
 )
 
-var hostMonitorTaks *MonitorJob
+
+var lock sync.Mutex
+
+var c *cron.Cron
 
 type MonitorJob struct {
-	cron *cron.Cron
+
 	monitorHostGroupDao dao.MonitorHostGroupDao
+}
+
+func (task MonitorJob)init(){
+
+	lock.Lock()
+	defer lock.Unlock()
+	if c != nil{
+		return
+	}
+
+	c = cron.New()
+
 }
 
 
 //启动多个任务
-func (task *MonitorJob)Start() error{
+func (task MonitorJob)Start() error{
 	var (
 		hostGroups []*monitor.MonitorHostGroupDto
 		err error
 	)
 
+	task.init()
+
 	//查询host_group
 	var monitorHostGroup = monitor.MonitorHostGroupDto{
-		State:"3302",
+		State:"3301",
 	}
 	 hostGroups,err = task.monitorHostGroupDao.GetMonitorHostGroups(monitorHostGroup)
 	 if err != nil{
@@ -34,11 +53,10 @@ func (task *MonitorJob)Start() error{
 	 	return nil
 	 }
 
-	 c := cron.New()
 
 	 for _,item := range hostGroups{
 		 //AddJob方法
-		 c.AddJob(item.MonCron, HostGroupTask{
+		 c.AddJob(item.MonCron, task2.HostGroupTask{
 			 MonitorHostGroupDto: item,
 		 })
 	 }
@@ -46,18 +64,18 @@ func (task *MonitorJob)Start() error{
 	//启动计划任务
 	c.Start()
 
-	hostMonitorTaks = &MonitorJob{
-		cron: c,
-	}
-	select{}
+
+	return nil
 }
 
 
 //启动多个任务
-func (task *MonitorJob)Stop(_time string) {
+func (task MonitorJob)Restart() {
 	//停止 所有定时器
-	task.cron.Stop()
+	if c != nil{
+		c.Stop()
+	}
 	//启动还没有停止的任务
-	task.cron.Start()
-	select{}
+	task.Start()
+
 }
