@@ -1,12 +1,18 @@
 package task
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/zihao-boy/zihao/zihao-service/common/date"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
+	"github.com/zihao-boy/zihao/zihao-service/monitor/dao"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/service"
 	"golang.org/x/crypto/ssh"
+	"strconv"
+	"strings"
 )
 
+const check_shell="#!/bin/bash\n\nmem_total=`free -m | awk '/Mem/ {print $2}'`\n\nmem_used=`free -m | awk '/Mem/ {print $3}'`\n\ndisk_total=`df -m $1 | grep $1 | awk '{print $2}'`\n\nif [ ! -n \"$disk_total\" ]; then\n        disk_total=0\nfi\n\ndisk_used=`df -m $1 | grep $1 | awk '{print $3}'`\n\nif [ ! -n \"$disk_used\" ]; then\n        disk_used=0\nfi\n\ncpu_us=`top -b -n 1 | grep Cpu | awk '{print $2}'`\n\necho \"{'cpuRate':$cpu_us,'memTotal':$mem_total,'memUsed':$mem_used,'diskTotal':$disk_total,'diskUsed':$disk_used}\"\n"
 
 
 type HostGroupTask struct {
@@ -69,11 +75,40 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 	//总内存
 	//totalMem, _ := session.Output("free -m | sed -n '2p' | awk '{print $2}'")
 	// 使用内存
-	userMem, _ := session.Output("free -m | sed -n '2p' | awk '{print $3}'")
+	userMem, _ := session.Output(strings.ReplaceAll(check_shell,"$1",host.MonDisk))
+	//userMem, _ := session.Output("top -b -n 1 | grep Cpu | awk '{print $2}'")
+	//userMem, _ := session.Output("df -m /dev/sda1 | grep /dev/sda1 | awk '{print $2}'")
 
-	fmt.Print(string(userMem))
 
+	var (
+		monitorCheckHostInfoDto *monitor.MonitorCheckHostInfoDto
+		monitorHostDao=dao.MonitorHostDao{}
+		outData = strings.ReplaceAll(string(userMem),"'","\"")
+	)
 
+	json.Unmarshal([]byte(outData),&monitorCheckHostInfoDto)
+
+	host.CpuRate = strconv.FormatFloat(monitorCheckHostInfoDto.CpuRate,'f',-1,64)
+	if monitorCheckHostInfoDto.MemTotal != 0{
+		host.MemRate = strconv.FormatFloat(monitorCheckHostInfoDto.MemUsed/monitorCheckHostInfoDto.MemTotal,
+			'f',-1,64)
+	}
+	host.FreeMem = strconv.FormatFloat(monitorCheckHostInfoDto.MemTotal-monitorCheckHostInfoDto.MemUsed,
+		'f',-1,64)
+
+	if monitorCheckHostInfoDto.DiskTotal != 0{
+		host.DiskRate = strconv.FormatFloat(monitorCheckHostInfoDto.DiskUsed/monitorCheckHostInfoDto.DiskTotal,
+			'f',-1,64)
+	}
+
+	host.FreeDisk = strconv.FormatFloat(monitorCheckHostInfoDto.DiskTotal-monitorCheckHostInfoDto.DiskUsed,
+		'f',-1,64)
+
+	host.MonDate = date.GetNowDateString()
+
+	monitorHostDao.UpdateMonitorHost(*host)
+
+	//告警
 
 }
 
