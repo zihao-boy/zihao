@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/zihao-boy/zihao/zihao-service/common/date"
+	"github.com/zihao-boy/zihao/zihao-service/common/queue/monitorHostQueue"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/dao"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/service"
@@ -109,6 +110,7 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 	monitorHostDao.UpdateMonitorHost(*host)
 
 	//告警
+	monitorHostQueue.SendData(*host)
 
 }
 
