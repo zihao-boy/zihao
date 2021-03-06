@@ -40,7 +40,7 @@ func (h HostGroupTask) Run() {
 	}
 
 	for _,monitorHostDto := range monitorHostDtos{
-		h.checkHost(monitorHostDto)
+		h.checkHost(monitorHostDto,*group)
 	}
 }
 
@@ -53,7 +53,7 @@ free_mem,空闲内存，单位为G
 free_disk,空闲磁盘单位为G
 
  */
-func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
+func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto,group monitor.MonitorHostGroupDto){
 
 	client, err := ssh.Dial("tcp", host.Ip, &ssh.ClientConfig{
 		User: host.Username,
@@ -80,7 +80,6 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 	userMem, _ := session.Output(strings.ReplaceAll(check_shell,"$1",host.MonDisk))
 	//userMem, _ := session.Output("top -b -n 1 | grep Cpu | awk '{print $2}'")
 	//userMem, _ := session.Output("df -m /dev/sda1 | grep /dev/sda1 | awk '{print $2}'")
-
 
 	var (
 		monitorCheckHostInfoDto *monitor.MonitorCheckHostInfoDto
@@ -110,6 +109,7 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 
 	monitorHostDao.UpdateMonitorHost(*host)
 
+	host.NoticeType = group.NoticeType
 	//存储告警记录
 	saveMonitorHostLog(host)
 	//告警

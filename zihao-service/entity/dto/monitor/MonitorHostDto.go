@@ -24,4 +24,6 @@ type MonitorHostDto struct {
 	Ip string `json:"ip"`
 	Passwd string `json:"passwd"`
 	Username string `json:"username"`
+	NoticeType  string `json:"noticeType" sql:"-"`
+
 }
