@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"sync"
-	"time"
 )
 var lock sync.Mutex
 var que chan monitor.MonitorHostDto
@@ -19,29 +18,27 @@ func initQueue()  {
 		lock.Unlock()
 		return
 	}
-	que = make(chan monitor.MonitorHostDto, 200)
+	que = make(chan monitor.MonitorHostDto, 1)
 	lock.Unlock()
 
-	go func() {
-		select {
-			case data := <- que:
-				dealData(data)
-			case <-time.After(time.Second * 2):
-				fmt.Println("timeout 2 seconds")
-		}
-	}()
+	go readData(que)
 
 }
 
 func SendData(host monitor.MonitorHostDto)  {
 	initQueue()
-
 	que <- host
+}
 
+func readData(que chan monitor.MonitorHostDto){
+	for{
+		select {
+			case data := <- que:
+				dealData(data)
+		}
+	}
 }
 
 func dealData(host monitor.MonitorHostDto)  {
-
 	fmt.Print(host.Ip)
-
 }

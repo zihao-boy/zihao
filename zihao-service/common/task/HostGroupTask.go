@@ -109,6 +109,8 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 
 	monitorHostDao.UpdateMonitorHost(*host)
 
+	//存储告警记录
+
 	//告警
 	monitorHostQueue.SendData(*host)
 
