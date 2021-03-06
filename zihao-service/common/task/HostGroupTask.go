@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/zihao-boy/zihao/zihao-service/common/date"
 	"github.com/zihao-boy/zihao/zihao-service/common/queue/monitorHostQueue"
+	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/dao"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/service"
@@ -110,9 +111,23 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto){
 	monitorHostDao.UpdateMonitorHost(*host)
 
 	//存储告警记录
-
+	saveMonitorHostLog(host)
 	//告警
 	monitorHostQueue.SendData(*host)
 
+}
+
+func saveMonitorHostLog(host *monitor.MonitorHostDto){
+
+	var monitorHostLogDto = monitor.MonitorHostLogDto{}
+	var monitorHostDao dao.MonitorHostLogDao
+	monitorHostLogDto.TenantId = host.TenantId
+	monitorHostLogDto.HostId = host.HostId
+	monitorHostLogDto.LogId = seq.Generator()
+	monitorHostLogDto.CpuRate = host.CpuRate
+	monitorHostLogDto.DiskRate= host.DiskRate
+	monitorHostLogDto.MemRate= host.MemRate
+
+	_ = monitorHostDao.SaveMonitorHostLog(monitorHostLogDto)
 }
 

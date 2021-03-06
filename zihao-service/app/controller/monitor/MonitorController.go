@@ -12,6 +12,7 @@ import (
 type MonitorController struct{
 	monitorHostService service.MonitorHostService
 	monitorHostGroupService service.MonitorHostGroupService
+	monitorHostLogService service.MonitorHostLogService
 }
 
 
@@ -54,6 +55,10 @@ func MonitorControllerRouter(party iris.Party) {
 
 	//保存sql
 	adinUser.Post("/stopMonitorHostGroup", hero.Handler(aus.stopMonitorHostGroup))
+
+
+	//查询监控日志
+	adinUser.Get("/getMonitorHostLog", hero.Handler(aus.getMonitorHostLog))
 }
 
 
@@ -141,6 +146,12 @@ func (aus *MonitorController) stopMonitorHostGroup(ctx iris.Context) {
 		monitorJob = crontab.MonitorJob{}
 	)
 	monitorJob.Restart()
+	ctx.JSON(relustDto)
+}
+
+
+func (aus *MonitorController) getMonitorHostLog(ctx iris.Context) {
+	relustDto := aus.monitorHostLogService.GetMonitorHostLogs(ctx)
 	ctx.JSON(relustDto)
 }
 

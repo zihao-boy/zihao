@@ -71,6 +71,9 @@
                 vc.component._listHosts(DEFAULT_PAGE, DEFAULT_ROWS);
 
             },
+            _openMonitorHostAnalysis:function(_host){
+                vc.jumpToPage('/index.html#/pages/admin/monitorHostGroupManageAnalysis?hostId='+_host.hostId)
+            },
             _moreCondition: function () {
                 if (vc.component.hostManageInfo.moreCondition) {
                     vc.component.hostManageInfo.moreCondition = false;

@@ -171,6 +171,10 @@ func (hostService *HostService) GetHosts(ctx iris.Context)  result.ResultDto {
 
 	hostDto.Page = (page -1) * row
 
+	groupId := ctx.URLParam("groupId")
+
+	hostDto.GroupId=groupId
+
 	total,err = hostService.hostDao.GetHostCount(hostDto)
 
 	if err != nil{
