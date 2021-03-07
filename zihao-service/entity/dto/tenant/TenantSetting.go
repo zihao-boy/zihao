@@ -13,4 +13,5 @@ type TenantSettingDto struct {
 	Value string `json:"value"`
 	CreateTime string `json:"CreateTime" sql:"-"`
 	StatusCd string `json:"statusCd" sql:"-"`
+	SpecCdName string `json:"specCdName" sql:"-"`
 }

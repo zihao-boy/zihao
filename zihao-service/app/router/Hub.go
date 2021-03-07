@@ -15,6 +15,7 @@ import (
 
 // 所有的路由
 func Hub(app *iris.Application) {
+
 	party := preSettring(app)
 
 	//系统信息

@@ -40,7 +40,7 @@
                };
 
                //发送get请求
-               vc.http.apiGet('tenantSetting.listTenantSettings',
+               vc.http.apiGet('/tenant/getTenantSettings',
                              param,
                              function(json,res){
                                 var _tenantSettingManageInfo=JSON.parse(json);

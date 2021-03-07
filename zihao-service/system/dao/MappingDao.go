@@ -53,6 +53,8 @@ const(
 				$endif
 	`
 
+
+
 	insert_mapping string = `
 	insert into mapping( domain, name, zkeys, value, remark)
 values(#Domain#,#Name#,#Zkeys#,#Value#,#Remark#)
@@ -84,6 +86,13 @@ values(#Domain#,#Name#,#Zkeys#,#Value#,#Remark#)
 		t.status_cd = '1'
 		where t.status_cd = '0'
 		  and t.id = #Id#
+	`
+
+	query_dict string = `
+	select * from t_dict t
+		where 1=1
+		and t.table_name = #TableName#
+		and t.table_columns = #TableColumns#
 	`
 )
 
@@ -117,6 +126,18 @@ func (*MappingDao) GetMappings(mappingDto mapping.MappingDto) ([]*mapping.Mappin
 	},false)
 
 	return mappingDtos,nil
+}
+
+/**
+查询用户
+*/
+func (*MappingDao) GetDicts(dictDto mapping.DictDto) ([]*mapping.DictDto,error){
+	var dictDtos []*mapping.DictDto
+	sqlTemplate.SelectList(query_dict,objectConvert.Struct2Map(dictDto), func(db *gorm.DB) {
+		db.Scan(&dictDtos)
+	},false)
+
+	return dictDtos,nil
 }
 
 /**

@@ -48,6 +48,9 @@ func SystemControllerRouter(party iris.Party) {
 
 	//保存sql
 	adinUser.Post("/deleteMapping", hero.Handler(aus.deleteMapping))
+
+	//查询sql
+	adinUser.Get("/getDicts", hero.Handler(aus.getDicts))
 }
 
 func (aus *SystemController) info(ctx iris.Context) {
@@ -89,6 +92,12 @@ func (aus *SystemController) deleteServiceSql(ctx iris.Context) {
 
 func (aus *SystemController) getMappings(ctx iris.Context) {
 	relustDto := aus.mappingService.GetMappings(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+func (aus *SystemController) getDicts(ctx iris.Context) {
+	relustDto := aus.mappingService.GetDicts(ctx)
 	ctx.JSON(relustDto)
 }
 

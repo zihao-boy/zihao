@@ -61,6 +61,28 @@ func (mappingService *MappingService) GetMappings(ctx iris.Context)  (result.Res
 
 }
 
+/**
+查询 系统信息
+*/
+func (mappingService *MappingService) GetDicts(ctx iris.Context)  (result.ResultDto) {
+	var (
+		err       error
+		dictDto = mapping.DictDto{}
+		dictDtos []*mapping.DictDto
+	)
+	dictDto.TableName = ctx.URLParam("tableName")
+	dictDto.TableColumns = ctx.URLParam("tableColumns")
+	dictDtos,err = mappingService.mappingDao.GetDicts(dictDto)
+	if(err != nil){
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(dictDtos)
+
+}
+
+
+
 
 /**
 保存 系统信息

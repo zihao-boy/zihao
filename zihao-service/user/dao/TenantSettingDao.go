@@ -27,8 +27,10 @@ const(
 	`
 	query_tenantSetting string = `
 
-					select * 
-					from tenant_setting t
+					select t.*,td.name spec_cd_name
+from tenant_setting t
+left join t_dict td on t.spec_cd = td.status_cd and td.table_name = 'tenant_setting' and td.table_columns = 'spec_cd'
+
 					where
 					t.status_cd = '0'
 					$if TenantId != '' then
