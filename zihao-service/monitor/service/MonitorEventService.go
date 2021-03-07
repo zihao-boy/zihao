@@ -7,8 +7,10 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/tenant"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/dao"
+	"github.com/zihao-boy/zihao/zihao-service/user/service"
 	"strconv"
 )
 
@@ -115,8 +117,21 @@ func (monitorEventService *MonitorEventService) SaveMonitorEvents(eventDto monit
 }
 
 func sendToDingDing(eventDto monitor.MonitorEventDto) (string,error){
+
+	//eventDto.TenantId
+
+	var tenantSettingService service.TenantSettingService
+	var tenantSettingDto = tenant.TenantSettingDto{
+		TenantId: eventDto.TenantId,
+		SpecCd: "300301",
+	}
+	tenantSettingDtos,err := tenantSettingService.GetTenantSettingAll(tenantSettingDto)
+
+	if err != nil || len(tenantSettingDtos)<1{
+		return "",err
+	}
 	//根据告警类型告警相应平台
-	var url string = "https://oapi.dingtalk.com/robot/send?access_token=b6de45c3ef202f1e34930547427efef3be1c3bb295f52c1855c76998142be6a5"
+	var url string = tenantSettingDtos[0].Value
 	// 1、构建需要的参数
 	context := map[string]string{
 		"content": "[梓豪平台告警]"+eventDto.Remark,

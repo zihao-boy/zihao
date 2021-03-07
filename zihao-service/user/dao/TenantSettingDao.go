@@ -43,7 +43,7 @@ left join t_dict td on t.spec_cd = td.status_cd and td.table_name = 'tenant_sett
 					and t.spec_cd = #SpecCd#
 					$endif
 					order by t.create_time desc
-					$if Page != -1 then
+					$if Row != 0 then
 						limit #Page#,#Row#
 					$endif
 	`

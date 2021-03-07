@@ -65,6 +65,24 @@ func (tenantSettingService *TenantSettingService) GetTenantSettings(ctx iris.Con
 
 }
 
+/**
+查询 系统信息
+*/
+func (tenantSettingService *TenantSettingService) GetTenantSettingAll(tenantSettingDto tenant.TenantSettingDto)  ([] *tenant.TenantSettingDto,error) {
+	var (
+		err       error
+		tenantSettingDtos []*tenant.TenantSettingDto
+	)
+
+
+	tenantSettingDtos,err = tenantSettingService.tenantSettingDao.GetTenantSettings(tenantSettingDto)
+	if(err != nil){
+		return nil,err
+	}
+	return tenantSettingDtos,nil
+
+}
+
 
 /**
 保存 系统信息

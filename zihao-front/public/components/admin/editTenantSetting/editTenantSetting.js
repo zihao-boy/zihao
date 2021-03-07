@@ -6,10 +6,15 @@
                 settingId: '',
                 specCd: '',
                 value: '',
-
+                specCds: []
             }
         },
         _initMethod: function () {
+
+            vc.getDict('tenant_setting', 'spec_cd', function (data) {
+
+                $that.editTenantSettingInfo.specCds = data.data;
+            })
 
         },
         _initEvent: function () {
@@ -88,11 +93,12 @@
                     });
             },
             refreshEditTenantSettingInfo: function () {
+                let _specCds = $that.addTenantSettingInfo.specCds
                 vc.component.editTenantSettingInfo = {
                     settingId: '',
                     specCd: '',
                     value: '',
-
+                    specCds: _specCds
                 }
             }
         }
