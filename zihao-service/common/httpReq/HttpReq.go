@@ -30,7 +30,7 @@ func GetAuthHeader() (header map[string]string, err error) {
 // getAuthorization 获取授权码
 func getAuthorization() (auth string, err error) {
 	// 1、构建需要的参数
-	data := map[string]string{
+	data := map[string]interface{}{
 		"username": "username",
 		"password": "password",
 	}
@@ -53,7 +53,7 @@ func getAuthorization() (auth string, err error) {
 }
 
 // sendRequest 发送request
-func SendRequest(url string, data map[string]string, addHeaders map[string]string, method string) (resp []byte, err error) {
+func SendRequest(url string, data map[string]interface{}, addHeaders map[string]string, method string) (resp []byte, err error) {
 	jsonData, err := json.Marshal(data)
 	body := bytes.NewReader(jsonData)
 	// 1、创建req

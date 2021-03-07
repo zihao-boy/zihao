@@ -13,6 +13,7 @@ type MonitorController struct{
 	monitorHostService service.MonitorHostService
 	monitorHostGroupService service.MonitorHostGroupService
 	monitorHostLogService service.MonitorHostLogService
+	monitorEventService service.MonitorEventService
 }
 
 
@@ -59,6 +60,9 @@ func MonitorControllerRouter(party iris.Party) {
 
 	//查询监控日志
 	adinUser.Get("/getMonitorHostLog", hero.Handler(aus.getMonitorHostLog))
+
+	//查询监控事件
+	adinUser.Get("/getMonitorEvents", hero.Handler(aus.getMonitorEvents))
 }
 
 
@@ -154,4 +158,11 @@ func (aus *MonitorController) getMonitorHostLog(ctx iris.Context) {
 	relustDto := aus.monitorHostLogService.GetMonitorHostLogs(ctx)
 	ctx.JSON(relustDto)
 }
+
+func (aus *MonitorController) getMonitorEvents(ctx iris.Context) {
+	relustDto := aus.monitorEventService.GetMonitorEvents(ctx)
+	ctx.JSON(relustDto)
+}
+
+
 

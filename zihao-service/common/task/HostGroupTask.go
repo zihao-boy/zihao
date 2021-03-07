@@ -89,7 +89,7 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto,group monitor.Mon
 
 	json.Unmarshal([]byte(outData),&monitorCheckHostInfoDto)
 
-	host.CpuRate = strconv.FormatFloat(monitorCheckHostInfoDto.CpuRate,'f',-1,64)
+	host.CpuRate = strconv.FormatFloat(monitorCheckHostInfoDto.CpuRate/100,'f',-1,64)
 	if monitorCheckHostInfoDto.MemTotal != 0{
 		host.MemRate = strconv.FormatFloat(monitorCheckHostInfoDto.MemUsed/monitorCheckHostInfoDto.MemTotal,
 			'f',-1,64)

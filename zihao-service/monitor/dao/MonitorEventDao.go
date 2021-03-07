@@ -10,30 +10,48 @@ import (
 
 const(
 	query_monitorEvent_count string = `
-		select count(1) total from monitor_host t
-					where t.status_cd = '0'
-					$if TenantId != '' then
-					and t.tenant_id = #TenantId#
-					$endif
-					$if MhgId != '' then
-					and t.mhg_id = #MhgId#
-					$endif
-					$if HostId != '' then
-					and t.host_id = #HostId#
-					$endif
-					$if MhId != '' then
-					and t.mh_id = #MhId#
-					$endif
+		select count(1) total
+		 from monitor_event t
+		where
+		t.status_cd = '0'
+		and t.tenant_id = #TenantId#
+		$if EventId != '' then
+		and t.event_id = #EventId#
+		$endif
+		$if NoticeType != '' then
+		and t.notice_type = #NoticeType#
+		$endif
+		$if State != '' then
+		and t.state= #State#
+		$endif
+		$if EventObjName != '' then
+		and t.event_obj_name = #EventObjName#
+		$endif
     	
 	`
 	query_monitorEvent string = `
-		
-				select DATE_FORMAT(t.create_time,'%H') create_time,max(t.cpu_rate) cpu_rate,max(t.mem_rate) mem_rate,max(t.disk_rate) disk_rate
-				from monitor_host_log t
-				where t.host_id = #HostId#
-				  and t.create_time >=(NOW() - interval 24 hour)
-				 group by DATE_FORMAT(t.create_time,'%H')
-				 order by t.create_time asc
+				select t.*,td.name notice_type_name from monitor_event t
+				left join t_dict td on td.status_cd = t.notice_type and td.table_name = 'monitor_host_group' and td.table_columns = 'notice_type'
+
+				where
+				t.status_cd = '0'
+				and t.tenant_id = #TenantId#
+				$if EventId != '' then
+				and t.event_id = #EventId#
+				$endif
+				$if NoticeType != '' then
+				and t.notice_type = #NoticeType#
+				$endif
+				$if State != '' then
+				and t.state= #State#
+				$endif
+				$if EventObjName != '' then
+				and t.event_obj_name = #EventObjName#
+				$endif
+				 order by t.create_time desc
+				$if Row != 0 then
+					limit #Page#,#Row#
+				$endif
 	`
 
 	insert_monitorEvent string = `

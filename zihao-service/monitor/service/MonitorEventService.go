@@ -2,10 +2,14 @@ package service
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/zihao-boy/zihao/zihao-service/common/constants"
+	"github.com/zihao-boy/zihao/zihao-service/common/httpReq"
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
 	"github.com/zihao-boy/zihao/zihao-service/monitor/dao"
+	"strconv"
 )
 
 type MonitorEventService struct {
@@ -35,18 +39,52 @@ func (monitorEventService *MonitorEventService) GetMonitorEventAll(monitorEventD
 查询 系统信息
 */
 func (monitorEventService *MonitorEventService) GetMonitorEvents(ctx iris.Context)  (result.ResultDto) {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
 	var (
 		err       error
-		monitorEventDto = monitor.MonitorEventDto{}
+		page int64
+		row int64
+		total int64
+		monitorEventDto = monitor.MonitorEventDto{TenantId: user.TenantId}
 		monitorEventDtos []*monitor.MonitorEventDto
 	)
+
+
+	page,err =  strconv.ParseInt(ctx.URLParam("page"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	row,err =  strconv.ParseInt(ctx.URLParam("row"),10,64)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	monitorEventDto.Row = row * page
+
+	monitorEventDto.Page = (page -1) * row
+
+	monitorEventDto.EventObjName = ctx.URLParam("eventObjName")
+
+	total,err = monitorEventService.monitorEventDao.GetMonitorEventCount(monitorEventDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if total < 1{
+		return result.Success()
+	}
 
 	monitorEventDtos,err = monitorEventService.monitorEventDao.GetMonitorEvents(monitorEventDto)
 	if(err != nil){
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(monitorEventDtos)
+	return result.SuccessData(monitorEventDtos,total,row)
 
 }
 
@@ -67,8 +105,28 @@ func (monitorEventService *MonitorEventService) SaveMonitorEvents(eventDto monit
 		return err
 	}
 
+	//钉钉告警
+	if eventDto.NoticeType == "2002"{
+		sendToDingDing(eventDto)
+	}
+
 	return nil
 
+}
+
+func sendToDingDing(eventDto monitor.MonitorEventDto) (string,error){
+	//根据告警类型告警相应平台
+	var url string = "https://oapi.dingtalk.com/robot/send?access_token=b6de45c3ef202f1e34930547427efef3be1c3bb295f52c1855c76998142be6a5"
+	// 1、构建需要的参数
+	context := map[string]string{
+		"content": "[梓豪平台告警]"+eventDto.Remark,
+	}
+	data := map[string]interface{}{
+		"msgtype": "text",
+		"text": context,
+	}
+	resp, err := httpReq.SendRequest(url,data,nil,"POST")
+	return string(resp),err
 }
 
 

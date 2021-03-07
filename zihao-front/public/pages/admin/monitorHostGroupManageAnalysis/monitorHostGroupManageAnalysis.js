@@ -56,7 +56,7 @@
                         let _diskData = [];
                         _data.forEach(item => {
                             _xAxis.push(item.createTime + "时");
-                            _cpuData.push(item.cpuRate);
+                            _cpuData.push(item.cpuRate * 100);
                             _memData.push(item.memRate * 100);
                             _diskData.push(item.diskRate * 100);
                         });
