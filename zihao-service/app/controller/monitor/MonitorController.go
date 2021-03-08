@@ -14,6 +14,7 @@ type MonitorController struct{
 	monitorHostGroupService service.MonitorHostGroupService
 	monitorHostLogService service.MonitorHostLogService
 	monitorEventService service.MonitorEventService
+	monitorTaskService service.MonitorTaskService
 }
 
 
@@ -63,6 +64,26 @@ func MonitorControllerRouter(party iris.Party) {
 
 	//查询监控事件
 	adinUser.Get("/getMonitorEvents", hero.Handler(aus.getMonitorEvents))
+
+
+	//查询sql
+	adinUser.Get("/getMonitorTasks", hero.Handler(aus.getMonitorTasks))
+
+	//保存sql
+	adinUser.Post("/saveMonitorTask", hero.Handler(aus.saveMonitorTask))
+
+	//保存sql
+	adinUser.Post("/updateMonitorTask", hero.Handler(aus.updateMonitorTask))
+
+	//保存sql
+	adinUser.Post("/deleteMonitorTask", hero.Handler(aus.deleteMonitorTask))
+
+	//保存sql
+	adinUser.Post("/startMonitorTask", hero.Handler(aus.startMonitorTask))
+
+
+	//保存sql
+	adinUser.Post("/stopMonitorTask", hero.Handler(aus.stopMonitorTask))
 }
 
 
@@ -161,6 +182,64 @@ func (aus *MonitorController) getMonitorHostLog(ctx iris.Context) {
 
 func (aus *MonitorController) getMonitorEvents(ctx iris.Context) {
 	relustDto := aus.monitorEventService.GetMonitorEvents(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+
+
+func (aus *MonitorController) getMonitorTasks(ctx iris.Context) {
+	relustDto := aus.monitorTaskService.GetMonitorTasks(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *MonitorController) saveMonitorTask(ctx iris.Context) {
+	relustDto := aus.monitorTaskService.SaveMonitorTasks(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *MonitorController) updateMonitorTask(ctx iris.Context) {
+	relustDto := aus.monitorTaskService.UpdateMonitorTasks(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+/**
+保存sql信息
+*/
+func (aus *MonitorController) deleteMonitorTask(ctx iris.Context) {
+	relustDto := aus.monitorTaskService.DeleteMonitorTasks(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *MonitorController) startMonitorTask(ctx iris.Context) {
+	relustDto := aus.monitorTaskService.StartMonitorTask(ctx)
+	var (
+		monitorJob = crontab.MonitorJob{}
+	)
+	monitorJob.Restart()
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *MonitorController) stopMonitorTask(ctx iris.Context) {
+	relustDto := aus.monitorTaskService.StopMonitorTasks(ctx)
+
+	var (
+		monitorJob = crontab.MonitorJob{}
+	)
+	monitorJob.Restart()
 	ctx.JSON(relustDto)
 }
 
