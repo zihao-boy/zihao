@@ -10,4 +10,10 @@ type MonitorTaskTemplateDto struct {
 	CreateTime string `json:"createTime" sql:"-"`
 	StatusCd string `json:"statusCd" sql:"-"`
 	ClassBean string `json:"classBean" sql:"-"`
+	SpecCd string `json:"specCd" sql:"-"`
+	SpecName string `json:"specName" sql:"-"`
+	SpecDesc string `json:"specDesc" sql:"-"`
+	IsShow string `json:"isShow" sql:"-"`
+
+	MonitorTaskTemplateSpecDto []MonitorTaskTemplateSpecDto `json:"specs"`
 }

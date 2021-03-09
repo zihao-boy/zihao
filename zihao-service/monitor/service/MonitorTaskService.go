@@ -82,6 +82,65 @@ func (monitorTaskService *MonitorTaskService) GetMonitorTasks(ctx iris.Context) 
 
 	return result.SuccessData(monitorTaskDtos,total,row)
 
+}/**
+查询 系统信息
+*/
+func (monitorTaskService *MonitorTaskService) ListTaskTemplate(ctx iris.Context)  (result.ResultDto) {
+
+	var (
+		err       error
+
+		monitorTaskTemplateDto = monitor.MonitorTaskTemplateDto{}
+		monitorTaskTemplateDtos []*monitor.MonitorTaskTemplateDto
+
+		tmpTemp = make([]*monitor.MonitorTaskTemplateDto,0,1)
+
+	)
+
+	monitorTaskTemplateDtos,err = monitorTaskService.monitorTaskDao.GetTaskTemplate(monitorTaskTemplateDto)
+	if(err != nil){
+		return result.Error(err.Error())
+	}
+
+	//先封装 template
+	for _, item := range monitorTaskTemplateDtos{
+		if !checkHasTemplate(tmpTemp,*item){
+			tmpTemp = append(tmpTemp,item)
+		}
+	}
+
+	for _,item := range tmpTemp{
+		var tmpTempSpec = make([]monitor.MonitorTaskTemplateSpecDto,0,1)
+		for _,allItme := range monitorTaskTemplateDtos{
+			if item.TemplateId == allItme.TemplateId{
+				var tempSpecDto = monitor.MonitorTaskTemplateSpecDto{
+					SpecCd: allItme.SpecCd,
+					SpecName: allItme.SpecName,
+					SpecDesc: allItme.SpecDesc,
+					IsShow: allItme.IsShow,
+				}
+
+				tmpTempSpec = append(tmpTempSpec,tempSpecDto)
+			}
+
+		}
+
+		item.MonitorTaskTemplateSpecDto = tmpTempSpec
+	}
+
+
+	return result.SuccessData(tmpTemp)
+
+}
+
+func checkHasTemplate(i []*monitor.MonitorTaskTemplateDto, dto monitor.MonitorTaskTemplateDto) bool {
+	for _,item := range i{
+		if dto.TemplateId == item.TemplateId{
+			return true
+		}
+	}
+
+	return false
 }
 
 

@@ -84,6 +84,10 @@ func MonitorControllerRouter(party iris.Party) {
 
 	//保存sql
 	adinUser.Post("/stopMonitorTask", hero.Handler(aus.stopMonitorTask))
+
+
+	//查询sql
+	adinUser.Get("/listTaskTemplate", hero.Handler(aus.listTaskTemplate))
 }
 
 
@@ -242,6 +246,15 @@ func (aus *MonitorController) stopMonitorTask(ctx iris.Context) {
 	monitorJob.Restart()
 	ctx.JSON(relustDto)
 }
+
+
+
+
+func (aus *MonitorController) listTaskTemplate(ctx iris.Context) {
+	relustDto := aus.monitorTaskService.ListTaskTemplate(ctx)
+	ctx.JSON(relustDto)
+}
+
 
 
 
