@@ -11,43 +11,33 @@ import (
 const(
 	query_monitorTask_count string = `
 		select count(1) total
-		 from monitor_event t
-		where
-		t.status_cd = '0'
-		and t.tenant_id = #TenantId#
-		$if EventId != '' then
-		and t.event_id = #EventId#
-		$endif
-		$if NoticeType != '' then
-		and t.notice_type = #NoticeType#
-		$endif
-		$if State != '' then
-		and t.state= #State#
-		$endif
-		$if EventObjName != '' then
-		and t.event_obj_name = #EventObjName#
-		$endif
+		 from task t 
+where 1=1
+    $if TenantId != '' then
+  and t.tenant_id = #TenantId#
+  $endif
+    $if HostId != '' then
+  and t.host_id = #HostId#
+   $endif
+  and t.status_cd = '0'
+ $if TaskName != '' then
+    and t.task_name = #TaskName#
+$endif
     	
 	`
 	query_monitorTask string = `
-				select t.*,td.name notice_type_name from monitor_event t
-				left join t_dict td on td.status_cd = t.notice_type and td.table_name = 'monitor_host_group' and td.table_columns = 'notice_type'
-
-				where
-				t.status_cd = '0'
-				and t.tenant_id = #TenantId#
-				$if EventId != '' then
-				and t.event_id = #EventId#
-				$endif
-				$if NoticeType != '' then
-				and t.notice_type = #NoticeType#
-				$endif
-				$if State != '' then
-				and t.state= #State#
-				$endif
-				$if EventObjName != '' then
-				and t.event_obj_name = #EventObjName#
-				$endif
+				select * from task t 
+					where 1=1
+						$if TenantId != '' then
+					  and t.tenant_id = #TenantId#
+					  $endif
+						$if HostId != '' then
+					  and t.host_id = #HostId#
+					   $endif
+					  and t.status_cd = '0'
+					 $if TaskName != '' then
+						and t.task_name = #TaskName#
+					$endif
 				 order by t.create_time desc
 				$if Row != 0 then
 					limit #Page#,#Row#
@@ -60,10 +50,32 @@ const(
 	`
 
 	update_monitorTask string = `
-	
+			update task t set
+			$if TaskName != '' then
+			t.task_name = #TaskName#,
+			$endif
+			$if TaskCron != '' then
+			t.task_cron = #TaskCron#,
+			$endif
+			$if HostId != '' then
+			t.host_id = #HostId#,
+			$endif
+			$if TemplateId != '' then
+			t.template_id = #TemplateId#,
+			$endif
+			t.status_cd = '0'
+			where
+			 1=1 
+			 and t.host_id = #HostId#
+			and t.status_cd = '0'
 	`
 	delete_monitorTask string = `
-	
+	update task t set
+			t.status_cd = '1'
+			where
+			 1=1 
+			 and t.host_id = #HostId#
+			and t.status_cd = '0'
 	`
 )
 
