@@ -13,4 +13,9 @@ type MonitorTaskDto struct {
 	CreateTime string `json:"createTime" sql:"-"`
 	TenantId string `json:"tenantId" sql:"-"`
  	HostId string `json:"hostId" sql:"-"`
+	TemplateName string `json:"templateName" sql:"-"`
+	ClassBean string `json:"classBean" sql:"-"`
+	HostName string `json:"hostName" sql:"-"`
+	Ip string `json:"ip" `
+	Attr []*MonitorTaskAttrDto `json:"templateSpecs"`
 }

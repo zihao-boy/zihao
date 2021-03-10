@@ -13,6 +13,7 @@ import (
 
 type MonitorTaskService struct {
 	monitorTaskDao dao.MonitorTaskDao
+	monitorTaskAttrDao dao.MonitorTaskAttrDao
 
 }
 
@@ -151,6 +152,7 @@ func (monitorTaskService *MonitorTaskService) SaveMonitorTasks(ctx iris.Context)
 	var (
 		err       error
 		monitorTaskDto  monitor.MonitorTaskDto
+		attr monitor.MonitorTaskAttrDto
 	)
 
 	if err = ctx.ReadJSON(&monitorTaskDto); err != nil {
@@ -159,11 +161,31 @@ func (monitorTaskService *MonitorTaskService) SaveMonitorTasks(ctx iris.Context)
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	monitorTaskDto.TenantId = user.TenantId
 	monitorTaskDto.TaskId = seq.Generator()
+	monitorTaskDto.State = "001"
 
 
 	err = monitorTaskService.monitorTaskDao.SaveMonitorTask(monitorTaskDto)
 	if(err != nil){
 		return result.Error(err.Error())
+	}
+
+
+	attrs :=monitorTaskDto.Attr
+
+
+	if len(attrs)<1{
+		return result.SuccessData(monitorTaskDto)
+	}
+
+	for _,item := range attrs{
+		attr = monitor.MonitorTaskAttrDto{
+			AttrId: seq.Generator(),
+			TaskId: monitorTaskDto.TaskId,
+			SpecCd: item.SpecCd,
+			Value: item.Value,
+		}
+
+		monitorTaskService.monitorTaskAttrDao.SaveMonitorTaskAttr(attr)
 	}
 
 	return result.SuccessData(monitorTaskDto)
@@ -178,6 +200,7 @@ func (monitorTaskService *MonitorTaskService) UpdateMonitorTasks(ctx iris.Contex
 	var (
 		err       error
 		monitorTaskDto monitor.MonitorTaskDto
+		attr monitor.MonitorTaskAttrDto
 	)
 
 	if err = ctx.ReadJSON(&monitorTaskDto); err != nil {
@@ -187,6 +210,30 @@ func (monitorTaskService *MonitorTaskService) UpdateMonitorTasks(ctx iris.Contex
 	err = monitorTaskService.monitorTaskDao.UpdateMonitorTask(monitorTaskDto)
 	if(err != nil){
 		return result.Error(err.Error())
+	}
+
+	attrs :=monitorTaskDto.Attr
+
+
+	if len(attrs)<1{
+		return result.SuccessData(monitorTaskDto)
+	}
+
+	for _,item := range attrs{
+		attr = monitor.MonitorTaskAttrDto{
+			AttrId: item.AttrId,
+			TaskId: monitorTaskDto.TaskId,
+			SpecCd: item.SpecCd,
+			Value: item.Value,
+		}
+
+		if attr.AttrId != "" && attr.AttrId != "-1"{
+			monitorTaskService.monitorTaskAttrDao.UpdateMonitorTaskAttr(attr)
+		}else{
+			attr.AttrId=seq.Generator()
+			monitorTaskService.monitorTaskAttrDao.SaveMonitorTaskAttr(attr)
+		}
+
 	}
 
 	return result.SuccessData(monitorTaskDto)

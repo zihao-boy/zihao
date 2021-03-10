@@ -7,7 +7,9 @@
                 templateId: '',
                 taskCron: '',
                 templates: [],
-                templateSpecs: []
+                templateSpecs: [],
+                hosts:[],
+                hostId:''
 
             }
         },
@@ -17,6 +19,7 @@
         _initEvent: function () {
             vc.on('addJob', 'openAddJobModal', function () {
                 $that.queryTempalte();
+                $that._listHosts();
                 $('#addJobModel').modal('show');
             });
         },
@@ -118,10 +121,7 @@
                         })
                         $that.addJobInfo.templateSpecs = item.specs;
                     }
-                });
-                
-                            
-                          
+                });             
             },
             clearAddJobInfo: function () {
                 vc.component.addJobInfo = {
@@ -129,9 +129,31 @@
                     templateId: '',
                     taskCron: '',
                     templates: [],
-                    templateSpecs: []
+                    templateSpecs: [],
+                    hosts:[],
+                    hostId:''
                 };
-            }
+            },
+            _listHosts: function (_page, _rows) {
+                var param = {
+                    params: {
+                        page:1,
+                        row:100
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/host/getHosts',
+                    param,
+                    function (json, res) {
+                        var _hostManageInfo = JSON.parse(json);
+                        vc.component.addJobInfo.hosts = _hostManageInfo.data;
+                       
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

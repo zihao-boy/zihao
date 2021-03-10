@@ -21,7 +21,7 @@
             deleteJob:function(){
                 //vc.component.deleteJobInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'task.deleteTask',
+                    '/monitor/deleteMonitorTask',
                     JSON.stringify(vc.component.deleteJobInfo),
                     {
                         emulateJSON:true

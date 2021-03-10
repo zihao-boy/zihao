@@ -20,8 +20,7 @@
                 vc.component.refreshEditJobInfo();
                 $('#editJobModel').modal('show');
                 vc.copyObject(_params, vc.component.editJobInfo);
-                $that.queryEditTempalte();
-                $that.chooseEditTemplate();
+                $that.queryEditTaskAttrs();
                 //vc.component.editJobInfo.communityId = vc.getCurrentCommunity().communityId;
             });
         },
@@ -66,7 +65,7 @@
                 }
 
                 vc.http.apiPost(
-                    'task.updateTask',
+                    '/monitor/updateMonitorTask',
                     JSON.stringify(vc.component.editJobInfo),
                     {
                         emulateJSON: true
@@ -90,61 +89,6 @@
                         vc.toast(errInfo);
                     });
             },
-            queryEditTempalte: function () {
-                var _param = {
-                    params: {
-                        page: 1,
-                        row: 30
-                    }
-                };
-                //获取模板信息
-                vc.http.apiGet('task.listTaskTemplate',
-                    _param,
-                    function (json, res) {
-                        console.log('task.listTaskTemplate', json);
-                        let _json = JSON.parse(json);
-                        let data = _json.data;
-                        if (_json.code == 0) {
-                            $that.editJobInfo.templates = data;
-                            return;
-                        }
-                    }, function (errInfo, error) {
-                        console.log('请求失败处理', errInfo, error);
-                        //vc.toast("查询地区失败");
-                    });
-            },
-            chooseEditTemplate: function () {
-                //根据当前 template 查询属性 渲染页面
-                var _param = {
-                    params: {
-                        page: 1,
-                        row: 30,
-                        templateId: $that.editJobInfo.templateId,
-                        isShow: 'T'
-                    }
-                };
-                //获取模板信息
-                vc.http.apiGet('task.listTaskTemplateSpec',
-                    _param,
-                    function (json, res) {
-                        let _json = JSON.parse(json);
-                        let data = _json.data;
-                        if (_json.code == 0) {
-                            data.forEach(item => {
-                                $that.editJobInfo.taskAttr.forEach(tmd => {
-                                    if(item.specCd == tmd.specCd && item.templateId == $that.editJobInfo.templateId){
-                                        item.value = tmd.value;
-                                        item.attrId = tmd.attrId;
-                                    }
-                                });
-                            });
-                            $that.editJobInfo.templateSpecs = data;
-                            return;
-                        }
-                    }, function (errInfo, error) {
-                        vc.toast("查询模板配置失败");
-                    });
-            },
             refreshEditJobInfo: function () {
                 vc.component.editJobInfo = {
                     taskId: '',
@@ -156,7 +100,30 @@
                     templateSpecs: []
 
                 }
-            }
+            },
+            queryEditTaskAttrs: function () {
+                var _param = {
+                    params: {
+                        page: 1,
+                        row: 30,
+                        taskId: $that.editJobInfo.taskId
+                    }
+                };
+                //获取模板信息
+                vc.http.apiGet('/monitor/listTaskAttrs',
+                    _param,
+                    function (json, res) {
+                        let _json = JSON.parse(json);
+                        let data = _json.data;
+                        if (_json.code == 0) {
+                            $that.editJobInfo.templateSpecs = data;
+                            return;
+                        }
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理', errInfo, error);
+                        vc.toast("查询地区失败");
+                    });
+            },
         }
     });
 

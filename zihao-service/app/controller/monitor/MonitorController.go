@@ -15,6 +15,7 @@ type MonitorController struct{
 	monitorHostLogService service.MonitorHostLogService
 	monitorEventService service.MonitorEventService
 	monitorTaskService service.MonitorTaskService
+	monitorTaskAttrService service.MonitorTaskAttrService
 }
 
 
@@ -88,6 +89,8 @@ func MonitorControllerRouter(party iris.Party) {
 
 	//查询sql
 	adinUser.Get("/listTaskTemplate", hero.Handler(aus.listTaskTemplate))
+	//查询sql
+	adinUser.Get("/listTaskAttrs", hero.Handler(aus.listTaskAttrs))
 }
 
 
@@ -252,6 +255,10 @@ func (aus *MonitorController) stopMonitorTask(ctx iris.Context) {
 
 func (aus *MonitorController) listTaskTemplate(ctx iris.Context) {
 	relustDto := aus.monitorTaskService.ListTaskTemplate(ctx)
+	ctx.JSON(relustDto)
+}
+func (aus *MonitorController) listTaskAttrs(ctx iris.Context) {
+	relustDto := aus.monitorTaskAttrService.GetMonitorTaskAttrs(ctx)
 	ctx.JSON(relustDto)
 }
 

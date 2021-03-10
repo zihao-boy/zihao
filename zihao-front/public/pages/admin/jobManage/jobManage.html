@@ -44,7 +44,7 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-title">
-                    <h5>映射信息</h5>
+                    <h5>监控任务</h5>
                     <div class="ibox-tools" style="top:10px;">
                         <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddJobModal()">
                             <i class="fa fa-plus"></i>
@@ -57,8 +57,10 @@
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                         <thead>
                             <tr>
-                                <th class="text-center">任务ID</th>
+                                
                                 <th class="text-center">任务名称</th>
+                                <th class="text-center">主机</th>
+                                <th class="text-center">ip</th>
                                 <th class="text-center">运行时间</th>
                                 <th class="text-center">模板名称</th>
                                 <th class="text-center">创建时间</th>
@@ -68,8 +70,10 @@
                         </thead>
                         <tbody>
                             <tr v-for="job in jobManageInfo.jobs">
-                                <td class="text-center">{{job.taskId}}</td>
+                                
                                 <td class="text-center">{{job.taskName}}</td>
+                                <td class="text-center">{{job.hostName}}</td>
+                                <td class="text-center">{{job.ip}}</td>
                                 <td class="text-center">{{job.taskCron}}</td>
                                 <td class="text-center">{{job.templateName}}</td>
                                 <td class="text-center">{{job.createTime}}</td>

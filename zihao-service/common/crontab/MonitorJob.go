@@ -16,6 +16,7 @@ var c *cron.Cron
 type MonitorJob struct {
 
 	monitorHostGroupDao dao.MonitorHostGroupDao
+	monitorTaskDao dao.MonitorTaskDao
 }
 
 func (task MonitorJob)init(){
@@ -35,7 +36,7 @@ func (task MonitorJob)init(){
 func (task MonitorJob)Start() error{
 	var (
 		hostGroups []*monitor.MonitorHostGroupDto
-		err error
+		taskDtos []*monitor.MonitorTaskDto
 	)
 
 	task.init()
@@ -44,14 +45,7 @@ func (task MonitorJob)Start() error{
 	var monitorHostGroup = monitor.MonitorHostGroupDto{
 		State:"3301",
 	}
-	 hostGroups,err = task.monitorHostGroupDao.GetMonitorHostGroups(monitorHostGroup)
-	 if err != nil{
-	 	return err
-	 }
-	 //没有任务时不启动
-	 if len(hostGroups) < 1{
-	 	return nil
-	 }
+	 hostGroups,_ = task.monitorHostGroupDao.GetMonitorHostGroups(monitorHostGroup)
 
 
 	 for _,item := range hostGroups{
@@ -60,7 +54,17 @@ func (task MonitorJob)Start() error{
 			 MonitorHostGroupDto: item,
 		 })
 	 }
+	var taskDto = monitor.MonitorTaskDto{
+		State: "002",
+	}
+	taskDtos,_ = task.monitorTaskDao.GetMonitorTasks(taskDto)
 
+	for _,item := range taskDtos{
+		//AddJob方法
+		c.AddJob(item.TaskCron, task2.MonitorCommonTask{
+			MonitorTaskDto: item,
+		})
+	}
 	//启动计划任务
 	c.Start()
 

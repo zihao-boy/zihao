@@ -25,7 +25,9 @@ where 1=1
 $endif
 	`
 	query_monitorTask string = `
-				select * from task t 
+				select t.*,tt.template_name, tt.class_bean,h.name host_name,h.ip from task t
+left join task_template tt on t.template_id = tt.template_id and tt.status_cd='0'
+left join host h on t.host_id = h.host_id and h.status_cd = '0'
 					where 1=1
 						$if TenantId != '' then
 					  and t.tenant_id = #TenantId#
@@ -62,10 +64,13 @@ $endif
 			$if TemplateId != '' then
 			t.template_id = #TemplateId#,
 			$endif
+			$if State != '' then
+			t.state = #State#,
+			$endif
 			t.status_cd = '0'
 			where
 			 1=1 
-			 and t.host_id = #HostId#
+			 and t.task_id = #TaskId#
 			and t.status_cd = '0'
 	`
 	delete_monitorTask string = `
@@ -73,7 +78,7 @@ $endif
 			t.status_cd = '1'
 			where
 			 1=1 
-			 and t.host_id = #HostId#
+			 and t.task_id = #TaskId#
 			and t.status_cd = '0'
 	`
 
