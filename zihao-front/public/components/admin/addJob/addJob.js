@@ -9,7 +9,8 @@
                 templates: [],
                 templateSpecs: [],
                 hosts:[],
-                hostId:''
+                hostId:'',
+                noticeType:''
 
             }
         },
@@ -131,7 +132,8 @@
                     templates: [],
                     templateSpecs: [],
                     hosts:[],
-                    hostId:''
+                    hostId:'',
+                    noticeType:''
                 };
             },
             _listHosts: function (_page, _rows) {

@@ -17,5 +17,7 @@ type MonitorTaskDto struct {
 	ClassBean string `json:"classBean" sql:"-"`
 	HostName string `json:"hostName" sql:"-"`
 	Ip string `json:"ip" `
+	NoticeType  string `json:"noticeType" sql:"-"`
+	NoticeTypeName string `json:"noticeTypeName" sql:"-"`
 	Attr []*MonitorTaskAttrDto `json:"templateSpecs"`
 }

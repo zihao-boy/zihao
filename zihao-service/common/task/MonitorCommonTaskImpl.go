@@ -21,6 +21,8 @@ func (h *MonitorCommonTaskImpl) getSession() (*ssh.Session,error) {
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	})
 
+	//defer client.Close()
+
 	if err != nil{
 		return nil,err
 	}

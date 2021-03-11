@@ -79,6 +79,7 @@ func (task MonitorJob)Restart() {
 	if c != nil{
 		c.Stop()
 	}
+
 	//启动还没有停止的任务
 	task.Start()
 

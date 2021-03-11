@@ -20,14 +20,19 @@ where 1=1
   and t.host_id = #HostId#
    $endif
   and t.status_cd = '0'
+$if NoticeType != '' then
+				and t.notice_type = #NoticeType#
+					$endif
  $if TaskName != '' then
     and t.task_name = #TaskName#
 $endif
 	`
 	query_monitorTask string = `
-				select t.*,tt.template_name, tt.class_bean,h.name host_name,h.ip from task t
+				select t.*,tt.template_name, tt.class_bean,h.name host_name,h.ip, td1.name notice_type_name
+from task t
 left join task_template tt on t.template_id = tt.template_id and tt.status_cd='0'
 left join host h on t.host_id = h.host_id and h.status_cd = '0'
+left join t_dict td1 on t.notice_type = td1.status_cd and td1.table_name = 'monitor_host_group' and td1.table_columns = 'notice_type'
 					where 1=1
 						$if TenantId != '' then
 					  and t.tenant_id = #TenantId#
@@ -39,6 +44,12 @@ left join host h on t.host_id = h.host_id and h.status_cd = '0'
 					 $if TaskName != '' then
 						and t.task_name = #TaskName#
 					$endif
+					 $if State != '' then
+						and t.state = #State#
+					$endif
+$if NoticeType != '' then
+				and t.notice_type = #NoticeType#
+					$endif
 				 order by t.create_time desc
 				$if Row != 0 then
 					limit #Page#,#Row#
@@ -46,8 +57,8 @@ left join host h on t.host_id = h.host_id and h.status_cd = '0'
 	`
 
 	insert_monitorTask string = `
-		insert into task(task_id, task_name, template_id, task_cron, state, tenant_id, host_id) 
-		VALUES (#TaskId#, #TaskName#, #TemplateId#, #TaskCron#, #State#,  #TenantId#, #HostId#)
+		insert into task(task_id, task_name, template_id, task_cron, state, tenant_id, host_id,notice_type) 
+		VALUES (#TaskId#, #TaskName#, #TemplateId#, #TaskCron#, #State#,  #TenantId#, #HostId#,#NoticeType#)
 	`
 
 	update_monitorTask string = `
@@ -66,6 +77,9 @@ left join host h on t.host_id = h.host_id and h.status_cd = '0'
 			$endif
 			$if State != '' then
 			t.state = #State#,
+			$endif
+			$if NoticeType != '' then
+			t.notice_type = #NoticeType#,
 			$endif
 			t.status_cd = '0'
 			where

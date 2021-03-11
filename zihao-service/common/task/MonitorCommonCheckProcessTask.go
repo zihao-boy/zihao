@@ -77,7 +77,7 @@ func (h *MonitorCommonTaskImpl) CheckProcess(){
 		ThresholdValue:"1",
 		CurValue:"0",
 		Remark:remark,
-		NoticeType:"2002",
+		NoticeType:h.TaskDto.NoticeType,
 	}
 	monitorEventService.SaveMonitorEvents(monitorEventDto)
 
