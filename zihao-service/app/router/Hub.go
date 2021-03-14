@@ -11,10 +11,14 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/tenant"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/user"
 	"github.com/zihao-boy/zihao/zihao-service/common/aop"
+	"github.com/zihao-boy/zihao/zihao-service/common/defaultWebsocket"
 )
 
 // 所有的路由
 func Hub(app *iris.Application) {
+
+	//处理websocket
+	defaultWebsocket.InitWebsocket(app)
 
 	party := preSettring(app)
 
