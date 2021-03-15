@@ -32,6 +32,10 @@ func HostControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteHost", hero.Handler(aus.deleteHost))
 
+	adinMenu.Get("/getHostToken", hero.Handler(aus.getHostToken))
+
+
+
 }
 
 /**
@@ -108,6 +112,15 @@ func (aus *HostController) updateHost(ctx iris.Context) {
 */
 func (aus *HostController) deleteHost(ctx iris.Context) {
 	reslut := aus.hostService.DeleteHost(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *HostController) getHostToken(ctx iris.Context) {
+	reslut := aus.hostService.GetHostToken(ctx)
 
 	ctx.JSON(reslut)
 }

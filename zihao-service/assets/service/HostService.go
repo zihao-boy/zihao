@@ -265,3 +265,33 @@ func (hostService *HostService) DeleteHost(ctx iris.Context)  (result.ResultDto)
 	return result.SuccessData(hostDto)
 
 }
+
+/**
+主机生成token
+*/
+func (hostService *HostService) GetHostToken(ctx iris.Context)  (result.ResultDto) {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto = host.HostDto{
+			HostId: ctx.URLParam("hostId"),
+			TenantId: user.TenantId,
+		}
+	)
+
+	hostDtos,err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1{
+		return result.Error("主机不存在")
+	}
+
+
+
+
+	return result.SuccessData(hostDto)
+
+}

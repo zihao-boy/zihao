@@ -69,7 +69,6 @@
             },
             _queryHostMethod: function () {
                 vc.component._listHosts(DEFAULT_PAGE, DEFAULT_ROWS);
-
             },
             _openMonitorHostAnalysis:function(_host){
                 vc.jumpToPage('/index.html#/pages/admin/monitorHostGroupManageAnalysis?hostId='+_host.hostId)
@@ -80,6 +79,10 @@
                 } else {
                     vc.component.hostManageInfo.moreCondition = true;
                 }
+            },
+            _openSsh:function(_host){
+                //获取主机访问token
+
             }
 
 
