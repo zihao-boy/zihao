@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/zihao-service/assets/dao"
+	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/host"
@@ -14,6 +15,10 @@ import (
 type HostService struct {
 	hostDao dao.HostDao
 }
+
+const(
+	host_token string = "host_token"
+)
 
 
 
@@ -189,6 +194,10 @@ func (hostService *HostService) GetHosts(ctx iris.Context)  result.ResultDto {
 		return result.Error(err.Error())
 	}
 
+	for _,item := range hostDtos{
+		item.Passwd=""
+	}
+
 	return result.SuccessData(hostDtos,total,row)
 
 }
@@ -278,7 +287,6 @@ func (hostService *HostService) GetHostToken(ctx iris.Context)  (result.ResultDt
 			TenantId: user.TenantId,
 		}
 	)
-
 	hostDtos,err := hostService.hostDao.GetHosts(hostDto)
 
 	if err != nil{
@@ -289,9 +297,9 @@ func (hostService *HostService) GetHostToken(ctx iris.Context)  (result.ResultDt
 		return result.Error("主机不存在")
 	}
 
+	var hostToken string = seq.Generator()
+	redis.G_Redis.SetValue(host_token,hostToken)
 
-
-
-	return result.SuccessData(hostDto)
+	return result.SuccessData(hostToken)
 
 }

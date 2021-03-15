@@ -5,11 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/kataras/iris/v12/websocket"
+	"github.com/zihao-boy/zihao/zihao-service/assets/dao"
+	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/host"
 	"net"
 	"time"
 	"unicode/utf8"
 
 	gossh "golang.org/x/crypto/ssh"
+)
+
+
+const(
+	host_token string = "host_token"
 )
 
 type ptyRequestMsg struct {
@@ -104,8 +112,8 @@ func sshConnect(login SshLoginModel) (client *gossh.Client, ch gossh.Channel, er
 
 type Request struct {
 	Operate   string `json:"operate"`
-	SshKey    string `json:"sshKey"`
-	TypeIp    string `json:"typeIp"`
+	ZihaoToken    string `json:"zihaoToken"`
+	HostId    string `json:"hostId"`
 	Command   string `json:"command"`
 	WinWidth  int64  `json:"winWidth"`
 	WinHeight int64  `json:"winHeight"`
@@ -122,10 +130,10 @@ func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 	}
 	if req.Operate == "connect" {
 
-		if !checkUserToken(req.SshKey) {
+		if !checkUserToken(req.ZihaoToken) {
 			return
 		}
-		loginInfo := getServerInfo(req.TypeIp)
+		loginInfo := getServerInfo(req.HostId)
 		if loginInfo.Addr == "" {
 			return
 		}
@@ -215,15 +223,41 @@ func CloseSsh(connId string) {
 }
 
 func checkUserToken(token string) bool {
+
+	cacheToken,err :=redis.G_Redis.GetValueAndRemove(host_token)
+
+	if err != nil {
+		return false
+	}
+
+	if token != cacheToken{
+		return false
+	}
 	return true
 }
 
 func getServerInfo(hostId string) SshLoginModel {
 
+	var (
+		hostDao dao.HostDao
+		hostDtos []*host.HostDto
+		err error
+	)
+
+	var hostDto = host.HostDto{
+		HostId: hostId,
+	}
+
+	hostDtos,err = hostDao.GetHosts(hostDto)
+
+	if err != nil || len(hostDtos) < 1{
+		return SshLoginModel{}
+	}
+
 	return SshLoginModel{
-		UserName: "root",
-		Pwd:      "Hjx965067",
-		Addr:     "175.27.221.224:22",
+		UserName: hostDtos[0].Username,
+		Pwd:      hostDtos[0].Passwd,
+		Addr:    hostDtos[0].Ip,
 		PtyCols:  100,
 		PtyRows:  100,
 	}

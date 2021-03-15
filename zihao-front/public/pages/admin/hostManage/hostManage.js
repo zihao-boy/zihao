@@ -82,7 +82,23 @@
             },
             _openSsh:function(_host){
                 //获取主机访问token
+                var param = {
+                    params: {
+                        hostId:_host.hostId
+                    }
+                };
 
+                //发送get请求
+                vc.http.apiGet('/host/getHostToken',
+                    param,
+                    function (json, res) {
+                        let _hostManageInfo = JSON.parse(json);
+                        let _zihaoToken = _hostManageInfo.data;
+                        window.open("/webshell/console.html?hostId="+_host.hostId+"&zihaoToken="+_zihaoToken,'_blank')
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
             }
 
 

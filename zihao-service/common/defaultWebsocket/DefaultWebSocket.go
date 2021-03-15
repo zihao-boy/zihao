@@ -1,7 +1,6 @@
 package defaultWebsocket
 
 import (
-	"fmt"
 	gorillaWs "github.com/gorilla/websocket"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/websocket"
@@ -19,7 +18,6 @@ func InitWebsocket(app *iris.Application){
 
 			webshell.WebSocketHandler(msg.Body,nsConn.Conn.ID(),nsConn)
 
-			fmt.Print("发送消息结束")
 			return nil
 		},
 	})

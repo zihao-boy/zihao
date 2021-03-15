@@ -61,7 +61,7 @@ getParam = function (_key) {
     //返回当前 URL 的查询部分（问号 ? 之后的部分）。
     let urlParameters = location.search;
     if (urlParameters != null && urlParameters != undefined && urlParameters != '') {
-        urlParameters = location.hash;
+        //urlParameters = location.hash;
 
         if (urlParameters.indexOf('?') != -1) {
             urlParameters = urlParameters.substring(urlParameters.indexOf('?'), urlParameters.length);
@@ -86,8 +86,8 @@ getParam = function (_key) {
 
 function initShell() {
 
-    let _sshKey = getParam('sshKey');
-    let _typeIp = getParam('typeIp');
+    let _zihaoToken = getParam('zihaoToken');
+    let _hostId = getParam('hostId');
     let command = getParam('command');
     let val = getParam('val');
 
@@ -103,9 +103,9 @@ function initShell() {
 
     openTerminal({
         operate: 'connect',
-        sshKey: _sshKey,
+        zihaoToken: _zihaoToken,
         command: command,
-        typeIp: _typeIp,
+        hostId: _hostId,
         winWidth: winWidth,
         winHeight: winHeight,
     });
