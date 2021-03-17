@@ -6,44 +6,32 @@
                     <th>容器ID</th>
                     <th data-hide="phone">容器名称</th>
                     <th data-hide="phone">镜像</th>
-                    <th data-hide="phone">命令</th>
-                    <th data-hide="phone">创建时间</th>
-                    <th data-hide="phone">状态时间</th>
                     <th data-hide="phone">端口映射</th>
                     <th class="text-right">操作</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="car in hostContainersInfo.ownerCars">
+                <tr v-for="container in hostContainersInfo.containers">
                     <td>
-                        {{car.carNum}}
+                        {{container.containerId}}
                     </td>
                     <td>
-                        {{car.carBrand}}
+                        {{container.containerName}}
                     </td>
                     <td>
-                        {{car.carTypeName}}
+                        {{container.image}}
                     </td>
                     <td>
-                        {{car.carColor}}
-                    </td>
-                    <td>
-                        {{car.ownerName}}({{car.link}})
-                    </td>
-                    <td>
-                        {{car.endTime}}
-                    </td>
-                    <td>
-                        {{car.stateName}}
+                        {{container.port}}
                     </td>
                     <td class="text-right">
-                        <div class="btn-group" v-if="car.psId != '-1'">
+                        <div class="btn-group" >
                             <button class="btn-white btn btn-xs"
-                                v-on:click="_deleteCarParkingSpace(car)">进入容器</button>
+                                v-on:click="_deleteCarParkingSpace(container)">进入容器</button>
                         </div>
-                        <div class="btn-group" v-else>
+                        <div class="btn-group" >
                             <button class="btn-white btn btn-xs"
-                                v-on:click="_addCarParkingSpace(car)">查看日志</button>
+                                v-on:click="_addCarParkingSpace(container)">查看日志</button>
                         </div>
                     </td>
                 </tr>

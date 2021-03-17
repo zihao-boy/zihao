@@ -35,6 +35,8 @@ func HostControllerRouter(party iris.Party) {
 	adinMenu.Get("/getHostToken", hero.Handler(aus.getHostToken))
 
 
+	adinMenu.Get("/getContainers", hero.Handler(aus.getContainers))
+
 
 }
 
@@ -121,6 +123,15 @@ func (aus *HostController) deleteHost(ctx iris.Context) {
 */
 func (aus *HostController) getHostToken(ctx iris.Context) {
 	reslut := aus.hostService.GetHostToken(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *HostController) getContainers(ctx iris.Context) {
+	reslut := aus.hostService.GetContainers(ctx)
 
 	ctx.JSON(reslut)
 }

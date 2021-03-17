@@ -35,12 +35,10 @@
             });
         },
         methods: {
-
-
             changeTab: function (_tab) {
                 $that.hostDetailManageInfo._currentTab = _tab;
                 vc.emit(_tab, 'switch', {
-                    ownerId: $that.hostDetailManageInfo.hostId
+                    hostId: $that.hostDetailManageInfo.hostId
                 })
             },
             _clearData: function () {
@@ -75,6 +73,8 @@
                         let _hostManageInfo = JSON.parse(json);
                         
                         vc.copyObject(_hostManageInfo.data[0],$that.hostDetailManageInfo)
+
+                        $that.changeTab($that.hostDetailManageInfo._currentTab);
                        
                     }, function (errInfo, error) {
                         console.log('请求失败处理');
