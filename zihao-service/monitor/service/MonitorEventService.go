@@ -71,6 +71,9 @@ func (monitorEventService *MonitorEventService) GetMonitorEvents(ctx iris.Contex
 
 	monitorEventDto.EventObjName = ctx.URLParam("eventObjName")
 
+
+	monitorEventDto.EventObjId = ctx.URLParam("eventObjId")
+
 	total,err = monitorEventService.monitorEventDao.GetMonitorEventCount(monitorEventDto)
 
 	if err != nil{

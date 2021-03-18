@@ -27,6 +27,9 @@ const(
 		$if EventObjName != '' then
 		and t.event_obj_name = #EventObjName#
 		$endif
+		$if EventObjId != '' then
+		and t.event_obj_id = #EventObjId#
+		$endif
     	
 	`
 	query_monitorEvent string = `
@@ -47,6 +50,9 @@ const(
 				$endif
 				$if EventObjName != '' then
 				and t.event_obj_name = #EventObjName#
+				$endif
+				$if EventObjId != '' then
+				and t.event_obj_id = #EventObjId#
 				$endif
 				 order by t.create_time desc
 				$if Row != 0 then

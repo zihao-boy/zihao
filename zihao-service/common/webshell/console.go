@@ -36,6 +36,8 @@ type SshLoginModel struct {
 	PemKey   string
 	PtyCols  uint32
 	PtyRows  uint32
+	Width uint32
+	Height uint32
 }
 
 var (
@@ -86,8 +88,8 @@ func sshConnect(login SshLoginModel) (client *gossh.Client, ch gossh.Channel, er
 		Term:     "xterm",
 		Columns:  login.PtyCols,
 		Rows:     login.PtyRows,
-		Width:    login.PtyCols * 8,
-		Height:   login.PtyRows * 8,
+		Width:    login.Width,
+		Height:   login.Height,
 		Modelist: string(modeList),
 	}
 	ok, err := channel.SendRequest("pty-req", true, gossh.Marshal(&req))
@@ -115,8 +117,8 @@ type Request struct {
 	ZihaoToken    string `json:"zihaoToken"`
 	HostId    string `json:"hostId"`
 	Command   string `json:"command"`
-	WinWidth  int64  `json:"winWidth"`
-	WinHeight int64  `json:"winHeight"`
+	WinWidth  uint32  `json:"winWidth"`
+	WinHeight uint32  `json:"winHeight"`
 }
 
 func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
@@ -133,7 +135,7 @@ func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 		if !checkUserToken(req.ZihaoToken) {
 			return
 		}
-		loginInfo := getServerInfo(req.HostId)
+		loginInfo := getServerInfo(req)
 		if loginInfo.Addr == "" {
 			return
 		}
@@ -236,7 +238,7 @@ func checkUserToken(token string) bool {
 	return true
 }
 
-func getServerInfo(hostId string) SshLoginModel {
+func getServerInfo(req Request) SshLoginModel {
 
 	var (
 		hostDao dao.HostDao
@@ -245,7 +247,7 @@ func getServerInfo(hostId string) SshLoginModel {
 	)
 
 	var hostDto = host.HostDto{
-		HostId: hostId,
+		HostId: req.HostId,
 	}
 
 	hostDtos,err = hostDao.GetHosts(hostDto)
@@ -260,5 +262,7 @@ func getServerInfo(hostId string) SshLoginModel {
 		Addr:    hostDtos[0].Ip,
 		PtyCols:  100,
 		PtyRows:  100,
+		Width: req.WinWidth,
+		Height: req.WinHeight,
 	}
 }

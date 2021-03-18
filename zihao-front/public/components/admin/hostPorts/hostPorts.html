@@ -1,0 +1,26 @@
+<div>
+    <div>
+        <table class="footable table table-stripped toggle-arrow-tiny" style="margin-top:10px" data-page-size="10">
+            <thead>
+                <tr>
+                    <th class="text-center">协议</th>
+                    <th data-hide="phone" class="text-center">监听端口</th>
+                    <th data-hide="phone" class="text-center">进程/程序名</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="port in hostPortsInfo.ports">
+                    <td class="text-center">
+                        {{port.protocol}}
+                    </td>
+                    <td class="text-center">
+                        {{port.port}}
+                    </td>
+                    <td class="text-center">
+                        {{port.programName}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

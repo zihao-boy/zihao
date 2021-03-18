@@ -38,6 +38,11 @@ func HostControllerRouter(party iris.Party) {
 	adinMenu.Get("/getContainers", hero.Handler(aus.getContainers))
 
 
+	adinMenu.Get("/getHostResource", hero.Handler(aus.getHostResource))
+
+	adinMenu.Get("/getHostPort", hero.Handler(aus.getHostPort))
+
+
 }
 
 /**
@@ -132,6 +137,25 @@ func (aus *HostController) getHostToken(ctx iris.Context) {
 */
 func (aus *HostController) getContainers(ctx iris.Context) {
 	reslut := aus.hostService.GetContainers(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+查询主机资源
+*/
+func (aus *HostController) getHostResource(ctx iris.Context) {
+	reslut := aus.hostService.GetHostResource(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+查询主机监听端口
+*/
+func (aus *HostController) getHostPort(ctx iris.Context) {
+	reslut := aus.hostService.GetHostPort(ctx)
 
 	ctx.JSON(reslut)
 }

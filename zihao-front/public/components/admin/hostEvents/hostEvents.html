@@ -1,0 +1,36 @@
+<div class="margin-top">
+    <div>
+        <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+            <thead>
+                <tr>
+                    
+                    <th class="text-center">事件对象</th>
+                    <th class="text-center" width="60%">事件内容</th>
+                    <th class="text-center">告警方式</th>
+                    <th class="text-center">事件时间</th>
+                    <!-- <th class="text-center">状态</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="event in hostEventsInfo.hostEvents">
+                    
+                    <td class="text-center">{{event.eventObjName}}</td>
+                    <td class="text-center">{{event.remark}}</td>
+                    <td class="text-center">{{event.noticeTypeName}}</td>
+                    <td class="text-center">{{event.createTime}}</td>
+                    <!-- <td class="text-center">{{event.stateName}}</td> -->
+
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <ul class="pagination float-right"></ul>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <!-- 分页 -->
+        <vc:create path="frame/pagination"></vc:create>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/zihao-service/assets/dao"
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
@@ -8,6 +9,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/container"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/host"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
 	"golang.org/x/crypto/ssh"
@@ -378,5 +380,126 @@ func (hostService *HostService) GetContainers(ctx iris.Context)  (result.ResultD
 
 
 	return result.SuccessData(processDtos)
+
+}
+/**
+主机生成token
+*/
+func (hostService *HostService) GetHostPort(ctx iris.Context)  (result.ResultDto) {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto = host.HostDto{
+			HostId: ctx.URLParam("hostId"),
+			TenantId: user.TenantId,
+		}
+	)
+	hostDtos,err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1{
+		return result.Error("主机不存在")
+	}
+
+	client, err := ssh.Dial("tcp", hostDtos[0].Ip, &ssh.ClientConfig{
+		User: hostDtos[0].Username,
+		Auth: []ssh.AuthMethod{ssh.Password(hostDtos[0].Passwd)},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	})
+
+	//defer client.Close()
+
+	if err != nil{
+		return result.Error("连接主机失败")
+	}
+	session, err := client.NewSession()
+	defer session.Close()
+	defer client.Close()
+
+	// 使用内存
+	processName, _ := session.Output(constants.Get_host_port_shell)
+	var (
+		portDtos []host.HostPortDto = make([]host.HostPortDto,0)
+		outData = strings.ReplaceAll(string(processName),"'","\"")
+	)
+
+	ports :=strings.Split(outData,"&&")
+
+	protocols :=strings.Split(ports[0],"\n")
+	tPorts :=strings.Split(ports[1],"\n")
+	programNames :=strings.Split(ports[2],"\n")
+
+	if len(protocols) == 1 && protocols[0] == ""{
+		return result.Success()
+	}
+
+	for index,item := range protocols{
+		tmpPortDto := host.HostPortDto{
+			Protocol: item,
+			Port: tPorts[index],
+			ProgramName: programNames[index],
+		}
+		portDtos = append(portDtos,tmpPortDto)
+	}
+
+
+
+	return result.SuccessData(portDtos)
+
+}
+
+/**
+查询主机资源
+*/
+func (hostService *HostService) GetHostResource(ctx iris.Context)  (result.ResultDto) {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto = host.HostDto{
+			HostId: ctx.URLParam("hostId"),
+			TenantId: user.TenantId,
+		}
+	)
+	hostDtos,err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1{
+		return result.Error("主机不存在")
+	}
+
+	client, err := ssh.Dial("tcp", hostDtos[0].Ip, &ssh.ClientConfig{
+		User: hostDtos[0].Username,
+		Auth: []ssh.AuthMethod{ssh.Password(hostDtos[0].Passwd)},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	})
+
+	//defer client.Close()
+
+	if err != nil{
+		return result.Error("连接主机失败")
+	}
+	session, err := client.NewSession()
+	defer session.Close()
+	defer client.Close()
+
+	// 使用内存
+
+	processName, _ := session.Output(strings.ReplaceAll(constants.Check_host_resource_shell,"$1","/"))
+
+	var (
+		monitorCheckHostInfoDto *monitor.MonitorCheckHostInfoDto
+		outData = strings.ReplaceAll(string(processName),"'","\"")
+	)
+
+	json.Unmarshal([]byte(outData),&monitorCheckHostInfoDto)
+
+
+	return result.SuccessData(monitorCheckHostInfoDto)
 
 }

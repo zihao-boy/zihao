@@ -66,14 +66,41 @@
         <div class="margin-top">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostEvents'}"
+                        v-on:click="changeTab('hostEvents')">主机事件</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostContainers'}"
                         v-on:click="changeTab('hostContainers')">主机容器</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostMonitors'}"
+                        v-on:click="changeTab('hostMonitors')">主机监控</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostResources'}"
+                        v-on:click="changeTab('hostResources')">主机资源</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostPorts'}"
+                        v-on:click="changeTab('hostPorts')">主机端口</a>
+                </li>
             </ul>
         </div>
-
+        <div v-if="hostDetailManageInfo._currentTab == 'hostEvents'">
+            <vc:create path="admin/hostEvents"></vc:create>
+        </div>
         <div v-if="hostDetailManageInfo._currentTab == 'hostContainers'">
             <vc:create path="admin/hostContainers"></vc:create>
+        </div>
+        <div v-if="hostDetailManageInfo._currentTab == 'hostMonitors'">
+            <vc:create path="admin/hostMonitors"></vc:create>
+        </div>
+        <div v-if="hostDetailManageInfo._currentTab == 'hostResources'">
+            <vc:create path="admin/hostResources"></vc:create>
+        </div>
+        <div v-if="hostDetailManageInfo._currentTab == 'hostPorts'">
+            <vc:create path="admin/hostPorts"></vc:create>
         </div>
     </div>
 </div>

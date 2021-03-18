@@ -8,7 +8,7 @@
     vc.extends({
         data: {
             hostDetailManageInfo: {
-                _currentTab: 'hostContainers',
+                _currentTab: 'hostEvents',
                 hostId: '',
                 groupId: '',
                 groupName: '',

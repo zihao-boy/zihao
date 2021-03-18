@@ -54,7 +54,80 @@
                     containers: [],
                     hostId: ''
                 }
+            },
+            _enterContainer: function (_container) {
+                //获取主机访问token
+                var param = {
+                    params: {
+                        hostId: $that.hostContainersInfo.hostId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/host/getHostToken',
+                    param,
+                    function (json, res) {
+                        let _hostManageInfo = JSON.parse(json);
+                        let _zihaoToken = _hostManageInfo.data;
+                        window.open("/webshell/console.html?hostId=" 
+                        + $that.hostDetailManageInfo.hostId 
+                        + "&zihaoToken=" + _zihaoToken
+                        +"&val=exec&command="+_container.containerId,
+                         '_blank')
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _viewContainerLog: function (_container) {
+                //获取主机访问token
+                var param = {
+                    params: {
+                        hostId: $that.hostContainersInfo.hostId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/host/getHostToken',
+                    param,
+                    function (json, res) {
+                        let _hostManageInfo = JSON.parse(json);
+                        let _zihaoToken = _hostManageInfo.data;
+                        window.open("/webshell/console.html?hostId=" 
+                        + $that.hostDetailManageInfo.hostId 
+                        + "&zihaoToken=" + _zihaoToken
+                        +"&val=log&command="+_container.containerId,
+                         '_blank')
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _restartContainer: function (_container) {
+                //获取主机访问token
+                var param = {
+                    params: {
+                        hostId: $that.hostContainersInfo.hostId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/host/getHostToken',
+                    param,
+                    function (json, res) {
+                        let _hostManageInfo = JSON.parse(json);
+                        let _zihaoToken = _hostManageInfo.data;
+                        window.open("/webshell/console.html?hostId=" 
+                        + $that.hostDetailManageInfo.hostId 
+                        + "&zihaoToken=" + _zihaoToken
+                        +"&val=restart&command="+_container.containerId,
+                         '_blank')
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
             }
+            
 
         }
 

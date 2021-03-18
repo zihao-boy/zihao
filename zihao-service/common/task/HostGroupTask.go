@@ -3,6 +3,7 @@ package task
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/zihao-boy/zihao/zihao-service/common/constants"
 	"github.com/zihao-boy/zihao/zihao-service/common/date"
 	"github.com/zihao-boy/zihao/zihao-service/common/queue/monitorHostQueue"
 	"github.com/zihao-boy/zihao/zihao-service/common/seq"
@@ -14,7 +15,6 @@ import (
 	"strings"
 )
 
-const check_shell="#!/bin/bash\n\nmem_total=`free -m | awk '/Mem/ {print $2}'`\n\nmem_used=`free -m | awk '/Mem/ {print $3}'`\n\ndisk_total=`df -m $1 | grep $1 | awk '{print $2}'`\n\nif [ ! -n \"$disk_total\" ]; then\n        disk_total=0\nfi\n\ndisk_used=`df -m $1 | grep $1 | awk '{print $3}'`\n\nif [ ! -n \"$disk_used\" ]; then\n        disk_used=0\nfi\n\ncpu_us=`top -b -n 1 | grep Cpu | awk '{print $2}'`\n\necho \"{'cpuRate':$cpu_us,'memTotal':$mem_total,'memUsed':$mem_used,'diskTotal':$disk_total,'diskUsed':$disk_used}\"\n"
 
 
 type HostGroupTask struct {
@@ -77,7 +77,7 @@ func (h *HostGroupTask) checkHost(host *monitor.MonitorHostDto,group monitor.Mon
 	//总内存
 	//totalMem, _ := session.Output("free -m | sed -n '2p' | awk '{print $2}'")
 	// 使用内存
-	userMem, _ := session.Output(strings.ReplaceAll(check_shell,"$1",host.MonDisk))
+	userMem, _ := session.Output(strings.ReplaceAll(constants.Check_host_resource_shell,"$1",host.MonDisk))
 	//userMem, _ := session.Output("top -b -n 1 | grep Cpu | awk '{print $2}'")
 	//userMem, _ := session.Output("df -m /dev/sda1 | grep /dev/sda1 | awk '{print $2}'")
 

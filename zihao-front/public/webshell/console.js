@@ -8,7 +8,8 @@ WSSHClient.prototype._generateEndpoint = function () {
         var protocol = 'ws://';
     }
     //window.location.host
-    var endpoint = protocol+'localhost:7000/app/console/ssh';
+    //var endpoint = protocol+'localhost:7000/app/console/ssh';
+    var endpoint = protocol+'192.168.1.34:7000/app/console/ssh';
     //var endpoint = protocol + window.location.host + '/app/console/ssh';
     return endpoint;
 };
@@ -94,12 +95,19 @@ function initShell() {
     if (command != null && val == 'log') {
         command = 'docker logs -f -t --tail 1 ' + command;
     }
-    if (command != null && val == 'tankage') {
+    if (command != null && val == 'exec') {
 
         command = 'docker exec -it ' + command + ' /bin/bash';
     }
-    let winWidth = document.body.clientWidth || document.documentElement.clientWidth;
-    let winHeight = document.body.clientHeight || document.documentElement.clientHeight;
+
+    if (command != null && val == 'restart') {
+
+        command = 'docker restart ' + command +'\n docker logs -f --tail 1 ' +command;
+    }
+    //document.body.clientWidth ||
+    let winWidth =  document.documentElement.clientWidth;
+    //document.body.clientHeight ||
+    let winHeight =  document.documentElement.clientHeight;
 
     openTerminal({
         operate: 'connect',
@@ -111,9 +119,11 @@ function initShell() {
     });
     function openTerminal(options) {
         var client = new WSSHClient();
+        let _cols = Math.floor(winWidth / 9) -5;
+        let _rows = Math.floor(winHeight / 16) -4;
         var term = new Terminal({
-            cols: 140,
-            rows: 37,
+            cols: _cols,
+            rows: _rows,
             cursorBlink: true, // 光标闪烁
             cursorStyle: "block", // 光标样式  null | 'block' | 'underline' | 'bar'
             scrollback: 800, //回滚
@@ -139,6 +149,9 @@ function initShell() {
             onConnect: function () {
                 //连接成功回调
                 client.sendInitData(options);
+                if(command != null && command != undefined && command != ''){
+                    client.sendClientData(command + '\n')
+                }
             },
             onClose: function () {
                 //连接关闭回调

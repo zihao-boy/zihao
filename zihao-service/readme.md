@@ -1,8 +1,5 @@
 ## 后端文档说明
 
-参考文档： https://gitee.com/yhm_my/go-iris/tree/master
-
-webshell  https://github.com/shibingli/webconsole
 
 #### 1.0 创建数据库和用户
 
@@ -13,3 +10,8 @@ webshell  https://github.com/shibingli/webconsole
 ./mysql -h127.0.0.1  -e "CREATE DATABASE zihao ;"
 ./mysql -h127.0.0.1  -e "grant all privileges on zihao.* to 'zihao'@'%' ;"
 ```
+
+#### 主机需要实现内容
+
+df -h
+
