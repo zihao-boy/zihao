@@ -85,6 +85,10 @@
                     <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostPorts'}"
                         v-on:click="changeTab('hostPorts')">主机端口</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostDisks'}"
+                        v-on:click="changeTab('hostDisks')">磁盘信息</a>
+                </li>
             </ul>
         </div>
         <div v-if="hostDetailManageInfo._currentTab == 'hostEvents'">
@@ -101,6 +105,9 @@
         </div>
         <div v-if="hostDetailManageInfo._currentTab == 'hostPorts'">
             <vc:create path="admin/hostPorts"></vc:create>
+        </div>
+        <div v-if="hostDetailManageInfo._currentTab == 'hostDisks'">
+            <vc:create path="admin/hostDisks"></vc:create>
         </div>
     </div>
 </div>

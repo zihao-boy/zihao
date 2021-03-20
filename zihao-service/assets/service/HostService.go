@@ -503,3 +503,73 @@ func (hostService *HostService) GetHostResource(ctx iris.Context)  (result.Resul
 	return result.SuccessData(monitorCheckHostInfoDto)
 
 }
+/**
+查询主机资源
+*/
+func (hostService *HostService) GetHostDisk(ctx iris.Context)  (result.ResultDto) {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto = host.HostDto{
+			HostId: ctx.URLParam("hostId"),
+			TenantId: user.TenantId,
+		}
+	)
+	hostDtos,err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil{
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1{
+		return result.Error("主机不存在")
+	}
+
+	client, err := ssh.Dial("tcp", hostDtos[0].Ip, &ssh.ClientConfig{
+		User: hostDtos[0].Username,
+		Auth: []ssh.AuthMethod{ssh.Password(hostDtos[0].Passwd)},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	})
+
+	//defer client.Close()
+
+	if err != nil{
+		return result.Error("连接主机失败")
+	}
+	session, err := client.NewSession()
+	defer session.Close()
+	defer client.Close()
+
+	// 使用内存
+
+	processName, _ := session.Output(constants.Get_host_disk_shell)
+
+	var (
+		diskDtos []host.HostDiskDto = make([]host.HostDiskDto,0)
+		outData = strings.ReplaceAll(string(processName),"'","\"")
+	)
+
+	disks :=strings.Split(outData,"&&")
+
+	diskNames :=strings.Split(disks[0],"\n")
+	sizes :=strings.Split(disks[1],"\n")
+	freeSizes :=strings.Split(disks[2],"\n")
+	dirs :=strings.Split(disks[3],"\n")
+
+	if len(diskNames) == 1 && diskNames[0] == ""{
+		return result.Success()
+	}
+
+	for index,item := range diskNames{
+		tmpPortDto := host.HostDiskDto{
+			DiskName: item,
+			Size: sizes[index],
+			FreeSize: freeSizes[index],
+			Dir: dirs[index],
+		}
+		diskDtos = append(diskDtos,tmpPortDto)
+	}
+
+	return result.SuccessData(diskDtos)
+
+}
