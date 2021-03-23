@@ -4,6 +4,7 @@ import (
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 	rcover "github.com/kataras/iris/v12/middleware/recover"
+	"github.com/zihao-boy/zihao/zihao-service/app/controller/appService"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/host"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/menu"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/monitor"
@@ -39,6 +40,9 @@ func Hub(app *iris.Application) {
 
 	//监控控制类
 	monitor.MonitorControllerRouter(party)
+
+	//应用服务
+	appService.AppServiceControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {
