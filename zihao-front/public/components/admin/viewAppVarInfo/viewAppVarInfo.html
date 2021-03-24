@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>环境变量信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewAppVarInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectAppVarInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择环境变量</button>
+
+                    <button type="button" v-if="viewAppVarInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddAppVarInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加环境变量</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >变量名：</label>
+                            <label class="">{{viewAppVarInfo.varName}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >变量组：</label>
+                            <label class="">{{viewAppVarInfo.avgId}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >变量类型：</label>
+                            <label class="">{{viewAppVarInfo.varType}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addAppVar"
+               callBackListener="viewAppVarInfo"
+               callBackFunction="chooseAppVar"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseAppVar"
+               emitChooseAppVar="viewAppVarInfo"
+               emitLoadData="viewAppVarInfo"
+    ></vc:create>
+</div>

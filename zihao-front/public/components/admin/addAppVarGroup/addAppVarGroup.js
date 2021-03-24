@@ -18,6 +18,7 @@
         },
         _initEvent: function () {
             vc.on('addAppVarGroup', 'openAddAppVarGroupModal', function () {
+                
                 $('#addAppVarGroupModel').modal('show');
             });
         },
@@ -103,7 +104,8 @@
                     avgDesc: '',
 
                 };
-            }
+            },
+            
         }
     });
 

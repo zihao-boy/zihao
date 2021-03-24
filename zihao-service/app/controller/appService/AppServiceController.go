@@ -9,6 +9,7 @@ import (
 type AppServiceController struct{
 	appServiceService service.AppServiceService
 	appVarGroupService service.AppVarGroupService
+	appVarService service.AppVarService
 }
 
 
@@ -33,6 +34,13 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppVarGroup", hero.Handler(aus.deleteAppVarGroup))
 
+	adinMenu.Get("/getAppVar", hero.Handler(aus.getAppVar))
+
+	adinMenu.Post("/saveAppVar", hero.Handler(aus.saveAppVar))
+
+	adinMenu.Post("/updateAppVar", hero.Handler(aus.updateAppVar))
+
+	adinMenu.Post("/deleteAppVar", hero.Handler(aus.deleteAppVar))
 
 }
 
@@ -113,3 +121,42 @@ func (aus *AppServiceController) deleteAppVarGroup(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+
+
+/**
+查询 主机组
+*/
+func (aus *AppServiceController) getAppVar(ctx iris.Context) {
+	reslut := aus.appVarService.GetAppVars(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *AppServiceController) saveAppVar(ctx iris.Context) {
+	reslut := aus.appVarService.SaveAppVars(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+修改 主机组
+*/
+func (aus *AppServiceController) updateAppVar(ctx iris.Context) {
+	reslut := aus.appVarService.UpdateAppVars(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+删除 主机组
+*/
+func (aus *AppServiceController) deleteAppVar(ctx iris.Context) {
+	reslut := aus.appVarService.DeleteAppVars(ctx)
+
+	ctx.JSON(reslut)
+}
