@@ -8,6 +8,7 @@ import (
 
 type AppVersionController struct{
 	appVersionService service.AppVersionService
+	appVersionAttrService service.AppVersionAttrService
 }
 
 
@@ -24,6 +25,8 @@ func AppVersionControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppVersion", hero.Handler(aus.deleteAppVersion))
 
+	adinMenu.Get("/getAppVersionAttr", hero.Handler(aus.getAppVersionAttr))
+
 }
 
 /**
@@ -34,6 +37,7 @@ func (aus *AppVersionController) getAppVersion(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
 
 /**
 添加 主机组
@@ -60,6 +64,15 @@ func (aus *AppVersionController) updateAppVersion(ctx iris.Context) {
 */
 func (aus *AppVersionController) deleteAppVersion(ctx iris.Context) {
 	reslut := aus.appVersionService.DeleteAppVersions(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+查询 主机组
+*/
+func (aus *AppVersionController) getAppVersionAttr(ctx iris.Context) {
+	reslut := aus.appVersionAttrService.GetAppVersionAttrs(ctx)
 
 	ctx.JSON(reslut)
 }
