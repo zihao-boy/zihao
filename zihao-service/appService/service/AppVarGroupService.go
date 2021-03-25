@@ -64,6 +64,9 @@ func (appVarGroupService *AppVarGroupService) GetAppVarGroups(ctx iris.Context) 
 
 	appVarGroupDto.Page = (page -1) * row
 
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appVarGroupDto.TenantId = user.TenantId
+
 	total,err = appVarGroupService.appVarGroupDao.GetAppVarGroupCount(appVarGroupDto)
 
 	if err != nil{

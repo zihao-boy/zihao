@@ -64,6 +64,9 @@ func (appVarService *AppVarService) GetAppVars(ctx iris.Context)  (result.Result
 
 	appVarDto.Page = (page -1) * row
 
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appVarDto.TenantId = user.TenantId
+
 	total,err = appVarService.appVarDao.GetAppVarCount(appVarDto)
 
 	if err != nil{

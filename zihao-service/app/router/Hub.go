@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	rcover "github.com/kataras/iris/v12/middleware/recover"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/appService"
+	"github.com/zihao-boy/zihao/zihao-service/app/controller/appVersion"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/host"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/menu"
 	"github.com/zihao-boy/zihao/zihao-service/app/controller/monitor"
@@ -43,6 +44,9 @@ func Hub(app *iris.Application) {
 
 	//应用服务
 	appService.AppServiceControllerRouter(party)
+
+	//版本
+	appVersion.AppVersionControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {
