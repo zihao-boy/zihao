@@ -37,7 +37,7 @@
 
                 vc.component.appVersionJobManageInfo.conditions.page = _page;
                 vc.component.appVersionJobManageInfo.conditions.row = _rows;
-                var param = {
+                let param = {
                     params: vc.component.appVersionJobManageInfo.conditions
                 };
 
@@ -77,6 +77,25 @@
                 } else {
                     vc.component.appVersionJobManageInfo.moreCondition = true;
                 }
+            },
+            _toJob: function (_appVersionJob) {
+                let data = {
+                    jobId:_appVersionJob.jobId
+                }
+                //发送get请求
+                vc.http.apiPost('/appVersion/doJob',
+                    JSON.stringify(data),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        var _appVersionJobManageInfo = JSON.parse(json);
+                        vc.toast(_appVersionJobManageInfo.msg);
+                        vc.emit('appVersionJobManage', 'listAppVersionJob',{})
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
             }
 
 

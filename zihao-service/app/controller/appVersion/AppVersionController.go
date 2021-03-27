@@ -36,6 +36,8 @@ func AppVersionControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppVersionJob", hero.Handler(aus.deleteAppVersionJob))
 
+	adinMenu.Post("/doJob", hero.Handler(aus.doJob))
+
 }
 
 /**
@@ -123,6 +125,15 @@ func (aus *AppVersionController) updateAppVersionJob(ctx iris.Context) {
 */
 func (aus *AppVersionController) deleteAppVersionJob(ctx iris.Context) {
 	reslut := aus.appVersionJobService.DeleteAppVersionJobs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *AppVersionController) doJob(ctx iris.Context) {
+	reslut := aus.appVersionJobService.DoJob(ctx)
 
 	ctx.JSON(reslut)
 }
