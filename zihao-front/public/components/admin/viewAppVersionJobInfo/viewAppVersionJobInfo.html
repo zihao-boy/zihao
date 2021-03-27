@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>版本构建信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewAppVersionJobInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectAppVersionJobInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择版本构建</button>
+
+                    <button type="button" v-if="viewAppVersionJobInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddAppVersionJobInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加版本构建</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >名称：</label>
+                            <label class="">{{viewAppVersionJobInfo.jobName}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >脚本：</label>
+                            <label class="">{{viewAppVersionJobInfo.jobShell}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addAppVersionJob"
+               callBackListener="viewAppVersionJobInfo"
+               callBackFunction="chooseAppVersionJob"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseAppVersionJob"
+               emitChooseAppVersionJob="viewAppVersionJobInfo"
+               emitLoadData="viewAppVersionJobInfo"
+    ></vc:create>
+</div>

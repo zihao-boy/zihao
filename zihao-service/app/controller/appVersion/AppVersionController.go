@@ -8,6 +8,7 @@ import (
 
 type AppVersionController struct{
 	appVersionService service.AppVersionService
+	appVersionJobService service.AppVersionJobService
 	appVersionAttrService service.AppVersionAttrService
 }
 
@@ -26,6 +27,14 @@ func AppVersionControllerRouter(party iris.Party) {
 	adinMenu.Post("/deleteAppVersion", hero.Handler(aus.deleteAppVersion))
 
 	adinMenu.Get("/getAppVersionAttr", hero.Handler(aus.getAppVersionAttr))
+
+	adinMenu.Get("/getAppVersionJob", hero.Handler(aus.getAppVersionJob))
+
+	adinMenu.Post("/saveAppVersionJob", hero.Handler(aus.saveAppVersionJob))
+
+	adinMenu.Post("/updateAppVersionJob", hero.Handler(aus.updateAppVersionJob))
+
+	adinMenu.Post("/deleteAppVersionJob", hero.Handler(aus.deleteAppVersionJob))
 
 }
 
@@ -73,6 +82,47 @@ func (aus *AppVersionController) deleteAppVersion(ctx iris.Context) {
 */
 func (aus *AppVersionController) getAppVersionAttr(ctx iris.Context) {
 	reslut := aus.appVersionAttrService.GetAppVersionAttrs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+/**
+查询 主机组
+*/
+func (aus *AppVersionController) getAppVersionJob(ctx iris.Context) {
+	reslut := aus.appVersionJobService.GetAppVersionJobs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+添加 主机组
+*/
+func (aus *AppVersionController) saveAppVersionJob(ctx iris.Context) {
+	reslut := aus.appVersionJobService.SaveAppVersionJobs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+修改 主机组
+*/
+func (aus *AppVersionController) updateAppVersionJob(ctx iris.Context) {
+	reslut := aus.appVersionJobService.UpdateAppVersionJobs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+删除 主机组
+*/
+func (aus *AppVersionController) deleteAppVersionJob(ctx iris.Context) {
+	reslut := aus.appVersionJobService.DeleteAppVersionJobs(ctx)
 
 	ctx.JSON(reslut)
 }
