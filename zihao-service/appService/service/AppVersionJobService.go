@@ -18,6 +18,7 @@ import (
 
 type AppVersionJobService struct {
 	appVersionJobDao dao.AppVersionJobDao
+	appVersionJobDetailDao dao.AppVersionJobDetailDao
 }
 
 /**
@@ -213,7 +214,23 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	var path string = tmpUser.HomeDir + "/zihao/" + appVersionJobDto.JobId+"/"
 	var fileName string = path + appVersionJobDto.JobId + ".sh"
 
-	jobShell :=  "nohup sh "+ fileName + " >" + path + appVersionJobDto.JobId + ".log &"
+
+	//插入构建记录
+	var appVersionJobDetailDto = appVersionJob.AppVersionJobDetailDto{
+		JobId: appVersionJobDto.JobId,
+		State: appVersionJob.STATE_wait,
+		LogPath: path + appVersionJobDto.JobId + ".log",
+		TenantId: user.TenantId,
+		DetailId: seq.Generator(),
+	}
+
+	err = appVersionJobService.appVersionJobDetailDao.SaveAppVersionJobDetail(appVersionJobDetailDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+
+	jobShell :=  "nohup sh "+ fileName +" " + appVersionJobDetailDto.DetailId +" >" + path + appVersionJobDto.JobId + ".log &"
 	cmd := exec.Command("bash", "-c",jobShell)
 	fmt.Println(jobShell)
 	//cmd := exec.Command("nohup echo 1")
