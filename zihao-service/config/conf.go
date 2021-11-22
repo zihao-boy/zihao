@@ -1,12 +1,17 @@
 package config
 
-
 import (
 	"fmt"
+	"sync"
+
+	io "io/ioutil"
+
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/v12"
 	"gopkg.in/yaml.v3"
 )
+
+var mutex sync.Mutex
 
 // global var
 var (
@@ -31,6 +36,8 @@ type (
 		Secret        string   `yaml:"secret"`
 		WebsocketPool int      `yaml:"websocket_pool"`
 		Domain        string   `yaml:"domain"`
+		Db            string   `yaml:"db"`
+		Cache         string   `yaml:"cache"`
 	}
 
 	// db
@@ -69,7 +76,14 @@ func (conf DBConfig) DBConnUrl() string {
 	//return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s", info.User, info.Password, info.Host, info.Port, info.Database, info.Charset)
 }
 
-func InitConfig(asset func(name string) ([]byte, error)) {
+func loadConfig(filename string) ([]byte, error) {
+	mutex.Lock()
+	data, err := io.ReadFile(filename)
+	mutex.Unlock()
+	return data, err
+}
+
+func InitConfig() {
 	var (
 		app  = AppConfig{}
 		db   = DBConfig{}
@@ -77,7 +91,7 @@ func InitConfig(asset func(name string) ([]byte, error)) {
 		err  error
 	)
 	// app
-	data, err = asset("resources/app.yaml")
+	data, err = loadConfig("conf/app.yaml")
 	if err != nil {
 		goto ERR
 	}
@@ -88,7 +102,7 @@ func InitConfig(asset func(name string) ([]byte, error)) {
 	golog.Infof("[app config]=> %v", G_AppConfig)
 
 	// db
-	data, err = asset("resources/db.yaml")
+	data, err = loadConfig("conf/db.yaml")
 	if err != nil {
 		goto ERR
 	}
@@ -101,4 +115,3 @@ func InitConfig(asset func(name string) ([]byte, error)) {
 ERR:
 	golog.Fatalf("~~> 解析配置文件错误,原因:%s", err.Error())
 }
-
