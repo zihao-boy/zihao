@@ -1,4 +1,4 @@
-package cache
+package cacheFactory
 
 import (
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/local"
