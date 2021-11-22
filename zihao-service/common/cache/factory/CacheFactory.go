@@ -1,4 +1,4 @@
-package cacheFactory
+package factory
 
 import (
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/local"
@@ -14,7 +14,7 @@ const (
 	Cache_local = "local"
 )
 
-func (cache *CacheFactory) Init() {
+func Init() {
 	cacheSwatch := config.G_AppConfig.Cache
 
 	if Cache_redis == cacheSwatch {
