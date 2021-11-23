@@ -1,14 +1,13 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 )
 
-const(
+const (
 	query_monitorHostLog_count string = `
 		select count(1) total from monitor_host t
 					where t.status_cd = '0'
@@ -50,54 +49,49 @@ const(
 )
 
 type MonitorHostLogDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*MonitorHostLogDao) GetMonitorHostLogCount(monitorHostLogDto monitor.MonitorHostLogDto) (int64,error){
+func (*MonitorHostLogDao) GetMonitorHostLogCount(monitorHostLogDto monitor.MonitorHostLogDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_monitorHostLog_count,objectConvert.Struct2Map(monitorHostLogDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_monitorHostLog_count, objectConvert.Struct2Map(monitorHostLogDto), &pageDto, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*MonitorHostLogDao) GetMonitorHostLogs(monitorHostLogDto monitor.MonitorHostLogDto) ([]*monitor.MonitorHostLogDto,error){
+func (*MonitorHostLogDao) GetMonitorHostLogs(monitorHostLogDto monitor.MonitorHostLogDto) ([]*monitor.MonitorHostLogDto, error) {
 	var monitorHostLogDtos []*monitor.MonitorHostLogDto
-	sqlTemplate.SelectList(query_monitorHostLog,objectConvert.Struct2Map(monitorHostLogDto), func(db *gorm.DB) {
-		db.Scan(&monitorHostLogDtos)
-	},false)
+	sqlTemplate.SelectList(query_monitorHostLog, objectConvert.Struct2Map(monitorHostLogDto), &monitorHostLogDtos, false)
 
-	return monitorHostLogDtos,nil
+	return monitorHostLogDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*MonitorHostLogDao) SaveMonitorHostLog(monitorHostLogDto monitor.MonitorHostLogDto) error{
-	return sqlTemplate.Insert(insert_monitorHostLog,objectConvert.Struct2Map(monitorHostLogDto),false)
+func (*MonitorHostLogDao) SaveMonitorHostLog(monitorHostLogDto monitor.MonitorHostLogDto) error {
+	return sqlTemplate.Insert(insert_monitorHostLog, objectConvert.Struct2Map(monitorHostLogDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*MonitorHostLogDao) UpdateMonitorHostLog(monitorHostLogDto monitor.MonitorHostLogDto) error{
-	return sqlTemplate.Update(update_monitorHostLog,objectConvert.Struct2Map(monitorHostLogDto),false)
+func (*MonitorHostLogDao) UpdateMonitorHostLog(monitorHostLogDto monitor.MonitorHostLogDto) error {
+	return sqlTemplate.Update(update_monitorHostLog, objectConvert.Struct2Map(monitorHostLogDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*MonitorHostLogDao) DeleteMonitorHostLog(monitorHostLogDto monitor.MonitorHostLogDto) error{
-	return sqlTemplate.Delete(delete_monitorHostLog,objectConvert.Struct2Map(monitorHostLogDto),false)
+func (*MonitorHostLogDao) DeleteMonitorHostLog(monitorHostLogDto monitor.MonitorHostLogDto) error {
+	return sqlTemplate.Delete(delete_monitorHostLog, objectConvert.Struct2Map(monitorHostLogDto), false)
 }

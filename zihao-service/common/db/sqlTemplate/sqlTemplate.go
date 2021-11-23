@@ -3,11 +3,18 @@ package sqlTemplate
 import (
 	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/zihao-boy/zihao/zihao-service/common/db/mysql"
-	"github.com/zihao-boy/zihao/zihao-service/common/utils"
 	"strconv"
 	"strings"
+
+	"github.com/zihao-boy/zihao/zihao-service/common/db/mysql"
+	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlite"
+	"github.com/zihao-boy/zihao/zihao-service/common/utils"
+	"github.com/zihao-boy/zihao/zihao-service/config"
+)
+
+const (
+	Cache_sqlite = "sqlite"
+	Cache_mysql  = "local"
 )
 
 /**
@@ -22,42 +29,42 @@ import (
 						and t.name = #name#
 						$endif
 */
-func ParseSql(sql string,param map[string]interface{}) (string,[]interface{}){
+func ParseSql(sql string, param map[string]interface{}) (string, []interface{}) {
 
 	var (
-		newSql string
-		tmpSql string
-		tmpWhere string //条件
+		newSql       string
+		tmpSql       string
+		tmpWhere     string //条件
 		tmpWhereBool bool
-		sqlParams []interface{}
+		sqlParams    []interface{}
 	)
 
-	sqls := strings.Split(sql,"$endif")
+	sqls := strings.Split(sql, "$endif")
 
-	for _,sql := range sqls{
+	for _, sql := range sqls {
 		//不包含条件语句
-		if sql == "" || !strings.Contains(sql,"$if"){
+		if sql == "" || !strings.Contains(sql, "$if") {
 			newSql += sql
 			continue
 		}
 
-		if !strings.HasPrefix(sql,"$if"){
-			newSql += sql[0:strings.Index(sql,"$if")]
+		if !strings.HasPrefix(sql, "$if") {
+			newSql += sql[0:strings.Index(sql, "$if")]
 		}
 
 		//条件语句
-		tmpSql = sql[strings.Index(sql,"$if")+3:len(sql)]
+		tmpSql = sql[strings.Index(sql, "$if")+3 : len(sql)]
 
 		// 条件
-		tmpWhere = tmpSql[0:strings.Index(tmpSql,"then")]
+		tmpWhere = tmpSql[0:strings.Index(tmpSql, "then")]
 
-		tmpWhereBool = parseExpression(tmpWhere,param)
+		tmpWhereBool = parseExpression(tmpWhere, param)
 
 		if !tmpWhereBool {
 			continue
 		}
 
-		tmpWhere = tmpSql[strings.Index(tmpSql,"then")+4:len(tmpSql)]
+		tmpWhere = tmpSql[strings.Index(tmpSql, "then")+4 : len(tmpSql)]
 		newSql += tmpWhere
 
 	}
@@ -65,38 +72,36 @@ func ParseSql(sql string,param map[string]interface{}) (string,[]interface{}){
 	fmt.Print(newSql)
 
 	//处理参数
-	newSql,sqlParams = parseParam(newSql, param )
+	newSql, sqlParams = parseParam(newSql, param)
 
-
-	return newSql,sqlParams
+	return newSql, sqlParams
 }
 
 /**
 解析参数
 */
-func parseParam(sql string, param map[string]interface{}) (string,[]interface{}) {
+func parseParam(sql string, param map[string]interface{}) (string, []interface{}) {
 
 	var (
-		sqls []string
+		sqls          []string
 		currentSqlNew string
-		sqlParams = make([]interface{},0)
-
+		sqlParams     = make([]interface{}, 0)
 	)
 
-	sqls = strings.Split(sql,"#")
+	sqls = strings.Split(sql, "#")
 
-	for sqlIndex,tmpSql := range sqls{
-		if sqlIndex % 2 == 0{
+	for sqlIndex, tmpSql := range sqls {
+		if sqlIndex%2 == 0 {
 			currentSqlNew += tmpSql
 			continue
 		}
 		currentSqlNew += "?"
-		sqlParams = append(sqlParams,utils.ParseObjectValueFromInterface(param,strings.Trim(tmpSql," ")))
+		sqlParams = append(sqlParams, utils.ParseObjectValueFromInterface(param, strings.Trim(tmpSql, " ")))
 	}
 
 	//update 时 如果 where 前面有, 则删除
 
-	return currentSqlNew,sqlParams
+	return currentSqlNew, sqlParams
 
 }
 
@@ -130,63 +135,59 @@ currentParams.add(param);
 func parseExpression(tmpWhere string, param map[string]interface{}) bool {
 
 	var (
-		tmpWhereName string //条件name
+		tmpWhereName  string //条件name
 		tmpWhereValue string //条件值
-		paramValue string
+		paramValue    string
 	)
 
-	if strings.Contains(tmpWhere,"!="){
+	if strings.Contains(tmpWhere, "!=") {
 
-		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere,"!=")]," ")
-		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere,"!=")+2:len(tmpWhere)]," ")
-		tmpWhereValue = strings.ReplaceAll(tmpWhereValue,"'","")
-		paramValue = utils.ParseStringValueFromInterface(param,tmpWhereName)
-		if tmpWhereValue != paramValue{
-			return true;
+		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere, "!=")], " ")
+		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere, "!=")+2:len(tmpWhere)], " ")
+		tmpWhereValue = strings.ReplaceAll(tmpWhereValue, "'", "")
+		paramValue = utils.ParseStringValueFromInterface(param, tmpWhereName)
+		if tmpWhereValue != paramValue {
+			return true
 		}
 
-	} else if strings.Contains(tmpWhere,"=="){
-		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere,"==")]," ")
-		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere,"==")+2:len(tmpWhere)]," ")
-		tmpWhereValue = strings.ReplaceAll(tmpWhereValue,"'","")
-		if tmpWhereValue == utils.ParseStringValueFromInterface(param,tmpWhereName){
-			return true;
+	} else if strings.Contains(tmpWhere, "==") {
+		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere, "==")], " ")
+		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere, "==")+2:len(tmpWhere)], " ")
+		tmpWhereValue = strings.ReplaceAll(tmpWhereValue, "'", "")
+		if tmpWhereValue == utils.ParseStringValueFromInterface(param, tmpWhereName) {
+			return true
 		}
-	} else if strings.Contains(tmpWhere,">"){
-		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere,">")]," ")
-		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere,">")+1:len(tmpWhere)]," ")
-		tmpWhereValue = strings.ReplaceAll(tmpWhereValue,"'","")
-		if tmpWhereValueInt,_ := strconv.ParseInt(tmpWhereValue,10,64);
-			tmpWhereValueInt > utils.ParseIntValueFromInterface(param,tmpWhereName){
-			return true;
+	} else if strings.Contains(tmpWhere, ">") {
+		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere, ">")], " ")
+		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere, ">")+1:len(tmpWhere)], " ")
+		tmpWhereValue = strings.ReplaceAll(tmpWhereValue, "'", "")
+		if tmpWhereValueInt, _ := strconv.ParseInt(tmpWhereValue, 10, 64); tmpWhereValueInt > utils.ParseIntValueFromInterface(param, tmpWhereName) {
+			return true
 		}
-	}else if strings.Contains(tmpWhere,"<"){
-		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere,"<")]," ")
-		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere,"<")+1:len(tmpWhere)]," ")
-		tmpWhereValue = strings.ReplaceAll(tmpWhereValue,"'","")
-		if tmpWhereValueInt,_ := strconv.ParseInt(tmpWhereValue,10,64);
-			tmpWhereValueInt < utils.ParseIntValueFromInterface(param,tmpWhereName){
-			return true;
+	} else if strings.Contains(tmpWhere, "<") {
+		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere, "<")], " ")
+		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere, "<")+1:len(tmpWhere)], " ")
+		tmpWhereValue = strings.ReplaceAll(tmpWhereValue, "'", "")
+		if tmpWhereValueInt, _ := strconv.ParseInt(tmpWhereValue, 10, 64); tmpWhereValueInt < utils.ParseIntValueFromInterface(param, tmpWhereName) {
+			return true
 		}
-	}else if strings.Contains(tmpWhere,">="){
-		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere,">=")]," ")
-		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere,">=")+2:len(tmpWhere)]," ")
-		tmpWhereValue = strings.ReplaceAll(tmpWhereValue,"'","")
-		if tmpWhereValueInt,_ := strconv.ParseInt(tmpWhereValue,10,64);
-			tmpWhereValueInt >= utils.ParseIntValueFromInterface(param,tmpWhereName){
-			return true;
+	} else if strings.Contains(tmpWhere, ">=") {
+		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere, ">=")], " ")
+		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere, ">=")+2:len(tmpWhere)], " ")
+		tmpWhereValue = strings.ReplaceAll(tmpWhereValue, "'", "")
+		if tmpWhereValueInt, _ := strconv.ParseInt(tmpWhereValue, 10, 64); tmpWhereValueInt >= utils.ParseIntValueFromInterface(param, tmpWhereName) {
+			return true
 		}
-	}else if strings.Contains(tmpWhere,"<="){
-		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere,"<=")]," ")
-		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere,"<=")+2:len(tmpWhere)]," ")
-		tmpWhereValue = strings.ReplaceAll(tmpWhereValue,"'","")
-		if tmpWhereValueInt,_ := strconv.ParseInt(tmpWhereValue,10,64);
-			tmpWhereValueInt <= utils.ParseIntValueFromInterface(param,tmpWhereName){
-			return true;
+	} else if strings.Contains(tmpWhere, "<=") {
+		tmpWhereName = strings.Trim(tmpWhere[0:strings.Index(tmpWhere, "<=")], " ")
+		tmpWhereValue = strings.Trim(tmpWhere[strings.Index(tmpWhere, "<=")+2:len(tmpWhere)], " ")
+		tmpWhereValue = strings.ReplaceAll(tmpWhereValue, "'", "")
+		if tmpWhereValueInt, _ := strconv.ParseInt(tmpWhereValue, 10, 64); tmpWhereValueInt <= utils.ParseIntValueFromInterface(param, tmpWhereName) {
+			return true
 		}
 	}
 
-	return false;
+	return false
 }
 
 /**
@@ -227,94 +228,120 @@ for (String oSql : oSqls) {
 /**
 封装 查询列表
 */
-func SelectList(sql string,param map[string]interface{},callback func(db *gorm.DB),cacheSql bool) {
-	var(
-		newSql string
+func SelectList(sql string, param map[string]interface{}, result interface{}, cacheSql bool) {
+	var (
+		newSql    string
 		sqlParams []interface{}
 	)
-	if cacheSql{
+	if cacheSql {
 		serviceSql := utils.GetServiceSql(sql)
 		sql = serviceSql.SqlText
 	}
-	newSql,sqlParams = ParseSql(sql,param)
-	db := mysql.G_DB.Raw(newSql,sqlParams...)
-	callback(db)
+	newSql, sqlParams = ParseSql(sql, param)
+	//db := mysql.G_DB.Raw(newSql, sqlParams...)
+	//callback(db)
 	//if err:=db.Scan(&out).Error; err !=nil{
 	//	return nil,err
 	//}
+	dbSwatch := config.G_AppConfig.Db
+	if Cache_mysql == dbSwatch {
+		db := mysql.G_DB.Raw(newSql, sqlParams...)
+		if err := db.Scan(&result).Error; err != nil {
+			return
+		}
+	}
+
+	if Cache_sqlite == dbSwatch {
+		db, _ := sqlite.S_DB.Query(newSql, sqlParams...)
+		if err := db.Scan(&result); err != nil {
+			return
+		}
+	}
 
 }
 
 /**
 封装 查询单个
 */
-func SelectOne(sql string,param map[string]interface{},callback func(db *gorm.DB),cacheSql bool) {
-	var(
-		newSql string
+func SelectOne(sql string, param map[string]interface{}, result interface{}, cacheSql bool) {
+	var (
+		newSql    string
 		sqlParams []interface{}
 	)
-	if cacheSql{
+	if cacheSql {
 		serviceSql := utils.GetServiceSql(sql)
 		sql = serviceSql.SqlText
 	}
-	newSql,sqlParams = ParseSql(sql,param)
-	db := mysql.G_DB.Raw(newSql,sqlParams...)
-	callback(db)
-}
+	newSql, sqlParams = ParseSql(sql, param)
+	// db := mysql.G_DB.Raw(newSql, sqlParams...)
+	// callback(db)
+	dbSwatch := config.G_AppConfig.Db
+	if Cache_mysql == dbSwatch {
+		db := mysql.G_DB.Raw(newSql, sqlParams...)
+		if err := db.Scan(&result).Error; err != nil {
+			return
+		}
+	}
 
+	if Cache_sqlite == dbSwatch {
+		db, _ := sqlite.S_DB.Query(newSql, sqlParams...)
+		if err := db.Scan(&result); err != nil {
+			return
+		}
+	}
+}
 
 /**
 封装 新增数据
 */
-func Insert(sql string,param map[string]interface{},cacheSql bool) error {
-	var(
-		newSql string
+func Insert(sql string, param map[string]interface{}, cacheSql bool) error {
+	var (
+		newSql    string
 		sqlParams []interface{}
 	)
-	if cacheSql{
+	if cacheSql {
 		serviceSql := utils.GetServiceSql(sql)
 		sql = serviceSql.SqlText
 	}
-	if sql == ""{
+	if sql == "" {
 		return errors.New("sql 配置错误 值为空")
 	}
-	newSql,sqlParams = ParseSql(sql,param)
-	db := mysql.G_DB.Exec(newSql,sqlParams...)
+	newSql, sqlParams = ParseSql(sql, param)
+	db := mysql.G_DB.Exec(newSql, sqlParams...)
 
 	return db.Error
 }
 
-
 /**
 封装 修改数据
 */
-func Update(sql string,param map[string]interface{},cacheSql bool) error {
-	var(
-		newSql string
+func Update(sql string, param map[string]interface{}, cacheSql bool) error {
+	var (
+		newSql    string
 		sqlParams []interface{}
 	)
-	if cacheSql{
+	if cacheSql {
 		serviceSql := utils.GetServiceSql(sql)
 		sql = serviceSql.SqlText
 	}
-	newSql,sqlParams = ParseSql(sql,param)
-	db := mysql.G_DB.Exec(newSql,sqlParams...)
+	newSql, sqlParams = ParseSql(sql, param)
+	db := mysql.G_DB.Exec(newSql, sqlParams...)
 	return db.Error
 }
 
 /**
 封装  删除数据
 */
-func Delete(sql string,param map[string]interface{},cacheSql bool) error{
-	var(
-		newSql string
+func Delete(sql string, param map[string]interface{}, cacheSql bool) error {
+	var (
+		newSql    string
 		sqlParams []interface{}
 	)
-	if cacheSql{
+	if cacheSql {
 		serviceSql := utils.GetServiceSql(sql)
 		sql = serviceSql.SqlText
 	}
-	newSql,sqlParams = ParseSql(sql,param)
-	db := mysql.G_DB.Exec(newSql,sqlParams...)
+	newSql, sqlParams = ParseSql(sql, param)
+	db := mysql.G_DB.Exec(newSql, sqlParams...)
 	return db.Error
 }

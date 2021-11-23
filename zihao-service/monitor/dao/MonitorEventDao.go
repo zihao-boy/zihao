@@ -1,14 +1,13 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
 )
 
-const(
+const (
 	query_monitorEvent_count string = `
 		select count(1) total
 		 from monitor_event t
@@ -74,54 +73,49 @@ VALUES (#EventId#, #EventType#, #EventObjId#, #EventObjName#,#TenantId#, #Thresh
 )
 
 type MonitorEventDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*MonitorEventDao) GetMonitorEventCount(monitorEventDto monitor.MonitorEventDto) (int64,error){
+func (*MonitorEventDao) GetMonitorEventCount(monitorEventDto monitor.MonitorEventDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_monitorEvent_count,objectConvert.Struct2Map(monitorEventDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_monitorEvent_count, objectConvert.Struct2Map(monitorEventDto), &pageDto, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*MonitorEventDao) GetMonitorEvents(monitorEventDto monitor.MonitorEventDto) ([]*monitor.MonitorEventDto,error){
+func (*MonitorEventDao) GetMonitorEvents(monitorEventDto monitor.MonitorEventDto) ([]*monitor.MonitorEventDto, error) {
 	var monitorEventDtos []*monitor.MonitorEventDto
-	sqlTemplate.SelectList(query_monitorEvent,objectConvert.Struct2Map(monitorEventDto), func(db *gorm.DB) {
-		db.Scan(&monitorEventDtos)
-	},false)
+	sqlTemplate.SelectList(query_monitorEvent, objectConvert.Struct2Map(monitorEventDto), &monitorEventDtos, false)
 
-	return monitorEventDtos,nil
+	return monitorEventDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*MonitorEventDao) SaveMonitorEvent(monitorEventDto monitor.MonitorEventDto) error{
-	return sqlTemplate.Insert(insert_monitorEvent,objectConvert.Struct2Map(monitorEventDto),false)
+func (*MonitorEventDao) SaveMonitorEvent(monitorEventDto monitor.MonitorEventDto) error {
+	return sqlTemplate.Insert(insert_monitorEvent, objectConvert.Struct2Map(monitorEventDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*MonitorEventDao) UpdateMonitorEvent(monitorEventDto monitor.MonitorEventDto) error{
-	return sqlTemplate.Update(update_monitorEvent,objectConvert.Struct2Map(monitorEventDto),false)
+func (*MonitorEventDao) UpdateMonitorEvent(monitorEventDto monitor.MonitorEventDto) error {
+	return sqlTemplate.Update(update_monitorEvent, objectConvert.Struct2Map(monitorEventDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*MonitorEventDao) DeleteMonitorEvent(monitorEventDto monitor.MonitorEventDto) error{
-	return sqlTemplate.Delete(delete_monitorEvent,objectConvert.Struct2Map(monitorEventDto),false)
+func (*MonitorEventDao) DeleteMonitorEvent(monitorEventDto monitor.MonitorEventDto) error {
+	return sqlTemplate.Delete(delete_monitorEvent, objectConvert.Struct2Map(monitorEventDto), false)
 }

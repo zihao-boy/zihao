@@ -4,6 +4,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/local"
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
 	"github.com/zihao-boy/zihao/zihao-service/config"
+	"github.com/zihao-boy/zihao/zihao-service/entity/dto/serviceSql"
 )
 
 type CacheFactory struct {
@@ -64,4 +65,38 @@ func DelToken(format, id string) (result int64, err error) {
 		result, err = local.G_Local.DelToken(format, id)
 	}
 	return
+}
+
+func SaveServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) (err error) {
+	cacheSwatch := config.G_AppConfig.Cache
+	if Cache_redis == cacheSwatch {
+		err = redis.G_Redis.SaveServiceSql(serviceSqlDto)
+	}
+	if Cache_local == cacheSwatch {
+		err = local.G_Local.SaveServiceSql(serviceSqlDto)
+	}
+	return err
+}
+
+func GetServiceSql(sqlCode string) (serviceSql serviceSql.ServiceSqlDto, err error) {
+	cacheSwatch := config.G_AppConfig.Cache
+	if Cache_redis == cacheSwatch {
+		serviceSql, err = redis.G_Redis.GetServiceSql(sqlCode)
+	}
+	if Cache_local == cacheSwatch {
+		serviceSql, err = local.G_Local.GetServiceSql(sqlCode)
+	}
+	return serviceSql, err
+}
+
+// Init
+func InitServiceSql() {
+	cacheSwatch := config.G_AppConfig.Cache
+	if Cache_redis == cacheSwatch {
+		redis.InitServiceSql()
+	}
+
+	if Cache_local == cacheSwatch {
+		local.InitServiceSql()
+	}
 }

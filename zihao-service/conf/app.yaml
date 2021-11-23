@@ -16,5 +16,5 @@ own:
   secret: xxx-Secret
   websocket_pool: 100
   domain: a
-  db: sqllite # mysql
+  db: sqlite # mysql
   cache: local # redis

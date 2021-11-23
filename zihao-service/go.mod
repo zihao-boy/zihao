@@ -18,6 +18,7 @@ require (
 	github.com/kataras/iris/v12 v12.2.0-alpha2
 	github.com/kataras/neffos v0.0.18
 	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/mattn/go-sqlite3 v1.11.0 // indirect
 	github.com/nats-io/nats-server/v2 v2.1.9 // indirect
 	github.com/onsi/ginkgo v1.15.0 // indirect
 	github.com/onsi/gomega v1.10.5 // indirect

@@ -4,9 +4,8 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/zihao-service/app/router"
 	"github.com/zihao-boy/zihao/zihao-service/common/cache/factory"
-	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
 	"github.com/zihao-boy/zihao/zihao-service/common/crontab"
-	"github.com/zihao-boy/zihao/zihao-service/common/db/mysql"
+	"github.com/zihao-boy/zihao/zihao-service/common/db/dbFactory"
 	"github.com/zihao-boy/zihao/zihao-service/common/jwt"
 	"github.com/zihao-boy/zihao/zihao-service/config"
 )
@@ -19,13 +18,14 @@ func main() {
 	config.InitConfig()
 	//support.InitLog()
 	//support.InitValidator()
-	mysql.InitGorm()
+	//mysql.InitGorm()
+	dbFactory.Init()
 	factory.Init()
 	//auth.InitAuth()
 	jwt.InitJWT()
 
 	//初始化缓存信息
-	redis.InitServiceSql()
+	factory.InitServiceSql()
 
 	//启动定时任务
 	var (
