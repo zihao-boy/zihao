@@ -1,14 +1,14 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/appService"
+	"gorm.io/gorm"
 )
 
-const(
+const (
 	query_appService_count string = `
 		select count(1) total
 			from app_service t
@@ -100,54 +100,53 @@ VALUES(#AsId#,#AsName#,#AsType#,#TenantId#,#AsDesc#,#State#,#AsCount#)
 )
 
 type AppServiceDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*AppServiceDao) GetAppServiceCount(appServiceDto appService.AppServiceDto) (int64,error){
+func (*AppServiceDao) GetAppServiceCount(appServiceDto appService.AppServiceDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_appService_count,objectConvert.Struct2Map(appServiceDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_appService_count, objectConvert.Struct2Map(appServiceDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*AppServiceDao) GetAppServices(appServiceDto appService.AppServiceDto) ([]*appService.AppServiceDto,error){
+func (*AppServiceDao) GetAppServices(appServiceDto appService.AppServiceDto) ([]*appService.AppServiceDto, error) {
 	var appServiceDtos []*appService.AppServiceDto
-	sqlTemplate.SelectList(query_appService,objectConvert.Struct2Map(appServiceDto), func(db *gorm.DB) {
+	sqlTemplate.SelectList(query_appService, objectConvert.Struct2Map(appServiceDto), func(db *gorm.DB) {
 		db.Scan(&appServiceDtos)
-	},false)
+	}, false)
 
-	return appServiceDtos,nil
+	return appServiceDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*AppServiceDao) SaveAppService(appServiceDto appService.AppServiceDto) error{
-	return sqlTemplate.Insert(insert_appService,objectConvert.Struct2Map(appServiceDto),false)
+func (*AppServiceDao) SaveAppService(appServiceDto appService.AppServiceDto) error {
+	return sqlTemplate.Insert(insert_appService, objectConvert.Struct2Map(appServiceDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*AppServiceDao) UpdateAppService(appServiceDto appService.AppServiceDto) error{
-	return sqlTemplate.Update(update_appService,objectConvert.Struct2Map(appServiceDto),false)
+func (*AppServiceDao) UpdateAppService(appServiceDto appService.AppServiceDto) error {
+	return sqlTemplate.Update(update_appService, objectConvert.Struct2Map(appServiceDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*AppServiceDao) DeleteAppService(appServiceDto appService.AppServiceDto) error{
-	return sqlTemplate.Delete(delete_appService,objectConvert.Struct2Map(appServiceDto),false)
+func (*AppServiceDao) DeleteAppService(appServiceDto appService.AppServiceDto) error {
+	return sqlTemplate.Delete(delete_appService, objectConvert.Struct2Map(appServiceDto), false)
 }

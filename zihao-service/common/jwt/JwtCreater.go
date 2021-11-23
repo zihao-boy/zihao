@@ -117,6 +117,7 @@ func (j *JWT) Token2Model(token *jwt.Token) (*user.UserDto, error) {
 	phone = mapClaims["phone"].(string)
 	realName = mapClaims["realName"].(string)
 	tenantId = mapClaims["tenantId"].(string)
+
 	return &user.UserDto{
 		UserId:   id,
 		Phone:    phone,

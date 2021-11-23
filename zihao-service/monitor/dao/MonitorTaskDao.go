@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
+	"gorm.io/gorm"
 )
 
 const (
@@ -116,7 +116,9 @@ func (*MonitorTaskDao) GetMonitorTaskCount(monitorTaskDto monitor.MonitorTaskDto
 		err     error
 	)
 
-	sqlTemplate.SelectOne(query_monitorTask_count, objectConvert.Struct2Map(monitorTaskDto), &pageDto, false)
+	sqlTemplate.SelectOne(query_monitorTask_count, objectConvert.Struct2Map(monitorTaskDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
 	return pageDto.Total, err
 }
@@ -126,7 +128,9 @@ func (*MonitorTaskDao) GetMonitorTaskCount(monitorTaskDto monitor.MonitorTaskDto
 */
 func (*MonitorTaskDao) GetMonitorTasks(monitorTaskDto monitor.MonitorTaskDto) ([]*monitor.MonitorTaskDto, error) {
 	var monitorTaskDtos []*monitor.MonitorTaskDto
-	sqlTemplate.SelectList(query_monitorTask, objectConvert.Struct2Map(monitorTaskDto), &monitorTaskDtos, false)
+	sqlTemplate.SelectList(query_monitorTask, objectConvert.Struct2Map(monitorTaskDto), func(db *gorm.DB) {
+		db.Scan(&monitorTaskDtos)
+	}, false)
 
 	return monitorTaskDtos, nil
 }

@@ -1,12 +1,16 @@
 package dao
 
 import (
+	"fmt"
+
 	"github.com/zihao-boy/zihao/zihao-service/common/db/mysql"
+	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlite"
+	"github.com/zihao-boy/zihao/zihao-service/config"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/menu"
 	"github.com/zihao-boy/zihao/zihao-service/entity/vo"
 )
 
-const(
+const (
 	query_menu string = `
 		SELECT mm.m_id ,mm.name menu_name,mm.g_id,mm.url,mm.seq menu_seq,
 			mm.description menu_description, mmg.name menu_group_name,mmg.icon,mmg.label,mmg.seq menu_group_seq,
@@ -39,18 +43,33 @@ const(
 )
 
 type MenuDao struct {
-
 }
+
+const (
+	Cache_sqlite = "sqlite"
+	Cache_mysql  = "local"
+)
 
 /**
 查询用户
 */
-func (*MenuDao) GetMenu(userVo vo.LoginUserVo) ([]*menu.MenusDto,error){
+func (*MenuDao) GetMenu(userVo vo.LoginUserVo) ([]*menu.MenusDto, error) {
 	var menusDto []*menu.MenusDto
-	db := mysql.G_DB.Raw(query_menu,userVo.UserId,userVo.UserId)
-	if err:=db.Scan(&menusDto).Error; err !=nil{
-		return nil,err
+	dbSwatch := config.G_AppConfig.Db
+
+	if Cache_mysql == dbSwatch {
+		db := mysql.G_DB.Raw(query_menu, userVo.UserId, userVo.UserId)
+		if err := db.Scan(&menusDto).Error; err != nil {
+			return nil, err
+		}
+	}
+	if Cache_sqlite == dbSwatch {
+		db := sqlite.S_DB.Raw(query_menu, userVo.UserId, userVo.UserId)
+		fmt.Print(db, userVo, "123")
+		if err := db.Scan(&menusDto).Error; err != nil {
+			return nil, err
+		}
 	}
 
-	return menusDto,nil
+	return menusDto, nil
 }

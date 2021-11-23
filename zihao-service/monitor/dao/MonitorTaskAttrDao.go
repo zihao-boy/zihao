@@ -4,6 +4,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
+	"gorm.io/gorm"
 )
 
 const (
@@ -50,7 +51,9 @@ type MonitorTaskAttrDao struct {
 */
 func (*MonitorTaskAttrDao) GetMonitorTaskAttrs(monitorTaskAttrDto monitor.MonitorTaskAttrDto) ([]*monitor.MonitorTaskAttrDto, error) {
 	var monitorTaskAttrDtos []*monitor.MonitorTaskAttrDto
-	sqlTemplate.SelectList(query_monitorTaskAttr, objectConvert.Struct2Map(monitorTaskAttrDto), &monitorTaskAttrDtos, false)
+	sqlTemplate.SelectList(query_monitorTaskAttr, objectConvert.Struct2Map(monitorTaskAttrDto), func(db *gorm.DB) {
+		db.Scan(&monitorTaskAttrDtos)
+	}, false)
 
 	return monitorTaskAttrDtos, nil
 }

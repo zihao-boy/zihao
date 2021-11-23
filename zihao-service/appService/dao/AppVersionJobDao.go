@@ -1,14 +1,14 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/appVersionJob"
+	"gorm.io/gorm"
 )
 
-const(
+const (
 	query_appVersionJob_count string = `
 		select count(1) total
 			from app_version_job t
@@ -88,54 +88,53 @@ VALUES(#JobId#, #JobName#, #JobShell#, #TenantId#, #PreJobTime#, #CurJobTime#,#S
 )
 
 type AppVersionJobDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*AppVersionJobDao) GetAppVersionJobCount(appVersionJobDto appVersionJob.AppVersionJobDto) (int64,error){
+func (*AppVersionJobDao) GetAppVersionJobCount(appVersionJobDto appVersionJob.AppVersionJobDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_appVersionJob_count,objectConvert.Struct2Map(appVersionJobDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_appVersionJob_count, objectConvert.Struct2Map(appVersionJobDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*AppVersionJobDao) GetAppVersionJobs(appVersionJobDto appVersionJob.AppVersionJobDto) ([]*appVersionJob.AppVersionJobDto,error){
+func (*AppVersionJobDao) GetAppVersionJobs(appVersionJobDto appVersionJob.AppVersionJobDto) ([]*appVersionJob.AppVersionJobDto, error) {
 	var appVersionJobDtos []*appVersionJob.AppVersionJobDto
-	sqlTemplate.SelectList(query_appVersionJob,objectConvert.Struct2Map(appVersionJobDto), func(db *gorm.DB) {
+	sqlTemplate.SelectList(query_appVersionJob, objectConvert.Struct2Map(appVersionJobDto), func(db *gorm.DB) {
 		db.Scan(&appVersionJobDtos)
-	},false)
+	}, false)
 
-	return appVersionJobDtos,nil
+	return appVersionJobDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*AppVersionJobDao) SaveAppVersionJob(appVersionJobDto appVersionJob.AppVersionJobDto) error{
-	return sqlTemplate.Insert(insert_appVersionJob,objectConvert.Struct2Map(appVersionJobDto),false)
+func (*AppVersionJobDao) SaveAppVersionJob(appVersionJobDto appVersionJob.AppVersionJobDto) error {
+	return sqlTemplate.Insert(insert_appVersionJob, objectConvert.Struct2Map(appVersionJobDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*AppVersionJobDao) UpdateAppVersionJob(appVersionJobDto appVersionJob.AppVersionJobDto) error{
-	return sqlTemplate.Update(update_appVersionJob,objectConvert.Struct2Map(appVersionJobDto),false)
+func (*AppVersionJobDao) UpdateAppVersionJob(appVersionJobDto appVersionJob.AppVersionJobDto) error {
+	return sqlTemplate.Update(update_appVersionJob, objectConvert.Struct2Map(appVersionJobDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*AppVersionJobDao) DeleteAppVersionJob(appVersionJobDto appVersionJob.AppVersionJobDto) error{
-	return sqlTemplate.Delete(delete_appVersionJob,objectConvert.Struct2Map(appVersionJobDto),false)
+func (*AppVersionJobDao) DeleteAppVersionJob(appVersionJobDto appVersionJob.AppVersionJobDto) error {
+	return sqlTemplate.Delete(delete_appVersionJob, objectConvert.Struct2Map(appVersionJobDto), false)
 }

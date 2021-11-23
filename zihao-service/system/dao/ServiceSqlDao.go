@@ -1,14 +1,14 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/serviceSql"
+	"gorm.io/gorm"
 )
 
-const(
+const (
 	query_service_sql_count string = `
 		select count(1) total from service_sql t
 		where 1=1
@@ -54,54 +54,53 @@ VALUES (#SqlCode#,#SqlText#,#Remark#)
 )
 
 type ServiceSqlDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*ServiceSqlDao) GetServiceSqlCount(serviceSqlDto serviceSql.ServiceSqlDto) (int64,error){
+func (*ServiceSqlDao) GetServiceSqlCount(serviceSqlDto serviceSql.ServiceSqlDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_service_sql_count,objectConvert.Struct2Map(serviceSqlDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_service_sql_count, objectConvert.Struct2Map(serviceSqlDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*ServiceSqlDao) GetServiceSqls(serviceSqlDto serviceSql.ServiceSqlDto) ([]*serviceSql.ServiceSqlDto,error){
+func (*ServiceSqlDao) GetServiceSqls(serviceSqlDto serviceSql.ServiceSqlDto) ([]*serviceSql.ServiceSqlDto, error) {
 	var serviceSqlDtos []*serviceSql.ServiceSqlDto
-	sqlTemplate.SelectList(query_service_sql,objectConvert.Struct2Map(serviceSqlDto), func(db *gorm.DB) {
+	sqlTemplate.SelectList(query_service_sql, objectConvert.Struct2Map(serviceSqlDto), func(db *gorm.DB) {
 		db.Scan(&serviceSqlDtos)
-	},false)
+	}, false)
 
-	return serviceSqlDtos,nil
+	return serviceSqlDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*ServiceSqlDao) SaveServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) error{
-	return sqlTemplate.Insert(insert_service_sql,objectConvert.Struct2Map(serviceSqlDto),false)
+func (*ServiceSqlDao) SaveServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) error {
+	return sqlTemplate.Insert(insert_service_sql, objectConvert.Struct2Map(serviceSqlDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*ServiceSqlDao) UpdateServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) error{
-	return sqlTemplate.Update(update_service_sql,objectConvert.Struct2Map(serviceSqlDto),false)
+func (*ServiceSqlDao) UpdateServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) error {
+	return sqlTemplate.Update(update_service_sql, objectConvert.Struct2Map(serviceSqlDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*ServiceSqlDao) DeleteServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) error{
-	return sqlTemplate.Delete(delete_service_sql,objectConvert.Struct2Map(serviceSqlDto),false)
+func (*ServiceSqlDao) DeleteServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) error {
+	return sqlTemplate.Delete(delete_service_sql, objectConvert.Struct2Map(serviceSqlDto), false)
 }

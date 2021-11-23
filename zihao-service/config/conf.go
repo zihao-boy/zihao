@@ -72,7 +72,7 @@ type (
 func (conf DBConfig) DBConnUrl() string {
 	var info = conf.Mysql
 	//"%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local"
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True", info.User, info.Password, info.Host, info.Port, info.Database, info.Charset)
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local", info.User, info.Password, info.Host, info.Port, info.Database, info.Charset)
 	//return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s", info.User, info.Password, info.Host, info.Port, info.Database, info.Charset)
 }
 

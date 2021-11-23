@@ -1,12 +1,12 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/assets/mapper/hostMapper"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/host"
+	"gorm.io/gorm"
 )
 
 const (

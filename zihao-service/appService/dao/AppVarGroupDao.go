@@ -1,14 +1,14 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/appVarGroup"
+	"gorm.io/gorm"
 )
 
-const(
+const (
 	query_appVarGroup_count string = `
 		select count(1) total
 		from app_var_group t
@@ -77,54 +77,53 @@ values(#AvgId#, #AvgName#, #AvgType#, #TenantId#, #AvgDesc#)
 )
 
 type AppVarGroupDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*AppVarGroupDao) GetAppVarGroupCount(appVarGroupDto appVarGroup.AppVarGroupDto) (int64,error){
+func (*AppVarGroupDao) GetAppVarGroupCount(appVarGroupDto appVarGroup.AppVarGroupDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_appVarGroup_count,objectConvert.Struct2Map(appVarGroupDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_appVarGroup_count, objectConvert.Struct2Map(appVarGroupDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*AppVarGroupDao) GetAppVarGroups(appVarGroupDto appVarGroup.AppVarGroupDto) ([]*appVarGroup.AppVarGroupDto,error){
+func (*AppVarGroupDao) GetAppVarGroups(appVarGroupDto appVarGroup.AppVarGroupDto) ([]*appVarGroup.AppVarGroupDto, error) {
 	var appVarGroupDtos []*appVarGroup.AppVarGroupDto
-	sqlTemplate.SelectList(query_appVarGroup,objectConvert.Struct2Map(appVarGroupDto), func(db *gorm.DB) {
+	sqlTemplate.SelectList(query_appVarGroup, objectConvert.Struct2Map(appVarGroupDto), func(db *gorm.DB) {
 		db.Scan(&appVarGroupDtos)
-	},false)
+	}, false)
 
-	return appVarGroupDtos,nil
+	return appVarGroupDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*AppVarGroupDao) SaveAppVarGroup(appVarGroupDto appVarGroup.AppVarGroupDto) error{
-	return sqlTemplate.Insert(insert_appVarGroup,objectConvert.Struct2Map(appVarGroupDto),false)
+func (*AppVarGroupDao) SaveAppVarGroup(appVarGroupDto appVarGroup.AppVarGroupDto) error {
+	return sqlTemplate.Insert(insert_appVarGroup, objectConvert.Struct2Map(appVarGroupDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*AppVarGroupDao) UpdateAppVarGroup(appVarGroupDto appVarGroup.AppVarGroupDto) error{
-	return sqlTemplate.Update(update_appVarGroup,objectConvert.Struct2Map(appVarGroupDto),false)
+func (*AppVarGroupDao) UpdateAppVarGroup(appVarGroupDto appVarGroup.AppVarGroupDto) error {
+	return sqlTemplate.Update(update_appVarGroup, objectConvert.Struct2Map(appVarGroupDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*AppVarGroupDao) DeleteAppVarGroup(appVarGroupDto appVarGroup.AppVarGroupDto) error{
-	return sqlTemplate.Delete(delete_appVarGroup,objectConvert.Struct2Map(appVarGroupDto),false)
+func (*AppVarGroupDao) DeleteAppVarGroup(appVarGroupDto appVarGroup.AppVarGroupDto) error {
+	return sqlTemplate.Delete(delete_appVarGroup, objectConvert.Struct2Map(appVarGroupDto), false)
 }

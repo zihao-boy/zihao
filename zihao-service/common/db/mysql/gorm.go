@@ -1,33 +1,36 @@
 package mysql
 
 import (
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/kataras/golog"
 	"github.com/zihao-boy/zihao/zihao-service/config"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var G_DB *gorm.DB
 
 func InitGorm() {
 	var (
-		err  error
-		db   *gorm.DB
+		err    error
+		db     *gorm.DB
 		config = config.G_DBConfig
 		//root:root@tcp(localhost:3306)/bst?charset=utf8&parseTime=True&loc=Local
 		url = config.DBConnUrl()
 	)
-	if db, err = gorm.Open(config.Mysql.Dialect, url); err != nil {
+
+	db, err = gorm.Open(mysql.New(mysql.Config{
+		DSN:                       url,   // DSN data source name
+		DefaultStringSize:         256,   // string 类型字段的默认长度
+		DisableDatetimePrecision:  true,  // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
+		DontSupportRenameIndex:    true,  // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
+		DontSupportRenameColumn:   true,  // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
+		SkipInitializeWithVersion: false, // 根据当前 MySQL 版本自动配置
+	}), &gorm.Config{})
+
+	if err != nil {
 		goto ERR
 	}
-	if err = db.DB().Ping(); err != nil {
-		goto ERR
-	}
-	//一个坑，不设置这个参数，gorm会把表名转义后加个s，导致找不到数据库的表
-	db.SingularTable(true)
-	db.LogMode(config.Mysql.ShowSql)
-	db.DB().SetMaxOpenConns(config.Mysql.MaxOpenConns)
-	db.DB().SetMaxIdleConns(config.Mysql.MaxIdleConns)
+
 	G_DB = db
 	return
 ERR:

@@ -22,6 +22,10 @@ func (r *Local) SetToken(format string, id string, token string) (err error) {
 
 func (r *Local) GetToken(format, id string) (token string, err error) {
 	value, _ := r.client.Get(fmt.Sprintf(format, id))
+	if value == nil {
+		token = ""
+		return
+	}
 	token = value.(string)
 	return
 }

@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/hero"
-	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
+	"github.com/zihao-boy/zihao/zihao-service/common/cache/factory"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
 	"github.com/zihao-boy/zihao/zihao-service/common/jwt"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/result"
@@ -13,7 +13,6 @@ import (
 type UserController struct {
 	userService service.UserService
 }
-
 
 func UserControllerRouter(party iris.Party) {
 	var (
@@ -36,27 +35,26 @@ func UserControllerRouter(party iris.Party) {
 
 /**
 登录处理类
- */
+*/
 func (aus *UserController) login(ctx iris.Context) {
-	 resultDto,userDto := aus.userService.Login(ctx);
+	resultDto, userDto := aus.userService.Login(ctx)
 
-	 if userDto != nil{
-		 token, _ := jwt.G_JWT.GenerateToken(userDto)
-		 //token 保存至redis
-		 redis.G_Redis.SetToken(constants.REDIS_ADMIN_FORMAT, userDto.UserId,token)
-		 ctx.SetCookieKV(jwt.DEFAULT_TOKEN,token);
-	 }
+	if userDto != nil {
+		token, _ := jwt.G_JWT.GenerateToken(userDto)
+		//token 保存至redis
+		factory.SetToken(constants.REDIS_ADMIN_FORMAT, userDto.UserId, token)
+		ctx.SetCookieKV(jwt.DEFAULT_TOKEN, token)
+	}
 
 	ctx.JSON(resultDto)
 }
-
 
 /**
 退出登录处理类
 */
 func (aus *UserController) logout(ctx iris.Context) {
 
-	ctx.RemoveCookie(jwt.DEFAULT_TOKEN);
+	ctx.RemoveCookie(jwt.DEFAULT_TOKEN)
 
 	ctx.JSON(result.Success())
 }
@@ -65,7 +63,7 @@ func (aus *UserController) logout(ctx iris.Context) {
 登录处理类
 */
 func (aus *UserController) changePwd(ctx iris.Context) {
-	resultDto := aus.userService.ChangePwd(ctx);
+	resultDto := aus.userService.ChangePwd(ctx)
 	ctx.JSON(resultDto)
 }
 
@@ -73,6 +71,6 @@ func (aus *UserController) changePwd(ctx iris.Context) {
 登录处理类
 */
 func (aus *UserController) getUserInfo(ctx iris.Context) {
-	resultDto := aus.userService.GetUserInfo(ctx);
+	resultDto := aus.userService.GetUserInfo(ctx)
 	ctx.JSON(resultDto)
 }

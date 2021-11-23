@@ -10,6 +10,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlite"
 	"github.com/zihao-boy/zihao/zihao-service/common/utils"
 	"github.com/zihao-boy/zihao/zihao-service/config"
+	"gorm.io/gorm"
 )
 
 const (
@@ -73,6 +74,8 @@ func ParseSql(sql string, param map[string]interface{}) (string, []interface{}) 
 
 	//处理参数
 	newSql, sqlParams = parseParam(newSql, param)
+
+	fmt.Print("------------------sql:", newSql, "-----------param:", sqlParams)
 
 	return newSql, sqlParams
 }
@@ -228,7 +231,7 @@ for (String oSql : oSqls) {
 /**
 封装 查询列表
 */
-func SelectList(sql string, param map[string]interface{}, result interface{}, cacheSql bool) {
+func SelectList(sql string, param map[string]interface{}, callback func(db *gorm.DB), cacheSql bool) {
 	var (
 		newSql    string
 		sqlParams []interface{}
@@ -246,16 +249,12 @@ func SelectList(sql string, param map[string]interface{}, result interface{}, ca
 	dbSwatch := config.G_AppConfig.Db
 	if Cache_mysql == dbSwatch {
 		db := mysql.G_DB.Raw(newSql, sqlParams...)
-		if err := db.Scan(&result).Error; err != nil {
-			return
-		}
+		callback(db)
 	}
 
 	if Cache_sqlite == dbSwatch {
-		db, _ := sqlite.S_DB.Query(newSql, sqlParams...)
-		if err := db.Scan(&result); err != nil {
-			return
-		}
+		db := sqlite.S_DB.Raw(newSql, sqlParams...)
+		callback(db)
 	}
 
 }
@@ -263,7 +262,7 @@ func SelectList(sql string, param map[string]interface{}, result interface{}, ca
 /**
 封装 查询单个
 */
-func SelectOne(sql string, param map[string]interface{}, result interface{}, cacheSql bool) {
+func SelectOne(sql string, param map[string]interface{}, callback func(db *gorm.DB), cacheSql bool) {
 	var (
 		newSql    string
 		sqlParams []interface{}
@@ -278,16 +277,12 @@ func SelectOne(sql string, param map[string]interface{}, result interface{}, cac
 	dbSwatch := config.G_AppConfig.Db
 	if Cache_mysql == dbSwatch {
 		db := mysql.G_DB.Raw(newSql, sqlParams...)
-		if err := db.Scan(&result).Error; err != nil {
-			return
-		}
+		callback(db)
 	}
 
 	if Cache_sqlite == dbSwatch {
-		db, _ := sqlite.S_DB.Query(newSql, sqlParams...)
-		if err := db.Scan(&result); err != nil {
-			return
-		}
+		db := sqlite.S_DB.Raw(newSql, sqlParams...)
+		callback(db)
 	}
 }
 
@@ -307,9 +302,16 @@ func Insert(sql string, param map[string]interface{}, cacheSql bool) error {
 		return errors.New("sql 配置错误 值为空")
 	}
 	newSql, sqlParams = ParseSql(sql, param)
-	db := mysql.G_DB.Exec(newSql, sqlParams...)
-
-	return db.Error
+	dbSwatch := config.G_AppConfig.Db
+	if Cache_mysql == dbSwatch {
+		db := mysql.G_DB.Exec(newSql, sqlParams...)
+		return db.Error
+	}
+	if Cache_sqlite == dbSwatch {
+		db := sqlite.S_DB.Exec(newSql, sqlParams...)
+		return db.Error
+	}
+	return nil
 }
 
 /**
@@ -325,8 +327,17 @@ func Update(sql string, param map[string]interface{}, cacheSql bool) error {
 		sql = serviceSql.SqlText
 	}
 	newSql, sqlParams = ParseSql(sql, param)
-	db := mysql.G_DB.Exec(newSql, sqlParams...)
-	return db.Error
+	//db := mysql.G_DB.Exec(newSql, sqlParams...)
+	dbSwatch := config.G_AppConfig.Db
+	if Cache_mysql == dbSwatch {
+		db := mysql.G_DB.Exec(newSql, sqlParams...)
+		return db.Error
+	}
+	if Cache_sqlite == dbSwatch {
+		db := sqlite.S_DB.Exec(newSql, sqlParams...)
+		return db.Error
+	}
+	return nil
 }
 
 /**
@@ -342,6 +353,15 @@ func Delete(sql string, param map[string]interface{}, cacheSql bool) error {
 		sql = serviceSql.SqlText
 	}
 	newSql, sqlParams = ParseSql(sql, param)
-	db := mysql.G_DB.Exec(newSql, sqlParams...)
-	return db.Error
+	//db := mysql.G_DB.Exec(newSql, sqlParams...)
+	dbSwatch := config.G_AppConfig.Db
+	if Cache_mysql == dbSwatch {
+		db := mysql.G_DB.Exec(newSql, sqlParams...)
+		return db.Error
+	}
+	if Cache_sqlite == dbSwatch {
+		db := sqlite.S_DB.Exec(newSql, sqlParams...)
+		return db.Error
+	}
+	return nil
 }

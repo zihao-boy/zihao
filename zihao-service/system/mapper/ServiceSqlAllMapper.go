@@ -22,7 +22,6 @@ type ServiceSqlAllMapper struct {
 */
 func (*ServiceSqlAllMapper) GetServiceSqls(serviceSqlDto serviceSql.ServiceSqlDto) ([]*serviceSql.ServiceSqlDto, error) {
 	var serviceSqlDtos []*serviceSql.ServiceSqlDto
-
 	dbSwatch := config.G_AppConfig.Db
 
 	if Cache_mysql == dbSwatch {
@@ -33,8 +32,8 @@ func (*ServiceSqlAllMapper) GetServiceSqls(serviceSqlDto serviceSql.ServiceSqlDt
 	}
 
 	if Cache_sqlite == dbSwatch {
-		db, _ := sqlite.S_DB.Query("select * from service_sql")
-		if err := db.Scan(&serviceSqlDtos); err != nil {
+		db := sqlite.S_DB.Raw("select * from service_sql")
+		if err := db.Scan(&serviceSqlDtos).Error; err != nil {
 			return nil, err
 		}
 	}

@@ -1,14 +1,14 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/tenant"
+	"gorm.io/gorm"
 )
 
-const(
+const (
 	query_tenant_count string = `
 		select count(1) total from tenant t
 					where t.status_cd = '0'
@@ -97,54 +97,53 @@ VALUES(#TenantId#, #TenantName#, #Address#, #PersonName#, #Phone#, #Remark#)
 )
 
 type TenantDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*TenantDao) GetTenantCount(tenantDto tenant.TenantDto) (int64,error){
+func (*TenantDao) GetTenantCount(tenantDto tenant.TenantDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_tenant_count,objectConvert.Struct2Map(tenantDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_tenant_count, objectConvert.Struct2Map(tenantDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*TenantDao) GetTenants(tenantDto tenant.TenantDto) ([]*tenant.TenantDto,error){
+func (*TenantDao) GetTenants(tenantDto tenant.TenantDto) ([]*tenant.TenantDto, error) {
 	var tenantDtos []*tenant.TenantDto
-	sqlTemplate.SelectList(query_tenant,objectConvert.Struct2Map(tenantDto), func(db *gorm.DB) {
+	sqlTemplate.SelectList(query_tenant, objectConvert.Struct2Map(tenantDto), func(db *gorm.DB) {
 		db.Scan(&tenantDtos)
-	},false)
+	}, false)
 
-	return tenantDtos,nil
+	return tenantDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*TenantDao) SaveTenant(tenantDto tenant.TenantDto) error{
-	return sqlTemplate.Insert(insert_tenant,objectConvert.Struct2Map(tenantDto),false)
+func (*TenantDao) SaveTenant(tenantDto tenant.TenantDto) error {
+	return sqlTemplate.Insert(insert_tenant, objectConvert.Struct2Map(tenantDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*TenantDao) UpdateTenant(tenantDto tenant.TenantDto) error{
-	return sqlTemplate.Update(update_tenant,objectConvert.Struct2Map(tenantDto),false)
+func (*TenantDao) UpdateTenant(tenantDto tenant.TenantDto) error {
+	return sqlTemplate.Update(update_tenant, objectConvert.Struct2Map(tenantDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*TenantDao) DeleteTenant(tenantDto tenant.TenantDto) error{
-	return sqlTemplate.Delete(delete_tenant,objectConvert.Struct2Map(tenantDto),false)
+func (*TenantDao) DeleteTenant(tenantDto tenant.TenantDto) error {
+	return sqlTemplate.Delete(delete_tenant, objectConvert.Struct2Map(tenantDto), false)
 }

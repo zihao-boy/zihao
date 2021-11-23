@@ -5,6 +5,7 @@ import (
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/monitor"
+	"gorm.io/gorm"
 )
 
 const (
@@ -113,7 +114,9 @@ func (*MonitorHostGroupDao) GetMonitorHostGroupCount(monitorHostGroupDto monitor
 		err     error
 	)
 
-	sqlTemplate.SelectOne(query_monitorHostGroup_count, objectConvert.Struct2Map(monitorHostGroupDto), &pageDto, false)
+	sqlTemplate.SelectOne(query_monitorHostGroup_count, objectConvert.Struct2Map(monitorHostGroupDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
 	return pageDto.Total, err
 }
@@ -123,7 +126,9 @@ func (*MonitorHostGroupDao) GetMonitorHostGroupCount(monitorHostGroupDto monitor
 */
 func (*MonitorHostGroupDao) GetMonitorHostGroups(monitorHostGroupDto monitor.MonitorHostGroupDto) ([]*monitor.MonitorHostGroupDto, error) {
 	var monitorHostGroupDtos []*monitor.MonitorHostGroupDto
-	sqlTemplate.SelectList(query_monitorHostGroup, objectConvert.Struct2Map(monitorHostGroupDto), &monitorHostGroupDtos, false)
+	sqlTemplate.SelectList(query_monitorHostGroup, objectConvert.Struct2Map(monitorHostGroupDto), func(db *gorm.DB) {
+		db.Scan(&monitorHostGroupDtos)
+	}, false)
 
 	return monitorHostGroupDtos, nil
 }

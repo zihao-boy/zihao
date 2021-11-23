@@ -17,7 +17,7 @@ func (r *Local) SaveServiceSql(serviceSqlDto serviceSql.ServiceSqlDto) (err erro
 
 func (r *Local) GetServiceSql(sqlCode string) (serviceSql serviceSql.ServiceSqlDto, err error) {
 	data, _ := r.client.Get(sqlCode)
-	json.Unmarshal([]byte(data.(string)), &serviceSql)
+	json.Unmarshal(data.([]byte), &serviceSql)
 	return serviceSql, err
 }
 
@@ -31,6 +31,8 @@ func InitServiceSql() {
 	)
 
 	serviceSqlDtos, err = serviceSqlAllMapper.GetServiceSqls(serviceSqlDto)
+
+	fmt.Print("123123", serviceSqlDtos)
 
 	if err != nil {
 		fmt.Print("加载sql 失败", err)

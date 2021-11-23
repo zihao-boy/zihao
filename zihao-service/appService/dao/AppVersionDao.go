@@ -1,14 +1,14 @@
 package dao
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/zihao-boy/zihao/zihao-service/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/zihao-service/common/objectConvert"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/appVersion"
+	"gorm.io/gorm"
 )
 
-const(
+const (
 	query_appVersion_count string = `
 		select count(1) total
 			from app_version t
@@ -69,54 +69,53 @@ VALUES (#AvId#,#Name#,#Remark#,#TenantId#)
 )
 
 type AppVersionDao struct {
-
 }
 
 /**
 查询用户
 */
-func (*AppVersionDao) GetAppVersionCount(appVersionDto appVersion.AppVersionDto) (int64,error){
+func (*AppVersionDao) GetAppVersionCount(appVersionDto appVersion.AppVersionDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
-		err error
+		err     error
 	)
 
-	sqlTemplate.SelectOne(query_appVersion_count,objectConvert.Struct2Map(appVersionDto), func(db *gorm.DB) {
-		err  = db.Scan(&pageDto).Error
-	},false)
+	sqlTemplate.SelectOne(query_appVersion_count, objectConvert.Struct2Map(appVersionDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
 
-
-	return pageDto.Total,err
+	return pageDto.Total, err
 }
+
 /**
 查询用户
 */
-func (*AppVersionDao) GetAppVersions(appVersionDto appVersion.AppVersionDto) ([]*appVersion.AppVersionDto,error){
+func (*AppVersionDao) GetAppVersions(appVersionDto appVersion.AppVersionDto) ([]*appVersion.AppVersionDto, error) {
 	var appVersionDtos []*appVersion.AppVersionDto
-	sqlTemplate.SelectList(query_appVersion,objectConvert.Struct2Map(appVersionDto), func(db *gorm.DB) {
+	sqlTemplate.SelectList(query_appVersion, objectConvert.Struct2Map(appVersionDto), func(db *gorm.DB) {
 		db.Scan(&appVersionDtos)
-	},false)
+	}, false)
 
-	return appVersionDtos,nil
+	return appVersionDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*AppVersionDao) SaveAppVersion(appVersionDto appVersion.AppVersionDto) error{
-	return sqlTemplate.Insert(insert_appVersion,objectConvert.Struct2Map(appVersionDto),false)
+func (*AppVersionDao) SaveAppVersion(appVersionDto appVersion.AppVersionDto) error {
+	return sqlTemplate.Insert(insert_appVersion, objectConvert.Struct2Map(appVersionDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*AppVersionDao) UpdateAppVersion(appVersionDto appVersion.AppVersionDto) error{
-	return sqlTemplate.Update(update_appVersion,objectConvert.Struct2Map(appVersionDto),false)
+func (*AppVersionDao) UpdateAppVersion(appVersionDto appVersion.AppVersionDto) error {
+	return sqlTemplate.Update(update_appVersion, objectConvert.Struct2Map(appVersionDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*AppVersionDao) DeleteAppVersion(appVersionDto appVersion.AppVersionDto) error{
-	return sqlTemplate.Delete(delete_appVersion,objectConvert.Struct2Map(appVersionDto),false)
+func (*AppVersionDao) DeleteAppVersion(appVersionDto appVersion.AppVersionDto) error {
+	return sqlTemplate.Delete(delete_appVersion, objectConvert.Struct2Map(appVersionDto), false)
 }
