@@ -2,14 +2,15 @@ package jwt
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/kataras/iris/v12/context"
-	"github.com/zihao-boy/zihao/zihao-service/common/cache/redis"
+	"github.com/zihao-boy/zihao/zihao-service/common/cache/factory"
 	"github.com/zihao-boy/zihao/zihao-service/common/constants"
 	"github.com/zihao-boy/zihao/zihao-service/common/sysError"
 	"github.com/zihao-boy/zihao/zihao-service/config"
 	"github.com/zihao-boy/zihao/zihao-service/entity/dto/user"
-	"time"
 )
 
 var G_JWT *JWT
@@ -19,10 +20,10 @@ type (
 		*IJwt
 	}
 	Claims struct {
-		UserId     string  `json:"userId"`
+		UserId   string `json:"userId"`
 		RealName string `json:"realName"`
-		Phone  string `json:"phone"`
-		Enable bool   `json:"enable"`
+		Phone    string `json:"phone"`
+		Enable   bool   `json:"enable"`
 		TenantId string `json:"tenantId"`
 		jwt.StandardClaims
 	}
@@ -51,7 +52,7 @@ func (j *JWT) ServeHTTP(ctx *context.Context) (err error) {
 		return err
 	}
 	// 检查redis缓存
-	if _, err = redis.G_Redis.GetToken(constants.REDIS_ADMIN_FORMAT, user.UserId); err != nil {
+	if _, err = factory.GetToken(constants.REDIS_ADMIN_FORMAT, user.UserId); err != nil {
 		return err
 	}
 	// token校验通过，设置当前用户id到上下文
@@ -65,7 +66,7 @@ func (j *JWT) ServeWebsocket(ctx context.Context) {
 	var (
 		token *jwt.Token
 		user  *user.UserDto
-		err error
+		err   error
 	)
 	if token, err = j.Check(ctx); err != nil {
 		return
@@ -74,7 +75,7 @@ func (j *JWT) ServeWebsocket(ctx context.Context) {
 	if user, err = j.Token2Model(token); err != nil {
 		return
 	}
-	if _, err = redis.G_Redis.GetToken(constants.REDIS_ADMIN_FORMAT, user.UserId); err != nil {
+	if _, err = factory.GetToken(constants.REDIS_ADMIN_FORMAT, user.UserId); err != nil {
 		return
 	}
 	// If everything ok then call next.
@@ -117,9 +118,9 @@ func (j *JWT) Token2Model(token *jwt.Token) (*user.UserDto, error) {
 	realName = mapClaims["realName"].(string)
 	tenantId = mapClaims["tenantId"].(string)
 	return &user.UserDto{
-		UserId:     id,
-		Phone:  phone,
-		RealName:realName,
+		UserId:   id,
+		Phone:    phone,
+		RealName: realName,
 		TenantId: tenantId,
 	}, nil
 }
@@ -131,4 +132,3 @@ func (j *JWT) TokenString2Model(tokenString string) (user *user.UserDto, err err
 	}
 	return j.Token2Model(token)
 }
-
