@@ -20,4 +20,5 @@ type HostDto struct {
 	TenantId   string `json:"tenantId" sql:"-"`
 	CreateTime string `json:"createTime" sql:"-"`
 	StatusCd   string `json:"statusCd" sql:"-"`
+	State      string `json:"state"`
 }

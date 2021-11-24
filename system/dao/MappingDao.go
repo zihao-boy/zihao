@@ -59,31 +59,31 @@ values(#Domain#,#Name#,#Zkeys#,#Value#,#Remark#)
 `
 
 	update_mapping string = `
-	update mapping t set
+	update mapping  set
 		$if Domain != '' then
-		 t.domain = #Domain#,
+		 domain = #Domain#,
 		$endif
 		$if Name != '' then
-		 t.name = #Name#,
+		 name = #Name#,
 		$endif
 		$if Zkeys != '' then
-		 t.zkeys=#Zkeys#,
+		 zkeys=#Zkeys#,
 		$endif
 		$if Value != '' then
-		 t.value = #Value#,
+		 value = #Value#,
 		$endif
 		$if Remark != '' then
-		 t.remark = #Remark#,
+		 remark = #Remark#,
 		$endif
-		t.status_cd = '0'
-		where t.status_cd = '0'
-		  and t.id = #Id#
+		status_cd = '0'
+		where status_cd = '0'
+		  and id = #Id#
 	`
 	delete_mapping string = `
-	update mapping t set
-		t.status_cd = '1'
-		where t.status_cd = '0'
-		  and t.id = #Id#
+	update mapping set
+		status_cd = '1'
+		where status_cd = '0'
+		  and id = #Id#
 	`
 
 	query_dict string = `

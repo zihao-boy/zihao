@@ -41,6 +41,7 @@ func HostControllerRouter(party iris.Party) {
 
 	adinMenu.Get("/getHostDisk", hero.Handler(aus.getHostDisk))
 
+	adinMenu.Post("/controlHost", hero.Handler(aus.controlHost))
 }
 
 /**
@@ -156,6 +157,15 @@ func (aus *HostController) getHostPort(ctx iris.Context) {
 */
 func (aus *HostController) getHostDisk(ctx iris.Context) {
 	reslut := aus.hostService.GetHostDisk(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+控制主机
+**/
+func (aus *HostController) controlHost(ctx iris.Context) {
+	reslut := aus.hostService.ControlHost(ctx)
 
 	ctx.JSON(reslut)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/entity/dto/container"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/monitor"
@@ -219,6 +220,7 @@ func (hostService *HostService) SaveHost(ctx iris.Context) result.ResultDto {
 
 	hostDto.TenantId = user.TenantId
 	hostDto.HostId = seq.Generator()
+	hostDto.State = "1001"
 
 	err = hostService.hostDao.SaveHost(hostDto)
 	if err != nil {
@@ -558,5 +560,37 @@ func (hostService *HostService) GetHostDisk(ctx iris.Context) result.ResultDto {
 	}
 
 	return result.SuccessData(diskDtos)
+
+}
+
+/**
+  控制主机
+*/
+func (hostService *HostService) ControlHost(ctx iris.Context) result.ResultDto {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto = host.HostDto{}
+	)
+	if err := ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	hostDto.TenantId = user.TenantId
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	go shell.ExecShell(*hostDtos[0])
+
+	hostDto.State = "3003"
+	hostService.hostDao.UpdateHost(hostDto)
+
+	return result.Success()
 
 }

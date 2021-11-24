@@ -130,16 +130,11 @@
                             errInfo: "磁盘大小不是有效数字"
                         },
                     ],
-
-
-
-
                 });
             },
             saveHostInfo: function () {
                 if (!vc.component.addHostValidate()) {
                     vc.toast(vc.validate.errInfo);
-
                     return;
                 }
 

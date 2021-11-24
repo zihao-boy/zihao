@@ -4,6 +4,7 @@ import (
 	"github.com/zihao-boy/zihao/common/cache/local"
 	"github.com/zihao-boy/zihao/common/cache/redis"
 	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/mapping"
 	"github.com/zihao-boy/zihao/entity/dto/serviceSql"
 )
 
@@ -134,5 +135,39 @@ func InitServiceSql() {
 
 	if Cache_local == cacheSwatch {
 		local.InitServiceSql()
+	}
+}
+
+func SaveMapping(mappingDto mapping.MappingDto) (err error) {
+	cacheSwatch := config.G_AppConfig.Cache
+	if Cache_redis == cacheSwatch {
+		err = redis.G_Redis.SaveMapping(mappingDto)
+	}
+	if Cache_local == cacheSwatch {
+		err = local.G_Local.SaveMapping(mappingDto)
+	}
+	return err
+}
+
+func GetMapping(zKey string) (mapping mapping.MappingDto, err error) {
+	cacheSwatch := config.G_AppConfig.Cache
+	if Cache_redis == cacheSwatch {
+		mapping, err = redis.G_Redis.GetMapping(zKey)
+	}
+	if Cache_local == cacheSwatch {
+		mapping, err = local.G_Local.GetMapping(zKey)
+	}
+	return mapping, err
+}
+
+// Init
+func InitMapping() {
+	cacheSwatch := config.G_AppConfig.Cache
+	if Cache_redis == cacheSwatch {
+		redis.InitMapping()
+	}
+
+	if Cache_local == cacheSwatch {
+		local.InitMapping()
 	}
 }

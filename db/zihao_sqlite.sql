@@ -213,15 +213,14 @@ INSERT INTO `host_group` VALUES ('fd96a59e-f04b-49d7-bd6a-0c9d284940e2', '生产
 -- ----------------------------
 DROP TABLE IF EXISTS `mapping`;
 CREATE TABLE `mapping` (
-  `id` int(11) NOT NULL,
+  `id` INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL ,
   `domain` varchar(50) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `zkeys` varchar(100) NOT NULL,
-  `value` varchar(1000) NOT NULL,
-  `remark` varchar(200) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
-  PRIMARY KEY (`id`)
+  `name` varchar(50) NOT NULL ,
+  `zkeys` varchar(100) NOT NULL ,
+  `value` varchar(1000) NOT NULL ,
+  `remark` varchar(200) DEFAULT NULL ,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `status_cd` varchar(2) NOT NULL DEFAULT '0' 
 );
 
 -- ----------------------------

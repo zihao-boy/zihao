@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/kataras/iris/v12"
+	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/entity/dto/mapping"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/system/dao"
@@ -99,6 +100,8 @@ func (mappingService *MappingService) SaveMappings(ctx iris.Context) result.Resu
 		return result.Error(err.Error())
 	}
 
+	go factory.InitMapping()
+
 	return result.SuccessData(mappingDto)
 
 }
@@ -120,6 +123,7 @@ func (mappingService *MappingService) UpdateMappings(ctx iris.Context) result.Re
 	if err != nil {
 		return result.Error(err.Error())
 	}
+	go factory.InitMapping()
 
 	return result.SuccessData(mappingDto)
 

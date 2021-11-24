@@ -83,6 +83,37 @@
             
             _openConsole:function(_host){
                 vc.jumpToPage('/index.html#/pages/admin/hostDetailManage?hostId='+_host.hostId)
+            },
+            _controlHost:function(_host){
+                console.log(JSON.stringify(_host))
+                vc.http.apiPost(
+                    '/host/controlHost',
+                    JSON.stringify(_host),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            vc.emit('hostManage', 'listHost', {});
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+                        vc.toast(errInfo);
+                    });
+            },
+            _getStateName:function(_state){
+                if(_state == '1001'){
+                    return '未管理';
+                }else if(_state == '2002'){
+                    return '正常';
+                }else{
+                    return '处理中';
+                }
             }
 
 
