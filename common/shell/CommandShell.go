@@ -17,6 +17,7 @@ func ExecShell(host host.HostDto, cmd string) error {
 	//defer client.Close()
 
 	if err != nil {
+		fmt.Print("链接主机失败", err)
 		return err
 	}
 	session, err := client.NewSession()
