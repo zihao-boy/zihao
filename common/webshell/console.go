@@ -10,7 +10,7 @@ import (
 
 	"github.com/kataras/iris/v12/websocket"
 	"github.com/zihao-boy/zihao/assets/dao"
-	"github.com/zihao-boy/zihao/common/cache/redis"
+	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 
 	gossh "golang.org/x/crypto/ssh"
@@ -226,7 +226,7 @@ func CloseSsh(connId string) {
 
 func checkUserToken(token string) bool {
 
-	cacheToken, err := redis.G_Redis.GetValueAndRemove(host_token)
+	cacheToken, err := factory.GetValueAndRemove(host_token)
 
 	if err != nil {
 		return false
