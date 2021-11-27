@@ -37,12 +37,7 @@ function docker_install()
         yum makecache fast
         yum -y install docker-ce
         service docker start
-        cat>/etc/docker/daemon.json<<EOF
-        {
-        "log-driver":"json-file",
-        "log-opts": {"max-size":"500m", "max-file":"3"}
-        }
-        EOF
+        cat>/etc/docker/daemon.json<<EOF{"log-driver":"json-file","log-opts":{"max-size":"500m","max-file":"3"}}EOF
 
         systemctl daemon-reload
         systemctl restart docker
