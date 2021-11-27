@@ -1,18 +1,21 @@
 #!/bin/bash
 
+ip=$1
+slaveId=$2
+
 
 function installSlave(){
     mkdir -p /zihao/slave
 
     cd /zihao/slave/
 
-    rf -f conf
+    rm -rf conf
     mkdir conf
 
-    echo "mastIp=$1" > conf/zihao.properties
-    echo "slaveId=$2" > conf/zihao.properties
+    echo "mastIp=$ip" >> conf/zihao.properties
+    echo "slaveId=$slaveId" >> conf/zihao.properties
 
-    wget http://$1:7000/download/slave.tar
+    wget http://$ip:7000/download/slave.tar
 
     tar -xvf slave.tar  
 
@@ -37,8 +40,9 @@ function docker_install()
         yum makecache fast
         yum -y install docker-ce
         service docker start
-        cat>/etc/docker/daemon.json<<EOF{"log-driver":"json-file","log-opts":{"max-size":"500m","max-file":"3"}}EOF
-
+        cat>/etc/docker/daemon.json<<EOF
+{"log-driver":"json-file","log-opts":{"max-size":"500m","max-file":"3"}}
+EOF
         systemctl daemon-reload
         systemctl restart docker
         groupadd docker
