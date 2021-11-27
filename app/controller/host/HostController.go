@@ -42,6 +42,8 @@ func HostControllerRouter(party iris.Party) {
 	adinMenu.Get("/getHostDisk", hero.Handler(aus.getHostDisk))
 
 	adinMenu.Post("/controlHost", hero.Handler(aus.controlHost))
+
+	adinMenu.Post("/slaveHealth", hero.Handler(aus.slaveHealth))
 }
 
 /**
@@ -166,6 +168,15 @@ func (aus *HostController) getHostDisk(ctx iris.Context) {
 **/
 func (aus *HostController) controlHost(ctx iris.Context) {
 	reslut := aus.hostService.ControlHost(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+控制主机
+**/
+func (aus *HostController) slaveHealth(ctx iris.Context) {
+	reslut := aus.hostService.SlaveHealth(ctx)
 
 	ctx.JSON(reslut)
 }

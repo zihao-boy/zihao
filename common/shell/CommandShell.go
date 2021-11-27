@@ -1,12 +1,11 @@
 package shell
 
 import (
-	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"golang.org/x/crypto/ssh"
 )
 
-func ExecShell(host host.HostDto) error {
+func ExecShell(host host.HostDto, cmd string) error {
 	client, err := ssh.Dial("tcp", host.Ip, &ssh.ClientConfig{
 		User:            host.Username,
 		Auth:            []ssh.AuthMethod{ssh.Password(host.Passwd)},
@@ -23,7 +22,7 @@ func ExecShell(host host.HostDto) error {
 	defer client.Close()
 
 	// 使用内存
-	session.Output(constants.DownLoad_slave_shell)
+	session.Output(cmd)
 
 	return nil
 

@@ -35,7 +35,6 @@ func getAuthorization() (auth string, err error) {
 		"password": "password",
 	}
 
-
 	// 2、请求获取授权码
 	resp, err := SendRequest("https://ip:port/auth", data, nil, "POST")
 	if err != nil {
@@ -88,4 +87,17 @@ func SendRequest(url string, data map[string]interface{}, addHeaders map[string]
 	return
 }
 
+// POST 发送request
+func Post(url string, data map[string]interface{}, addHeaders map[string]string) (resp string, err error) {
+	res, err := SendRequest(url, data, addHeaders, "POST")
+	resp = string(res)
+	return
+}
 
+// GET 发送request
+func Get(url string, addHeaders map[string]string) (resp string, err error) {
+	data := map[string]interface{}{}
+	res, err := SendRequest(url, data, addHeaders, "GET")
+	resp = string(res)
+	return
+}

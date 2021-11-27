@@ -2,6 +2,12 @@ package host
 
 import "github.com/zihao-boy/zihao/entity/dto"
 
+const (
+	State_w string = "1001" // 未管理
+	State_N string = "2002" // 正常
+	State_D string = "3003" // 处理中
+)
+
 /**
 主机 实体
 */

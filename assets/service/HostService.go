@@ -586,9 +586,49 @@ func (hostService *HostService) ControlHost(ctx iris.Context) result.ResultDto {
 		return result.Error("主机不存在")
 	}
 
-	go shell.ExecShell(*hostDtos[0])
+	mapping, err := factory.GetMapping("MASTER_IP")
+	var masterIp string
+	if err != nil {
+		masterIp = "127.0.0.1"
+	} else {
+		masterIp = mapping.Value
+	}
 
-	hostDto.State = "3003"
+	shellScript := strings.ReplaceAll(constants.DownLoad_slave_shell, "$zihao_ip", masterIp)
+
+	shellScript = strings.ReplaceAll(shellScript, "$zihao_hostId", hostDtos[0].HostId)
+
+	go shell.ExecShell(*hostDtos[0], shellScript)
+
+	hostDto.State = host.State_D
+	hostService.hostDao.UpdateHost(hostDto)
+
+	return result.Success()
+
+}
+
+/**
+  控制主机
+*/
+func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
+
+	var (
+		hostDto = host.HostDto{}
+	)
+	if err := ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	hostDto.State = host.State_N
 	hostService.hostDao.UpdateHost(hostDto)
 
 	return result.Success()
