@@ -9,8 +9,8 @@ WSSHClient.prototype._generateEndpoint = function () {
     }
     //window.location.host
     //var endpoint = protocol+'localhost:7000/app/console/ssh';
-    var endpoint = protocol+'192.168.1.34:7000/app/console/ssh';
-    //var endpoint = protocol + window.location.host + '/app/console/ssh';
+    //var endpoint = protocol+'192.168.1.34:7000/app/console/ssh';
+    var endpoint = protocol + window.location.host + '/app/console/ssh';
     return endpoint;
 };
 
