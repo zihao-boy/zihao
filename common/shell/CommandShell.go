@@ -1,6 +1,8 @@
 package shell
 
 import (
+	"fmt"
+
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"golang.org/x/crypto/ssh"
 )
@@ -22,6 +24,7 @@ func ExecShell(host host.HostDto, cmd string) error {
 	defer client.Close()
 
 	// 使用内存
+	fmt.Print("主机执行指令", cmd)
 	session.Output(cmd)
 
 	return nil
