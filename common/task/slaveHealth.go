@@ -25,7 +25,7 @@ func doSlaveHealth() {
 	}
 	resp, err := httpReq.Post(url, data, nil)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Print(err.Error(), url, data)
 	}
 	fmt.Print(resp)
 }

@@ -11,7 +11,7 @@ func main() {
 	//加载配置文件
 
 	config.InitProp()
-	task.SlaveHealth()
+	go task.SlaveHealth()
 	app := iris.New()
 	router.HubSlave(app)
 	app.Get("/", func(ctx iris.Context) {
