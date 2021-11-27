@@ -1,15 +1,14 @@
 ## 后端文档说明
 
 
-#### 1.0 创建数据库和用户
+#### 1.0 如何安装
 
-```sql
+git clone https://github.com/zihao-boy/zihao.git
 
-./mysql -h127.0.0.1  -e "create user 'zihao'@'%' identified by 'zihao@12345678';"
-./mysql -h127.0.0.1  -e "flush privileges;"
-./mysql -h127.0.0.1  -e "CREATE DATABASE zihao ;"
-./mysql -h127.0.0.1  -e "grant all privileges on zihao.* to 'zihao'@'%' ;"
-```
+git build .
+
+./zihao > zihao.log &
+
 
 #### 主机需要实现内容
 
