@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/mapping"
 	"github.com/zihao-boy/zihao/entity/dto/serviceSql"
+	"github.com/zihao-boy/zihao/system/mapper"
 )
 
 type CacheFactory struct {
@@ -26,6 +27,10 @@ func Init() {
 	if Cache_local == cacheSwatch {
 		local.InitLocal()
 	}
+
+	var mapper = mapper.MappingAllMapper{}
+	var mappingDto = mapping.MappingDto{}
+	mapper.GetMappings(mappingDto)
 
 }
 
