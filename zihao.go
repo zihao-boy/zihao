@@ -27,6 +27,9 @@ func main() {
 	//初始化缓存信息
 	factory.InitServiceSql()
 
+	//初始化映射
+	factory.InitMapping()
+
 	//启动定时任务
 	var (
 		monitorJob = crontab.MonitorJob{}
