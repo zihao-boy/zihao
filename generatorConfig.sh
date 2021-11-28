@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+go-bindata -pkg resources -o config/ConfigData.go resources/...

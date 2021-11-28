@@ -1,0 +1,70 @@
+<div id = "chooseHostModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chooseHostModelLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="chooseHostModelLabel">选择主机</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class=" row">
+                    <div class="col-lg-12">
+                        <div class="ibox ">
+                            <div class="row">
+
+                                <div class="col-sm-7 m-b-xs">
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="input-group">
+                                        <input placeholder="输入主机名称" type="text" v-model="chooseHostInfo._currentHostName" class="form-control form-control-sm">
+                                        <span class="input-group-append">
+                                                <button type="button" class="btn btn-sm btn-primary" v-on:click="queryHosts()">查询</button>
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive" style="margin-top:15px">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                                                        <th class="text-center">主机ID</th>
+                            <th class="text-center">主机组</th>
+                            <th class="text-center">主机名称</th>
+                            <th class="text-center">主机IP</th>
+                            <th class="text-center">用户名</th>
+                            <th class="text-center">密码</th>
+                            <th class="text-center">CPU核数</th>
+                            <th class="text-center">内存</th>
+                            <th class="text-center">磁盘大小</th>
+                            <th class="text-center">操作</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="host in chooseHostInfo.hosts">
+                                                                        <td class="text-center">{{host.hostId}}</td>
+                            <td class="text-center">{{host.groupId}}</td>
+                            <td class="text-center">{{host.name}}</td>
+                            <td class="text-center">{{host.ip}}</td>
+                            <td class="text-center">{{host.username}}</td>
+                            <td class="text-center">{{host.passwd}}</td>
+                            <td class="text-center">{{host.cpu}}</td>
+                            <td class="text-center">{{host.mem}}</td>
+                            <td class="text-center">{{host.disk}}</td>
+
+                                            <td>
+                                                <button class="btn btn-primary btn-xs" v-on:click="chooseHost(host)">选择</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

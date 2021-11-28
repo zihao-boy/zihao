@@ -1,0 +1,64 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>编码映射信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewMappingInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectMappingInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择编码映射</button>
+
+                    <button type="button" v-if="viewMappingInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddMappingInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加编码映射</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >域：</label>
+                            <label class="">{{viewMappingInfo.domain}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >名称：</label>
+                            <label class="">{{viewMappingInfo.name}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >键：</label>
+                            <label class="">{{viewMappingInfo.keys}}</label>
+                        </div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >值：</label>
+                            <label class="">{{viewMappingInfo.value}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >备注：</label>
+                            <label class="">{{viewMappingInfo.remark}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addMapping"
+               callBackListener="viewMappingInfo"
+               callBackFunction="chooseMapping"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseMapping"
+               emitChooseMapping="viewMappingInfo"
+               emitLoadData="viewMappingInfo"
+    ></vc:create>
+</div>

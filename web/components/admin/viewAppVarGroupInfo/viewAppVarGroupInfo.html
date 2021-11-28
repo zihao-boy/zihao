@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>环境组信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewAppVarGroupInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectAppVarGroupInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择环境组</button>
+
+                    <button type="button" v-if="viewAppVarGroupInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddAppVarGroupInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加环境组</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >组名称：</label>
+                            <label class="">{{viewAppVarGroupInfo.avgName}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >组描述：</label>
+                            <label class="">{{viewAppVarGroupInfo.avgDesc}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addAppVarGroup"
+               callBackListener="viewAppVarGroupInfo"
+               callBackFunction="chooseAppVarGroup"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseAppVarGroup"
+               emitChooseAppVarGroup="viewAppVarGroupInfo"
+               emitLoadData="viewAppVarGroupInfo"
+    ></vc:create>
+</div>

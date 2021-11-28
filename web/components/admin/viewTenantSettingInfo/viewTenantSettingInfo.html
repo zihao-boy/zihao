@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>租户设置信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewTenantSettingInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectTenantSettingInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择租户设置</button>
+
+                    <button type="button" v-if="viewTenantSettingInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddTenantSettingInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加租户设置</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >规格：</label>
+                            <label class="">{{viewTenantSettingInfo.specCd}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >值：</label>
+                            <label class="">{{viewTenantSettingInfo.value}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addTenantSetting"
+               callBackListener="viewTenantSettingInfo"
+               callBackFunction="chooseTenantSetting"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseTenantSetting"
+               emitChooseTenantSetting="viewTenantSettingInfo"
+               emitLoadData="viewTenantSettingInfo"
+    ></vc:create>
+</div>

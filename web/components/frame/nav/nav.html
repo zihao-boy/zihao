@@ -1,0 +1,48 @@
+<div  id="nav">
+    <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="javascript:void(0)"
+                @click="_doMenu()"><i class="fa fa-bars"></i> </a>
+        </div>
+        <ul class="nav navbar-top-links navbar-right">
+            <li style="padding: 20px">
+                <span class="m-r-sm text-muted welcome-message">{{vc.i18n('welcome')}}，{{userName}}！</span>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell"></i> <span class="label label-primary">{{nav.total}}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-alerts">
+                    <li v-for="notice in nav.notices">
+                        <a v-on:click="_noticeDetail(notice)" class="dropdown-item">
+                            <div>
+                                <i class="fa fa-envelope fa-fw"></i> {{notice.title}}
+                                <span class="float-right text-muted small">{{notice.createTime}}</span>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                        <div class="text-center link-block">
+                            <a v-bind:href="nav.moreNoticeUrl" class="dropdown-item">
+                                <strong>{{vc.i18n('moreMsg')}}</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <a v-on:click="_viewDocument()">
+                    <i class="fa fa-question-circle-o"></i>
+                </a>
+            </li>
+            <li>
+                <a v-on:click="logout()">
+                    <i class="fa fa-sign-out"></i> {{vc.i18n('signOut')}}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

@@ -1,0 +1,30 @@
+<div>
+    <div>
+        <table class="footable table table-stripped toggle-arrow-tiny" style="margin-top:10px" data-page-size="10">
+            <thead>
+                <tr>
+                    <th class="text-center" width="30%">磁盘</th>
+                    <th data-hide="phone" class="text-center">总大小</th>
+                    <th data-hide="phone" class="text-center">空闲大小</th>
+                    <th data-hide="phone" class="text-center" width="30%">挂在目录</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="disk in hostDisksInfo.disks">
+                    <td class="text-center" width="30%">
+                        {{disk.diskName}}
+                    </td>
+                    <td class="text-center">
+                        {{disk.size}}
+                    </td>
+                    <td class="text-center">
+                        {{disk.freeSize}}
+                    </td>
+                    <td class="text-center" width="30%">
+                        {{disk.dir}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

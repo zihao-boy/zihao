@@ -1,0 +1,19 @@
+redis:
+  addr: dev.redis.java110.com:6379
+  password: hc
+  db: 1
+  poolSize: 100
+
+
+mysql:
+  dialect: mysql
+  host: dev.db.java110.com
+  port: 3306
+  user: zihao
+  password: zihao@12345678
+  database: zihao
+  charset: utf8
+  showSql: true
+  logLevel: debug
+  maxOpenConns: 800 # 最大打开连接数
+  maxIdleConns: 100 # 连接池的空闲数大小
