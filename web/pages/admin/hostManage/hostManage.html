@@ -66,6 +66,7 @@
                                 <th class="text-center">内存</th>
                                 <th class="text-center">磁盘大小</th>
                                 <th class="text-center">状态</th>
+                                <th class="text-center">在线</th>
                                 <th class="text-center">操作</th>
 
 
@@ -81,6 +82,7 @@
                                 <td class="text-center">{{host.mem}}</td>
                                 <td class="text-center">{{host.disk}}</td>
                                 <td class="text-center">{{_getStateName(host.state)}}</td>
+                                <td class="text-center">{{_getOnline(host.heartbeatTime)}}</td>
                                 <td class="text-center">
                                     <!-- <div class="btn-group">
                                         <button class="btn-white btn btn-xs"

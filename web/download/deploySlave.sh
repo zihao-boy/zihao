@@ -9,7 +9,7 @@ function installSlave(){
 
     cd /zihao/slave/
 
-    rm -rf conf
+    rm -rf conf slave*
     mkdir conf
 
     echo "mastIp=$ip" >> conf/zihao.properties

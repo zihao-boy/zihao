@@ -27,5 +27,5 @@ type HostDto struct {
 	CreateTime    string `json:"createTime" sql:"-"`
 	StatusCd      string `json:"statusCd" sql:"-"`
 	State         string `json:"state"`
-	HeartbeatTime string `json:"heartbeat_time"`
+	HeartbeatTime string `json:"heartbeatTime" sql:"-"`
 }

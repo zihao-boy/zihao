@@ -114,6 +114,19 @@
                 }else{
                     return '处理中';
                 }
+            },
+            _getOnline:function(_time){
+                if(!_time){
+                    return "离线";
+                }
+                _time = _time.replace('T'," ");
+                _time = _time.replace('Z',"");
+                let _date = new Date(_time);
+                if(new Date().getTime() - _date.getTime() < 2 * 60 * 1000){
+                    return "在线"
+                }
+
+                return "离线"
             }
 
 

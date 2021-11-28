@@ -5,6 +5,10 @@
 
 git clone https://github.com/zihao-boy/zihao.git
 
+国内建议开启代理
+export GO111MODULE=on
+export GOPROXY=https://goproxy.io
+
 git build .
 
 ./zihao > zihao.log &
