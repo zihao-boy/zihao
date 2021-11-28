@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/assets/dao"
@@ -221,6 +222,7 @@ func (hostService *HostService) SaveHost(ctx iris.Context) result.ResultDto {
 	hostDto.TenantId = user.TenantId
 	hostDto.HostId = seq.Generator()
 	hostDto.State = "1001"
+	hostDto.HeartbeatTime = time.Now().Format("2006-01-02 15:04:05")
 
 	err = hostService.hostDao.SaveHost(hostDto)
 	if err != nil {
@@ -629,6 +631,7 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 	}
 
 	hostDto.State = host.State_N
+	hostDto.HeartbeatTime = time.Now().Format("2006-01-02 15:04:05")
 	hostService.hostDao.UpdateHost(hostDto)
 
 	return result.Success()

@@ -176,6 +176,8 @@ CREATE TABLE `host` (
   PRIMARY KEY (`host_id`)
 );
 
+alter table host add column heartbeat_time datetime ;
+
 -- ----------------------------
 -- Records of host
 -- ----------------------------
