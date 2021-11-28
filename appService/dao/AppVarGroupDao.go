@@ -49,29 +49,29 @@ values(#AvgId#, #AvgName#, #AvgType#, #TenantId#, #AvgDesc#)
 `
 
 	update_appVarGroup string = `
-	update app_var_group t set
+	update app_var_group set
 	$if AvgName != '' then
-	t.avg_name = #AvgName#,
+	avg_name = #AvgName#,
 	$endif
 	$if AvgDesc != '' then
-	t.avg_desc = #AvgDesc#,
+	avg_desc = #AvgDesc#,
 	$endif
-	t.status_cd ='0'
-	where t.status_cd = '0'
+	status_cd ='0'
+	where status_cd = '0'
 	$if TenantId != '' then
-	and t.tenant_id = #TenantId#
+	and tenant_id = #TenantId#
 	$endif
 	$if AvgId != '' then
-	and t.avg_id = #AvgId#
+	and avg_id = #AvgId#
 	$endif
 	`
 	delete_appVarGroup string = `
-	update app_var_group t set
-                          t.status_cd = '1'
-                          where t.status_cd = '0'
+	update app_var_group  set
+                          status_cd = '1'
+                          where status_cd = '0'
 
 		$if AvgId != '' then
-		and t.avg_id = #AvgId#
+		and avg_id = #AvgId#
 		$endif
 	`
 )
