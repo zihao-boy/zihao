@@ -3515,3 +3515,14 @@ CREATE TABLE `u_user` (
 INSERT INTO `u_user` VALUES ('037eaaa6-1891-49fa-94d2-b9c3d7a96451', 'xuewen', '学文', '9a55274928b959703835d8e6de1842f6', '1', '17797173942', 'xuewen@zihao.com', '100201', '2021-02-23 22:23:31', '0', '2d4451e6-83ea-4028-99d4-6f5a8e1d4864', '1001');
 INSERT INTO `u_user` VALUES ('1', 'zihao', 'zihao', '25d346f8e979038a43a37e382524fe16', '1', '18909711443', '928255095@qq.com', '100201', '2021-02-18 18:20:05', '0', '512c369e-0642-41e5-9ea6-5fe737984ae6', '1001');
 INSERT INTO `u_user` VALUES ('b8a0776d-521b-4393-8fe8-ae81b2587a05', 'yongmei', '王永梅', 'e492c0c2fe55de16b05445668d0ec8e5', '1', '18909711443', 'yongmei@zihao.com', '100201', '2021-02-23 21:54:20', '0', '13ba9db7-fcdd-496a-a9b0-abfd00bf24e3', '1001');
+
+create table business_package(
+	`id` varchar(64) PRIMARY KEY  NOT NULL,
+  `name` varchar(64) NOT NULL ,
+  `varsion` varchar(32) NOT NULL,
+  `path` varchar(128) NOT NULL,
+	 create_user_id varchar(64) not null,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status_cd` varchar(2) NOT NULL DEFAULT '0',
+  `tenant_id` varchar(64) NOT NULL
+);

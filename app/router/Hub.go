@@ -9,6 +9,7 @@ import (
 	"github.com/zihao-boy/zihao/app/controller/host"
 	"github.com/zihao-boy/zihao/app/controller/menu"
 	"github.com/zihao-boy/zihao/app/controller/monitor"
+	"github.com/zihao-boy/zihao/app/controller/soft"
 	"github.com/zihao-boy/zihao/app/controller/system"
 	"github.com/zihao-boy/zihao/app/controller/tenant"
 	"github.com/zihao-boy/zihao/app/controller/user"
@@ -47,6 +48,9 @@ func Hub(app *iris.Application) {
 
 	//版本
 	appVersion.AppVersionControllerRouter(party)
+
+	//软件中心
+	soft.SoftControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {
