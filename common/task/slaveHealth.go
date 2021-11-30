@@ -11,9 +11,9 @@ import (
 func doSlaveHealth() {
 	mastIp, isExist := config.Prop.Property("mastIp")
 	if !isExist {
-		mastIp = "127.0.0.1"
+		mastIp = "127.0.0.1:7000"
 	}
-	url := "http://" + mastIp + ":7000/app/host/slaveHealth"
+	url := "http://" + mastIp + "/app/host/slaveHealth"
 
 	slaveId, isExist := config.Prop.Property("slaveId")
 	if !isExist {

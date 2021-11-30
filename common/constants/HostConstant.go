@@ -7,5 +7,5 @@ const (
 
 	Get_host_disk_shell = "#!/bin/bash\n\ndisk_name=`df -h|awk '{if (NR>2){print $1}}'`\n\nsize=`df -h|awk '{if (NR>2){print $2}}'`\n\nfree_size=`df -h|awk '{if (NR>2){print $4}}'`\n\ndir=`df -h|awk '{if (NR>2){print $6}}'`\n\n\necho \"$disk_name&&$size&&$free_size&&$dir\""
 
-	DownLoad_slave_shell = "wget http://$zihao_ip:7000/download/deploySlave.sh && sh deploySlave.sh $zihao_ip $zihao_hostId"
+	DownLoad_slave_shell = "wget http://$zihao_ip/download/deploySlave.sh && sh deploySlave.sh $zihao_ip $zihao_hostId"
 )

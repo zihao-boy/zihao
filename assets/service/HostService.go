@@ -591,7 +591,7 @@ func (hostService *HostService) ControlHost(ctx iris.Context) result.ResultDto {
 	mapping, err := factory.GetMapping("MASTER_IP")
 	var masterIp string
 	if err != nil {
-		masterIp = "127.0.0.1"
+		masterIp = "127.0.0.1:7000"
 	} else {
 		masterIp = mapping.Value
 	}
