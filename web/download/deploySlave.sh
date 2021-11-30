@@ -15,7 +15,7 @@ function installSlave(){
     echo "mastIp=$ip" >> conf/zihao.properties
     echo "slaveId=$slaveId" >> conf/zihao.properties
 
-    wget http://$ip:7000/download/slave.tar
+    wget http://$ip/download/slave.tar
 
     tar -xvf slave.tar  
 
