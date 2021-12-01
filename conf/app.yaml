@@ -18,3 +18,4 @@ own:
   domain: a
   db: sqlite # mysql
   cache: local # redis
+  data_path: /Users/wuxuewen

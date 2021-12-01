@@ -20,6 +20,7 @@ const (
 )
 
 func InitLog() {
+
 	var (
 		err error
 	)
@@ -64,10 +65,10 @@ func NewRequestLogger() (h iris.Handler, close func() error) {
 
 	close = func() error { return nil }
 	conf = logger.Config{
-		Status:  true,
-		IP:      true,
-		Method:  true,
-		Path:    true,
+		Status: true,
+		IP:     true,
+		Method: true,
+		Path:   true,
 		//Columns: true,
 	}
 
@@ -104,4 +105,3 @@ func newOtherLogger() {
 	)
 	golog.AddOutput(logFile)
 }
-

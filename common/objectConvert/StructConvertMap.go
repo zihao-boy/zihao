@@ -14,4 +14,3 @@ func Struct2Map(obj interface{}) map[string]interface{} {
 	}
 	return data
 }
-
