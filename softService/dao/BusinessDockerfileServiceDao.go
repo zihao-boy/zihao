@@ -4,12 +4,12 @@ import (
 	"github.com/zihao-boy/zihao/common/db/sqlTemplate"
 	"github.com/zihao-boy/zihao/common/objectConvert"
 	"github.com/zihao-boy/zihao/entity/dto"
-	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
+	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"gorm.io/gorm"
 )
 
 const (
-	query_businessPackage_count string = `
+	query_businessDockerfile_count string = `
 	select count(1) total
 	from business_package t
 	where t.status_cd = '0'
@@ -30,7 +30,7 @@ const (
 	$endif
     	
 	`
-	query_businessPackage string = `
+	query_businessDockerfile string = `
 				select t.*,uu.username
 				from business_package t
 				left join u_user uu on t.create_user_id = uu.user_id and uu.status_cd = '0'
@@ -56,12 +56,12 @@ const (
 					$endif
 	`
 
-	insert_businessPackage string = `
+	insert_businessDockerfile string = `
 	insert into business_package(id, name, varsion, path, create_user_id,tenant_id)
 VALUES(#Id#,#Name#,#Varsion#,#Path#,#CreateUserId#,#TenantId#)
 `
 
-	update_businessPackage string = `
+	update_businessDockerfile string = `
 	update business_package set
 		$if Name != '' then
 		name = #Name#,
@@ -75,7 +75,7 @@ VALUES(#Id#,#Name#,#Varsion#,#Path#,#CreateUserId#,#TenantId#)
 		and id = #Id#
 		$endif
 	`
-	delete_businessPackage string = `
+	delete_businessDockerfile string = `
 	update business_package  set
                           status_cd = '1'
                           where status_cd = '0'
@@ -86,19 +86,19 @@ VALUES(#Id#,#Name#,#Varsion#,#Path#,#CreateUserId#,#TenantId#)
 	`
 )
 
-type BusinessPackageDao struct {
+type BusinessDockerfileDao struct {
 }
 
 /**
 查询用户
 */
-func (*BusinessPackageDao) GetBusinessPackageCount(businessPackageDto businessPackage.BusinessPackageDto) (int64, error) {
+func (*BusinessDockerfileDao) GetBusinessDockerfileCount(businessDockerfileDto businessDockerfile.BusinessDockerfileDto) (int64, error) {
 	var (
 		pageDto dto.PageDto
 		err     error
 	)
 
-	sqlTemplate.SelectOne(query_businessPackage_count, objectConvert.Struct2Map(businessPackageDto), func(db *gorm.DB) {
+	sqlTemplate.SelectOne(query_businessDockerfile_count, objectConvert.Struct2Map(businessDockerfileDto), func(db *gorm.DB) {
 		err = db.Scan(&pageDto).Error
 	}, false)
 
@@ -108,32 +108,32 @@ func (*BusinessPackageDao) GetBusinessPackageCount(businessPackageDto businessPa
 /**
 查询用户
 */
-func (*BusinessPackageDao) GetBusinessPackages(businessPackageDto businessPackage.BusinessPackageDto) ([]*businessPackage.BusinessPackageDto, error) {
-	var businessPackageDtos []*businessPackage.BusinessPackageDto
-	sqlTemplate.SelectList(query_businessPackage, objectConvert.Struct2Map(businessPackageDto), func(db *gorm.DB) {
-		db.Scan(&businessPackageDtos)
+func (*BusinessDockerfileDao) GetBusinessDockerfiles(businessDockerfileDto businessDockerfile.BusinessDockerfileDto) ([]*businessDockerfile.BusinessDockerfileDto, error) {
+	var businessDockerfileDtos []*businessDockerfile.BusinessDockerfileDto
+	sqlTemplate.SelectList(query_businessDockerfile, objectConvert.Struct2Map(businessDockerfileDto), func(db *gorm.DB) {
+		db.Scan(&businessDockerfileDtos)
 	}, false)
 
-	return businessPackageDtos, nil
+	return businessDockerfileDtos, nil
 }
 
 /**
 保存服务sql
 */
-func (*BusinessPackageDao) SaveBusinessPackage(businessPackageDto businessPackage.BusinessPackageDto) error {
-	return sqlTemplate.Insert(insert_businessPackage, objectConvert.Struct2Map(businessPackageDto), false)
+func (*BusinessDockerfileDao) SaveBusinessDockerfile(businessDockerfileDto businessDockerfile.BusinessDockerfileDto) error {
+	return sqlTemplate.Insert(insert_businessDockerfile, objectConvert.Struct2Map(businessDockerfileDto), false)
 }
 
 /**
 修改服务sql
 */
-func (*BusinessPackageDao) UpdateBusinessPackage(businessPackageDto businessPackage.BusinessPackageDto) error {
-	return sqlTemplate.Update(update_businessPackage, objectConvert.Struct2Map(businessPackageDto), false)
+func (*BusinessDockerfileDao) UpdateBusinessDockerfile(businessDockerfileDto businessDockerfile.BusinessDockerfileDto) error {
+	return sqlTemplate.Update(update_businessDockerfile, objectConvert.Struct2Map(businessDockerfileDto), false)
 }
 
 /**
 删除服务sql
 */
-func (*BusinessPackageDao) DeleteBusinessPackage(businessPackageDto businessPackage.BusinessPackageDto) error {
-	return sqlTemplate.Delete(delete_businessPackage, objectConvert.Struct2Map(businessPackageDto), false)
+func (*BusinessDockerfileDao) DeleteBusinessDockerfile(businessDockerfileDto businessDockerfile.BusinessDockerfileDto) error {
+	return sqlTemplate.Delete(delete_businessDockerfile, objectConvert.Struct2Map(businessDockerfileDto), false)
 }

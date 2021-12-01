@@ -1,57 +1,51 @@
 package service
 
 import (
-	"github.com/zihao-boy/zihao/common/utils"
-	"github.com/zihao-boy/zihao/config"
-	"path"
-	"path/filepath"
 	"strconv"
 
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
-	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
+	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
 	"github.com/zihao-boy/zihao/softService/dao"
 )
 
-type BusinessPackageService struct {
-	businessPackageDao dao.BusinessPackageDao
+type BusinessDockerfileService struct {
+	businessDockerfileDao dao.BusinessDockerfileDao
 }
-
-const maxSize = 1000 * iris.MB // 第二种方法
 
 /**
 查询 系统信息
 */
-func (businessPackageService *BusinessPackageService) GetBusinessPackageAll(businessPackageDto businessPackage.BusinessPackageDto) ([]*businessPackage.BusinessPackageDto, error) {
+func (businessDockerfileService *BusinessDockerfileService) GetBusinessDockerfileAll(businessDockerfileDto businessDockerfile.BusinessDockerfileDto) ([]*businessDockerfile.BusinessDockerfileDto, error) {
 	var (
-		err                 error
-		businessPackageDtos []*businessPackage.BusinessPackageDto
+		err                error
+		businessDockerfileDtos []*businessDockerfile.BusinessDockerfileDto
 	)
 
-	businessPackageDtos, err = businessPackageService.businessPackageDao.GetBusinessPackages(businessPackageDto)
+	businessDockerfileDtos, err = businessDockerfileService.businessDockerfileDao.GetBusinessDockerfiles(businessDockerfileDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return businessPackageDtos, nil
+	return businessDockerfileDtos, nil
 
 }
 
 /**
 查询 系统信息
 */
-func (businessPackageService *BusinessPackageService) GetBusinessPackages(ctx iris.Context) result.ResultDto {
+func (businessDockerfileService *BusinessDockerfileService) GetBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err                 error
-		page                int64
-		row                 int64
-		total               int64
-		businessPackageDto  = businessPackage.BusinessPackageDto{}
-		businessPackageDtos []*businessPackage.BusinessPackageDto
+		err                error
+		page               int64
+		row                int64
+		total              int64
+		businessDockerfileDto  = businessDockerfile.BusinessDockerfileDto{}
+		businessDockerfileDtos []*businessDockerfile.BusinessDockerfileDto
 	)
 
 	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
@@ -66,13 +60,13 @@ func (businessPackageService *BusinessPackageService) GetBusinessPackages(ctx ir
 		return result.Error(err.Error())
 	}
 
-	businessPackageDto.Row = row * page
+	businessDockerfileDto.Row = row * page
 
-	businessPackageDto.Page = (page - 1) * row
+	businessDockerfileDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	businessPackageDto.TenantId = user.TenantId
+	businessDockerfileDto.TenantId = user.TenantId
 
-	total, err = businessPackageService.businessPackageDao.GetBusinessPackageCount(businessPackageDto)
+	total, err = businessDockerfileService.businessDockerfileDao.GetBusinessDockerfileCount(businessDockerfileDto)
 
 	if err != nil {
 		return result.Error(err.Error())
@@ -82,105 +76,82 @@ func (businessPackageService *BusinessPackageService) GetBusinessPackages(ctx ir
 		return result.Success()
 	}
 
-	businessPackageDtos, err = businessPackageService.businessPackageDao.GetBusinessPackages(businessPackageDto)
+	businessDockerfileDtos, err = businessDockerfileService.businessDockerfileDao.GetBusinessDockerfiles(businessDockerfileDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(businessPackageDtos, total, row)
+	return result.SuccessData(businessDockerfileDtos, total, row)
 
 }
 
 /**
 保存 系统信息
 */
-func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx iris.Context) result.ResultDto {
+func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err                error
-		businessPackageDto businessPackage.BusinessPackageDto
+		err               error
+		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
-
-	ctx.SetMaxRequestBodySize(maxSize)
-
-	file, fileHeader, err := ctx.FormFile("uploadFile")
-
-	if err != nil {
-		return result.Error("上传失败" + err.Error())
+	if err = ctx.ReadJSON(&businessDockerfileDto); err != nil {
+		return result.Error("解析入参失败")
 	}
-
-	defer file.Close()
-	dest := filepath.Join(config.G_AppConfig.DataPath,"/businessPackage")
-
-	if(!utils.IsDir(dest)){
-		utils.CreateDir(dest)
-	}
-
-	fileName := path.Ext(fileHeader.Filename)
-
-	dest = filepath.Join(dest,seq.Generator()+fileName)
-
-	_, err = ctx.SaveFormFile(fileHeader, dest)
-	if err != nil {
-		return result.Error("上传失败"+err.Error())
-	}
-
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	businessPackageDto.TenantId = user.TenantId
-	businessPackageDto.CreateUserId = user.UserId
-	businessPackageDto.Id = seq.Generator()
-	businessPackageDto.Path = dest
-	businessPackageDto.Varsion = "V" + date.GetNowAString()
-	businessPackageDto.Name = ctx.FormValue("name")
+	businessDockerfileDto.TenantId = user.TenantId
+	businessDockerfileDto.CreateUserId = user.UserId
+	businessDockerfileDto.Id = seq.Generator()
+	businessDockerfileDto.Version = "V" + date.GetNowAString()
+	businessDockerfileDto.Name = ctx.FormValue("name")
 
-	err = businessPackageService.businessPackageDao.SaveBusinessPackage(businessPackageDto)
+	err = businessDockerfileService.businessDockerfileDao.SaveBusinessDockerfile(businessDockerfileDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(businessPackageDto)
+	return result.SuccessData(businessDockerfileDto)
 
 }
 
 /**
 修改 系统信息
 */
-func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx iris.Context) result.ResultDto {
+func (businessDockerfileService *BusinessDockerfileService) UpdateBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err                error
-		businessPackageDto businessPackage.BusinessPackageDto
+		err               error
+		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
 
-	if err = ctx.ReadJSON(&businessPackageDto); err != nil {
+	if err = ctx.ReadJSON(&businessDockerfileDto); err != nil {
 		return result.Error("解析入参失败")
 	}
 
-	err = businessPackageService.businessPackageDao.UpdateBusinessPackage(businessPackageDto)
+	err = businessDockerfileService.businessDockerfileDao.UpdateBusinessDockerfile(businessDockerfileDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(businessPackageDto)
+	return result.SuccessData(businessDockerfileDto)
 
 }
 
 /**
 删除 系统信息
 */
-func (businessPackageService *BusinessPackageService) DeleteBusinessPackages(ctx iris.Context) result.ResultDto {
+func (businessDockerfileService *BusinessDockerfileService) DeleteBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err                error
-		businessPackageDto businessPackage.BusinessPackageDto
+		err               error
+		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
 
-	if err = ctx.ReadJSON(&businessPackageDto); err != nil {
+	if err = ctx.ReadJSON(&businessDockerfileDto); err != nil {
 		return result.Error("解析入参失败")
 	}
 
-	err = businessPackageService.businessPackageDao.DeleteBusinessPackage(businessPackageDto)
+	err = businessDockerfileService.businessDockerfileDao.DeleteBusinessDockerfile(businessDockerfileDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(businessPackageDto)
+	return result.SuccessData(businessDockerfileDto)
 
 }

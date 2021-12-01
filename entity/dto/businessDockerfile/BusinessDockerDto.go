@@ -1,16 +1,16 @@
-package businessDocker
+package businessDockerfile
 
 import "github.com/zihao-boy/zihao/entity/dto"
 
-type BusinessDockerDto struct {
+type BusinessDockerfileDto struct {
 	dto.PageDto
 	Id           string `json:"id" sql:"-"`
 	Name         string `json:"name" sql:"-"`
-	Varsion      string `json:"varsion" sql:"-"`
-	Path         string `json:"path" sql:"-"`
+	Version      string `json:"version" sql:"-"`
+	Dockerfile         string `json:"dockerfile" sql:"-"`
 	CreateUserId string `json:"createUserId" sql:"-"`
 	CreateTime   string `json:"createTime" sql:"-"`
 	StatusCd     string `json:"statusCd" sql:"-"`
 	TenantId     string `json:"tenantId" sql:"-"`
-	Username	string `json:"username"`
+	Username	string `json:"username" sql:"-"`
 }
