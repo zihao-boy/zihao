@@ -3494,3 +3494,14 @@ create table business_package(
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   `tenant_id` varchar(64) NOT NULL
 );
+
+create table business_dockerfile(
+    `id` varchar(64) PRIMARY KEY  NOT NULL,
+    `name` varchar(64) NOT NULL ,
+    `version` varchar(32) NOT NULL,
+    `dockerfile` longtext NOT NULL,
+    create_user_id varchar(64) not null,
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `status_cd` varchar(2) NOT NULL DEFAULT '0',
+    `tenant_id` varchar(64) NOT NULL
+);
