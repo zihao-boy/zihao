@@ -3505,3 +3505,16 @@ create table business_dockerfile(
     `status_cd` varchar(2) NOT NULL DEFAULT '0',
     `tenant_id` varchar(64) NOT NULL
 );
+
+CREATE TABLE business_images(
+     `id` varchar(64) PRIMARY KEY  NOT NULL,
+     `name` varchar(64) NOT NULL ,
+     `version` varchar(32) NOT NULL,
+     images_type varchar(12) not null,
+     type_url varchar(512) not null,
+     images_flag varchar(12) not null,
+     create_user_id varchar(64) not null,
+     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     `status_cd` varchar(2) NOT NULL DEFAULT '0',
+     `tenant_id` varchar(64) NOT NULL
+ )

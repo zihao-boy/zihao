@@ -56,7 +56,7 @@ const (
 					$endif
 	`
 	insert_businessImages string = `
-	insert into business_images(id, name, version, imagesType,typeUrl,imagesFlag, create_user_id,tenant_id)
+	insert into business_images(id, name, version, images_type,type_url,images_flag, create_user_id,tenant_id)
 VALUES(#Id#,#Name#,#Version#,#ImagesType#,#TypeUrl#,#ImagesFlag#,#CreateUserId#,#TenantId#)
 `
 

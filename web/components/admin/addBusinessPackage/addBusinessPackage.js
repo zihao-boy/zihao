@@ -43,7 +43,6 @@
             saveBusinessPackageInfo: function () {
                 if (!vc.component.addBusinessPackageValidate()) {
                     vc.toast(vc.validate.errInfo);
-
                     return;
                 }
                 var param = new FormData();

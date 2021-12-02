@@ -2,6 +2,14 @@ package businessImages
 
 import "github.com/zihao-boy/zihao/entity/dto"
 
+const(
+	IMAGES_TYPE_REMOTE = "1"
+	IMAGES_TYPE_DOCKER = "2"
+	IMAGES_TYPE_IMPORT = "3"
+	IMAGES_FLAG_PUBLIC ="P"
+	IMAGES_FLAG_CUSTOM = "C"
+)
+
 type BusinessImagesDto struct {
 	dto.PageDto
 	Id           string `json:"id" sql:"-"`

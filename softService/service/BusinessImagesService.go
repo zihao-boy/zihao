@@ -1,6 +1,10 @@
 package service
 
 import (
+	"github.com/zihao-boy/zihao/common/utils"
+	"github.com/zihao-boy/zihao/config"
+	"path"
+	"path/filepath"
 	"strconv"
 
 	"github.com/kataras/iris/v12"
@@ -93,14 +97,39 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 		err                   error
 		businessImagesDto businessImages.BusinessImagesDto
 	)
-	if err = ctx.ReadJSON(&businessImagesDto); err != nil {
-		return result.Error("解析入参失败")
+	ctx.SetMaxRequestBodySize(maxSize)
+
+	file, fileHeader, err := ctx.FormFile("uploadFile")
+
+	if err != nil {
+		return result.Error("上传失败" + err.Error())
 	}
+
+	defer file.Close()
+	dest := filepath.Join(config.G_AppConfig.DataPath, "/businessImages")
+
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+
+	fileName := path.Ext(fileHeader.Filename)
+
+	dest = filepath.Join(dest, seq.Generator()+fileName)
+
+	_, err = ctx.SaveFormFile(fileHeader, dest)
+	if err != nil {
+		return result.Error("上传失败" + err.Error())
+	}
+
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessImagesDto.TenantId = user.TenantId
 	businessImagesDto.CreateUserId = user.UserId
 	businessImagesDto.Id = seq.Generator()
 	businessImagesDto.Version = "V" + date.GetNowAString()
+	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_IMPORT
+	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
+	businessImagesDto.TypeUrl = dest
+	businessImagesDto.Name = ctx.FormValue("name")
 
 	err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
 	if err != nil {
