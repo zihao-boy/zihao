@@ -31,8 +31,9 @@ const (
     	
 	`
 	query_businessPackage string = `
-				select t.*
+				select t.*,uu.username
 				from business_package t
+				left join u_user uu on t.create_user_id = uu.user_id and uu.status_cd = '0'
 				where t.status_cd = '0'
 				$if TenantId != '' then
 				and t.tenant_id = #TenantId#
@@ -57,7 +58,7 @@ const (
 
 	insert_businessPackage string = `
 	insert into business_package(id, name, varsion, path, create_user_id,tenant_id)
-VALUES(#Id#,#Name#,#Version#,#Path#,#CreateUserId#,#TenantId#)
+VALUES(#Id#,#Name#,#Varsion#,#Path#,#CreateUserId#,#TenantId#)
 `
 
 	update_businessPackage string = `

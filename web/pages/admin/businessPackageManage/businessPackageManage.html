@@ -12,25 +12,21 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入id" v-model="businessPackageManageInfo.conditions.id"
-                                    class=" form-control">
+                                <input type="text" placeholder="请输入id" v-model="businessPackageManageInfo.conditions.id" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入名称"
-                                    v-model="businessPackageManageInfo.conditions.name" class=" form-control">
+                                <input type="text" placeholder="请输入名称" v-model="businessPackageManageInfo.conditions.name" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入版本"
-                                    v-model="businessPackageManageInfo.conditions.varsion" class=" form-control">
+                                <input type="text" placeholder="请输入版本" v-model="businessPackageManageInfo.conditions.varsion" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-1">
-                            <button type="button" class="btn btn-primary btn-sm"
-                                v-on:click="_queryBusinessPackageMethod()">
+                            <button type="button" class="btn btn-primary btn-sm" v-on:click="_queryBusinessPackageMethod()">
                                 <i class="glyphicon glyphicon-search"></i> 查询
                             </button>
                         </div>
@@ -47,8 +43,7 @@
                 <div class="ibox-title">
                     <h5>业务包</h5>
                     <div class="ibox-tools" style="top:10px;">
-                        <button type="button" class="btn btn-primary btn-sm"
-                            v-on:click="_openAddBusinessPackageModal()">
+                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddBusinessPackageModal()">
                             <i class="glyphicon glyphicon-plus"></i>
                             上传
                         </button>
@@ -59,23 +54,24 @@
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                         <thead>
                             <tr>
-                                <th class="text-center">ID</th>
                                 <th class="text-center">名称</th>
                                 <th class="text-center">版本</th>
+                                <th class="text-center">上传时间</th>
+                                <th class="text-center">上传人</th>
+                                <th class="text-center" width="120">文件路径</th>
                                 <th class="text-center">操作</th>
-
-
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="businessPackage in businessPackageManageInfo.businessPackages">
-                                <td class="text-center">{{businessPackage.id}}</td>
                                 <td class="text-center">{{businessPackage.name}}</td>
                                 <td class="text-center">{{businessPackage.varsion}}</td>
+                                <td class="text-center">{{businessPackage.createTime}}</td>
+                                <td class="text-center">{{businessPackage.username}}</td>
+                                <td class="text-center">{{businessPackage.path}}</td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openDeleteBusinessPackageModel(businessPackage)">删除</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteBusinessPackageModel(businessPackage)">删除</button>
                                     </div>
                                 </td>
 

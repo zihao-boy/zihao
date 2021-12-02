@@ -50,4 +50,3 @@ const (
 	WS_TOPIC_INING   = "INING" // 在聊天界面，同步的消息，意思是在聊天可以直接发送消息
 	WS_TOPIC_UNREAD  = "UNREAD"
 )
-

@@ -14,7 +14,7 @@ type (
 	TokenExtractor func(context.Context) (string, error)
 )
 
-const(
+const (
 	DEFAULT_TOKEN string = "zihaotoken"
 )
 
@@ -35,7 +35,7 @@ func fromAuthHeader(ctx context.Context) (string, error) {
 	//}
 
 	//return authHeaderParts[1], nil
-	return authHeader,nil
+	return authHeader, nil
 }
 
 // below 3 method is get token from url

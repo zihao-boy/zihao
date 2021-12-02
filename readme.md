@@ -9,10 +9,24 @@ git clone https://github.com/zihao-boy/zihao.git
 export GO111MODULE=on
 export GOPROXY=https://goproxy.io
 
+window 
+
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.io
+
 git build .
 
 ./zihao > zihao.log &
 
+github 太慢走自己的代理
+
+git config --global http.proxy http://127.0.0.1:1080
+
+git config --global https.proxy http://127.0.0.1:1080
+
+git config --global --unset http.proxy
+
+git config --global --unset https.proxy
 
 #### 主机需要实现内容
 

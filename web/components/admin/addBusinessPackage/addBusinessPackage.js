@@ -10,7 +10,7 @@
                 id: '',
                 name: '',
                 varsion: '',
-
+                excelTemplate: '',
             }
         },
         _initMethod: function () {
@@ -37,23 +37,7 @@
                             param: "64",
                             errInfo: "名称不能超过64"
                         },
-                    ],
-                    'addBusinessPackageInfo.varsion': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "版本不能为空"
-                        },
-                        {
-                            limit: "maxLength",
-                            param: "32",
-                            errInfo: "版本不能超过32"
-                        },
-                    ],
-
-
-
-
+                    ]
                 });
             },
             saveBusinessPackageInfo: function () {
@@ -62,23 +46,21 @@
 
                     return;
                 }
-
-                vc.component.addBusinessPackageInfo.communityId = vc.getCurrentCommunity().communityId;
-                //不提交数据将数据 回调给侦听处理
-                if (vc.notNull($props.callBackListener)) {
-                    vc.emit($props.callBackListener, $props.callBackFunction, vc.component.addBusinessPackageInfo);
-                    $('#addBusinessPackageModel').modal('hide');
-                    return;
-                }
+                var param = new FormData();
+                param.append("uploadFile", vc.component.addBusinessPackageInfo.excelTemplate);
+                param.append('name', vc.component.addBusinessPackageInfo.name);
 
                 vc.http.apiPost(
                     '/soft/saveBusinessPackages',
-                    JSON.stringify(vc.component.addBusinessPackageInfo),
+                    param,
                     {
-                        emulateJSON: true
+                        emulateJSON: true,
+                        //添加请求头
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
                     },
                     function (json, res) {
-                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
@@ -88,21 +70,25 @@
 
                             return;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
 
                     },
                     function (errInfo, error) {
                         console.log('请求失败处理');
 
-                        vc.message(errInfo);
+                        vc.toast(errInfo);
 
                     });
+            },
+            getExcelTemplate: function (e) {
+                //console.log("getExcelTemplate 开始调用")
+                vc.component.addBusinessPackageInfo.excelTemplate = e.target.files[0];
             },
             clearAddBusinessPackageInfo: function () {
                 vc.component.addBusinessPackageInfo = {
                     name: '',
                     varsion: '',
-
+                    excelTemplate: '',
                 };
             }
         }

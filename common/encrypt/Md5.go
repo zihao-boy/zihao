@@ -14,8 +14,8 @@ const (
 md5加密
 add by 吴学文
 time 2021-01-18
- */
-func Md5(srcStr string) string{
+*/
+func Md5(srcStr string) string {
 	w := md5.New()
 	io.WriteString(w, srcStr+SLAT_CODE)
 	//将str写入到w中
