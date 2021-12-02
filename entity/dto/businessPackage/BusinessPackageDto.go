@@ -12,5 +12,5 @@ type BusinessPackageDto struct {
 	CreateTime   string `json:"createTime" sql:"-"`
 	StatusCd     string `json:"statusCd" sql:"-"`
 	TenantId     string `json:"tenantId" sql:"-"`
-	Username	string `json:"username"`
+	Username     string `json:"username"`
 }

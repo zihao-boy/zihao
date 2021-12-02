@@ -109,19 +109,19 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 	}
 
 	defer file.Close()
-	dest := filepath.Join(config.G_AppConfig.DataPath,"/businessPackage")
+	dest := filepath.Join(config.G_AppConfig.DataPath, "/businessPackage")
 
-	if(!utils.IsDir(dest)){
+	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
 
 	fileName := path.Ext(fileHeader.Filename)
 
-	dest = filepath.Join(dest,seq.Generator()+fileName)
+	dest = filepath.Join(dest, seq.Generator()+fileName)
 
 	_, err = ctx.SaveFormFile(fileHeader, dest)
 	if err != nil {
-		return result.Error("上传失败"+err.Error())
+		return result.Error("上传失败" + err.Error())
 	}
 
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)

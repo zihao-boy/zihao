@@ -7,10 +7,10 @@ type BusinessDockerfileDto struct {
 	Id           string `json:"id" sql:"-"`
 	Name         string `json:"name" sql:"-"`
 	Version      string `json:"version" sql:"-"`
-	Dockerfile         string `json:"dockerfile" sql:"-"`
+	Dockerfile   string `json:"dockerfile" sql:"-"`
 	CreateUserId string `json:"createUserId" sql:"-"`
 	CreateTime   string `json:"createTime" sql:"-"`
 	StatusCd     string `json:"statusCd" sql:"-"`
 	TenantId     string `json:"tenantId" sql:"-"`
-	Username	string `json:"username" sql:"-"`
+	Username     string `json:"username" sql:"-"`
 }

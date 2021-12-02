@@ -15,6 +15,7 @@ import (
  *  作者：吴学文
  */
 func main() {
+
 	config.InitConfig()
 	//support.InitLog()
 	//support.InitValidator()

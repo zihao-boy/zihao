@@ -22,7 +22,7 @@ type BusinessDockerfileService struct {
 */
 func (businessDockerfileService *BusinessDockerfileService) GetBusinessDockerfileAll(businessDockerfileDto businessDockerfile.BusinessDockerfileDto) ([]*businessDockerfile.BusinessDockerfileDto, error) {
 	var (
-		err                error
+		err                    error
 		businessDockerfileDtos []*businessDockerfile.BusinessDockerfileDto
 	)
 
@@ -40,10 +40,10 @@ func (businessDockerfileService *BusinessDockerfileService) GetBusinessDockerfil
 */
 func (businessDockerfileService *BusinessDockerfileService) GetBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err                error
-		page               int64
-		row                int64
-		total              int64
+		err                    error
+		page                   int64
+		row                    int64
+		total                  int64
 		businessDockerfileDto  = businessDockerfile.BusinessDockerfileDto{}
 		businessDockerfileDtos []*businessDockerfile.BusinessDockerfileDto
 	)
@@ -90,7 +90,7 @@ func (businessDockerfileService *BusinessDockerfileService) GetBusinessDockerfil
 */
 func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err               error
+		err                   error
 		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
 	if err = ctx.ReadJSON(&businessDockerfileDto); err != nil {
@@ -117,7 +117,7 @@ func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfi
 */
 func (businessDockerfileService *BusinessDockerfileService) UpdateBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err               error
+		err                   error
 		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
 
@@ -139,7 +139,7 @@ func (businessDockerfileService *BusinessDockerfileService) UpdateBusinessDocker
 */
 func (businessDockerfileService *BusinessDockerfileService) DeleteBusinessDockerfiles(ctx iris.Context) result.ResultDto {
 	var (
-		err               error
+		err                   error
 		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
 

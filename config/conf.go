@@ -38,7 +38,7 @@ type (
 		Domain        string   `yaml:"domain"`
 		Db            string   `yaml:"db"`
 		Cache         string   `yaml:"cache"`
-		DataPath      string    `yaml:"data_path"`
+		DataPath      string   `yaml:"data_path"`
 	}
 
 	// db
