@@ -9,6 +9,7 @@ import (
 type SoftController struct {
 	businessPackageService service.BusinessPackageService
 	businessDockerService service.BusinessDockerfileService
+	businessImagesService service.BusinessImagesService
 }
 
 func SoftControllerRouter(party iris.Party) {
@@ -17,6 +18,7 @@ func SoftControllerRouter(party iris.Party) {
 		aus      = SoftController{
 			businessPackageService: service.BusinessPackageService{},
 			businessDockerService: service.BusinessDockerfileService{},
+			businessImagesService: service.BusinessImagesService{},
 		}
 	)
 	adinMenu.Get("/getBusinessPackages", hero.Handler(aus.GetBusinessPackages))
@@ -34,6 +36,14 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateBusinessDockerfile", hero.Handler(aus.UpdateBusinessDockerfile))
 
 	adinMenu.Post("/deleteBusinessDockerfile", hero.Handler(aus.DeleteBusinessDockerfiles))
+
+	adinMenu.Get("/getBusinessImages", hero.Handler(aus.GetBusinessImages))
+
+	adinMenu.Post("/saveBusinessImages", hero.Handler(aus.SaveBusinessImages))
+
+	adinMenu.Post("/updateBusinessImages", hero.Handler(aus.UpdateBusinessImages))
+
+	adinMenu.Post("/deleteBusinessImages", hero.Handler(aus.DeleteBusinessImages))
 }
 
 /**
@@ -105,6 +115,43 @@ func (aus *SoftController) UpdateBusinessDockerfile(ctx iris.Context) {
 */
 func (aus *SoftController) DeleteBusinessDockerfiles(ctx iris.Context) {
 	reslut := aus.businessDockerService.DeleteBusinessDockerfiles(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+查询 dockerfile
+*/
+func (aus *SoftController) GetBusinessImages(ctx iris.Context) {
+	reslut := aus.businessImagesService.GetBusinessImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 业务包
+*/
+func (aus *SoftController) SaveBusinessImages(ctx iris.Context) {
+	reslut := aus.businessImagesService.SaveBusinessImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 业务包
+*/
+func (aus *SoftController) UpdateBusinessImages(ctx iris.Context) {
+	reslut := aus.businessImagesService.UpdateBusinessImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 业务包
+*/
+func (aus *SoftController) DeleteBusinessImages(ctx iris.Context) {
+	reslut := aus.businessImagesService.DeleteBusinessImages(ctx)
 
 	ctx.JSON(reslut)
 }
