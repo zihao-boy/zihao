@@ -9,7 +9,7 @@ Configuration:
 #自定义配置
 own:
   separate: false
-  port: 8888
+  port: 7000
   ignore_urls: [/app/user/login, /app/user/logout,/app/system/info,/app/host/slaveHealth]
   jwt_timeout: 120 #minute
   log_level: debug
@@ -19,3 +19,5 @@ own:
   db: sqlite # mysql
   cache: local # redis
   data_path: /Users/wuxuewen
+  sqlite_path: C:\\project\\vip\db\\zihao.db
+#  sqlite_path: /home/zihao/db/zihao_dev.db

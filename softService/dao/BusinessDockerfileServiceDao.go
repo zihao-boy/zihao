@@ -11,7 +11,7 @@ import (
 const (
 	query_businessDockerfile_count string = `
 	select count(1) total
-	from business_package t
+	from business_dockerfile t
 	where t.status_cd = '0'
 	$if TenantId != '' then
 	and t.tenant_id = #TenantId#
@@ -19,8 +19,8 @@ const (
 	$if Name != '' then
 	and t.name = #Name#
 	$endif
-	$if Varsion != '' then
-	and t.varsion = #Varsion#
+	$if Version != '' then
+	and t.version = #Version#
 	$endif
 	$if CreateUserId != '' then
 	and t.create_user_id = #CreateUserId#
@@ -32,7 +32,7 @@ const (
 	`
 	query_businessDockerfile string = `
 				select t.*,uu.username
-				from business_package t
+				from business_dockerfile t
 				left join u_user uu on t.create_user_id = uu.user_id and uu.status_cd = '0'
 				where t.status_cd = '0'
 				$if TenantId != '' then
@@ -41,8 +41,8 @@ const (
 				$if Name != '' then
 				and t.name = #Name#
 				$endif
-				$if Varsion != '' then
-				and t.varsion = #Varsion#
+				$if Version != '' then
+				and t.version = #Version#
 				$endif
 				$if CreateUserId != '' then
 				and t.create_user_id = #CreateUserId#
@@ -57,14 +57,17 @@ const (
 	`
 
 	insert_businessDockerfile string = `
-	insert into business_package(id, name, varsion, path, create_user_id,tenant_id)
-VALUES(#Id#,#Name#,#Varsion#,#Path#,#CreateUserId#,#TenantId#)
+	insert into business_dockerfile(id, name, version, dockerfile, create_user_id,tenant_id)
+VALUES(#Id#,#Name#,#Version#,#Dockerfile#,#CreateUserId#,#TenantId#)
 `
 
 	update_businessDockerfile string = `
-	update business_package set
+	update business_dockerfile set
 		$if Name != '' then
 		name = #Name#,
+		$endif
+		$if Dockerfile != '' then
+		dockerfile = #Dockerfile#,
 		$endif
 		status_cd = '0'
 		where status_cd = '0'
@@ -76,13 +79,10 @@ VALUES(#Id#,#Name#,#Varsion#,#Path#,#CreateUserId#,#TenantId#)
 		$endif
 	`
 	delete_businessDockerfile string = `
-	update business_package  set
+	update business_dockerfile  set
                           status_cd = '1'
                           where status_cd = '0'
-
-						  $if Id != '' then
 						  and id = #Id#
-						  $endif
 	`
 )
 

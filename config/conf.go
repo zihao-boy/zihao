@@ -39,6 +39,7 @@ type (
 		Db            string   `yaml:"db"`
 		Cache         string   `yaml:"cache"`
 		DataPath      string   `yaml:"data_path"`
+		SqlitePath      string   `yaml:"sqlite_path"`
 	}
 
 	// db

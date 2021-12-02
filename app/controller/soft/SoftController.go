@@ -74,7 +74,7 @@ func (aus *SoftController) DeleteBusinessPackages(ctx iris.Context) {
 
 
 /**
-查询 业务包
+查询 dockerfile
 */
 func (aus *SoftController) GetBusinessDockerfile(ctx iris.Context) {
 	reslut := aus.businessDockerService.GetBusinessDockerfiles(ctx)

@@ -101,7 +101,6 @@ func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfi
 	businessDockerfileDto.CreateUserId = user.UserId
 	businessDockerfileDto.Id = seq.Generator()
 	businessDockerfileDto.Version = "V" + date.GetNowAString()
-	businessDockerfileDto.Name = ctx.FormValue("name")
 
 	err = businessDockerfileService.businessDockerfileDao.SaveBusinessDockerfile(businessDockerfileDto)
 	if err != nil {

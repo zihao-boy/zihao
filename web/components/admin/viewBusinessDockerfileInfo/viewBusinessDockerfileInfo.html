@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>mydockerfile信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewBusinessDockerfileInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectBusinessDockerfileInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择mydockerfile</button>
+
+                    <button type="button" v-if="viewBusinessDockerfileInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddBusinessDockerfileInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加mydockerfile</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >名称：</label>
+                            <label class="">{{viewBusinessDockerfileInfo.name}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >内容：</label>
+                            <label class="">{{viewBusinessDockerfileInfo.dockerfile}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addBusinessDockerfile"
+               callBackListener="viewBusinessDockerfileInfo"
+               callBackFunction="chooseBusinessDockerfile"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseBusinessDockerfile"
+               emitChooseBusinessDockerfile="viewBusinessDockerfileInfo"
+               emitLoadData="viewBusinessDockerfileInfo"
+    ></vc:create>
+</div>

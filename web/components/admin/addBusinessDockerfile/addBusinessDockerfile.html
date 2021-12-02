@@ -1,0 +1,34 @@
+<div id="addBusinessDockerfileModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 class="m-t-none m-b ">添加</h3>
+                <div class="ibox-content">
+                    <div>
+                        <div>
+                            <div class="form-group row">
+                                <label class="col-sm-1 col-form-label">名称</label>
+                                <div class="col-sm-11">
+                                    <input v-model="addBusinessDockerfileInfo.name" type="text" placeholder="必填，请填写名称" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-1 col-form-label">内容</label>
+                                <div class="col-sm-11">
+                                    <textarea v-model="addBusinessDockerfileInfo.dockerfile" rows="15" placeholder="必填，请填写内容" class="form-control">
+                                       
+                                    </textarea>
+                                </div>
+                            </div>
+
+                            <div class="ibox-content">
+                                <button class="btn btn-primary float-right" type="button" v-on:click="saveBusinessDockerfileInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

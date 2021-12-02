@@ -8,6 +8,7 @@ import (
 	"github.com/zihao-boy/zihao/common/db/dbFactory"
 	"github.com/zihao-boy/zihao/common/jwt"
 	"github.com/zihao-boy/zihao/config"
+	"strconv"
 )
 
 /**
@@ -47,6 +48,12 @@ func main() {
 	// 	app.Logger().Info("欢迎访问梓豪平台，这个是后台服务，请直接访问前段服务！")
 	// })
 
-	app.Run(iris.Addr(":7000"))
+	port := config.G_AppConfig.Port
+
+	if(port == 0){
+		port = 7000
+	}
+
+	app.Run(iris.Addr(":"+strconv.Itoa(port)))
 
 }
