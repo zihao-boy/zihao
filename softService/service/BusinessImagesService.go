@@ -233,7 +233,7 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 		businessImagesDao dao.BusinessImagesDao
 		f                 *os.File
 		err               error
-		cmd *exec.Cmd
+		cmd               *exec.Cmd
 	)
 
 	dest := filepath.Join(config.WorkSpace, tenantId+"/"+id)
@@ -262,23 +262,30 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 
 	imageName := imageRepository + businessDockerfileDto.Name + ":" + businessDockerfileDto.Version
 
+	shellScript := "docker build -f " + dest + " -t " + imageName + " ."
 	//生成镜像
-	exec.Command("docker build -f " + dest + " -t " + imageName + " .")
+	cmd = exec.Command(shellScript)
+	output, _ := cmd.Output()
+	fmt.Print("构建镜像：" + shellScript +" 返回："+  string(output))
+
 	dockerRepositoryUrl, _ := factory.GetValue("DOCKER_REPOSITORY_URL")
 	username, _ := factory.GetValue("DOCKER_USERNAME")
 	password, _ := factory.GetValue("DOCKER_PASSWORD")
 	//登录镜像仓库
-	cmd = exec.Command("docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl)
+	shellScript = "docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl
+	cmd = exec.Command(shellScript)
 
-	output,_ := cmd.Output()
+	output, _ = cmd.Output()
+	fmt.Print("登录：" + shellScript +" 返回："+  string(output))
 
-	fmt.Print("登录打印",string(output))
+	//推镜像
+	shellScript = "docker push " + imageName
 
-	cmd = exec.Command("docker push " + imageName)
+	cmd = exec.Command(shellScript)
 
-	output,_ = cmd.Output()
+	output, _ = cmd.Output()
 
-	fmt.Print("docker push ",string(output))
+	fmt.Print("推镜像：" + shellScript +" 返回："+ string(output))
 
 	businessImagesDto := businessImages.BusinessImagesDto{}
 	businessImagesDto.TenantId = user.TenantId
