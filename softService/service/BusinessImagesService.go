@@ -233,6 +233,7 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 		businessImagesDao dao.BusinessImagesDao
 		f                 *os.File
 		err               error
+		cmd *exec.Cmd
 	)
 
 	dest := filepath.Join(config.WorkSpace, tenantId+"/"+id)
@@ -267,9 +268,17 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 	username, _ := factory.GetValue("DOCKER_USERNAME")
 	password, _ := factory.GetValue("DOCKER_PASSWORD")
 	//登录镜像仓库
-	exec.Command("docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl)
+	cmd = exec.Command("docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl)
 
-	exec.Command("docker push " + imageName)
+	output,_ := cmd.Output()
+
+	fmt.Print("登录打印",string(output))
+
+	cmd = exec.Command("docker push " + imageName)
+
+	output,_ = cmd.Output()
+
+	fmt.Print("docker push ",string(output))
 
 	businessImagesDto := businessImages.BusinessImagesDto{}
 	businessImagesDto.TenantId = user.TenantId
