@@ -19,6 +19,9 @@ func (r *Local) SaveMapping(mappingDto mapping.MappingDto) (err error) {
 
 func (r *Local) GetMapping(zKey string) (mapping mapping.MappingDto, err error) {
 	data, _ := r.client.Get(constants.DOMAIN_COMMON + zKey)
+	if data == nil{
+		return mapping,err
+	}
 	json.Unmarshal(data.([]byte), &mapping)
 	return mapping, err
 }

@@ -165,10 +165,10 @@ func GetMappingValue(zKey string) (value string, err error) {
 	cacheSwatch := config.G_AppConfig.Cache
 	var m mapping.MappingDto
 	if Cache_redis == cacheSwatch {
-		m, err = redis.G_Redis.GetMapping("DOMAIN.COMMON"+zKey)
+		m, err = redis.G_Redis.GetMapping(zKey)
 	}
 	if Cache_local == cacheSwatch {
-		m, err = local.G_Local.GetMapping("DOMAIN.COMMON"+zKey)
+		m, err = local.G_Local.GetMapping(zKey)
 	}
 	if(m == (mapping.MappingDto{})){
 		return "",err
