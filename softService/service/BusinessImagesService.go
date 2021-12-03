@@ -1,14 +1,10 @@
 package service
 
 import (
-	"fmt"
-	"github.com/zihao-boy/zihao/common/cache/factory"
+	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
-	"os"
-	"os/exec"
-	"path"
 	"path/filepath"
 	"strconv"
 
@@ -106,31 +102,29 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 	ctx.SetMaxRequestBodySize(maxSize)
 
 	file, fileHeader, err := ctx.FormFile("uploadFile")
-
+	defer file.Close()
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
-
-	defer file.Close()
-	dest := filepath.Join(config.G_AppConfig.DataPath, "/businessImages")
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	businessImagesDto.Id = seq.Generator()
+	dest := filepath.Join( "/businessImages",user.TenantId,businessImagesDto.Id)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
 
-	fileName := path.Ext(fileHeader.Filename)
 
-	dest = filepath.Join(dest, seq.Generator()+fileName)
+	dest = filepath.Join(dest, fileHeader.Filename)
 
-	_, err = ctx.SaveFormFile(fileHeader, dest)
+	_, err = ctx.SaveFormFile(fileHeader, config.G_AppConfig.DataPath+dest)
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
 
-	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
 	businessImagesDto.TenantId = user.TenantId
 	businessImagesDto.CreateUserId = user.UserId
-	businessImagesDto.Id = seq.Generator()
 	businessImagesDto.Version = "V" + date.GetNowAString()
 	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_IMPORT
 	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
@@ -218,90 +212,15 @@ func (businessImagesService *BusinessImagesService) GeneratorImages(ctx iris.Con
 		return result.Error("dockerfile 不存在")
 	}
 
-	go doGeneratorImage(businessDockerfileDtos[0], user)
+	doGeneratorImage(businessDockerfileDtos[0], user)
 
 	return result.Success()
 
 }
 
 func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto, user *user.UserDto) {
-
-	var (
-		dockerfile        = businessDockerfileDto.Dockerfile
-		tenantId          = businessDockerfileDto.TenantId
-		id                = businessDockerfileDto.Id
-		businessImagesDao dao.BusinessImagesDao
-		f                 *os.File
-		err               error
-		cmd               *exec.Cmd
-	)
-
-	dest := filepath.Join(config.WorkSpace, tenantId+"/"+id)
-
-	if !utils.IsDir(dest) {
-		utils.CreateDir(dest)
-	}
-
-	dest += "/Dockerfile"
-
-	if !utils.IsFile(dest  ) {
-		f, err = os.OpenFile(dest, os.O_RDONLY|os.O_TRUNC, 0600)
-	} else {
-		f, err = os.Create(dest)
-	}
-
-	defer f.Close()
-	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		_, err = f.Write([]byte(dockerfile))
-		if err != nil {
-			fmt.Print(err.Error())
-		}
-	}
-
-	imageRepository, _ := factory.GetMappingValue("IMAGES_REPOSITORY")
-
-	imageName := imageRepository + businessDockerfileDto.Name + ":" + businessDockerfileDto.Version
-
-	shellScript := "docker build -f " + dest + " -t " + imageName + " ."
-	//生成镜像
-	cmd = exec.Command(shellScript)
-	output, _ := cmd.Output()
-	fmt.Print("构建镜像：" + shellScript +" 返回："+  string(output))
-
-	dockerRepositoryUrl, _ := factory.GetMappingValue("DOCKER_REPOSITORY_URL")
-	username, _ := factory.GetMappingValue("DOCKER_USERNAME")
-	password, _ := factory.GetMappingValue("DOCKER_PASSWORD")
-	//登录镜像仓库
-	shellScript = "docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl
-	cmd = exec.Command(shellScript)
-
-	output, _ = cmd.Output()
-	fmt.Print("登录：" + shellScript +" 返回："+  string(output))
-
-	//推镜像
-	shellScript = "docker push " + imageName
-
-	cmd = exec.Command(shellScript)
-
-	output, _ = cmd.Output()
-
-	fmt.Print("推镜像：" + shellScript +" 返回："+ string(output))
-
-	businessImagesDto := businessImages.BusinessImagesDto{}
-	businessImagesDto.TenantId = user.TenantId
-	businessImagesDto.CreateUserId = user.UserId
-	businessImagesDto.Id = seq.Generator()
-	businessImagesDto.Version = "V" + date.GetNowAString()
-	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_DOCKER
-	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
-	businessImagesDto.TypeUrl = "docker pull " + imageName
-	businessImagesDto.Name = businessDockerfileDto.Name
-
-	err = businessImagesDao.SaveBusinessImages(businessImagesDto)
-	if err != nil {
-		fmt.Println("保存镜像失败" + err.Error())
-	}
-
+	businessDockerfileDto.TenantId = user.TenantId
+	businessDockerfileDto.CreateUserId = user.UserId
+	//消息队列
+	dockerfileQueue.SendData(businessDockerfileDto)
 }

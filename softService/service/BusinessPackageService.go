@@ -3,7 +3,6 @@ package service
 import (
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
-	"path"
 	"path/filepath"
 	"strconv"
 
@@ -103,31 +102,28 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 	ctx.SetMaxRequestBodySize(maxSize)
 
 	file, fileHeader, err := ctx.FormFile("uploadFile")
-
-	if err != nil {
-		return result.Error("上传失败" + err.Error())
-	}
-
 	defer file.Close()
-	dest := filepath.Join(config.G_AppConfig.DataPath, "/businessPackage")
-
-	if !utils.IsDir(dest) {
-		utils.CreateDir(dest)
-	}
-
-	fileName := path.Ext(fileHeader.Filename)
-
-	dest = filepath.Join(dest, seq.Generator()+fileName)
-
-	_, err = ctx.SaveFormFile(fileHeader, dest)
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
 
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	businessPackageDto.Id = seq.Generator()
+	dest := filepath.Join("/businessPackage",user.TenantId,businessPackageDto.Id)
+
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+
+	dest = filepath.Join(dest, fileHeader.Filename)
+
+	_, err = ctx.SaveFormFile(fileHeader, config.G_AppConfig.DataPath+dest)
+	if err != nil {
+		return result.Error("上传失败" + err.Error())
+	}
+
 	businessPackageDto.TenantId = user.TenantId
 	businessPackageDto.CreateUserId = user.UserId
-	businessPackageDto.Id = seq.Generator()
 	businessPackageDto.Path = dest
 	businessPackageDto.Varsion = "V" + date.GetNowAString()
 	businessPackageDto.Name = ctx.FormValue("name")
