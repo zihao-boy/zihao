@@ -242,10 +242,12 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 		utils.CreateDir(dest)
 	}
 
-	if !utils.IsFile(dest + "/Dockerfile") {
-		f, err = os.OpenFile(dest+"/Dockerfile", os.O_RDONLY|os.O_TRUNC, 0600)
+	dest += "/Dockerfile"
+
+	if !utils.IsFile(dest  ) {
+		f, err = os.OpenFile(dest, os.O_RDONLY|os.O_TRUNC, 0600)
 	} else {
-		f, err = os.Create(dest + "/Dockerfile")
+		f, err = os.Create(dest)
 	}
 
 	defer f.Close()
@@ -258,7 +260,7 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 		}
 	}
 
-	imageRepository, _ := factory.GetValue("IMAGES_REPOSITORY")
+	imageRepository, _ := factory.GetMappingValue("IMAGES_REPOSITORY")
 
 	imageName := imageRepository + businessDockerfileDto.Name + ":" + businessDockerfileDto.Version
 
@@ -268,9 +270,9 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 	output, _ := cmd.Output()
 	fmt.Print("构建镜像：" + shellScript +" 返回："+  string(output))
 
-	dockerRepositoryUrl, _ := factory.GetValue("DOCKER_REPOSITORY_URL")
-	username, _ := factory.GetValue("DOCKER_USERNAME")
-	password, _ := factory.GetValue("DOCKER_PASSWORD")
+	dockerRepositoryUrl, _ := factory.GetMappingValue("DOCKER_REPOSITORY_URL")
+	username, _ := factory.GetMappingValue("DOCKER_USERNAME")
+	password, _ := factory.GetMappingValue("DOCKER_PASSWORD")
 	//登录镜像仓库
 	shellScript = "docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl
 	cmd = exec.Command(shellScript)

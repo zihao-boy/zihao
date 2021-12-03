@@ -160,6 +160,22 @@ func GetMapping(zKey string) (mapping mapping.MappingDto, err error) {
 	return mapping, err
 }
 
+// query domain is DOMAIN.COMMON  value
+func GetMappingValue(zKey string) (value string, err error) {
+	cacheSwatch := config.G_AppConfig.Cache
+	var m mapping.MappingDto
+	if Cache_redis == cacheSwatch {
+		m, err = redis.G_Redis.GetMapping("DOMAIN.COMMON"+zKey)
+	}
+	if Cache_local == cacheSwatch {
+		m, err = local.G_Local.GetMapping("DOMAIN.COMMON"+zKey)
+	}
+	if(m == (mapping.MappingDto{})){
+		return "",err
+	}
+	return m.Value, err
+}
+
 // Init
 func InitMapping() {
 	cacheSwatch := config.G_AppConfig.Cache
