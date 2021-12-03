@@ -1,8 +1,13 @@
 package service
 
 import (
+	"fmt"
+	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
+	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -18,7 +23,8 @@ import (
 )
 
 type BusinessImagesService struct {
-	businessImagesDao dao.BusinessImagesDao
+	businessImagesDao     dao.BusinessImagesDao
+	businessDockerfileDao dao.BusinessDockerfileDao
 }
 
 /**
@@ -26,7 +32,7 @@ type BusinessImagesService struct {
 */
 func (businessImagesService *BusinessImagesService) GetBusinessImagesAll(businessImagesDto businessImages.BusinessImagesDto) ([]*businessImages.BusinessImagesDto, error) {
 	var (
-		err                    error
+		err                error
 		businessImagesDtos []*businessImages.BusinessImagesDto
 	)
 
@@ -44,10 +50,10 @@ func (businessImagesService *BusinessImagesService) GetBusinessImagesAll(busines
 */
 func (businessImagesService *BusinessImagesService) GetBusinessImages(ctx iris.Context) result.ResultDto {
 	var (
-		err                    error
-		page                   int64
-		row                    int64
-		total                  int64
+		err                error
+		page               int64
+		row                int64
+		total              int64
 		businessImagesDto  = businessImages.BusinessImagesDto{}
 		businessImagesDtos []*businessImages.BusinessImagesDto
 	)
@@ -94,7 +100,7 @@ func (businessImagesService *BusinessImagesService) GetBusinessImages(ctx iris.C
 */
 func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.Context) result.ResultDto {
 	var (
-		err                   error
+		err               error
 		businessImagesDto businessImages.BusinessImagesDto
 	)
 	ctx.SetMaxRequestBodySize(maxSize)
@@ -145,7 +151,7 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 */
 func (businessImagesService *BusinessImagesService) UpdateBusinessImages(ctx iris.Context) result.ResultDto {
 	var (
-		err                   error
+		err               error
 		businessImagesDto businessImages.BusinessImagesDto
 	)
 
@@ -167,7 +173,7 @@ func (businessImagesService *BusinessImagesService) UpdateBusinessImages(ctx iri
 */
 func (businessImagesService *BusinessImagesService) DeleteBusinessImages(ctx iris.Context) result.ResultDto {
 	var (
-		err                   error
+		err               error
 		businessImagesDto businessImages.BusinessImagesDto
 	)
 
@@ -181,5 +187,94 @@ func (businessImagesService *BusinessImagesService) DeleteBusinessImages(ctx iri
 	}
 
 	return result.SuccessData(businessImagesDto)
+
+}
+
+/**
+删除 系统信息
+*/
+func (businessImagesService *BusinessImagesService) GeneratorImages(ctx iris.Context) result.ResultDto {
+	var (
+		err                   error
+		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
+	)
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	if err = ctx.ReadJSON(&businessDockerfileDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	tmpBusinessDockerfileDto := businessDockerfile.BusinessDockerfileDto{
+		Id:       businessDockerfileDto.Id,
+		TenantId: user.TenantId,
+	}
+	businessDockerfileDtos, err := businessImagesService.businessDockerfileDao.GetBusinessDockerfiles(tmpBusinessDockerfileDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(businessDockerfileDtos) < 1 {
+		return result.Error("dockerfile 不存在")
+	}
+
+	go doGeneratorImage(businessDockerfileDtos[0], user)
+
+	return result.Success()
+
+}
+
+func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto, user *user.UserDto) {
+
+	var (
+		dockerfile        = businessDockerfileDto.Dockerfile
+		tenantId          = businessDockerfileDto.TenantId
+		id                = businessDockerfileDto.Id
+		businessImagesDao dao.BusinessImagesDao
+	)
+
+	dest := filepath.Join(config.WorkSpace, tenantId+"/"+id+"/Dockerfile")
+
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+
+	f, err := os.OpenFile(dest, os.O_WRONLY|os.O_TRUNC, 0600)
+	defer f.Close()
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		_, err = f.Write([]byte(dockerfile))
+		fmt.Print(err.Error())
+	}
+
+	imageRepository, _ := factory.GetValue("IMAGES_REPOSITORY")
+
+	imageName := imageRepository + businessDockerfileDto.Name + ":" + businessDockerfileDto.Version
+
+	//生成镜像
+	exec.Command("docker build -f " + dest + " -t " + imageName + " .")
+	dockerRepositoryUrl, _ := factory.GetValue("DOCKER_REPOSITORY_URL")
+	username, _ := factory.GetValue("DOCKER_USERNAME")
+	password, _ := factory.GetValue("DOCKER_PASSWORD")
+	//登录镜像仓库
+	exec.Command("docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl)
+
+	exec.Command("docker push " + imageName)
+
+	businessImagesDto := businessImages.BusinessImagesDto{}
+	businessImagesDto.TenantId = user.TenantId
+	businessImagesDto.CreateUserId = user.UserId
+	businessImagesDto.Id = seq.Generator()
+	businessImagesDto.Version = "V" + date.GetNowAString()
+	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_DOCKER
+	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
+	businessImagesDto.TypeUrl = "docker pull " + imageName
+	businessImagesDto.Name = businessDockerfileDto.Name
+
+	err = businessImagesDao.SaveBusinessImages(businessImagesDto)
+	if err != nil {
+		fmt.Println("保存镜像失败" + err.Error())
+	}
 
 }

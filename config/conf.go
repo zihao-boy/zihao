@@ -19,6 +19,10 @@ var (
 	G_DBConfig  DBConfig
 )
 
+const (
+	WorkSpace string = "/zihao/master/"
+)
+
 // 全局配置文件对应的结构体
 type (
 	// app

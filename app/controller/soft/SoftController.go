@@ -44,6 +44,8 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateBusinessImages", hero.Handler(aus.UpdateBusinessImages))
 
 	adinMenu.Post("/deleteBusinessImages", hero.Handler(aus.DeleteBusinessImages))
+
+	adinMenu.Post("/generatorImages", hero.Handler(aus.GeneratorImages))
 }
 
 /**
@@ -152,6 +154,15 @@ func (aus *SoftController) UpdateBusinessImages(ctx iris.Context) {
 */
 func (aus *SoftController) DeleteBusinessImages(ctx iris.Context) {
 	reslut := aus.businessImagesService.DeleteBusinessImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 业务包
+*/
+func (aus *SoftController) GeneratorImages(ctx iris.Context) {
+	reslut := aus.businessImagesService.GeneratorImages(ctx)
 
 	ctx.JSON(reslut)
 }
