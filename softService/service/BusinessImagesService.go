@@ -233,13 +233,13 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 		businessImagesDao dao.BusinessImagesDao
 	)
 
-	dest := filepath.Join(config.WorkSpace, tenantId+"/"+id+"/Dockerfile")
+	dest := filepath.Join(config.WorkSpace, tenantId+"/"+id)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
 
-	f, err := os.OpenFile(dest, os.O_WRONLY|os.O_TRUNC, 0600)
+	f, err := os.Create(dest+"/Dockerfile")
 	defer f.Close()
 	if err != nil {
 		fmt.Println(err.Error())

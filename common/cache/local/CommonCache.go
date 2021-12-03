@@ -26,6 +26,10 @@ func (r *Local) SetValue(key string, value string, timeout ...int64) (err error)
 func (r *Local) GetValue(key string) (string, error) {
 	value, _ := r.client.Get(key)
 
+	if value ==nil{
+		return "",nil
+	}
+
 	return value.(string), nil
 }
 
