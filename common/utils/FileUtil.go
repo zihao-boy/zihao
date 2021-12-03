@@ -16,6 +16,17 @@ func IsDir(fileAddr string) bool {
 }
 
 /**
+判断文件是否存在
+*/
+func IsFile(fileAddr string) bool {
+	s, err := os.Stat(fileAddr)
+	if err != nil {
+		return false
+	}
+	return !s.IsDir()
+}
+
+/**
 创建文件夹
 */
 func CreateDir(dirName string) bool {

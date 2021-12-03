@@ -231,6 +231,8 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 		tenantId          = businessDockerfileDto.TenantId
 		id                = businessDockerfileDto.Id
 		businessImagesDao dao.BusinessImagesDao
+		f                 *os.File
+		err               error
 	)
 
 	dest := filepath.Join(config.WorkSpace, tenantId+"/"+id)
@@ -239,13 +241,20 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 		utils.CreateDir(dest)
 	}
 
-	f, err := os.Create(dest+"/Dockerfile")
+	if !utils.IsFile(dest + "/Dockerfile") {
+		f, err = os.OpenFile(dest+"/Dockerfile", os.O_RDONLY|os.O_TRUNC, 0600)
+	} else {
+		f, err = os.Create(dest + "/Dockerfile")
+	}
+
 	defer f.Close()
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
 		_, err = f.Write([]byte(dockerfile))
-		fmt.Print(err.Error())
+		if err != nil {
+			fmt.Print(err.Error())
+		}
 	}
 
 	imageRepository, _ := factory.GetValue("IMAGES_REPOSITORY")
