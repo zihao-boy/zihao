@@ -90,8 +90,8 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	shellScript := "docker build -f " + dest + " -t " + imageName + " ."
 	//生成镜像
-	cmd = exec.Command("docker","build","-f",dest,"t",imageName,".")
-	output, _ := cmd.Output()
+	cmd = exec.Command("bash", "-c",shellScript)
+	output, _ := cmd.CombinedOutput()
 	fmt.Print("构建镜像：" + shellScript +" 返回："+  string(output))
 
 	dockerRepositoryUrl, _ := factory.GetMappingValue("DOCKER_REPOSITORY_URL")
