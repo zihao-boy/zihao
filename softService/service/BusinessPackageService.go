@@ -109,7 +109,8 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.Id = seq.Generator()
-	dest := filepath.Join("/businessPackage",user.TenantId,businessPackageDto.Id)
+
+	dest := filepath.Join(config.WorkSpace,"businessPackage",user.TenantId,businessPackageDto.Id)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
