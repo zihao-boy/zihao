@@ -110,7 +110,8 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.Id = seq.Generator()
 
-	dest := filepath.Join(config.WorkSpace,"businessPackage",user.TenantId,businessPackageDto.Id)
+	curDest := filepath.Join("businessPackage",user.TenantId,businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace,curDest)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
@@ -118,14 +119,14 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 
 	dest = filepath.Join(dest, fileHeader.Filename)
 
-	_, err = ctx.SaveFormFile(fileHeader, config.G_AppConfig.DataPath+dest)
+	_, err = ctx.SaveFormFile(fileHeader, dest)
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
 
 	businessPackageDto.TenantId = user.TenantId
 	businessPackageDto.CreateUserId = user.UserId
-	businessPackageDto.Path = dest
+	businessPackageDto.Path = filepath.Join(curDest, fileHeader.Filename)
 	businessPackageDto.Varsion = "V" + date.GetNowAString()
 	businessPackageDto.Name = ctx.FormValue("name")
 
