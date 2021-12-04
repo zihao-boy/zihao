@@ -90,7 +90,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	shellScript := "docker build -f " + dest + " -t " + imageName + " ."
 	//生成镜像
-	cmd = exec.Command(shellScript)
+	cmd = exec.Command("docker","build","-f",dest,"t",imageName,".")
 	output, _ := cmd.Output()
 	fmt.Print("构建镜像：" + shellScript +" 返回："+  string(output))
 
