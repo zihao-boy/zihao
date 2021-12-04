@@ -62,6 +62,8 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
 
+	tenantDesc := dest
+
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
@@ -91,6 +93,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	shellScript := "docker build -f " + dest + " -t " + imageName + " ."
 	//生成镜像
 	cmd = exec.Command("bash", "-c",shellScript)
+	cmd.Dir = tenantDesc
 	output, _ := cmd.CombinedOutput()
 	fmt.Print("构建镜像：" + shellScript +" 返回："+  string(output))
 
@@ -99,17 +102,17 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	password, _ := factory.GetMappingValue("DOCKER_PASSWORD")
 	//登录镜像仓库
 	shellScript = "docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl
-	cmd = exec.Command(shellScript)
+	cmd = exec.Command("bash", "-c",shellScript)
 
-	output, _ = cmd.Output()
+	output, _ = cmd.CombinedOutput()
 	fmt.Print("登录：" + shellScript +" 返回："+  string(output))
 
 	//推镜像
 	shellScript = "docker push " + imageName
 
-	cmd = exec.Command(shellScript)
+	cmd = exec.Command("bash", "-c",shellScript)
 
-	output, _ = cmd.Output()
+	output, _ = cmd.CombinedOutput()
 
 	fmt.Print("推镜像：" + shellScript +" 返回："+ string(output))
 
