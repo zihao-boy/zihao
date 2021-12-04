@@ -12,6 +12,7 @@
                 records: 1,
                 moreCondition: false,
                 id: '',
+                component: 'businessDockerfileManage',
                 conditions: {
                     id: '',
                     name: ''
@@ -23,6 +24,7 @@
         },
         _initEvent: function() {
             vc.on('businessDockerfileManage', 'listBusinessDockerfile', function(_param) {
+                $that.businessDockerfileManageInfo.component = 'businessDockerfileManage'
                 vc.component._listBusinessDockerfiles(DEFAULT_PAGE, DEFAULT_ROWS);
             });
             vc.on('pagination', 'page_event', function(_currentPage) {
@@ -56,6 +58,7 @@
             },
             _openAddBusinessDockerfileModal: function() {
                 vc.emit('addBusinessDockerfile', 'openAddBusinessDockerfileModal', {});
+                $that.businessDockerfileManageInfo.component = 'addBusinessDockerfile';
             },
             _openEditBusinessDockerfileModel: function(_businessDockerfile) {
                 vc.emit('editBusinessDockerfile', 'openEditBusinessDockerfileModal', _businessDockerfile);

@@ -1,4 +1,4 @@
-<div id = "chooseBusinessPackageModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chooseBusinessPackageModelLabel" aria-hidden="true" >
+<div id="chooseBusinessPackageModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chooseBusinessPackageModelLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -28,18 +28,18 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                                                        <th class="text-center">ID</th>
-                            <th class="text-center">名称</th>
-                            <th class="text-center">版本</th>
-                            <th class="text-center">操作</th>
+                                            <th class="text-center">ID</th>
+                                            <th class="text-center">名称</th>
+                                            <th class="text-center">版本</th>
+                                            <th class="text-center">操作</th>
 
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="businessPackage in chooseBusinessPackageInfo.businessPackages">
-                                                                        <td class="text-center">{{businessPackage.id}}</td>
-                            <td class="text-center">{{businessPackage.name}}</td>
-                            <td class="text-center">{{businessPackage.varsion}}</td>
+                                            <td class="text-center">{{businessPackage.id}}</td>
+                                            <td class="text-center">{{businessPackage.name}}</td>
+                                            <td class="text-center">{{businessPackage.varsion}}</td>
 
                                             <td>
                                                 <button class="btn btn-primary btn-xs" v-on:click="chooseBusinessPackage(businessPackage)">选择</button>

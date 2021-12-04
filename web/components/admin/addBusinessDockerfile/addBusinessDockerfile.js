@@ -10,6 +10,7 @@
                 id: '',
                 name: '',
                 dockerfile: '',
+                textAreaIndex: 0
             }
         },
         _initMethod: function() {
@@ -18,8 +19,19 @@
         _initEvent: function() {
             vc.on('addBusinessDockerfile', 'openAddBusinessDockerfileModal', function() {
                 $that._initDockerfile();
-                $('#addBusinessDockerfileModel').modal('show');
             });
+            vc.on('addBusinessDockerfile', 'chooseBusinessPackage', function(param) {
+
+                let insert = $that.addBusinessDockerfileInfo.textAreaIndex;
+                let _value = $that.addBusinessDockerfileInfo.dockerfile;
+                // 拼接字符串的形式来得到需要的内容
+                $that.addBusinessDockerfileInfo.dockerfile = _value.substr(0, insert) +
+                    "ADD " + param.path + " /root \n";
+                if (insert <= _value.length) {
+                    $that.addBusinessDockerfileInfo.dockerfile += _value.substr(insert);
+                }
+            });
+
         },
         methods: {
             addBusinessDockerfileValidate() {
@@ -92,6 +104,20 @@
                 };
                 $that._initDockerfile();
             },
+            _goBack: function() {
+                vc.emit('businessDockerfileManage', 'listBusinessDockerfile', {});
+            },
+            _selectBusinessPackages: function() {
+                let textInput = document.querySelector('.addDockfile');
+                // 获取光标初始索引
+                let insert = textInput.selectionStart;
+                if (insert) {
+                    $that.addBusinessDockerfileInfo.textAreaIndex = insert;
+                } else {
+                    $that.addBusinessDockerfileInfo.textAreaIndex = textInput.value.length;
+                }
+                vc.emit('chooseBusinessPackage', 'openChooseBusinessPackageModel', {});
+            },
             _initDockerfile: function() {
                 $that.addBusinessDockerfileInfo.dockerfile = "" +
                     "# 指定源于一个基础镜像\n" +
@@ -99,11 +125,9 @@
                     "# 维护者/拥有者\n" +
                     "MAINTAINER xxx <xxx@xx.com>\n" +
                     "# 从宿主机上传文件 ，这里上传一个脚本，\n" +
-                    "# 具体脚本可以去业务包上传后复制路径\n" +
-                    "ADD bin/start_api.sh /root/\n" +
-                    "# 从宿主机上传文件 ，这里上传一个业务文件，\n" +
-                    "# 具体脚本可以去业务包上传后复制路径\n" +
-                    "ADD xxx /root/\n" +
+                    "# 点击选择业务包上传\n" +
+                    "# ADD bin/start_api.sh /root/\n" +
+                    "\n" +
                     "# 容器内执行相应指令\n" +
                     "RUN chmod u+x /root/start_api.sh\n" +
                     "# 运行命令\n" +
