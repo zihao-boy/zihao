@@ -3517,4 +3517,49 @@ CREATE TABLE business_images(
      `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
      `status_cd` varchar(2) NOT NULL DEFAULT '0',
      `tenant_id` varchar(64) NOT NULL
- )
+ );
+
+CREATE TABLE `app_service_var` (
+           `av_id` varchar(64) NOT NULL ,
+           `as_id` varchar(64) NOT NULL ,
+           `tenant_id` varchar(64) NOT NULL,
+           `var_spec` varchar(64) NOT NULL ,
+           `var_name` varchar(128) NOT NULL ,
+           `var_value` varchar(512) NOT NULL ,
+           `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+           `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
+           PRIMARY KEY (`av_id`)
+);
+
+CREATE TABLE `app_service_hosts` (
+         `hosts_id` varchar(64) NOT NULL ,
+         `as_id` varchar(64) NOT NULL ,
+         `tenant_id` varchar(64) NOT NULL,
+         `hostname` varchar(128) NOT NULL ,
+         `ip` varchar(64) NOT NULL ,
+         `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+         `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
+         PRIMARY KEY (`hosts_id`)
+);
+
+CREATE TABLE `app_service_dir` (
+       `dir_id` varchar(64) NOT NULL ,
+       `as_id` varchar(64) NOT NULL ,
+       `tenant_id` varchar(64) NOT NULL,
+       `src_dir` integer NOT NULL ,
+       `target_dir` integer NOT NULL ,
+       `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+       `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
+       PRIMARY KEY (`dir_id`)
+)
+
+CREATE TABLE `app_service_port` (
+        `port_id` varchar(64) NOT NULL ,
+        `as_id` varchar(64) NOT NULL ,
+        `tenant_id` varchar(64) NOT NULL,
+        `src_port` integer NOT NULL ,
+        `target_port` integer NOT NULL ,
+        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+        `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
+        PRIMARY KEY (`port_id`)
+)
