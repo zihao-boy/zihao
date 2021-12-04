@@ -19,7 +19,7 @@
         methods: {
             deleteBusinessDockerfile: function() {
                 vc.http.apiPost(
-                    'businessDockerfile.deleteBusinessDockerfile',
+                    '/soft/deleteBusinessDockerfile',
                     JSON.stringify(vc.component.deleteBusinessDockerfileInfo), {
                         emulateJSON: true
                     },
