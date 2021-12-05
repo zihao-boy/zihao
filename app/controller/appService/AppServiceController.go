@@ -68,6 +68,15 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppServiceDir", hero.Handler(aus.deleteAppServiceDir))
 
+
+	adinMenu.Get("/getAppServicePort", hero.Handler(aus.getAppServicePort))
+
+	adinMenu.Post("/saveAppServicePort", hero.Handler(aus.saveAppServicePort))
+
+	adinMenu.Post("/updateAppServicePort", hero.Handler(aus.updateAppServicePort))
+
+	adinMenu.Post("/deleteAppServicePort", hero.Handler(aus.deleteAppServicePort))
+
 }
 
 /**
@@ -260,7 +269,7 @@ func (aus *AppServiceController) deleteAppServiceHosts(ctx iris.Context) {
 查询 主机组
 */
 func (aus *AppServiceController) getAppServiceDir(ctx iris.Context) {
-	reslut := aus.appServiceService.GetAppServiceHosts(ctx)
+	reslut := aus.appServiceService.GetAppServiceDir(ctx)
 
 	ctx.JSON(reslut)
 }
@@ -269,7 +278,7 @@ func (aus *AppServiceController) getAppServiceDir(ctx iris.Context) {
 添加 主机组
 */
 func (aus *AppServiceController) saveAppServiceDir(ctx iris.Context) {
-	reslut := aus.appServiceService.SaveAppServiceHosts(ctx)
+	reslut := aus.appServiceService.SaveAppServiceDir(ctx)
 
 	ctx.JSON(reslut)
 }
@@ -278,7 +287,7 @@ func (aus *AppServiceController) saveAppServiceDir(ctx iris.Context) {
 修改 主机组
 */
 func (aus *AppServiceController) updateAppServiceDir(ctx iris.Context) {
-	reslut := aus.appServiceService.UpdateAppServiceHosts(ctx)
+	reslut := aus.appServiceService.UpdateAppServiceDir(ctx)
 
 	ctx.JSON(reslut)
 }
@@ -287,7 +296,45 @@ func (aus *AppServiceController) updateAppServiceDir(ctx iris.Context) {
 删除 主机组
 */
 func (aus *AppServiceController) deleteAppServiceDir(ctx iris.Context) {
-	reslut := aus.appServiceService.DeleteAppServiceHosts(ctx)
+	reslut := aus.appServiceService.DeleteAppServiceDir(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+/**
+查询 主机组
+*/
+func (aus *AppServiceController) getAppServicePort(ctx iris.Context) {
+	reslut := aus.appServiceService.GetAppServicePort(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *AppServiceController) saveAppServicePort(ctx iris.Context) {
+	reslut := aus.appServiceService.SaveAppServicePort(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *AppServiceController) updateAppServicePort(ctx iris.Context) {
+	reslut := aus.appServiceService.UpdateAppServicePort(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *AppServiceController) deleteAppServicePort(ctx iris.Context) {
+	reslut := aus.appServiceService.DeleteAppServicePort(ctx)
 
 	ctx.JSON(reslut)
 }

@@ -359,3 +359,209 @@ func (appServiceService *AppServiceService) DeleteAppServiceHosts(ctx iris.Conte
 
 	return result.SuccessData(appServiceHostsDto)
 }
+
+func (appServiceService *AppServiceService) GetAppServiceDir(ctx iris.Context) interface{} {
+	var (
+		err            error
+		page           int64
+		row            int64
+		total          int64
+		appServiceDirDto  = appService.AppServiceDirDto{}
+		appServiceDirDtos []*appService.AppServiceDirDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	appServiceDirDto.Row = row * page
+
+	appServiceDirDto.Page = (page - 1) * row
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceDirDto.TenantId = user.TenantId
+
+	total, err = appServiceService.appServiceDao.GetAppServiceDirCount(appServiceDirDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	appServiceDirDtos, err = appServiceService.appServiceDao.GetAppServiceDir(appServiceDirDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceDirDtos, total, row)
+}
+
+func (appServiceService *AppServiceService) SaveAppServiceDir(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceDirDto appService.AppServiceDirDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceDirDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceDirDto.TenantId = user.TenantId
+	appServiceDirDto.DirId = seq.Generator()
+
+	err = appServiceService.appServiceDao.SaveAppServiceDir(appServiceDirDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceDirDto)
+}
+
+func (appServiceService *AppServiceService) UpdateAppServiceDir(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceDirDto appService.AppServiceDirDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceDirDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.UpdateAppServiceDir(appServiceDirDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceDirDto)
+}
+
+func (appServiceService *AppServiceService) DeleteAppServiceDir(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceDirDto appService.AppServiceDirDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceDirDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.DeleteAppServiceDir(appServiceDirDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceDirDto)
+}
+
+func (appServiceService *AppServiceService) GetAppServicePort(ctx iris.Context) interface{} {
+	var (
+		err            error
+		page           int64
+		row            int64
+		total          int64
+		appServicePortDto  = appService.AppServicePortDto{}
+		appServicePortDtos []*appService.AppServicePortDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	appServicePortDto.Row = row * page
+
+	appServicePortDto.Page = (page - 1) * row
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServicePortDto.TenantId = user.TenantId
+
+	total, err = appServiceService.appServiceDao.GetAppServicePortCount(appServicePortDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	appServicePortDtos, err = appServiceService.appServiceDao.GetAppServicePort(appServicePortDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServicePortDtos, total, row)
+}
+
+func (appServiceService *AppServiceService) SaveAppServicePort(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServicePortDto appService.AppServicePortDto
+	)
+
+	if err = ctx.ReadJSON(&appServicePortDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServicePortDto.TenantId = user.TenantId
+	appServicePortDto.PortId = seq.Generator()
+
+	err = appServiceService.appServiceDao.SaveAppServicePort(appServicePortDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServicePortDto)
+}
+
+func (appServiceService *AppServiceService) UpdateAppServicePort(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServicePortDto appService.AppServicePortDto
+	)
+
+	if err = ctx.ReadJSON(&appServicePortDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.UpdateAppServicePort(appServicePortDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServicePortDto)
+}
+
+func (appServiceService *AppServiceService) DeleteAppServicePort(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServicePortDto appService.AppServicePortDto
+	)
+
+	if err = ctx.ReadJSON(&appServicePortDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.DeleteAppServicePort(appServicePortDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServicePortDto)
+}

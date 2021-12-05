@@ -257,6 +257,138 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 			and hosts_id = #HostsId#
 		$endif
 	`
+
+
+	//查询应用目录映射
+	query_appServiceDir_count string = `
+		select count(1) total
+			from app_service_dir t
+			where t.status_cd = '0'
+			$if TenantId != '' then
+			and t.tenant_id = #TenantId#
+			$endif
+			$if AsId != '' then
+			and t.as_id = #AsId#
+			$endif
+			$if DirId != '' then
+			and t.dir_id = #DirId#
+			$endif
+    	
+	`
+	query_appServiceDir string = `
+				select t.*
+					from app_service_dir t
+					where t.status_cd = '0'
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
+					$endif
+					$if AsId != '' then
+					and t.as_id = #AsId#
+					$endif
+					$if DirId != '' then
+					and t.dir_id = #DirId#
+					$endif
+					order by t.create_time desc
+					$if Row != 0 then
+						limit #Page#,#Row#
+					$endif
+	`
+	insert_appServiceDir string = `
+	insert into app_service_dir(dir_id, as_id, tenant_id, src_dir, target_dir)
+	VALUES(#DirId#,#AsId#,#TenantId#,#SrcDir#,#TargetDir#)
+`
+
+	update_appServiceDir string = `
+	update app_service_dir set
+		$if SrcDir != '' then
+		 src_dir = #SrcDir#,
+		$endif
+		$if TargetDir != '' then
+		 target_dir = #TargetDir#,
+		$endif
+		status_cd = '0'
+		where status_cd = '0'
+		$if TenantId != '' then
+		and tenant_id = #TenantId#
+		$endif
+		$if DirId != '' then
+		and dir_id = #DirId#
+		$endif
+	`
+	delete_appServiceDir string = `
+	update app_service_dir  set
+                          status_cd = '1'
+                          where status_cd = '0'
+		$if DirId != '' then
+		and dir_id = #DirId#
+		$endif
+	`
+
+
+	//查询应用目录映射
+	query_appServicePort_count string = `
+		select count(1) total
+			from app_service_port t
+			where t.status_cd = '0'
+			$if TenantId != '' then
+			and t.tenant_id = #TenantId#
+			$endif
+			$if AsId != '' then
+			and t.as_id = #AsId#
+			$endif
+			$if PortId != '' then
+			and t.port_id = #PortId#
+			$endif
+
+	`
+	query_appServicePort string = `
+				select t.*
+					from app_service_port t
+					where t.status_cd = '0'
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
+					$endif
+					$if AsId != '' then
+					and t.as_id = #AsId#
+					$endif
+					$if PortId != '' then
+					and t.port_id = #PortId#
+					$endif
+					order by t.create_time desc
+					$if Row != 0 then
+						limit #Page#,#Row#
+					$endif
+	`
+	insert_appServicePort string = `
+	insert into app_service_port(port_id, as_id, tenant_id, src_port, target_port)
+	VALUES(#PortId#,#AsId#,#TenantId#,#SrcPort#,#TargetPort#)
+`
+
+	update_appServicePort string = `
+	update app_service_port set
+		$if SrcPort != '' then
+		 src_port = #SrcPort#,
+		$endif
+		$if TargetPort != '' then
+		 target_port = #TargetPort#,
+		$endif
+		status_cd = '0'
+		where status_cd = '0'
+		$if TenantId != '' then
+		and tenant_id = #TenantId#
+		$endif
+		$if PortId != '' then
+		and t.port_id = #PortId#
+		$endif
+	`
+	delete_appServicePort string = `
+	update app_service_port  set
+                          status_cd = '1'
+                          where status_cd = '0'
+		$if PortId != '' then
+		and t.port_id = #PortId#
+		$endif
+	`
 )
 
 type AppServiceDao struct {
@@ -395,4 +527,77 @@ func (d *AppServiceDao) UpdateAppServiceHost(hostsDto appService.AppServiceHosts
 func (d *AppServiceDao) DeleteAppServiceHosts(hostsDto appService.AppServiceHostsDto) error {
 	return sqlTemplate.Delete(delete_appServiceHosts, objectConvert.Struct2Map(hostsDto), false)
 
+}
+
+func (d *AppServiceDao) GetAppServiceDirCount(dirDto appService.AppServiceDirDto) (int64, error) {
+	var (
+		pageDto dto.PageDto
+		err     error
+	)
+
+	sqlTemplate.SelectOne(query_appServiceDir_count, objectConvert.Struct2Map(dirDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
+
+	return pageDto.Total, err
+}
+
+//查询服务磁盘路径
+func (d *AppServiceDao) GetAppServiceDir(dirDto appService.AppServiceDirDto) ([]*appService.AppServiceDirDto, error) {
+	var appServiceDirDtos []*appService.AppServiceDirDto
+	sqlTemplate.SelectList(query_appServiceDir, objectConvert.Struct2Map(dirDto), func(db *gorm.DB) {
+		db.Scan(&appServiceDirDtos)
+	}, false)
+
+	return appServiceDirDtos, nil
+}
+
+func (d *AppServiceDao) SaveAppServiceDir(dirDto appService.AppServiceDirDto) error {
+	return sqlTemplate.Insert(insert_appServiceDir, objectConvert.Struct2Map(dirDto), false)
+}
+
+//修改服务映射目录
+func (d *AppServiceDao) UpdateAppServiceDir(dirDto appService.AppServiceDirDto) error {
+	return sqlTemplate.Update(update_appServiceDir, objectConvert.Struct2Map(dirDto), false)
+}
+
+//删除应用映射目录
+func (d *AppServiceDao) DeleteAppServiceDir(dirDto appService.AppServiceDirDto) error {
+	return sqlTemplate.Delete(delete_appServiceDir, objectConvert.Struct2Map(dirDto), false)
+}
+
+//查询端口
+func (d *AppServiceDao) GetAppServicePortCount(portDto appService.AppServicePortDto) (int64, error) {
+	var (
+		pageDto dto.PageDto
+		err     error
+	)
+
+	sqlTemplate.SelectOne(query_appServicePort_count, objectConvert.Struct2Map(portDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
+
+	return pageDto.Total, err
+}
+
+//query app service port mapping
+func (d *AppServiceDao) GetAppServicePort(portDto appService.AppServicePortDto) ([]*appService.AppServicePortDto, error) {
+	var appServicePortDtos []*appService.AppServicePortDto
+	sqlTemplate.SelectList(query_appServicePort, objectConvert.Struct2Map(portDto), func(db *gorm.DB) {
+		db.Scan(&appServicePortDtos)
+	}, false)
+
+	return appServicePortDtos, nil
+}
+
+func (d *AppServiceDao) SaveAppServicePort(portDto appService.AppServicePortDto) error {
+	return sqlTemplate.Insert(insert_appServicePort, objectConvert.Struct2Map(portDto), false)
+}
+
+func (d *AppServiceDao) UpdateAppServicePort(portDto appService.AppServicePortDto) error {
+	return sqlTemplate.Update(update_appServicePort, objectConvert.Struct2Map(portDto), false)
+}
+
+func (d *AppServiceDao) DeleteAppServicePort(portDto appService.AppServicePortDto) error {
+	return sqlTemplate.Delete(delete_appServicePort, objectConvert.Struct2Map(portDto), false)
 }
