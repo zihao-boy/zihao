@@ -28,10 +28,9 @@ const (
 			$if AsName != '' then
 			and t.as_name = #AsName#
 			$endif
-    	
 	`
+
 	query_appService string = `
-		
 				select t.*,td.name as_type_name,td1.name state_name from app_service t
 left join t_dict td on t.as_type = td.status_cd and td.table_name = 'app_service' and td.table_columns = 'as_type'
 left join t_dict td1 on t.state = td1.status_cd and td1.table_name = 'app_service' and td1.table_columns = 'state'
@@ -383,8 +382,8 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 	`
 	delete_appServicePort string = `
 	update app_service_port  set
-                          status_cd = '1'
-                          where status_cd = '0'
+            status_cd = '1'
+	    where status_cd = '0'
 		$if PortId != '' then
 		and t.port_id = #PortId#
 		$endif
