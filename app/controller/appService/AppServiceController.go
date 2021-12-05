@@ -59,6 +59,15 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppServiceHosts", hero.Handler(aus.deleteAppServiceHosts))
 
+
+	adinMenu.Get("/getAppServiceDir", hero.Handler(aus.getAppServiceDir))
+
+	adinMenu.Post("/saveAppServiceDir", hero.Handler(aus.saveAppServiceDir))
+
+	adinMenu.Post("/updateAppServiceDir", hero.Handler(aus.updateAppServiceDir))
+
+	adinMenu.Post("/deleteAppServiceDir", hero.Handler(aus.deleteAppServiceDir))
+
 }
 
 /**
@@ -240,6 +249,44 @@ func (aus *AppServiceController) updateAppServiceHosts(ctx iris.Context) {
 删除 主机组
 */
 func (aus *AppServiceController) deleteAppServiceHosts(ctx iris.Context) {
+	reslut := aus.appServiceService.DeleteAppServiceHosts(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+/**
+查询 主机组
+*/
+func (aus *AppServiceController) getAppServiceDir(ctx iris.Context) {
+	reslut := aus.appServiceService.GetAppServiceHosts(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *AppServiceController) saveAppServiceDir(ctx iris.Context) {
+	reslut := aus.appServiceService.SaveAppServiceHosts(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *AppServiceController) updateAppServiceDir(ctx iris.Context) {
+	reslut := aus.appServiceService.UpdateAppServiceHosts(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *AppServiceController) deleteAppServiceDir(ctx iris.Context) {
 	reslut := aus.appServiceService.DeleteAppServiceHosts(ctx)
 
 	ctx.JSON(reslut)
