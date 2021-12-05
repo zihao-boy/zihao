@@ -57,8 +57,8 @@ where t.status_cd = '0'
 	`
 
 	insert_appService string = `
-	insert into app_service(as_id, as_name, as_type, tenant_id, as_desc,state,as_count)
-VALUES(#AsId#,#AsName#,#AsType#,#TenantId#,#AsDesc#,#State#,#AsCount#)
+	insert into app_service(as_id, as_name, as_type, tenant_id, as_desc,state,as_count,as_group_id,as_deploy_type,as_deploy_id)
+VALUES(#AsId#,#AsName#,#AsType#,#TenantId#,#AsDesc#,#State#,#AsCount#,#AsGroupId#,#AsDeployType#,#AsDeployId#)
 `
 
 	update_appService string = `
@@ -77,6 +77,15 @@ VALUES(#AsId#,#AsName#,#AsType#,#TenantId#,#AsDesc#,#State#,#AsCount#)
 		$endif
 		$if AsDesc != '' then
 		 as_desc = #AsDesc#,
+		$endif
+		$if AsGroupId != '' then
+		 as_group_id = #AsGroupId#,
+		$endif
+		$if AsDeployType != '' then
+		 as_deploy_type = #AsDeployType#,
+		$endif
+		$if AsDeployId != '' then
+		 as_deploy_id = #AsDeployId#,
 		$endif
 		status_cd = '0'
 		where status_cd = '0'

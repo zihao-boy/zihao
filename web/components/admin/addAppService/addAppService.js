@@ -11,8 +11,14 @@
                 asName: '',
                 asType: '',
                 asDesc: '',
-                asCount:'1'
-
+                asCount: '1',
+                asGroupId: '',
+                asGroups: [],
+                hostGroups: [],
+                groupId: '',
+                asDeployType: '1001',
+                hosts: [],
+                hostId: ''
             }
         },
         _initMethod: function () {
@@ -20,7 +26,9 @@
         },
         _initEvent: function () {
             vc.on('addAppService', 'openAddAppServiceModal', function () {
-                $('#addAppServiceModel').modal('show');
+                //$('#addAppServiceModel').modal('show');
+                $that._listAddAppVarGroups();
+                $that._listAddHostGroups();
             });
         },
         methods: {
@@ -85,15 +93,13 @@
             saveAppServiceInfo: function () {
                 if (!vc.component.addAppServiceValidate()) {
                     vc.toast(vc.validate.errInfo);
-
                     return;
                 }
 
-                //不提交数据将数据 回调给侦听处理
-                if (vc.notNull($props.callBackListener)) {
-                    vc.emit($props.callBackListener, $props.callBackFunction, vc.component.addAppServiceInfo);
-                    $('#addAppServiceModel').modal('hide');
-                    return;
+                if($that.addAppServiceInfo.asDeployType == '1001'){
+                    $that.addAppServiceInfo.asDeployId = $that.addAppServiceInfo.groupId
+                }else{
+                    $that.addAppServiceInfo.asDeployId = $that.addAppServiceInfo.hostId
                 }
 
                 vc.http.apiPost(
@@ -106,8 +112,6 @@
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
-                            //关闭model
-                            $('#addAppServiceModel').modal('hide');
                             vc.component.clearAddAppServiceInfo();
                             vc.emit('appServiceManage', 'listAppService', {});
 
@@ -128,10 +132,79 @@
                     asName: '',
                     asType: '',
                     asDesc: '',
-                    asCount:'1'
-
+                    asCount: '1',
+                    asGroupId: '',
+                    asGroups: [],
+                    hostGroups: [],
+                    groupId: '',
+                    asDeployType: '1001',
+                    hosts: [],
+                    hostId: ''
                 };
-            }
+            },
+            _listAddAppVarGroups: function (_page, _rows) {
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 50
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/appService/getAppVarGroup',
+                    param,
+                    function (json, res) {
+                        var _appVarGroupManageInfo = JSON.parse(json);
+                        vc.component.addAppServiceInfo.asGroups = _appVarGroupManageInfo.data;
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _listAddHostGroups: function () {
+                let param = {
+                    params: {
+                        page: 1,
+                        row: 50
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/host/getHostGroup',
+                    param,
+                    function (json, res) {
+                        let _hostGroupManageInfo = JSON.parse(json);
+                        vc.component.addAppServiceInfo.hostGroups = _hostGroupManageInfo.data;
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _changeHostGroup: function () {
+                $that._listAddHosts();
+            },
+            _listAddHosts: function () {
+
+
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 100,
+                        groupId: $that.addAppServiceInfo.groupId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/host/getHosts',
+                    param,
+                    function (json, res) {
+                        var _hostManageInfo = JSON.parse(json);
+                        vc.component.addAppServiceInfo.hosts = _hostManageInfo.data;
+
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

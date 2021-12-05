@@ -11,6 +11,7 @@
                 total: 0,
                 records: 1,
                 moreCondition: false,
+                component:'appServiceManage',
                 asId: '',
                 conditions: {
                     asName: '',
@@ -26,6 +27,7 @@
         _initEvent: function () {
 
             vc.on('appServiceManage', 'listAppService', function (_param) {
+                $that.appServiceManageInfo.component = 'appServiceManage';
                 vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
             });
             vc.on('pagination', 'page_event', function (_currentPage) {
@@ -59,6 +61,7 @@
                 );
             },
             _openAddAppServiceModal: function () {
+                $that.appServiceManageInfo.component = 'addAppService';
                 vc.emit('addAppService', 'openAddAppServiceModal', {});
             },
             _openEditAppServiceModel: function (_appService) {

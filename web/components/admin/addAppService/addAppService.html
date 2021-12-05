@@ -1,54 +1,94 @@
-<div id="addAppServiceModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h3 class="m-t-none m-b ">添加</h3>
-                <div class="ibox-content">
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>添加应用</h5>
+                <div class="ibox-tools" style="top:10px;">
+               
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
                     <div>
-                        <div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">应用名称</label>
-                                <div class="col-sm-10">
-                                    <input v-model="addAppServiceInfo.asName" type="text" placeholder="必填，请填写应用名称"
-                                        class="form-control">
-                                </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">应用名称</label>
+                            <div class="col-sm-10">
+                                <input v-model="addAppServiceInfo.asName" type="text" placeholder="必填，请填写应用名称"
+                                    class="form-control">
                             </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">服务类型</label>
-                                <div class="col-sm-10">
-                                    <select class="custom-select" v-model="addAppServiceInfo.asType">
-                                        <option selected disabled value="">必填，请选择服务类型</option>
-                                        <option value="001">数据库</option>
-                                        <option value="002">缓存</option>
-                                        <option value="003">计算应用</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">服务类型</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" v-model="addAppServiceInfo.asType">
+                                    <option selected disabled value="">必填，请选择服务类型</option>
+                                    <option value="001">数据库</option>
+                                    <option value="002">缓存</option>
+                                    <option value="003">计算应用</option>
+                                </select>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">副本数</label>
-                                <div class="col-sm-10">
-                                    <input v-model="addAppServiceInfo.asCount" type="text" placeholder="必填，请填写应用名称"
-                                        class="form-control">
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">副本数</label>
+                            <div class="col-sm-10">
+                                <input v-model="addAppServiceInfo.asCount" type="text" placeholder="必填，请填写应用名称"
+                                    class="form-control">
                             </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">服务描述</label>
-                                <div class="col-sm-10">
-                                    <textarea v-model="addAppServiceInfo.asDesc" placeholder="必填，请填写服务描述"
-                                        class="form-control"></textarea>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">应用组</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" v-model="addAppServiceInfo.asGroupId">
+                                    <option selected disabled value="">必填，请选择应用组</option>
+                                    <option :value="item.avgId" v-for="(item,index) in addAppServiceInfo.asGroups">{{item.avgName}}</option>
+                                </select>
                             </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">部署方式</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" v-model="addAppServiceInfo.asDeployType">
+                                    <option selected disabled value="">必填，请选择部署方式</option>
+                                    <option value="1001">多主机</option>
+                                    <option value="2002">单主机</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">主机组</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" v-model="addAppServiceInfo.groupId" @change="_changeHostGroup()">
+                                    <option selected disabled value="">必填，请选择主机组</option>
+                                    <option :value="item.groupId" v-for="(item,index) in addAppServiceInfo.hostGroups">{{item.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row" v-if="addAppServiceInfo.asDeployType == '2002'">
+                            <label class="col-sm-2 col-form-label">主机</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" v-model="addAppServiceInfo.hostId">
+                                    <option selected disabled value="">必填，请选择主机</option>
+                                    <option :value="item.hostId" v-for="(item,index) in addAppServiceInfo.hosts">{{item.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">服务描述</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="addAppServiceInfo.asDesc" placeholder="必填，请填写服务描述"
+                                    class="form-control"></textarea>
+                            </div>
+                        </div>
 
-                            <div class="ibox-content">
-                                <button class="btn btn-primary float-right" type="button"
-                                    v-on:click="saveAppServiceInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
-                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;"
-                                    data-dismiss="modal">取消</button>
-                            </div>
+                        <div class="ibox-content">
+                            <button class="btn btn-primary float-right" type="button"
+                                v-on:click="saveAppServiceInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                            <button type="button" class="btn btn-warning float-right" style="margin-right:20px;"
+                                data-dismiss="modal">取消</button>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
