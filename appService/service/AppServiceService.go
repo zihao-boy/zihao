@@ -153,3 +153,106 @@ func (appServiceService *AppServiceService) DeleteAppServices(ctx iris.Context) 
 	return result.SuccessData(appServiceDto)
 
 }
+
+func (appServiceService *AppServiceService) GetAppServiceVars(ctx iris.Context) result.ResultDto {
+	var (
+		err            error
+		page           int64
+		row            int64
+		total          int64
+		appServiceVarDto  = appService.AppServiceVarDto{}
+		appServiceVarDtos []*appService.AppServiceVarDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	appServiceVarDto.Row = row * page
+
+	appServiceVarDto.Page = (page - 1) * row
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceVarDto.TenantId = user.TenantId
+
+	total, err = appServiceService.appServiceDao.GetAppServiceVarCount(appServiceVarDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	appServiceVarDtos, err = appServiceService.appServiceDao.GetAppServiceVars(appServiceVarDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceVarDtos, total, row)
+}
+
+func (appServiceService *AppServiceService) SaveAppServiceVars(ctx iris.Context) result.ResultDto {
+	var (
+		err           error
+		appServiceVarDto appService.AppServiceVarDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceVarDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceVarDto.TenantId = user.TenantId
+	appServiceVarDto.AvId = seq.Generator()
+
+	err = appServiceService.appServiceDao.SaveAppServiceVar(appServiceVarDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceVarDto)
+}
+
+func (appServiceService *AppServiceService) UpdateAppServiceVars(ctx iris.Context) result.ResultDto {
+	var (
+		err           error
+		appServiceVarDto appService.AppServiceVarDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceVarDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.UpdateAppServiceVar(appServiceVarDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceVarDto)
+}
+
+func (appServiceService *AppServiceService) DeleteAppServiceVars(ctx iris.Context) result.ResultDto {
+	var (
+		err           error
+		appServiceVarDto appService.AppServiceVarDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceVarDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.DeleteAppServiceVar(appServiceVarDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceVarDto)
+}
