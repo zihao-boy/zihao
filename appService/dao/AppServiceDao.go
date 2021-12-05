@@ -180,6 +180,83 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 		and av_id = #AvId#
 		$endif
 	`
+
+	query_appServiceHosts_count string = `
+		select count(1) total
+			from app_service_hosts t
+			where t.status_cd = '0'
+			$if TenantId != '' then
+			and t.tenant_id = #TenantId#
+			$endif
+			$if AsId != '' then
+			and t.as_id = #AsId#
+			$endif
+			$if Ip != '' then
+			and t.ip = #Ip#
+			$endif
+			$if Hostname != '' then
+			and t.hostname = #Hostname#
+			$endif
+			$if HostsId != '' then
+			and t.hosts_id = #HostsId#
+			$endif
+    	
+	`
+	query_appServiceHosts string = `
+				select t.*
+				from app_service_hosts t
+					where t.status_cd = '0'
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
+					$endif
+					$if AsId != '' then
+					and t.as_id = #AsId#
+					$endif
+					$if Ip != '' then
+					and t.ip = #Ip#
+					$endif
+					$if Hostname != '' then
+					and t.hostname = #Hostname#
+					$endif
+					$if HostsId != '' then
+					and t.hosts_id = #HostsId#
+					$endif
+					order by t.create_time desc
+					$if Row != 0 then
+						limit #Page#,#Row#
+					$endif
+	`
+
+	insert_appServiceHosts string = `
+	insert into app_service_hosts(hosts_id, as_id, tenant_id, hostname, ip)
+	VALUES(#HostsId#,#AsId#,#TenantId#,#Hostname#,#Ip#)
+`
+
+	update_appServiceHosts string = `
+	update app_service_hosts set
+		$if Ip != '' then
+		 ip = #Ip#,
+		$endif
+		$if Hostname != '' then
+		 hostname = #Hostname#,
+		$endif
+		status_cd = '0'
+		where status_cd = '0'
+		$if TenantId != '' then
+		and tenant_id = #TenantId#
+		$endif
+		$if HostsId != '' then
+		and hosts_id = #HostsId#
+		$endif
+	`
+	delete_appServiceHosts string = `
+	update app_service_hosts  set
+                          status_cd = '1'
+                          where status_cd = '0'
+		$if HostsId != '' then
+			and hosts_id = #HostsId#
+		$endif
+	`
 )
 
 type AppServiceDao struct {
@@ -281,4 +358,41 @@ func (*AppServiceDao) UpdateAppServiceVar(appServiceVarDto appService.AppService
 */
 func (*AppServiceDao) DeleteAppServiceVar(appServiceVarDto appService.AppServiceVarDto) error {
 	return sqlTemplate.Delete(delete_appServiceVar, objectConvert.Struct2Map(appServiceVarDto), false)
+}
+
+func (d *AppServiceDao) GetAppServiceHostsCount(appServiceHostsDto appService.AppServiceHostsDto) (int64, error) {
+	var (
+		pageDto dto.PageDto
+		err     error
+	)
+
+	sqlTemplate.SelectOne(query_appServiceHosts_count, objectConvert.Struct2Map(appServiceHostsDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
+
+	return pageDto.Total, err
+}
+
+func (d *AppServiceDao) GetAppServiceHosts(hostsDto appService.AppServiceHostsDto) ([]*appService.AppServiceHostsDto, error) {
+
+	var appServiceHostsDtos []*appService.AppServiceHostsDto
+	sqlTemplate.SelectList(query_appServiceHosts, objectConvert.Struct2Map(hostsDto), func(db *gorm.DB) {
+		db.Scan(&appServiceHostsDtos)
+	}, false)
+
+	return appServiceHostsDtos, nil
+}
+
+func (d *AppServiceDao) SaveAppServiceHosts(hostsDto appService.AppServiceHostsDto) error {
+	return sqlTemplate.Insert(insert_appServiceHosts, objectConvert.Struct2Map(hostsDto), false)
+}
+
+func (d *AppServiceDao) UpdateAppServiceHost(hostsDto appService.AppServiceHostsDto) error {
+	return sqlTemplate.Update(update_appServiceHosts, objectConvert.Struct2Map(hostsDto), false)
+
+}
+
+func (d *AppServiceDao) DeleteAppServiceHosts(hostsDto appService.AppServiceHostsDto) error {
+	return sqlTemplate.Delete(delete_appServiceHosts, objectConvert.Struct2Map(hostsDto), false)
+
 }

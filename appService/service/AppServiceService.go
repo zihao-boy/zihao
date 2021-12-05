@@ -256,3 +256,106 @@ func (appServiceService *AppServiceService) DeleteAppServiceVars(ctx iris.Contex
 
 	return result.SuccessData(appServiceVarDto)
 }
+
+func (appServiceService *AppServiceService) GetAppServiceHosts(ctx iris.Context) interface{} {
+	var (
+		err            error
+		page           int64
+		row            int64
+		total          int64
+		appServiceHostsDto  = appService.AppServiceHostsDto{}
+		appServiceHostsDtos []*appService.AppServiceHostsDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	appServiceHostsDto.Row = row * page
+
+	appServiceHostsDto.Page = (page - 1) * row
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceHostsDto.TenantId = user.TenantId
+
+	total, err = appServiceService.appServiceDao.GetAppServiceHostsCount(appServiceHostsDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	appServiceHostsDtos, err = appServiceService.appServiceDao.GetAppServiceHosts(appServiceHostsDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceHostsDtos, total, row)
+}
+
+func (appServiceService *AppServiceService) SaveAppServiceHosts(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceHostsDto appService.AppServiceHostsDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceHostsDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceHostsDto.TenantId = user.TenantId
+	appServiceHostsDto.HostsId = seq.Generator()
+
+	err = appServiceService.appServiceDao.SaveAppServiceHosts(appServiceHostsDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceHostsDto)
+}
+
+func (appServiceService *AppServiceService) UpdateAppServiceHosts(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceHostsDto appService.AppServiceHostsDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceHostsDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.UpdateAppServiceHost(appServiceHostsDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceHostsDto)
+}
+
+func (appServiceService *AppServiceService) DeleteAppServiceHosts(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceHostsDto appService.AppServiceHostsDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceHostsDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.DeleteAppServiceHosts(appServiceHostsDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceHostsDto)
+}
