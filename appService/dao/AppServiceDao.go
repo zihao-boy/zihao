@@ -392,6 +392,7 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 )
 
 type AppServiceDao struct {
+
 }
 
 /**
