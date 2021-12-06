@@ -1,0 +1,45 @@
+<div class="margin-top">
+    <div>
+        <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+            <thead>
+                <tr> 
+                    <th class="text-center">主机</th>
+                    <th class="text-center">容器ID</th>
+                    <th class="text-center">状态</th>
+                    <th class="text-center">说明</th>
+                    <th class="text-center">在线</th>
+                    <th class="text-center">创建时间</th>
+                    <th class="text-center">操作</th>
+                    <!-- <th class="text-center">状态</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="event in appServiceControlContainerInfo.appServiceControlContainers">
+                    
+                    <td class="text-center">{{event.hostName}}</td>
+                    <td class="text-center">{{event.dockerContainerId}}</td>
+                    <td class="text-center">{{event.state}}</td>
+                    <td class="text-center">{{event.message}}</td>
+                    <td class="text-center">{{event.update_time}}</td>
+                    <td class="text-center">{{event.createTime}}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-white btn-sm" style="margin-left:10px"
+                            v-on:click="_openDeleteContainerModal(event)">
+                            日志
+                        </button>
+                    </td>
+
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <ul class="pagination float-right"></ul>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <!-- 分页 -->
+        <vc:create namespace="appServiceControlContainer" path="frame/paginationPlus"></vc:create>
+    </div>
+</div>
