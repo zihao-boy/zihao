@@ -77,6 +77,14 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppServicePort", hero.Handler(aus.deleteAppServicePort))
 
+	adinMenu.Get("/getAppServiceContainer", hero.Handler(aus.getAppServiceContainer))
+
+	adinMenu.Post("/saveAppServiceContainer", hero.Handler(aus.saveAppServiceContainer))
+
+	adinMenu.Post("/updateAppServiceContainer", hero.Handler(aus.updateAppServiceContainer))
+
+	adinMenu.Post("/deleteAppServiceContainer", hero.Handler(aus.deleteAppServiceContainer))
+
 }
 
 /**
@@ -335,6 +343,45 @@ func (aus *AppServiceController) updateAppServicePort(ctx iris.Context) {
 */
 func (aus *AppServiceController) deleteAppServicePort(ctx iris.Context) {
 	reslut := aus.appServiceService.DeleteAppServicePort(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+
+/**
+查询 主机组
+*/
+func (aus *AppServiceController) getAppServiceContainer(ctx iris.Context) {
+	reslut := aus.appServiceService.GetAppServiceContainer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *AppServiceController) saveAppServiceContainer(ctx iris.Context) {
+	reslut := aus.appServiceService.SaveAppServiceContainer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *AppServiceController) updateAppServiceContainer(ctx iris.Context) {
+	reslut := aus.appServiceService.UpdateAppServiceContainer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *AppServiceController) deleteAppServiceContainer(ctx iris.Context) {
+	reslut := aus.appServiceService.DeleteAppServiceContainer(ctx)
 
 	ctx.JSON(reslut)
 }

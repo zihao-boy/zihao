@@ -3563,3 +3563,17 @@ CREATE TABLE `app_service_port` (
         `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
         PRIMARY KEY (`port_id`)
 )
+
+CREATE TABLE `app_service_container` (
+        `container_id` varchar(64) NOT NULL ,
+        `as_id` varchar(64) NOT NULL ,
+        `tenant_id` varchar(64) NOT NULL,
+        `host_id` varchar(64) NOT NULL ,
+        `docker_container_id` varchar(64) NOT NULL ,
+        `state` varchar(12) not null ,
+        `message` varchar(512) ,
+        `update_time` datetime not null,
+        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+        `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
+        PRIMARY KEY (`container_id`)
+)

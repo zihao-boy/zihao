@@ -395,7 +395,7 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 		and tenant_id = #TenantId#
 		$endif
 		$if PortId != '' then
-		and t.port_id = #PortId#
+		and port_id = #PortId#
 		$endif
 	`
 	delete_appServicePort string = `
@@ -404,6 +404,81 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 	    where status_cd = '0'
 		$if PortId != '' then
 		and port_id = #PortId#
+		$endif
+	`
+
+	//查询应用目录映射
+	query_appServiceContainer_count string = `
+		select count(1) total
+			from app_service_container t
+			where t.status_cd = '0'
+			$if TenantId != '' then
+			and t.tenant_id = #TenantId#
+			$endif
+			$if AsId != '' then
+			and t.as_id = #AsId#
+			$endif
+			$if ContainerId != '' then
+			and t.container_id = #ContainerId#
+			$endif
+
+	`
+
+	query_appServiceContainer string = `
+				select t.*
+					from app_service_container t
+					where t.status_cd = '0'
+					$if TenantId != '' then
+					and t.tenant_id = #TenantId#
+					$endif
+					$if AsId != '' then
+					and t.as_id = #AsId#
+					$endif
+					$if ContainerId != '' then
+					and t.container_id = #ContainerId#
+					$endif
+					order by t.create_time desc
+					$if Row != 0 then
+						limit #Page#,#Row#
+					$endif
+	`
+	insert_appServiceContainer string = `
+	insert into app_service_container(container_id, as_id, tenant_id, host_id, docker_container_id, state,message,update_time)
+	VALUES(#ContainerId#,#AsId#,#TenantId#,#HostId#,#DockerContainerId#,#State#,#Message#,#UpdateTime#)
+`
+
+	update_appServiceContainer string = `
+	update app_service_container set
+		$if HostId != '' then
+		 host_id = #HostId#,
+		$endif
+		$if DockerContainerId != '' then
+		 docker_container_id = #DockerContainerId#,
+		$endif
+		$if State != '' then
+		 state = #State#,
+		$endif
+		$if UpdateTime != '' then
+		 update_time = #UpdateTime#,
+		$endif
+		$if Message != '' then
+		 message = #Message#,
+		$endif
+		status_cd = '0'
+		where status_cd = '0'
+		$if TenantId != '' then
+		and tenant_id = #TenantId#
+		$endif
+		$if ContainerId != '' then
+		and container_id = #ContainerId#
+		$endif
+	`
+	delete_appServiceContainer string = `
+	update app_service_container  set
+            status_cd = '1'
+	    where status_cd = '0'
+		$if ContainerId != '' then
+		and container_id = #ContainerId#
 		$endif
 	`
 )
@@ -618,4 +693,38 @@ func (d *AppServiceDao) UpdateAppServicePort(portDto appService.AppServicePortDt
 
 func (d *AppServiceDao) DeleteAppServicePort(portDto appService.AppServicePortDto) error {
 	return sqlTemplate.Delete(delete_appServicePort, objectConvert.Struct2Map(portDto), false)
+}
+
+func (d *AppServiceDao) GetAppServiceContainerCount(containerDto appService.AppServiceContainerDto) (int64, error) {
+	var (
+		pageDto dto.PageDto
+		err     error
+	)
+
+	sqlTemplate.SelectOne(query_appServiceContainer_count, objectConvert.Struct2Map(containerDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
+
+	return pageDto.Total, err
+}
+
+func (d *AppServiceDao) GetAppServiceContainer(containerDto appService.AppServiceContainerDto) ([]*appService.AppServiceContainerDto, error) {
+	var appServiceContainerDtos []*appService.AppServiceContainerDto
+	sqlTemplate.SelectList(query_appServiceContainer, objectConvert.Struct2Map(containerDto), func(db *gorm.DB) {
+		db.Scan(&appServiceContainerDtos)
+	}, false)
+
+	return appServiceContainerDtos, nil
+}
+
+func (d *AppServiceDao) SaveAppServiceContainer(containerDto appService.AppServiceContainerDto) error {
+	return sqlTemplate.Insert(insert_appServiceContainer, objectConvert.Struct2Map(containerDto), false)
+}
+
+func (d *AppServiceDao) UpdateAppServiceContainer(containerDto appService.AppServiceContainerDto) error {
+	return sqlTemplate.Update(update_appServiceContainer, objectConvert.Struct2Map(containerDto), false)
+}
+
+func (d *AppServiceDao) DeleteAppServiceContainer(containerDto appService.AppServiceContainerDto) error {
+	return sqlTemplate.Delete(delete_appServiceContainer, objectConvert.Struct2Map(containerDto), false)
 }

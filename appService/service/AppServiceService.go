@@ -602,3 +602,106 @@ func (appServiceService *AppServiceService) DeleteAppServicePort(ctx iris.Contex
 
 	return result.SuccessData(appServicePortDto)
 }
+
+func (appServiceService *AppServiceService) GetAppServiceContainer(ctx iris.Context) interface{} {
+	var (
+		err            error
+		page           int64
+		row            int64
+		total          int64
+		appServiceContainerDto  = appService.AppServiceContainerDto{}
+		appServiceContainerDtos []*appService.AppServiceContainerDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	appServiceContainerDto.Row = row * page
+
+	appServiceContainerDto.Page = (page - 1) * row
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceContainerDto.TenantId = user.TenantId
+
+	total, err = appServiceService.appServiceDao.GetAppServiceContainerCount(appServiceContainerDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	appServiceContainerDtos, err = appServiceService.appServiceDao.GetAppServiceContainer(appServiceContainerDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceContainerDtos, total, row)
+}
+
+func (appServiceService *AppServiceService) SaveAppServiceContainer(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceContainerDto appService.AppServiceContainerDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceContainerDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceContainerDto.TenantId = user.TenantId
+	appServiceContainerDto.ContainerId = seq.Generator()
+
+	err = appServiceService.appServiceDao.SaveAppServiceContainer(appServiceContainerDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceContainerDto)
+}
+
+func (appServiceService *AppServiceService) UpdateAppServiceContainer(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceContainerDto appService.AppServiceContainerDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceContainerDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.UpdateAppServiceContainer(appServiceContainerDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceContainerDto)
+}
+
+func (appServiceService *AppServiceService) DeleteAppServiceContainer(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceContainerDto appService.AppServiceContainerDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceContainerDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.DeleteAppServiceContainer(appServiceContainerDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appServiceContainerDto)
+}
