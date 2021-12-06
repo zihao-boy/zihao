@@ -55,6 +55,12 @@
                         console.log('请求失败处理');
                     }
                 );
+            },
+            _openAddDirModal:function(){
+                vc.emit('addAppServiceDir', 'openAddAppServiceDirModal',$that.appServiceControlDirInfo);
+            },
+            _openDeleteDirModal:function(_dir){
+                vc.emit('deleteAppServiceDir','openDeleteAppServiceDirModal',_dir); 
             }
 
         }

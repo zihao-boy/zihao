@@ -55,6 +55,12 @@
                         console.log('请求失败处理');
                     }
                 );
+            },
+            _openAddVarModal:function(){
+                vc.emit('addAppServiceVar', 'openAddAppServiceVarModal',$that.appServiceControlVarInfo);
+            },
+            _openDeleteVarModal:function(_dir){
+                vc.emit('deleteAppServiceVar','openDeleteAppServiceVarModal',_dir); 
             }
 
         }

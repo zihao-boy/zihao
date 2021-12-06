@@ -55,6 +55,12 @@
                         console.log('请求失败处理');
                     }
                 );
+            },
+            _openAddHostsModal:function(){
+                vc.emit('addAppServiceHosts', 'openAddAppServiceHostsModal',$that.appServiceControlHostsInfo);
+            },
+            _openDeleteHostsModal:function(_hosts){
+                vc.emit('deleteAppServiceHosts','openDeleteAppServiceHostsModal',_hosts); 
             }
 
         }

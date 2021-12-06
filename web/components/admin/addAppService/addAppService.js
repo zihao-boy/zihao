@@ -87,10 +87,6 @@
                             errInfo: "描述太长"
                         },
                     ],
-
-
-
-
                 });
             },
             saveAppServiceInfo: function() {
@@ -159,7 +155,6 @@
                         row: 50
                     }
                 };
-
                 //发送get请求
                 vc.http.apiGet('/appService/getAppVarGroup',
                     param,

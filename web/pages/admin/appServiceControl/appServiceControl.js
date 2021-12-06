@@ -19,6 +19,9 @@
                 avgName: '',
                 hostGroupName: '',
                 hostName: '',
+                asGroupId:'',
+                hostId: '',
+                imagesId: '',
             }
         },
         _initMethod: function() {
@@ -26,8 +29,8 @@
             $that._listAppServices();
         },
         _initEvent: function() {
-            vc.on('simplifyAcceptance', 'chooseRoom', function(_room) {
-                vc.copyObject(_room, $that.appServiceControlInfo);
+            vc.on('appServiceControlInfo', 'notify', function(_room) {
+                $that._listAppServices();
                 vc.emit('simplifyRoomFee', 'switch', $that.appServiceControlInfo)
             });
         },
@@ -111,6 +114,9 @@
                 }
                 return '计算应用';
 
+            },
+            _editAppService:function(){
+                vc.emit('editAppService', 'openEditAppServiceModal',$that.appServiceControlInfo);
             }
 
         }

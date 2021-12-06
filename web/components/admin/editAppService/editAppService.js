@@ -7,7 +7,16 @@
                 asName: '',
                 asType: '',
                 asDesc: '',
-                asCount:''
+                asCount: '1',
+                asGroupId: '',
+                asGroups: [],
+                hostGroups: [],
+                groupId: '',
+                asDeployType: '1001',
+                hosts: [],
+                hostId: '',
+                imagesId: '',
+                images: []
 
             }
         },
@@ -17,6 +26,9 @@
         _initEvent: function () {
             vc.on('editAppService', 'openEditAppServiceModal', function (_params) {
                 vc.component.refreshEditAppServiceInfo();
+                $that._listEditAppVarGroups();
+                $that._listEditHostGroups();
+                $that._listEditBusinessImagess();
                 $('#editAppServiceModel').modal('show');
                 vc.copyObject(_params, vc.component.editAppServiceInfo);
             });
@@ -101,10 +113,10 @@
                         if (_json.code == 0) {
                             //关闭model
                             $('#editAppServiceModel').modal('hide');
-                            vc.emit('appServiceManage', 'listAppService', {});
+                            vc.emit('appServiceControlInfo', 'notify', {});
                             return;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
                     },
                     function (errInfo, error) {
                         console.log('请求失败处理');
@@ -118,10 +130,103 @@
                     asName: '',
                     asType: '',
                     asDesc: '',
-                    asCount:''
-
+                    asCount: '1',
+                    asGroupId: '',
+                    asGroups: [],
+                    hostGroups: [],
+                    groupId: '',
+                    asDeployType: '1001',
+                    hosts: [],
+                    hostId: '',
+                    imagesId: '',
+                    images: []
                 }
-            }
+            },
+            _listEditAppVarGroups: function (_page, _rows) {
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 50
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/appService/getAppVarGroup',
+                    param,
+                    function (json, res) {
+                        var _appVarGroupManageInfo = JSON.parse(json);
+                        vc.component.editAppServiceInfo.asGroups = _appVarGroupManageInfo.data;
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _listEditHostGroups: function () {
+                let param = {
+                    params: {
+                        page: 1,
+                        row: 50
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/host/getHostGroup',
+                    param,
+                    function (json, res) {
+                        let _hostGroupManageInfo = JSON.parse(json);
+                        vc.component.editAppServiceInfo.hostGroups = _hostGroupManageInfo.data;
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _changeHostGroup: function () {
+                $that._listEditHosts();
+            },
+            _listEditHosts: function () {
+
+
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 100,
+                        groupId: $that.editAppServiceInfo.groupId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/host/getHosts',
+                    param,
+                    function (json, res) {
+                        var _hostManageInfo = JSON.parse(json);
+                        vc.component.editAppServiceInfo.hosts = _hostManageInfo.data;
+
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _listEditBusinessImagess: function (_page, _rows) {
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 100
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/soft/getBusinessImages',
+                    param,
+                    function (json, res) {
+                        var _businessImagesManageInfo = JSON.parse(json);
+                        vc.component.editAppServiceInfo.images = _businessImagesManageInfo.data;
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

@@ -51,6 +51,7 @@
                         <div class="col-sm-3">
                             <div class="form-group" v-if="appServiceControlInfo.asId">
                                 <button class="btn-white btn btn-xs" v-on:click="_goBack()">返回</button>
+                                <button class="btn-white btn btn-xs" v-on:click="_editAppService()">修改</button>
                                 <button class="btn-primary btn btn-xs" v-on:click="_openSsh()">启动</button>
 
                             </div>
@@ -95,5 +96,7 @@
         <div v-if="appServiceControlInfo._currentTab == 'hostPorts'">
             <vc:create path="admin/hostPorts"></vc:create>
         </div>
+
+        <vc:create path="admin/editAppService"></vc:create>
     </div>
 </div>
