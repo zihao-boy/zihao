@@ -34,4 +34,15 @@ type AppServiceDto struct {
 	AsDeployType string `json:"asDeployType" sql:"-"`
 	AsDeployId  string `json:"asDeployId" sql:"-"`
 	ImagesId  string `json:"imagesId" sql:"-"`
+	ImagesName  string `json:"imagesName" sql:"-"`
+	ImagesVersion  string `json:"imagesVersion" sql:"-"`
+	AvgName  string `json:"avgName" sql:"-"`
+	HostGroupName  string `json:"hostGroupName" sql:"-"`
+	HostName  string `json:"hostName" sql:"-"`
+
+
+	AppServicePorts []AppServicePortDto `json:"appServicePorts"`
+	AppServiceHosts []AppServiceHostsDto `json:"appServiceHosts"`
+	AppServiceDirs []AppServiceDirDto `json:"appServiceDirs"`
+	AppServiceVars []AppServiceVarDto `json:"appServiceVars"`
 }

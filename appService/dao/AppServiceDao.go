@@ -31,9 +31,15 @@ const (
 	`
 
 	query_appService string = `
-				select t.*,td.name as_type_name,td1.name state_name from app_service t
+				select t.*,td.name as_type_name,td1.name state_name,bi.name images_name,bi.version images_version,
+asv.avg_name,hg.name host_group_name,h.name host_name
+from app_service t
 left join t_dict td on t.as_type = td.status_cd and td.table_name = 'app_service' and td.table_columns = 'as_type'
 left join t_dict td1 on t.state = td1.status_cd and td1.table_name = 'app_service' and td1.table_columns = 'state'
+left join business_images bi on bi.id = t.images_id and bi.status_cd = '0'
+left join app_var_group asv on asv.avg_id = t.as_group_id and asv.status_cd ='0'
+left join host_group hg on hg.group_id = t.as_deploy_id and hg.status_cd ='0'
+left join host h on h.host_id = t.as_deploy_id and h.status_cd ='0'
 where t.status_cd = '0'
 					$if TenantId != '' then
 					and t.tenant_id = #TenantId#

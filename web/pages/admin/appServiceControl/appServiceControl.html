@@ -1,0 +1,99 @@
+<div class="white-bg padding-top-lg ">
+    <div class="padding margin-top">
+        <div class="">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">应用名称：</label>
+                                <label class="">{{appServiceControlInfo.asName}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">副本数：</label>
+                                <label class="">{{appServiceControlInfo.asCount}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">状态：</label>
+                                <label class="">{{appServiceControlInfo.stateName}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">镜像：</label>
+                                <label class="">{{appServiceControlInfo.imagesName}}:{{appServiceControlInfo.imagesVersion}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">主机组/主机：</label>
+                                <label class="">{{appServiceControlInfo.hostGroupName}}{{appServiceControlInfo.hostName}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">服务类型：</label>
+                                <label class="">{{_getAsType(appServiceControlInfo.asType)}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">应用组：</label>
+                                <label class="fix-width">{{appServiceControlInfo.avgName}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group" v-if="appServiceControlInfo.asId">
+                                <button class="btn-white btn btn-xs" v-on:click="_goBack()">返回</button>
+                                <button class="btn-primary btn btn-xs" v-on:click="_openSsh()">启动</button>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="vc-line margin-top-xs"></div>
+        <div class="margin-top">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostEvents'}" v-on:click="changeTab('hostEvents')">端口映射</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostContainers'}" v-on:click="changeTab('hostContainers')">磁盘映射</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostMonitors'}" v-on:click="changeTab('hostMonitors')">hosts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostResources'}" v-on:click="changeTab('hostResources')">环境变量</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostPorts'}" v-on:click="changeTab('hostPorts')">docker容器</a>
+                </li>
+            </ul>
+        </div>
+        <div v-if="appServiceControlInfo._currentTab == 'hostEvents'">
+            <vc:create path="admin/hostEvents"></vc:create>
+        </div>
+        <div v-if="appServiceControlInfo._currentTab == 'hostContainers'">
+            <vc:create path="admin/hostContainers"></vc:create>
+        </div>
+        <div v-if="appServiceControlInfo._currentTab == 'hostMonitors'">
+            <vc:create path="admin/hostMonitors"></vc:create>
+        </div>
+        <div v-if="appServiceControlInfo._currentTab == 'hostResources'">
+            <vc:create path="admin/hostResources"></vc:create>
+        </div>
+        <div v-if="appServiceControlInfo._currentTab == 'hostPorts'">
+            <vc:create path="admin/hostPorts"></vc:create>
+        </div>
+    </div>
+</div>

@@ -101,13 +101,50 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 	appServiceDto.State = appService.STATE_STOP
 	appServiceDto.AsId = seq.Generator()
 
+
+
 	err = appServiceService.appServiceDao.SaveAppService(appServiceDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(appServiceDto)
+	if len(appServiceDto.AppServicePorts) > 0{
+		for _,appServicePort := range appServiceDto.AppServicePorts{
+			appServicePort.PortId = seq.Generator()
+			appServicePort.TenantId = user.TenantId
+			appServicePort.AsId = appServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServicePort(appServicePort)
+		}
+	}
 
+	if len(appServiceDto.AppServiceHosts) > 0{
+		for _,appServiceHost := range appServiceDto.AppServiceHosts{
+			appServiceHost.HostsId = seq.Generator()
+			appServiceHost.TenantId = user.TenantId
+			appServiceHost.AsId = appServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServiceHosts(appServiceHost)
+		}
+	}
+
+	if len(appServiceDto.AppServiceDirs) > 0{
+		for _,appServiceDir := range appServiceDto.AppServiceDirs{
+			appServiceDir.DirId = seq.Generator()
+			appServiceDir.TenantId = user.TenantId
+			appServiceDir.AsId = appServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServiceDir(appServiceDir)
+		}
+	}
+
+	if len(appServiceDto.AppServiceVars) > 0{
+		for _,appServiceVar := range appServiceDto.AppServiceVars{
+			appServiceVar.AvId = seq.Generator()
+			appServiceVar.TenantId = user.TenantId
+			appServiceVar.AsId = appServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServiceVar(appServiceVar)
+		}
+	}
+
+	return result.SuccessData(appServiceDto)
 }
 
 /**

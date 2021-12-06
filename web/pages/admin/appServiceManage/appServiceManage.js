@@ -1,7 +1,7 @@
 /**
     入驻小区
 **/
-(function (vc) {
+(function(vc) {
     var DEFAULT_PAGE = 1;
     var DEFAULT_ROWS = 10;
     vc.extends({
@@ -11,7 +11,7 @@
                 total: 0,
                 records: 1,
                 moreCondition: false,
-                component:'appServiceManage',
+                component: 'appServiceManage',
                 asId: '',
                 conditions: {
                     asName: '',
@@ -21,21 +21,20 @@
                 }
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
             vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
         },
-        _initEvent: function () {
-
-            vc.on('appServiceManage', 'listAppService', function (_param) {
+        _initEvent: function() {
+            vc.on('appServiceManage', 'listAppService', function(_param) {
                 $that.appServiceManageInfo.component = 'appServiceManage';
                 vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
             });
-            vc.on('pagination', 'page_event', function (_currentPage) {
+            vc.on('pagination', 'page_event', function(_currentPage) {
                 vc.component._listAppServices(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listAppServices: function (_page, _rows) {
+            _listAppServices: function(_page, _rows) {
 
                 vc.component.appServiceManageInfo.conditions.page = _page;
                 vc.component.appServiceManageInfo.conditions.row = _rows;
@@ -46,7 +45,7 @@
                 //发送get请求
                 vc.http.apiGet('/appService/getAppService',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _appServiceManageInfo = JSON.parse(json);
                         vc.component.appServiceManageInfo.total = _appServiceManageInfo.total;
                         vc.component.appServiceManageInfo.records = _appServiceManageInfo.records;
@@ -55,26 +54,30 @@
                             total: vc.component.appServiceManageInfo.records,
                             currentPage: _page
                         });
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _openAddAppServiceModal: function () {
+            _openAddAppServiceModal: function() {
                 $that.appServiceManageInfo.component = 'addAppService';
                 vc.emit('addAppService', 'openAddAppServiceModal', {});
             },
-            _openEditAppServiceModel: function (_appService) {
+            _openControl: function(_appService) {
+                vc.jumpToPage('/index.html#/pages/admin/appServiceControl?asId=' + _appService.asId)
+            },
+            _openEditAppServiceModel: function(_appService) {
                 vc.emit('editAppService', 'openEditAppServiceModal', _appService);
             },
-            _openDeleteAppServiceModel: function (_appService) {
+            _openDeleteAppServiceModel: function(_appService) {
                 vc.emit('deleteAppService', 'openDeleteAppServiceModal', _appService);
             },
-            _queryAppServiceMethod: function () {
+            _queryAppServiceMethod: function() {
                 vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
 
             },
-            _moreCondition: function () {
+            _moreCondition: function() {
                 if (vc.component.appServiceManageInfo.moreCondition) {
                     vc.component.appServiceManageInfo.moreCondition = false;
                 } else {
