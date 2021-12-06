@@ -403,7 +403,7 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
             status_cd = '1'
 	    where status_cd = '0'
 		$if PortId != '' then
-		and t.port_id = #PortId#
+		and port_id = #PortId#
 		$endif
 	`
 )

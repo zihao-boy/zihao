@@ -8,7 +8,7 @@
     vc.extends({
         data: {
             appServiceControlInfo: {
-                _currentTab: 'hostEvents',
+                _currentTab: 'appServiceControlPort',
                 asId: '',
                 asName: '',
                 asCount: '',
@@ -35,7 +35,7 @@
             changeTab: function(_tab) {
                 $that.appServiceControlInfo._currentTab = _tab;
                 vc.emit(_tab, 'switch', {
-                    hostId: $that.appServiceControlInfo.hostId
+                    asId: $that.appServiceControlInfo.asId
                 })
             },
             _clearData: function() {

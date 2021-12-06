@@ -1,0 +1,37 @@
+<div class="margin-top">
+    <div>
+        <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+            <thead>
+                <tr>
+                    
+                    <th class="text-center">变量名</th>
+                    <th class="text-center">变量值</th>
+                    <th class="text-center">说明</th>
+                    <th class="text-center">创建时间</th>
+                    <th class="text-center">操作</th>
+                    <!-- <th class="text-center">状态</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="event in appServiceControlVarInfo.appServiceControlVars">
+                    <td class="text-center">{{event.varSpec}}</td>
+                    <td class="text-center">{{event.varValue}}</td>
+                    <td class="text-center">{{event.varName}}</td>
+                    <td class="text-center">{{event.createTime}}</td>
+                    <td class="text-center">{{event.createTime}}</td>
+                    <!-- <td class="text-center">{{event.stateName}}</td> -->
+
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <ul class="pagination float-right"></ul>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <!-- 分页 -->
+        <vc:create namespace="appServiceControlVar" path="frame/paginationPlus"></vc:create>
+    </div>
+</div>

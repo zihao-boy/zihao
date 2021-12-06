@@ -64,33 +64,33 @@
         <div class="margin-top">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostEvents'}" v-on:click="changeTab('hostEvents')">端口映射</a>
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'appServiceControlPort'}" v-on:click="changeTab('appServiceControlPort')">端口映射</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostContainers'}" v-on:click="changeTab('hostContainers')">磁盘映射</a>
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'appServiceControlDir'}" v-on:click="changeTab('appServiceControlDir')">磁盘映射</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostMonitors'}" v-on:click="changeTab('hostMonitors')">hosts</a>
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'appServiceControlHosts'}" v-on:click="changeTab('appServiceControlHosts')">hosts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostResources'}" v-on:click="changeTab('hostResources')">环境变量</a>
+                    <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'appServiceControlVar'}" v-on:click="changeTab('appServiceControlVar')">环境变量</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" v-bind:class="{active:appServiceControlInfo._currentTab == 'hostPorts'}" v-on:click="changeTab('hostPorts')">docker容器</a>
                 </li>
             </ul>
         </div>
-        <div v-if="appServiceControlInfo._currentTab == 'hostEvents'">
-            <vc:create path="admin/hostEvents"></vc:create>
+        <div v-if="appServiceControlInfo._currentTab == 'appServiceControlPort'">
+            <vc:create path="admin/appServiceControlPort"></vc:create>
         </div>
-        <div v-if="appServiceControlInfo._currentTab == 'hostContainers'">
-            <vc:create path="admin/hostContainers"></vc:create>
+        <div v-if="appServiceControlInfo._currentTab == 'appServiceControlDir'">
+            <vc:create path="admin/appServiceControlDir"></vc:create>
         </div>
-        <div v-if="appServiceControlInfo._currentTab == 'hostMonitors'">
-            <vc:create path="admin/hostMonitors"></vc:create>
+        <div v-if="appServiceControlInfo._currentTab == 'appServiceControlHosts'">
+            <vc:create path="admin/appServiceControlHosts"></vc:create>
         </div>
-        <div v-if="appServiceControlInfo._currentTab == 'hostResources'">
-            <vc:create path="admin/hostResources"></vc:create>
+        <div v-if="appServiceControlInfo._currentTab == 'appServiceControlVar'">
+            <vc:create path="admin/appServiceControlVar"></vc:create>
         </div>
         <div v-if="appServiceControlInfo._currentTab == 'hostPorts'">
             <vc:create path="admin/hostPorts"></vc:create>
