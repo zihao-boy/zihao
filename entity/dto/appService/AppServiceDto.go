@@ -33,4 +33,5 @@ type AppServiceDto struct {
 	AsGroupId  string `json:"asGroupId" sql:"-"`
 	AsDeployType string `json:"asDeployType" sql:"-"`
 	AsDeployId  string `json:"asDeployId" sql:"-"`
+	ImagesId  string `json:"imagesId" sql:"-"`
 }

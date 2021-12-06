@@ -2,9 +2,9 @@
     <div class="col-lg-12">
         <div class="ibox">
             <div class="ibox-title">
-                <h5>添加应用</h5>
+                <h5>基本信息</h5>
                 <div class="ibox-tools" style="top:10px;">
-               
+
                 </div>
             </div>
             <div class="ibox-content">
@@ -13,8 +13,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">应用名称</label>
                             <div class="col-sm-10">
-                                <input v-model="addAppServiceInfo.asName" type="text" placeholder="必填，请填写应用名称"
-                                    class="form-control">
+                                <input v-model="addAppServiceInfo.asName" type="text" placeholder="必填，请填写应用名称" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -31,8 +30,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">副本数</label>
                             <div class="col-sm-10">
-                                <input v-model="addAppServiceInfo.asCount" type="text" placeholder="必填，请填写应用名称"
-                                    class="form-control">
+                                <input v-model="addAppServiceInfo.asCount" type="text" placeholder="必填，请填写应用名称" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -72,24 +70,167 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">镜像</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" v-model="addAppServiceInfo.imagesId">
+                                    <option selected disabled value="">必填，请选择镜像</option>
+                                    <option :value="item.id" v-for="(item,index) in addAppServiceInfo.images">{{item.name}}:{{item.version}}</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">服务描述</label>
                             <div class="col-sm-10">
-                                <textarea v-model="addAppServiceInfo.asDesc" placeholder="必填，请填写服务描述"
-                                    class="form-control"></textarea>
+                                <textarea v-model="addAppServiceInfo.asDesc" placeholder="必填，请填写服务描述" class="form-control"></textarea>
                             </div>
                         </div>
 
-                        <div class="ibox-content">
-                            <button class="btn btn-primary float-right" type="button"
-                                v-on:click="saveAppServiceInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
-                            <button type="button" class="btn btn-warning float-right" style="margin-right:20px;"
-                                data-dismiss="modal">取消</button>
-                        </div>
+
                     </div>
                 </div>
 
             </div>
         </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>端口映射</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_addPort()">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        添加
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div>
+                        <div class="form-group row" v-for="(item,index) in addAppServiceInfo.appServicePorts">
+                            <label class="col-sm-1 col-form-label ">宿主机端口</label>
+                            <div class="col-sm-4">
+                                <input v-model="item.srcPort" type="number" placeholder="必填，请填写宿主机端口" class="form-control">
+                            </div>
+                            <label class="col-sm-1 col-form-label">容器端口</label>
+                            <div class="col-sm-4">
+                                <input v-model="item.targetPort" type="number" placeholder="必填，请填写容器端口" class="form-control">
+                            </div>
+                            <a href="javascript:void(0)" class="col-form-label" v-on:click="_deletePort(index)">
+                                <i class="glyphicon glyphicon-plus"></i> 删除
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>磁盘映射</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_addDir()">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        添加
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div>
+                        <div class="form-group row" v-for="(item,index) in addAppServiceInfo.appServiceDirs">
+                            <label class="col-sm-1 col-form-label ">宿主机目录</label>
+                            <div class="col-sm-4">
+                                <input v-model="item.srcDir" type="text" placeholder="必填，请填写宿主机目录" class="form-control">
+                            </div>
+                            <label class="col-sm-1 col-form-label">容器目录</label>
+                            <div class="col-sm-4">
+                                <input v-model="item.targetDir" type="text" placeholder="必填，请填写容器目录" class="form-control">
+                            </div>
+                            <a href="javascript:void(0)" class="col-form-label" v-on:click="_deleteDir(index)">
+                                <i class="glyphicon glyphicon-plus"></i> 删除
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>hosts</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_addHosts()">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        添加
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div>
+                        <div class="form-group row" v-for="(item,index) in addAppServiceInfo.appServiceHosts">
+                            <label class="col-sm-1 col-form-label ">域名</label>
+                            <div class="col-sm-4">
+                                <input v-model="item.hostname" type="text" placeholder="必填，请填写域名" class="form-control">
+                            </div>
+                            <label class="col-sm-1 col-form-label">IP</label>
+                            <div class="col-sm-4">
+                                <input v-model="item.ip" type="text" placeholder="必填，请填写IP" class="form-control">
+                            </div>
+                            <a href="javascript:void(0)" class="col-form-label" v-on:click="_deleteHosts(index)">
+                                <i class="glyphicon glyphicon-plus"></i> 删除
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>环境变量</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_addVar()">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        添加
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div>
+                        <div class="form-group row" v-for="(item,index) in addAppServiceInfo.appServiceVars">
+                            <label class="col-sm-1 col-form-label ">变量名</label>
+                            <div class="col-sm-2">
+                                <input v-model="item.varSpec" type="text" placeholder="必填，请填写变量名" class="form-control">
+                            </div>
+                            <label class="col-sm-1 col-form-label">变量值</label>
+                            <div class="col-sm-3">
+                                <input v-model="item.varValue" type="text" placeholder="必填，请填写变量值" class="form-control">
+                            </div>
+                            <label class="col-sm-1 col-form-label">说明</label>
+                            <div class="col-sm-3">
+                                <input v-model="item.varName" type="text" placeholder="必填，请填写说明" class="form-control">
+                            </div>
+                            <a href="javascript:void(0)" class="col-form-label" v-on:click="_deleteVar(index)">
+                                <i class="glyphicon glyphicon-plus"></i> 删除
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 text-right">
+        <button class="btn btn-primary float-right" type="button" v-on:click="saveAppServiceInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
+        <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" @click="_goBack()">取消</button>
     </div>
 </div>
