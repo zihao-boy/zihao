@@ -11,5 +11,9 @@ import (
 //add by wuxw 2021-12-07
 func Scheduling(hosts []*host.HostDto, appServiceDto *appService.AppServiceDto) (result.ResultDto, error) {
 
-	return result.Success(),nil
+	if len(hosts) == 1 {
+
+	}
+
+	return result.Success(), nil
 }

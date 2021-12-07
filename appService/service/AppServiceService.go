@@ -117,7 +117,7 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 			appServicePort.PortId = seq.Generator()
 			appServicePort.TenantId = user.TenantId
 			appServicePort.AsId = appServiceDto.AsId
-			appServiceService.appServiceDao.SaveAppServicePort(appServicePort)
+			appServiceService.appServiceDao.SaveAppServicePort(*appServicePort)
 		}
 	}
 
@@ -126,7 +126,7 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 			appServiceHost.HostsId = seq.Generator()
 			appServiceHost.TenantId = user.TenantId
 			appServiceHost.AsId = appServiceDto.AsId
-			appServiceService.appServiceDao.SaveAppServiceHosts(appServiceHost)
+			appServiceService.appServiceDao.SaveAppServiceHosts(*appServiceHost)
 		}
 	}
 
@@ -135,7 +135,7 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 			appServiceDir.DirId = seq.Generator()
 			appServiceDir.TenantId = user.TenantId
 			appServiceDir.AsId = appServiceDto.AsId
-			appServiceService.appServiceDao.SaveAppServiceDir(appServiceDir)
+			appServiceService.appServiceDao.SaveAppServiceDir(*appServiceDir)
 		}
 	}
 
@@ -144,7 +144,7 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 			appServiceVar.AvId = seq.Generator()
 			appServiceVar.TenantId = user.TenantId
 			appServiceVar.AsId = appServiceDto.AsId
-			appServiceService.appServiceDao.SaveAppServiceVar(appServiceVar)
+			appServiceService.appServiceDao.SaveAppServiceVar(*appServiceVar)
 		}
 	}
 

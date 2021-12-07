@@ -42,8 +42,8 @@ type AppServiceDto struct {
 	HostName  string `json:"hostName" sql:"-"`
 
 
-	AppServicePorts []AppServicePortDto `json:"appServicePorts"`
-	AppServiceHosts []AppServiceHostsDto `json:"appServiceHosts"`
-	AppServiceDirs []AppServiceDirDto `json:"appServiceDirs"`
-	AppServiceVars []AppServiceVarDto `json:"appServiceVars"`
+	AppServicePorts []*AppServicePortDto `json:"appServicePorts"`
+	AppServiceHosts []*AppServiceHostsDto `json:"appServiceHosts"`
+	AppServiceDirs []*AppServiceDirDto `json:"appServiceDirs"`
+	AppServiceVars []*AppServiceVarDto `json:"appServiceVars"`
 }
