@@ -754,3 +754,32 @@ func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) in
 	}
 	return param
 }
+
+func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) interface{} {
+	var (
+		appServiceDto appService.AppServiceDto
+	)
+
+	if err := ctx.ReadJSON(&appServiceDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	appServiceDto.State = appService.STATE_STOP
+	appServiceDtos,_ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
+
+	if len(appServiceDtos) <1{
+		return result.Error("应用不存在")
+	}
+
+	//修改应用为启动中
+	appServiceDto.State = appService.STATE_DOING
+	appServiceService.appServiceDao.UpdateAppService(appServiceDto)
+
+	tmpAppServiceDto := appServiceDtos[0]
+
+	var param, err = containerScheduling.StopContainer(tmpAppServiceDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	return param
+}

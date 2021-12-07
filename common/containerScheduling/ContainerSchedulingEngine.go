@@ -1,6 +1,7 @@
 package containerScheduling
 
 import (
+	"errors"
 	"github.com/zihao-boy/zihao/appService/dao"
 	"github.com/zihao-boy/zihao/common/containerScheduling/defalutContainerScheduling"
 	"github.com/zihao-boy/zihao/common/containerScheduling/k8sContainerScheduling"
@@ -8,6 +9,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/result"
+	"strconv"
 )
 
 const (
@@ -59,11 +61,69 @@ func ContainerScheduling(hosts []*host.HostDto, appServiceDto *appService.AppSer
 	portDtos,_ := appServiceDao.GetAppServicePort(portDto)
 	appServiceDto.AppServicePorts = portDtos
 
-	//根据配置触发 调度引擎  目前暂时支持 k8s 和默认调度器
-	if Scheduling_k8s == scheduling {
-		resultDto , err = defalutContainerScheduling.Scheduling(hosts,appServiceDto)
-	}else if(Scheduling_default == scheduling){
-		resultDto , err = k8sContainerScheduling.Scheduling(hosts,appServiceDto)
+	//get container count
+
+	containerCount,err := strconv.Atoi(appServiceDto.AsCount)
+
+	if err!=nil{
+		return nil,errors.New(err.Error())
+	}
+	//循环调度副本
+	for containerIndex := 0 ; containerIndex < containerCount ; containerIndex++{
+		//根据配置触发 调度引擎  目前暂时支持 k8s 和默认调度器
+		if Scheduling_default == scheduling {
+			resultDto , err = defalutContainerScheduling.Scheduling(hosts,appServiceDto)
+		}else if(Scheduling_k8s == scheduling){
+			resultDto , err = k8sContainerScheduling.Scheduling(hosts,appServiceDto)
+		}
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			break;
+		}
+	}
+
+	return resultDto, err
+}
+
+
+// 容器调度引擎
+// 目前支持 k8s 和 默认 引擎
+func StopContainer(appServiceDto *appService.AppServiceDto) (interface{}, error) {
+
+	//调度器
+	var (
+		scheduling = config.G_AppConfig.ContainerScheduling
+		err        error
+		resultDto  result.ResultDto
+		appServiceDao dao.AppServiceDao
+	)
+
+
+	//查询 环境变量
+	containerDto :=appService.AppServiceContainerDto{
+		AsId: appServiceDto.AsId,
+		TenantId: appServiceDto.TenantId,
+	}
+	containerDtos,_ := appServiceDao.GetAppServiceContainer(containerDto)
+
+	if len(containerDtos) < 1{
+		return result.Success(),nil
+	}
+	//get container count
+
+
+	//循环调度副本
+	for _, tmpContainerDto := range containerDtos{
+		//根据配置触发 调度引擎  目前暂时支持 k8s 和默认调度器
+		if Scheduling_default == scheduling {
+			resultDto , err = defalutContainerScheduling.StopContainer(tmpContainerDto,appServiceDto)
+		}else if(Scheduling_k8s == scheduling){
+			resultDto , err = k8sContainerScheduling.StopContainer(tmpContainerDto,appServiceDto)
+		}
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			break;
+		}
 	}
 
 	return resultDto, err

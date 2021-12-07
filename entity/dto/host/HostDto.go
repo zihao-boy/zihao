@@ -21,8 +21,11 @@ type HostDto struct {
 	Username      string `json:"username" `
 	Passwd        string `json:"passwd" `
 	Cpu           string `json:"cpu" `
+	UseCpu        string `json:"useCpu"`
 	Mem           string `json:"mem" `
+	UseMem        string `json:"useMem"`
 	Disk          string `json:"disk" `
+	UseDisk       string `json:"useDisk"`
 	TenantId      string `json:"tenantId" sql:"-"`
 	CreateTime    string `json:"createTime" sql:"-"`
 	StatusCd      string `json:"statusCd" sql:"-"`

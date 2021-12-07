@@ -388,10 +388,19 @@ func (aus *AppServiceController) deleteAppServiceContainer(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 /**
-删除 主机组
+开启容器
 */
 func (aus *AppServiceController) startAppService(ctx iris.Context) {
 	reslut := aus.appServiceService.StartAppService(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+停止容器
+*/
+func (aus *AppServiceController) stopAppService(ctx iris.Context) {
+	reslut := aus.appServiceService.StopAppService(ctx)
 
 	ctx.JSON(reslut)
 }

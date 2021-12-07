@@ -21,6 +21,7 @@ var (
 
 const (
 	WorkSpace string = "/zihao/master/"
+	Slave  int = 7001
 )
 
 // 全局配置文件对应的结构体

@@ -630,7 +630,16 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 		return result.Error("主机不存在")
 	}
 
+	//
+	//      "hostId":  slaveId,
+	//		"cpu":     cpuCore,
+	//		"mem":     totalMem.Total,
+	//		"disk":    totalDisk.Total,
+	//		"useCpu":  cpuPercentDec.Float64(),
+	//		"useMem":  totalMem.Used,
+	//		"useDisk": totalDisk.Used,
 	hostDto.State = host.State_N
+
 	hostDto.HeartbeatTime = time.Now().Format("2006-01-02 15:04:05")
 	hostService.hostDao.UpdateHost(hostDto)
 

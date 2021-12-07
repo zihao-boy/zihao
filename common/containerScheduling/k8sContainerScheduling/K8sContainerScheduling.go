@@ -9,3 +9,11 @@ import (
 func Scheduling(hosts []*host.HostDto, appServiceDto *appService.AppServiceDto) (result.ResultDto, error) {
 	return result.Success(),nil
 }
+
+
+//default  stop
+// base on mem
+//add by wuxw 2021-12-07
+func StopContainer(containerDto *appService.AppServiceContainerDto, appServiceDto *appService.AppServiceDto) (result.ResultDto, error) {
+	return result.Success(),nil
+}

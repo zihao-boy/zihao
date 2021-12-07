@@ -87,5 +87,38 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 	cmd = exec.Command("bash", "-c", dockerRun)
 	output, _ = cmd.CombinedOutput()
 	fmt.Print("构建镜像：" + dockerpull + " 返回：" + string(output))
-	return result.SuccessData(string(output)), nil
+	paramOut := map[string]interface{}{
+		"ContainerId": string(output),
+	}
+	return result.SuccessData(paramOut), nil
+}
+
+func (s *SystemInfoService) StopContainer(ctx iris.Context) (interface{}, error) {
+	var (
+		err                    error
+		appServiceContainerDto appService.AppServiceContainerDto
+		cmd                    *exec.Cmd
+	)
+
+	if err = ctx.ReadJSON(&appServiceContainerDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+
+	dockerpull := "docker stop " + appServiceContainerDto.DockerContainerId
+
+	//停止容器
+	cmd = exec.Command("bash", "-c", dockerpull)
+	output, _ := cmd.CombinedOutput()
+
+	fmt.Print("停止容器：" + string(output))
+
+	dockerpull = "docker rm " + appServiceContainerDto.DockerContainerId
+
+	//停止容器
+	cmd = exec.Command("bash", "-c", dockerpull)
+	output, _ = cmd.CombinedOutput()
+
+	fmt.Print("删除容器：" + string(output))
+
+	return result.Success(), nil
 }
