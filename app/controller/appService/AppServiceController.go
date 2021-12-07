@@ -85,6 +85,8 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppServiceContainer", hero.Handler(aus.deleteAppServiceContainer))
 
+	adinMenu.Post("/startAppService", hero.Handler(aus.startAppService))
+
 }
 
 /**
@@ -385,3 +387,12 @@ func (aus *AppServiceController) deleteAppServiceContainer(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+/**
+删除 主机组
+*/
+func (aus *AppServiceController) startAppService(ctx iris.Context) {
+	reslut := aus.appServiceService.StartAppService(ctx)
+
+	ctx.JSON(reslut)
+}
+

@@ -19,7 +19,7 @@
                 avgName: '',
                 hostGroupName: '',
                 hostName: '',
-                asGroupId:'',
+                asGroupId: '',
                 hostId: '',
                 imagesId: '',
             }
@@ -82,6 +82,12 @@
                     }
                 );
             },
+            _startAppService: function() {
+
+            },
+            _stopAppService: function() {
+
+            },
             _openSsh: function() {
                 //获取主机访问token
                 var param = {
@@ -115,8 +121,8 @@
                 return '计算应用';
 
             },
-            _editAppService:function(){
-                vc.emit('editAppService', 'openEditAppServiceModal',$that.appServiceControlInfo);
+            _editAppService: function() {
+                vc.emit('editAppService', 'openEditAppServiceModal', $that.appServiceControlInfo);
             }
 
         }

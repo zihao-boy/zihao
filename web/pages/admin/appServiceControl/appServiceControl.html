@@ -52,8 +52,8 @@
                             <div class="form-group" v-if="appServiceControlInfo.asId">
                                 <button class="btn-white btn btn-xs" v-on:click="_goBack()">返回</button>
                                 <button class="btn-white btn btn-xs" v-on:click="_editAppService()">修改</button>
-                                <button class="btn-primary btn btn-xs" v-on:click="_openSsh()">启动</button>
-
+                                <button class="btn-primary btn btn-xs" v-if="appServiceControlInfo.state == '10012'" v-on:click="_startAppService()">启动</button>
+                                <button class="btn-primary btn btn-xs" v-else v-on:click="_stopAppService()">停止</button>
                             </div>
 
                         </div>

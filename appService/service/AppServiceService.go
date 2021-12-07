@@ -1,10 +1,13 @@
 package service
 
 import (
+	"github.com/zihao-boy/zihao/common/containerScheduling"
+	"github.com/zihao-boy/zihao/entity/dto/host"
 	"strconv"
 
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/appService/dao"
+	assetsDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
@@ -14,6 +17,7 @@ import (
 
 type AppServiceService struct {
 	appServiceDao dao.AppServiceDao
+	hostDao assetsDao.HostDao
 }
 
 /**
@@ -704,4 +708,49 @@ func (appServiceService *AppServiceService) DeleteAppServiceContainer(ctx iris.C
 	}
 
 	return result.SuccessData(appServiceContainerDto)
+}
+
+//应用启用方法
+
+func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) interface{} {
+	var (
+		err           error
+		appServiceDto appService.AppServiceDto
+		hosts []*host.HostDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	appServiceDto.State = appService.STATE_STOP
+	appServiceDtos,_ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
+
+	if len(appServiceDtos) <1{
+		return result.Error("应用不存在")
+	}
+
+	//修改应用为启动中
+	appServiceDto.State = appService.STATE_DOING
+	appServiceService.appServiceDao.UpdateAppService(appServiceDto)
+
+	tmpAppServiceDto := appServiceDtos[0]
+
+	if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST{
+		hostDto :=host.HostDto{
+			HostId: tmpAppServiceDto.AsDeployId,
+		}
+		hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+	}else{
+		hostDto :=host.HostDto{
+			GroupId: tmpAppServiceDto.AsDeployId,
+		}
+		hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+	}
+
+	param,err:=containerScheduling.ContainerScheduling(hosts,tmpAppServiceDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	return param
 }

@@ -19,6 +19,7 @@ own:
   db: sqlite # mysql
   cache: local # redis
   data_path: /Users/wuxuewen
+  container_scheduling: default  # k8s
   sqlite_path: C:\\project\\vip\db\\zihao.db
 #  sqlite_path: D:\\hc\\db\\zihao.db
 #  sqlite_path: /home/zihao/db/zihao_dev.db

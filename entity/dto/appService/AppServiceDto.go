@@ -6,6 +6,7 @@ const (
 	//状态  10012 停止 10013 启动 10011 升级
 	STATE_STOP    string = "10012"
 	STATE_START   string = "10013"
+	STATE_DOING  string ="10014"
 	STATE_UPGRADE string = "10011"
 
 	//服务类型，001 数据库 002 缓存 003 计算应用

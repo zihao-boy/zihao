@@ -44,6 +44,8 @@ type (
 		Cache         string   `yaml:"cache"`
 		DataPath      string   `yaml:"data_path"`
 		SqlitePath      string   `yaml:"sqlite_path"`
+		ContainerScheduling      string   `yaml:"container_scheduling"`
+
 	}
 
 	// db
