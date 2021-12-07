@@ -40,7 +40,7 @@ type AppServiceDto struct {
 	AvgName  string `json:"avgName" sql:"-"`
 	HostGroupName  string `json:"hostGroupName" sql:"-"`
 	HostName  string `json:"hostName" sql:"-"`
-
+	ImagesUrl  string `json:"imagesUrl" sql:"-"`
 
 	AppServicePorts []*AppServicePortDto `json:"appServicePorts"`
 	AppServiceHosts []*AppServiceHostsDto `json:"appServiceHosts"`
