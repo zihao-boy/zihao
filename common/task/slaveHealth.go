@@ -31,6 +31,7 @@ func doSlaveHealth() {
 	cpuPercentDec := decimal.NewFromFloat(cpuPercent[0])
 	cpuPercentDec = cpuPercentDec.Mul(decimal.NewFromInt(int64(cpuCore)))
 
+	useCpu,_ :=cpuPercentDec.Float64()
 	// 获取内存
 	totalMem, _ := mem.VirtualMemory()
 
@@ -43,7 +44,7 @@ func doSlaveHealth() {
 		"cpu":     cpuCore,
 		"mem":     totalMem.Total,
 		"disk":    totalDisk.Total,
-		"useCpu":  cpuPercentDec.Float64(),
+		"useCpu":  useCpu,
 		"useMem":  totalMem.Used,
 		"useDisk": totalDisk.Used,
 	}
