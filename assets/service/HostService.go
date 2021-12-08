@@ -618,7 +618,7 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 		hostDto = host.HostDto{}
 	)
 	if err := ctx.ReadJSON(&hostDto); err != nil {
-		return result.Error("解析入参失败")
+		return result.Error("解析入参失败" + err.Error())
 	}
 	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
 
