@@ -3,7 +3,7 @@ package appService
 import "github.com/zihao-boy/zihao/entity/dto"
 
 const (
-	//状态  10012 停止 10013 启动 10011 升级
+	//状态  10012 停止 10013 启动 10011 升级  10014 处理中
 	STATE_STOP    string = "10012"
 	STATE_START   string = "10013"
 	STATE_DOING  string ="10014"

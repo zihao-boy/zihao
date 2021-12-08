@@ -70,7 +70,7 @@
                         let _hostManageInfo = JSON.parse(json);
                         let _zihaoToken = _hostManageInfo.data;
                         window.open("/webshell/console.html?hostId=" +
-                            $that.hostDetailManageInfo.hostId +
+                            _container.hostId +
                             "&zihaoToken=" + _zihaoToken +
                             "&val=exec&command=" + _container.dockerContainerId,
                             '_blank')
@@ -95,7 +95,7 @@
                         let _hostManageInfo = JSON.parse(json);
                         let _zihaoToken = _hostManageInfo.data;
                         window.open("/webshell/console.html?hostId=" +
-                            $that.hostDetailManageInfo.hostId +
+                            _container.hostId +
                             "&zihaoToken=" + _zihaoToken +
                             "&val=log&command=" + _container.dockerContainerId,
                             '_blank')
@@ -120,7 +120,7 @@
                         let _hostManageInfo = JSON.parse(json);
                         let _zihaoToken = _hostManageInfo.data;
                         window.open("/webshell/console.html?hostId=" +
-                            $that.hostDetailManageInfo.hostId +
+                            _container.hostId +
                             "&zihaoToken=" + _zihaoToken +
                             "&val=restart&command=" + _container.dockerContainerId,
                             '_blank')
@@ -129,7 +129,21 @@
                         console.log('请求失败处理');
                     }
                 );
+            },
+            _getOnline: function(_time) {
+                if (!_time) {
+                    return "离线";
+                }
+                _time = _time.replace('T', " ");
+                _time = _time.replace('Z', "");
+                let _date = new Date(_time);
+                if (new Date().getTime() - _date.getTime() < 10 * 60 * 1000) {
+                    return "在线"
+                }
+
+                return "离线"
             }
+
 
         }
     });

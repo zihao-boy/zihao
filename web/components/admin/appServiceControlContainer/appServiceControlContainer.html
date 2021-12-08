@@ -16,11 +16,11 @@
             <tbody>
                 <tr v-for="event in appServiceControlContainerInfo.appServiceControlContainers">
 
-                    <td class="text-center">{{event.hostName}}</td>
+                    <td class="text-center">{{event.hostname}}</td>
                     <td class="text-center">{{event.ip}}</td>
                     <td class="text-center">{{event.dockerContainerId}}</td>
                     <td class="text-center">{{event.message}}</td>
-                    <td class="text-center">{{event.updateTime}}</td>
+                    <td class="text-center">{{_getOnline(event.updateTime)}}</td>
                     <td class="text-center">{{event.createTime}}</td>
                     <td class="text-center">
                         <div class="btn-group">

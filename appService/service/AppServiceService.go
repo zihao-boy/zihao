@@ -765,7 +765,7 @@ func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) int
 		return result.Error("解析入参失败")
 	}
 
-	appServiceDto.State = appService.STATE_STOP
+	appServiceDto.State = appService.STATE_ONLINE
 	appServiceDtos,_ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
 
 	if len(appServiceDtos) <1{
