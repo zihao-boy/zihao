@@ -173,6 +173,97 @@ func (appServiceService *AppServiceService) UpdateAppServices(ctx iris.Context) 
 
 }
 
+func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) result.ResultDto {
+
+	var (
+		err           error
+		appServiceDto appService.AppServiceDto
+		newAppServiceDto *appService.AppServiceDto
+	)
+
+	if err = ctx.ReadJSON(&appServiceDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	oldAppServiceDto := appService.AppServiceDto{
+		AsId: appServiceDto.AsId,
+	}
+
+	appServiceDtos, err := appServiceService.appServiceDao.GetAppServices(oldAppServiceDto)
+
+	if len(appServiceDtos) < 1{
+		return result.Error("应用不存在")
+	}
+
+	newAppServiceDto = appServiceDtos[0]
+
+	newAppServiceDto.AsId = seq.Generator()
+	newAppServiceDto.AsName = appServiceDto.AsName
+	newAppServiceDto.AsDesc = appServiceDto.AsDesc
+	newAppServiceDto.ImagesId = appServiceDto.ImagesId
+
+	err = appServiceService.appServiceDao.SaveAppService(*newAppServiceDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	portDto := appService.AppServicePortDto{
+		AsId: appServiceDto.AsId,
+	}
+	portDtos,_ := appServiceService.appServiceDao.GetAppServicePort(portDto)
+
+	if len(portDtos) > 0{
+		for _,appServicePort := range portDtos{
+			appServicePort.PortId = seq.Generator()
+			appServicePort.TenantId = newAppServiceDto.TenantId
+			appServicePort.AsId = newAppServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServicePort(*appServicePort)
+		}
+	}
+
+	hostsDto := appService.AppServiceHostsDto{
+		AsId: appServiceDto.AsId,
+	}
+	hostsDtos,_ := appServiceService.appServiceDao.GetAppServiceHosts(hostsDto)
+
+	if len(hostsDtos) > 0{
+		for _,appServiceHost := range hostsDtos{
+			appServiceHost.HostsId = seq.Generator()
+			appServiceHost.TenantId = newAppServiceDto.TenantId
+			appServiceHost.AsId = newAppServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServiceHosts(*appServiceHost)
+		}
+	}
+	dirDto := appService.AppServiceDirDto{
+		AsId: appServiceDto.AsId,
+	}
+	dirDtos,_ := appServiceService.appServiceDao.GetAppServiceDir(dirDto)
+
+	if len(dirDtos) > 0{
+		for _,appServiceDir := range dirDtos{
+			appServiceDir.DirId = seq.Generator()
+			appServiceDir.TenantId = newAppServiceDto.TenantId
+			appServiceDir.AsId = newAppServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServiceDir(*appServiceDir)
+		}
+	}
+
+	varDto := appService.AppServiceVarDto{
+		AsId: appServiceDto.AsId,
+	}
+	varDtos,_ := appServiceService.appServiceDao.GetAppServiceVars(varDto)
+	if len(varDtos) > 0{
+		for _,appServiceVar := range varDtos{
+			appServiceVar.AvId = seq.Generator()
+			appServiceVar.TenantId = newAppServiceDto.TenantId
+			appServiceVar.AsId = newAppServiceDto.AsId
+			appServiceService.appServiceDao.SaveAppServiceVar(*appServiceVar)
+		}
+	}
+
+	return result.SuccessData(newAppServiceDto)
+}
+
 /**
 删除 系统信息
 */
@@ -784,3 +875,5 @@ func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) int
 	}
 	return param
 }
+
+

@@ -68,7 +68,7 @@
                 vc.jumpToPage('/index.html#/pages/admin/appServiceControl?asId=' + _appService.asId)
             },
             _copyAppService: function(_appService) {
-                vc.emit('editAppService', 'openEditAppServiceModal', _appService);
+                vc.emit('copyAppService', 'openCopyAppServiceModal', _appService);
             },
             _openDeleteAppServiceModel: function(_appService) {
                 vc.emit('deleteAppService', 'openDeleteAppServiceModal', _appService);

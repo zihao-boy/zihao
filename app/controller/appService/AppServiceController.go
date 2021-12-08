@@ -89,6 +89,9 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/stopAppService", hero.Handler(aus.stopAppService))
 
+	adinMenu.Post("/copyAppService", hero.Handler(aus.copyAppService))
+
+
 }
 
 /**
@@ -117,6 +120,17 @@ func (aus *AppServiceController) updateAppService(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+修改 主机组
+*/
+func (aus *AppServiceController) copyAppService(ctx iris.Context) {
+	reslut := aus.appServiceService.CopyAppServices(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
 
 /**
 删除 主机组
