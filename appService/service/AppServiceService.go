@@ -222,7 +222,7 @@ func (appServiceService *AppServiceService) GetAppServiceVars(ctx iris.Context) 
 	appServiceVarDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	appServiceVarDto.TenantId = user.TenantId
-
+	appServiceVarDto.AsId = ctx.URLParam("asId")
 	total, err = appServiceService.appServiceDao.GetAppServiceVarCount(appServiceVarDto)
 
 	if err != nil {
@@ -325,7 +325,7 @@ func (appServiceService *AppServiceService) GetAppServiceHosts(ctx iris.Context)
 	appServiceHostsDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	appServiceHostsDto.TenantId = user.TenantId
-
+	appServiceHostsDto.AsId = ctx.URLParam("asId")
 	total, err = appServiceService.appServiceDao.GetAppServiceHostsCount(appServiceHostsDto)
 
 	if err != nil {
@@ -428,7 +428,7 @@ func (appServiceService *AppServiceService) GetAppServiceDir(ctx iris.Context) i
 	appServiceDirDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	appServiceDirDto.TenantId = user.TenantId
-
+	appServiceDirDto.AsId = ctx.URLParam("asId")
 	total, err = appServiceService.appServiceDao.GetAppServiceDirCount(appServiceDirDto)
 
 	if err != nil {
@@ -531,6 +531,7 @@ func (appServiceService *AppServiceService) GetAppServicePort(ctx iris.Context) 
 	appServicePortDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	appServicePortDto.TenantId = user.TenantId
+	appServicePortDto.AsId = ctx.URLParam("asId")
 
 	total, err = appServiceService.appServiceDao.GetAppServicePortCount(appServicePortDto)
 
@@ -634,7 +635,7 @@ func (appServiceService *AppServiceService) GetAppServiceContainer(ctx iris.Cont
 	appServiceContainerDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	appServiceContainerDto.TenantId = user.TenantId
-
+	appServiceContainerDto.AsId = ctx.URLParam("asId")
 	total, err = appServiceService.appServiceDao.GetAppServiceContainerCount(appServiceContainerDto)
 
 	if err != nil {
