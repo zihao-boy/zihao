@@ -158,7 +158,7 @@ func doStopContainer(containerDto *appService.AppServiceContainerDto, dto2 *appS
 		ip = ip[0:strings.Index(ip, ":")]
 	}
 
-	ip += (":" + string(config.Slave))
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
 	resp, err := httpReq.Post("http://"+ip+"/app/slave/startContainer", data, nil)
 	if err != nil {
