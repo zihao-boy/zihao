@@ -136,7 +136,7 @@ func StopContainer(containerDto *appService.AppServiceContainerDto, appServiceDt
 	}
 
 	appServiceContainerDto := appService.AppServiceContainerDto{
-		ContainerId: seq.Generator(),
+		ContainerId: containerDto.ContainerId,
 		AsId:        appServiceDto.AsId,
 		TenantId:    appServiceDto.TenantId,
 	}
@@ -160,7 +160,7 @@ func doStopContainer(containerDto *appService.AppServiceContainerDto, dto2 *appS
 
 	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
-	resp, err := httpReq.Post("http://"+ip+"/app/slave/startContainer", data, nil)
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/stopContainer", data, nil)
 	if err != nil {
 		return resultDto, err
 	}
