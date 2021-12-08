@@ -67,7 +67,7 @@
             _openControl: function(_appService) {
                 vc.jumpToPage('/index.html#/pages/admin/appServiceControl?asId=' + _appService.asId)
             },
-            _openEditAppServiceModel: function(_appService) {
+            _copyAppService: function(_appService) {
                 vc.emit('editAppService', 'openEditAppServiceModal', _appService);
             },
             _openDeleteAppServiceModel: function(_appService) {
@@ -75,7 +75,6 @@
             },
             _queryAppServiceMethod: function() {
                 vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
-
             },
             _moreCondition: function() {
                 if (vc.component.appServiceManageInfo.moreCondition) {

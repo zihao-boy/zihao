@@ -26,6 +26,7 @@ require (
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/shopspring/decimal v1.3.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
+	github.com/tklauser/go-sysconf v0.3.9 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
