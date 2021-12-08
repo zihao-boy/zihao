@@ -22,6 +22,7 @@
                 asGroupId: '',
                 hostId: '',
                 imagesId: '',
+                state: ''
             }
         },
         _initMethod: function() {
@@ -54,6 +55,8 @@
                     avgName: '',
                     hostGroupName: '',
                     hostName: '',
+                    imagesId: '',
+                    state: ''
                 }
             },
             _listAppServices: function() {

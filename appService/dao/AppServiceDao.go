@@ -31,7 +31,7 @@ const (
 	`
 
 	query_appService string = `
-				select t.*,td.name as_type_name,td1.name state_name,bi.name images_name,bi.version images_version,bi.type_url images_url
+				select t.*,td.name as_type_name,td1.name state_name,bi.name images_name,bi.version images_version,bi.type_url images_url,
 asv.avg_name,hg.name host_group_name,h.name host_name
 from app_service t
 left join t_dict td on t.as_type = td.status_cd and td.table_name = 'app_service' and td.table_columns = 'as_type'
