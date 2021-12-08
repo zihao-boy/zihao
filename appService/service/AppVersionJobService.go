@@ -267,3 +267,108 @@ func (appVersionJobService *AppVersionJobService) DeleteAppVersionJobs(ctx iris.
 	return result.SuccessData(appVersionJobDto)
 
 }
+
+func (appVersionJobService *AppVersionJobService) GetAppVersionJobImages(ctx iris.Context) interface{} {
+	var (
+		err               error
+		page              int64
+		row               int64
+		total             int64
+		appVersionJobImagesDto  = appVersionJob.AppVersionJobImagesDto{}
+		appVersionJobImagesDtos []*appVersionJob.AppVersionJobImagesDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	appVersionJobImagesDto.Row = row * page
+	appVersionJobImagesDto.Page = (page - 1) * row
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	appVersionJobImagesDto.TenantId = user.TenantId
+
+	total, err = appVersionJobService.appVersionJobDao.GetAppVersionJobImagesCount(appVersionJobImagesDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	appVersionJobImagesDtos, err = appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImagesDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appVersionJobImagesDtos, total, row)
+}
+
+func (appVersionJobService *AppVersionJobService) SaveAppVersionJobImages(ctx iris.Context) interface{} {
+	var (
+		err              error
+		appVersionJobImagesDto appVersionJob.AppVersionJobImagesDto
+	)
+
+	if err = ctx.ReadJSON(&appVersionJobImagesDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appVersionJobImagesDto.TenantId = user.TenantId
+	appVersionJobImagesDto.JobImagesId = seq.Generator()
+
+	err = appVersionJobService.appVersionJobDao.SaveAppVersionJobImages(appVersionJobImagesDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appVersionJobImagesDto)
+}
+
+func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobImages(ctx iris.Context) interface{} {
+	var (
+		err              error
+		appVersionJobImagesDto appVersionJob.AppVersionJobImagesDto
+	)
+
+	if err = ctx.ReadJSON(&appVersionJobImagesDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appVersionJobImagesDto.TenantId = user.TenantId
+	err = appVersionJobService.appVersionJobDao.UpdateAppVersionJobImages(appVersionJobImagesDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appVersionJobImagesDto)
+}
+
+func (appVersionJobService *AppVersionJobService) DeleteAppVersionJobImages(ctx iris.Context) interface{} {
+	var (
+		err              error
+		appVersionJobImagesDto appVersionJob.AppVersionJobImagesDto
+	)
+
+	if err = ctx.ReadJSON(&appVersionJobImagesDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appVersionJobService.appVersionJobDao.DeleteAppVersionJobImages(appVersionJobImagesDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(appVersionJobImagesDto)
+}

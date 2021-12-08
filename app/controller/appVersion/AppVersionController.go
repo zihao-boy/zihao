@@ -37,6 +37,14 @@ func AppVersionControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/doJob", hero.Handler(aus.doJob))
 
+	adinMenu.Get("/getAppVersionJobImages", hero.Handler(aus.getAppVersionJobImages))
+
+	adinMenu.Post("/saveAppVersionJobImages", hero.Handler(aus.saveAppVersionJobImages))
+
+	adinMenu.Post("/updateAppVersionJobImages", hero.Handler(aus.updateAppVersionJobImages))
+
+	adinMenu.Post("/deleteAppVersionJobImages", hero.Handler(aus.deleteAppVersionJobImages))
+
 }
 
 /**
@@ -125,6 +133,44 @@ func (aus *AppVersionController) deleteAppVersionJob(ctx iris.Context) {
 */
 func (aus *AppVersionController) doJob(ctx iris.Context) {
 	reslut := aus.appVersionJobService.DoJob(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+/**
+查询 主机组
+*/
+func (aus *AppVersionController) getAppVersionJobImages(ctx iris.Context) {
+	reslut := aus.appVersionJobService.GetAppVersionJobImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *AppVersionController) saveAppVersionJobImages(ctx iris.Context) {
+	reslut := aus.appVersionJobService.SaveAppVersionJobImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *AppVersionController) updateAppVersionJobImages(ctx iris.Context) {
+	reslut := aus.appVersionJobService.UpdateAppVersionJobImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *AppVersionController) deleteAppVersionJobImages(ctx iris.Context) {
+	reslut := aus.appVersionJobService.DeleteAppVersionJobImages(ctx)
 
 	ctx.JSON(reslut)
 }
