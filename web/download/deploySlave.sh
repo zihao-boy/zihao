@@ -9,6 +9,8 @@ function installSlave(){
 
     cd /zihao/slave/
 
+    ps -ef | grep slave | grep -v grep | awk '{print $2}' | xargs kill -9
+
     rm -rf conf slave*
     mkdir conf
 
