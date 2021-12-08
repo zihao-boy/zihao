@@ -9,6 +9,7 @@ type AppVersionJobImagesDto struct {
 	PackageUrl          string `json:"packageUrl" sql:"-"`
 	BusinessPackageName string `json:"businessPackageName" sql:"-"`
 	BusinessImagesName  string `json:"businessImagesName" sql:"-"`
+	JobId               string `json:"jobId" sql:"-"`
 	CreateTime          string `json:"createTime" sql:"-"`
 	StatusCd            string `json:"statusCd" sql:"-"`
 }

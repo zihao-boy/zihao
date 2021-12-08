@@ -85,40 +85,33 @@ VALUES(#JobId#, #JobName#, #JobShell#, #TenantId#, #PreJobTime#, #CurJobTime#,#S
 			and t.job_id = #JobId#
 		$endif
 	`
-
 	query_appVersionJobImages_count string = `
 		select count(1) total
-			from app_version_job t
+			from app_version_job_images t
 			where t.status_cd = '0'
 			$if TenantId != '' then
 			and t.tenant_id= #TenantId#
 			$endif
+			$if JobImagesId != '' then
+			and t.job_images_id = #JobImagesId#
+			$endif
 			$if JobId != '' then
 			and t.job_id = #JobId#
 			$endif
-			$if JobName != '' then
-			and t.job_name = #JobName#
-			$endif
-			$if State != '' then
-			and t.state = #State#
-			$endif
-    	
 	`
+
 	query_appVersionJobImages string = `
-				select t.*,td.name state_name from app_version_job t
-left join t_dict td on t.state = td.status_cd and td.table_name = 'app_version_job' and td.table_columns = 'state'
-where t.status_cd = '0'
+				select t.*
+			    from app_version_job_images t
+					where t.status_cd = '0'
 					$if TenantId != '' then
 					and t.tenant_id= #TenantId#
 					$endif
+					$if JobImagesId != '' then
+					and t.job_images_id = #JobImagesId#
+					$endif
 					$if JobId != '' then
 					and t.job_id = #JobId#
-					$endif
-					$if JobName != '' then
-					and t.job_name = #JobName#
-					$endif
-					$if State != '' then
-					and t.state = #State#
 					$endif
 					order by t.create_time desc
 					$if Row != 0 then
@@ -127,40 +120,35 @@ where t.status_cd = '0'
 	`
 
 	insert_appVersionJobImages string = `
-insert into app_version_job(job_id, job_name, job_shell, tenant_id, pre_job_time, cur_job_time,state) 
-VALUES(#JobId#, #JobName#, #JobShell#, #TenantId#, #PreJobTime#, #CurJobTime#,#State#) 
+insert into app_version_job_images(job_images_id, tenant_id, package_url, business_package_name, business_images_name,job_id) 
+VALUES(#JobImagesId#, #TenantId#, #PackageUrl#, #BusinessPackageName#, #BusinessImagesName#,#JobId#) 
 `
 
 	update_appVersionJobImages string = `
-	update app_version_job t set
-    $if Name != '' then 
-    t.job_name = #Name#,
+	update app_version_job_images t set
+    $if PackageUrl != '' then 
+    t.package_url = #PackageUrl#,
     $endif
-    $if JobShell != '' then 
-     t.job_shell =  #JobShell#,
+    $if BusinessPackageName != '' then 
+     t.business_package_name =  #BusinessPackageName#,
      $endif
-    $if CurJobTime != '' then 
-     t.cur_job_time =  #CurJobTime#,
-     $endif
-        $if PreJobTime != '' then 
-     t.pre_job_time =  #PreJobTime#,
-     $endif
-        $if State != '' then 
-     t.state =  #State#,
+    $if BusinessImagesName != '' then 
+     t.business_images_name =  #BusinessImagesName#,
      $endif
      t.status_cd = '0'
 	where
 		t.status_cd = '0'
-	and t.job_id = #JobId#
+	and t.job_images_id = #JobImagesId#
 	and t.tenant_id = #TenantId#
+	$if JobId != '' then
+	and t.job_id = #JobId#
+	$endif
 	`
 	delete_appVersionJobImages string = `
-	update app_version_job t set
+	update app_version_job_images t set
                           t.status_cd = '1'
                           where t.status_cd = '0'
-		$if JobId != '' then
-			and t.job_id = #JobId#
-		$endif
+		and t.job_images_id = #JobImagesId#
 	`
 )
 
