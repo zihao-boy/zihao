@@ -87,6 +87,8 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/startAppService", hero.Handler(aus.startAppService))
 
+	adinMenu.Post("/stopAppService", hero.Handler(aus.stopAppService))
+
 }
 
 /**
