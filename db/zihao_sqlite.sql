@@ -3577,3 +3577,13 @@ CREATE TABLE `app_service_container` (
         `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
         PRIMARY KEY (`container_id`)
 )
+
+create table app_version_job_images(
+       job_images_id varchar(64) not null,
+       tenant_id varchar(64) not null,
+       package_url varchar(512) not null ,
+       business_package_name varchar(256) not null ,
+       business_images_name varchar(256) not null,
+       create_time timestamp not null DEFAULT CURRENT_TIMESTAMP ,
+       status_cd varchar(2) not null DEFAULT '0'
+);
