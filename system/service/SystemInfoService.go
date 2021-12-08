@@ -54,7 +54,7 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 
 	fmt.Print("构建镜像：" + dockerpull + " 返回：" + string(output))
 
-	dockerRun := "docker run "
+	dockerRun := "docker run -d "
 
 	//端口
 	if len(appServiceDto.AppServicePorts) > 0 {
@@ -83,7 +83,7 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 
 	//dockerRun += " --name=\"" + appServiceDto.AsName + "_" + seq.Generator() + "\" " + imagesUrl
 
-	dockerRun +=  imagesUrl
+	dockerRun += (" " + imagesUrl)
 
 	//运行镜像
 	cmd = exec.Command("bash", "-c", dockerRun)
