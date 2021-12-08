@@ -17,7 +17,6 @@ const (
 	AS_DEPLOY_TYPE_GROUP string ="1001" // 多主机
 	AS_DEPLOY_TYPE_HOST string ="2002" //单主机
 )
-
 type AppServiceDto struct {
 	dto.PageDto
 	AsId       string `json:"asId" sql:"-"`

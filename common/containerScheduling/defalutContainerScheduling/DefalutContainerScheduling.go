@@ -105,7 +105,7 @@ func doStartContainer(host *host.HostDto, appServiceDto *appService.AppServiceDt
 
 	ip += (":" + string(config.Slave))
 
-	resp, err := httpReq.Post(ip+"/app/slave/startContainer", data, nil)
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/startContainer", data, nil)
 	if err != nil {
 		return resultDto, err
 	}
