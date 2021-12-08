@@ -123,7 +123,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	businessImagesDto.Version = version
 	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_DOCKER
 	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
-	businessImagesDto.TypeUrl = "docker pull " + imageName
+	businessImagesDto.TypeUrl = imageName
 	businessImagesDto.Name = businessDockerfileDto.Name
 
 	err = businessImagesDao.SaveBusinessImages(businessImagesDto)

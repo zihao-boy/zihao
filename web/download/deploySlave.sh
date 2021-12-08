@@ -18,10 +18,14 @@ function installSlave(){
     wget http://$ip/download/slave.tar
 
     tar -xvf slave.tar  
+    #download start slave shell
+    wget http://$ip/download/startSlave.sh
+    chmod u+x startSlave.sh
+    ./startSlave.sh
 
-    chmod u+x slave
-
-    ./slave >> slave.log &
+    # power on execute start slave shell
+    chmod +x /etc/rc.d/rc.local
+    echo '/zihao/slave/startSlave.sh' >> /etc/rc.d/rc.local
 }
 
 
