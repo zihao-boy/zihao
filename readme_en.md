@@ -1,13 +1,14 @@
-## 文档说明
+## Zihao micr-service paas platform
 
 
-#### 1.0 如何安装
+#### 1.0 how to install
 
 git clone https://github.com/zihao-boy/zihao.git
 
 https://github.com.cnpmjs.org/zihao-boy/zihao.git
 
-国内建议开启代理
+China open proxy
+
 export GO111MODULE=on
 export GOPROXY=https://goproxy.io
 
