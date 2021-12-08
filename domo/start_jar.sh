@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar target/service-$1.jar
+java -jar /root/service-$1.jar

@@ -81,7 +81,9 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 		}
 	}
 
-	dockerRun += " --name=\"" + appServiceDto.AsName + "\" " + imagesUrl
+	//dockerRun += " --name=\"" + appServiceDto.AsName + "_" + seq.Generator() + "\" " + imagesUrl
+
+	dockerRun +=  imagesUrl
 
 	//运行镜像
 	cmd = exec.Command("bash", "-c", dockerRun)
