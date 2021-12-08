@@ -724,7 +724,7 @@ func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) in
 		return result.Error("解析入参失败")
 	}
 
-	appServiceDto.State = appService.STATE_STOP
+	//appServiceDto.State = appService.STATE_STOP //避免 状态不一致导致的坑
 	appServiceDtos,_ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
 
 	if len(appServiceDtos) <1{
@@ -765,7 +765,7 @@ func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) int
 		return result.Error("解析入参失败")
 	}
 
-	appServiceDto.State = appService.STATE_ONLINE
+	//appServiceDto.State = appService.STATE_ONLINE //避免 状态不一致导致的坑
 	appServiceDtos,_ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
 
 	if len(appServiceDtos) <1{
