@@ -34,8 +34,7 @@ func Scheduling(hosts []*host.HostDto, appServiceDto *appService.AppServiceDto) 
 		return resultDto, err
 	}
 
-
-	if resultDto.Code != result.CODE_SUCCESS{
+	if resultDto.Code != result.CODE_SUCCESS {
 		return resultDto, err
 	}
 
@@ -103,7 +102,7 @@ func doStartContainer(host *host.HostDto, appServiceDto *appService.AppServiceDt
 		ip = ip[0:strings.Index(ip, ":")]
 	}
 
-	ip += (":" + strconv.FormatInt(int64(config.Slave),10))
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
 	resp, err := httpReq.Post("http://"+ip+"/app/slave/startContainer", data, nil)
 	if err != nil {
@@ -132,7 +131,7 @@ func StopContainer(containerDto *appService.AppServiceContainerDto, appServiceDt
 		return resultDto, err
 	}
 
-	if resultDto.Code != result.CODE_SUCCESS{
+	if resultDto.Code != result.CODE_SUCCESS {
 		return resultDto, err
 	}
 
@@ -161,7 +160,7 @@ func doStopContainer(containerDto *appService.AppServiceContainerDto, dto2 *appS
 
 	ip += (":" + string(config.Slave))
 
-	resp, err := httpReq.Post(ip+"/app/slave/startContainer", data, nil)
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/startContainer", data, nil)
 	if err != nil {
 		return resultDto, err
 	}

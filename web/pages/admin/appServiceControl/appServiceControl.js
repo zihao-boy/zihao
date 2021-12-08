@@ -127,27 +127,7 @@
                         vc.message(errInfo);
                     });
             },
-            _openSsh: function() {
-                //获取主机访问token
-                var param = {
-                    params: {
-                        hostId: $that.appServiceControlInfo.hostId
-                    }
-                };
 
-                //发送get请求
-                vc.http.apiGet('/host/getHostToken',
-                    param,
-                    function(json, res) {
-                        let _hostManageInfo = JSON.parse(json);
-                        let _zihaoToken = _hostManageInfo.data;
-                        window.open("/webshell/console.html?hostId=" + $that.appServiceControlInfo.hostId + "&zihaoToken=" + _zihaoToken, '_blank')
-                    },
-                    function(errInfo, error) {
-                        console.log('请求失败处理');
-                    }
-                );
-            },
             _goBack: function() {
                 vc.goBack();
             },

@@ -10,6 +10,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
 	"os/exec"
+	"strings"
 )
 
 const (
@@ -90,7 +91,7 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 	output, _ = cmd.CombinedOutput()
 	fmt.Print("启动容器：" + dockerRun + " 返回：" + string(output))
 	paramOut := map[string]interface{}{
-		"ContainerId": string(output),
+		"ContainerId": strings.Replace(string(output), "\n", "", -1),
 	}
 	return result.SuccessData(paramOut), nil
 }

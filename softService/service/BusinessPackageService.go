@@ -126,7 +126,8 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 
 	businessPackageDto.TenantId = user.TenantId
 	businessPackageDto.CreateUserId = user.UserId
-	businessPackageDto.Path = filepath.Join(curDest, fileHeader.Filename)
+	//businessPackageDto.Path = filepath.Join(curDest, fileHeader.Filename)
+	businessPackageDto.Path = filepath.Join(businessPackageDto.Id, fileHeader.Filename)
 	businessPackageDto.Varsion = "V" + date.GetNowAString()
 	businessPackageDto.Name = ctx.FormValue("name")
 

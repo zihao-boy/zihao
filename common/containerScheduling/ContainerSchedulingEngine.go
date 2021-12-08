@@ -82,6 +82,15 @@ func ContainerScheduling(hosts []*host.HostDto, appServiceDto *appService.AppSer
 		}
 	}
 
+	if err == nil && resultDto.Code == result.CODE_SUCCESS{
+		//将 服务的状态刷为启动完成
+		tmpAppServiceDto := appService.AppServiceDto{
+			State:appService.STATE_ONLINE,
+			AsId: appServiceDto.AsId,
+		}
+		appServiceDao.UpdateAppService(tmpAppServiceDto)
+	}
+
 	return resultDto, err
 }
 
@@ -124,6 +133,15 @@ func StopContainer(appServiceDto *appService.AppServiceDto) (interface{}, error)
 		if resultDto.Code != result.CODE_SUCCESS{
 			break;
 		}
+	}
+
+	if err == nil && resultDto.Code == result.CODE_SUCCESS{
+		//将 服务的状态刷为启动完成
+		tmpAppServiceDto := appService.AppServiceDto{
+			State:appService.STATE_STOP,
+			AsId: appServiceDto.AsId,
+		}
+		appServiceDao.UpdateAppService(tmpAppServiceDto)
 	}
 
 	return resultDto, err

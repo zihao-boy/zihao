@@ -425,8 +425,9 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 	`
 
 	query_appServiceContainer string = `
-				select t.*
+				select t.*,h.name hostname,h.ip
 					from app_service_container t
+          left join host h on t.host_id = h.host_id and h.status_cd = '0'
 					where t.status_cd = '0'
 					$if TenantId != '' then
 					and t.tenant_id = #TenantId#

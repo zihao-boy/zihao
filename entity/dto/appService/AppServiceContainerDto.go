@@ -15,4 +15,5 @@ type AppServiceContainerDto struct {
 	CreateTime string `json:"createTime" sql:"-"`
 	StatusCd   string `json:"statusCd" sql:"-"`
 	Ip string `json:"ip"`
+	Hostname string `json:"hostname"`
 }
