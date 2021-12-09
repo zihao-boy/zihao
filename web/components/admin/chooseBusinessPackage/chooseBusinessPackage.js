@@ -16,6 +16,10 @@
                 vc.component._refreshChooseBusinessPackageInfo();
                 vc.component._loadAllBusinessPackageInfo(1, 10, '');
             });
+
+            vc.on('chooseBusinessPackage', 'paginationPlus', 'page_event', function(_currentPage) {
+                vc.component._loadAllBusinessPackageInfo(_currentPage, 10);
+            });
         },
         methods: {
             _loadAllBusinessPackageInfo: function(_page, _row, _name) {
@@ -32,6 +36,10 @@
                     function(json) {
                         var _businessPackageInfo = JSON.parse(json);
                         vc.component.chooseBusinessPackageInfo.businessPackages = _businessPackageInfo.data;
+                        vc.emit('chooseBusinessPackage', 'paginationPlus', 'init', {
+                            total: _businessPackageInfo.records,
+                            currentPage: _page
+                        });
                     },
                     function() {
                         console.log('请求失败处理');
