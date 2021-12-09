@@ -129,11 +129,11 @@
                     "# ADD bin/start_api.sh /root/\n" +
                     "\n" +
                     "# 容器内执行相应指令\n" +
-                    "RUN chmod u+x /root/start_api.sh\n" +
+                    "RUN chmod u+x /root/start_jar.sh\n" +
                     "# 运行命令\n" +
                     "# CMD <command>   or CMD [<command>]\n" +
                     "# 整个Dockerfile 中只能有一个,多个会被覆盖的\n" +
-                    "CMD [\"/root/start_api.sh\", \"dev -Dcache -Xms512m -Xmx512m\"]\n";
+                    "CMD [\"/root/start_jar.sh\", \"api\"]";
             }
         }
     });
