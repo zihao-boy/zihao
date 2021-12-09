@@ -71,10 +71,11 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	dest += "/Dockerfile"
 
 	if  utils.IsFile(dest) {
-		f, err = os.OpenFile(dest, os.O_RDWR, 0600)
-	} else {
-		f, err = os.Create(dest)
+		//f, err = os.OpenFile(dest, os.O_RDWR, 0600)
+		os.Remove(dest)
 	}
+		f, err = os.Create(dest)
+
 
 	defer f.Close()
 	if err != nil {
