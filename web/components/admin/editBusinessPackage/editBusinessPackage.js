@@ -49,7 +49,7 @@
                     return;
                 }
                 var param = new FormData();
-                param.append("uploadFile", vc.component.editBusinessPackageInfo.excelTemplate);
+                param.append("uploadFile", vc.component.editBusinessPackageInfo.excelEditTemplate);
                 param.append('name', vc.component.editBusinessPackageInfo.name);
                 param.append('id', vc.component.editBusinessPackageInfo.id);
 
