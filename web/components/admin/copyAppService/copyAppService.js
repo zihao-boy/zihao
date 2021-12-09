@@ -1,4 +1,4 @@
-(function (vc, vm) {
+(function(vc, vm) {
 
     vc.extends({
         data: {
@@ -11,11 +11,11 @@
 
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('copyAppService', 'openCopyAppServiceModal', function (_params) {
+        _initEvent: function() {
+            vc.on('copyAppService', 'openCopyAppServiceModal', function(_params) {
                 vc.component.refreshCopyAppServiceInfo();
                 $that._listEditBusinessImagess();
                 $('#copyAppServiceModel').modal('show');
@@ -23,12 +23,11 @@
             });
         },
         methods: {
-            copyAppServiceValidate: function () {
+            copyAppServiceValidate: function() {
                 return vc.validate.validate({
                     copyAppServiceInfo: vc.component.copyAppServiceInfo
                 }, {
-                    'copyAppServiceInfo.asName': [
-                        {
+                    'copyAppServiceInfo.asName': [{
                             limit: "required",
                             param: "",
                             errInfo: "应用名称不能为空"
@@ -39,8 +38,7 @@
                             errInfo: "应用名称太长"
                         },
                     ],
-                    'copyAppServiceInfo.asDesc': [
-                        {
+                    'copyAppServiceInfo.asDesc': [{
                             limit: "required",
                             param: "",
                             errInfo: "服务描述不能为空"
@@ -51,16 +49,15 @@
                             errInfo: "描述太长"
                         },
                     ],
-                    'copyAppServiceInfo.asId': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "ID不能为空"
-                        }]
+                    'copyAppServiceInfo.asId': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "ID不能为空"
+                    }]
 
                 });
             },
-            copyAppService: function () {
+            copyAppService: function() {
                 if (!vc.component.copyAppServiceValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
@@ -68,28 +65,27 @@
 
                 vc.http.apiPost(
                     '/appService/copyAppService',
-                    JSON.stringify(vc.component.copyAppServiceInfo),
-                    {
+                    JSON.stringify(vc.component.copyAppServiceInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
                             $('#copyAppServiceModel').modal('hide');
-                            vc.emit('appServiceControlInfo', 'notify', {});
+                            vc.emit('appServiceManage', 'listAppService', {});
                             return;
                         }
                         vc.toast(_json.msg);
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.message(errInfo);
                     });
             },
-            refreshCopyAppServiceInfo: function () {
+            refreshCopyAppServiceInfo: function() {
                 vc.component.copyAppServiceInfo = {
                     asId: '',
                     asName: '',
@@ -98,7 +94,7 @@
                     images: []
                 }
             },
-            _listEditBusinessImagess: function (_page, _rows) {
+            _listEditBusinessImagess: function(_page, _rows) {
                 var param = {
                     params: {
                         page: 1,
@@ -109,11 +105,11 @@
                 //发送get请求
                 vc.http.apiGet('/soft/getBusinessImages',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _businessImagesManageInfo = JSON.parse(json);
                         vc.component.copyAppServiceInfo.images = _businessImagesManageInfo.data;
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
