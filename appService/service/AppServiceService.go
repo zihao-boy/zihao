@@ -202,6 +202,7 @@ func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) re
 	newAppServiceDto.AsName = appServiceDto.AsName
 	newAppServiceDto.AsDesc = appServiceDto.AsDesc
 	newAppServiceDto.ImagesId = appServiceDto.ImagesId
+	newAppServiceDto.State = appService.STATE_STOP
 
 	err = appServiceService.appServiceDao.SaveAppService(*newAppServiceDto)
 	if err != nil {
