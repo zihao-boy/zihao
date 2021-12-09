@@ -149,9 +149,32 @@ func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx
 		businessPackageDto businessPackage.BusinessPackageDto
 	)
 
-	if err = ctx.ReadJSON(&businessPackageDto); err != nil {
-		return result.Error("解析入参失败")
+	file, fileHeader, err := ctx.FormFile("uploadFile")
+	defer file.Close()
+	if err != nil {
+		return result.Error("上传失败" + err.Error())
 	}
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	businessPackageDto.Id = ctx.FormValue("name")
+
+	curDest := filepath.Join("businessPackage",user.TenantId,businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace,curDest)
+
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+
+	dest = filepath.Join(dest, fileHeader.Filename)
+
+	_, err = ctx.SaveFormFile(fileHeader, dest)
+	if err != nil {
+		return result.Error("上传失败" + err.Error())
+	}
+
+	businessPackageDto.TenantId = user.TenantId
+	businessPackageDto.CreateUserId = user.UserId
+	businessPackageDto.Name = ctx.FormValue("name")
 
 	err = businessPackageService.businessPackageDao.UpdateBusinessPackage(businessPackageDto)
 	if err != nil {

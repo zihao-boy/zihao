@@ -1,101 +1,99 @@
-(function(vc,vm){
+(function(vc, vm) {
 
     vc.extends({
-        data:{
-            editBusinessPackageInfo:{
-                id:'',
-name:'',
-varsion:'',
-
+        data: {
+            editBusinessPackageInfo: {
+                id: '',
+                name: '',
+                varsion: '',
+                excelEditTemplate: '',
             }
         },
-         _initMethod:function(){
+        _initMethod: function() {
 
-         },
-         _initEvent:function(){
-             vc.on('editBusinessPackage','openEditBusinessPackageModal',function(_params){
+        },
+        _initEvent: function() {
+            vc.on('editBusinessPackage', 'openEditBusinessPackageModal', function(_params) {
                 vc.component.refreshEditBusinessPackageInfo();
                 $('#editBusinessPackageModel').modal('show');
-                vc.copyObject(_params, vc.component.editBusinessPackageInfo );
-                vc.component.editBusinessPackageInfo.communityId = vc.getCurrentCommunity().communityId;
+                vc.copyObject(_params, vc.component.editBusinessPackageInfo);
             });
         },
-        methods:{
-            editBusinessPackageValidate:function(){
-                        return vc.validate.validate({
-                            editBusinessPackageInfo:vc.component.editBusinessPackageInfo
-                        },{
-                            'editBusinessPackageInfo.name':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"名称不能为空"
+        methods: {
+            editBusinessPackageValidate: function() {
+                return vc.validate.validate({
+                    editBusinessPackageInfo: vc.component.editBusinessPackageInfo
+                }, {
+                    'editBusinessPackageInfo.name': [{
+                            limit: "required",
+                            param: "",
+                            errInfo: "名称不能为空"
                         },
- {
-                            limit:"maxLength",
-                            param:"64",
-                            errInfo:"名称不能超过64"
-                        },
-                    ],
-'editBusinessPackageInfo.varsion':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"版本不能为空"
-                        },
- {
-                            limit:"maxLength",
-                            param:"32",
-                            errInfo:"版本不能超过32"
+                        {
+                            limit: "maxLength",
+                            param: "64",
+                            errInfo: "名称不能超过64"
                         },
                     ],
-'editBusinessPackageInfo.id':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"ID不能为空"
-                        }]
+                    'editBusinessPackageInfo.id': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "ID不能为空"
+                    }]
 
-                        });
-             },
-            editBusinessPackage:function(){
-                if(!vc.component.editBusinessPackageValidate()){
+                });
+            },
+            editBusinessPackage: function() {
+                if (!vc.component.editBusinessPackageValidate()) {
                     vc.toast(vc.validate.errInfo);
-                    return ;
+                    return;
                 }
+                var param = new FormData();
+                param.append("uploadFile", vc.component.editBusinessPackageInfo.excelTemplate);
+                param.append('name', vc.component.editBusinessPackageInfo.name);
+                param.append('id', vc.component.editBusinessPackageInfo.id);
 
                 vc.http.apiPost(
-                    'businessPackage.updateBusinessPackage',
-                    JSON.stringify(vc.component.editBusinessPackageInfo),
-                    {
-                        emulateJSON:true
-                     },
-                     function(json,res){
-                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                    '/soft/updateBusinessPackages',
+                    param, {
+                        emulateJSON: true,
+                        //添加请求头
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    },
+                    function(json, res) {
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
                             $('#editBusinessPackageModel').modal('hide');
-                             vc.emit('businessPackageManage','listBusinessPackage',{});
-                            return ;
+                            vc.component.clearEditBusinessPackageInfo();
+                            vc.emit('businessPackageManage', 'listBusinessPackage', {});
+                            return;
                         }
-                        vc.message(_json.msg);
-                     },
-                     function(errInfo,error){
+                        vc.toast(_json.msg);
+
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
-                        vc.message(errInfo);
-                     });
-            },
-            refreshEditBusinessPackageInfo:function(){
-                vc.component.editBusinessPackageInfo= {
-                  id:'',
-name:'',
-varsion:'',
+                        vc.toast(errInfo);
 
+                    });
+            },
+            getEditExcelTemplate: function(e) {
+                //console.log("getExcelTemplate 开始调用")
+                vc.component.editBusinessPackageInfo.excelEditTemplate = e.target.files[0];
+            },
+            refreshEditBusinessPackageInfo: function() {
+                vc.component.editBusinessPackageInfo = {
+                    id: '',
+                    name: '',
+                    varsion: '',
+                    excelEditTemplate: '',
                 }
             }
         }
     });
 
-})(window.vc,window.vc.component);
+})(window.vc, window.vc.component);

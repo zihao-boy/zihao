@@ -22,6 +22,8 @@ var (
 const (
 	WorkSpace string = "/zihao/master/"
 	Slave  int = 7001
+	Remote_Images_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.listZihaoApp"
+	Hc_cloud_app_id string = "102021120963240004"
 )
 
 // 全局配置文件对应的结构体

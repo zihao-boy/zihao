@@ -1,21 +1,23 @@
 package service
 
 import (
-	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
-	"github.com/zihao-boy/zihao/common/utils"
-	"github.com/zihao-boy/zihao/config"
-	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
-	"path/filepath"
-	"strconv"
-
+	"bytes"
+	"encoding/json"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/httpReq"
+	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/utils"
+	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"github.com/zihao-boy/zihao/entity/dto/businessImages"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
 	"github.com/zihao-boy/zihao/softService/dao"
+	"path/filepath"
+	"strconv"
 )
 
 type BusinessImagesService struct {
@@ -108,12 +110,11 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessImagesDto.Id = seq.Generator()
-	dest := filepath.Join( "/businessImages",user.TenantId,businessImagesDto.Id)
+	dest := filepath.Join("/businessImages", user.TenantId, businessImagesDto.Id)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
-
 
 	dest = filepath.Join(dest, fileHeader.Filename)
 
@@ -121,7 +122,6 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
-
 
 	businessImagesDto.TenantId = user.TenantId
 	businessImagesDto.CreateUserId = user.UserId
@@ -223,4 +223,121 @@ func doGeneratorImage(businessDockerfileDto *businessDockerfile.BusinessDockerfi
 	businessDockerfileDto.CreateUserId = user.UserId
 	//消息队列
 	dockerfileQueue.SendData(businessDockerfileDto)
+}
+
+/**
+查询镜像 系统信息
+*/
+func (businessImagesService *BusinessImagesService) GetImagesPool(ctx iris.Context) result.ResultDto {
+	var (
+		err       error
+		resultDto result.ResultDto
+	)
+
+	values := ctx.URLParams()
+
+	headers := map[string]string{
+		"APP-ID":         config.Hc_cloud_app_id,
+		"REQ-TIME":       date.GetNowAString(),
+		"SIGN":           "",
+		"TRANSACTION-ID": seq.Generator(),
+		"USER-ID":        "-1",
+	}
+	value := Urlencode(values)
+	resp, err := httpReq.Get(config.Remote_Images_Url+"?"+value, headers)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	return resultDto
+
+}
+
+//安装镜像
+func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Context) result.ResultDto {
+
+	var (
+		err             error
+		resultDto       result.ResultDto
+		imagesPoolsDto  businessImages.ImagesPoolsDto
+		imagesPoolsDtos []businessImages.ImagesPoolsDto
+		message         string = ""
+	)
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	if err = ctx.ReadJSON(&imagesPoolsDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	headers := map[string]string{
+		"APP-ID":         config.Hc_cloud_app_id,
+		"REQ-TIME":       date.GetNowAString(),
+		"SIGN":           "",
+		"TRANSACTION-ID": seq.Generator(),
+		"USER-ID":        "-1",
+	}
+
+	resp, err := httpReq.Get(config.Remote_Images_Url+"?page=1&row=1&appId="+imagesPoolsDto.AppId, headers)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	if resultDto.Code != result.CODE_SUCCESS {
+		return resultDto
+	}
+	data, _ := json.Marshal(resultDto.Data)
+	json.Unmarshal(data, &imagesPoolsDtos)
+
+	if len(imagesPoolsDtos) < 1 {
+		return result.Error("未查询到应用")
+	}
+
+	for _, zihaoAppImagesDto := range imagesPoolsDtos[0].ZihaoAppImagesDtos {
+		//if exits images
+		businessImagesDto := businessImages.BusinessImagesDto{}
+		businessImagesDto.TenantId = user.TenantId
+		businessImagesDto.Name = zihaoAppImagesDto.Name
+		businessImagesDto.Version = imagesPoolsDtos[0].Version
+		businessImagesDtos, _ := businessImagesService.businessImagesDao.GetBusinessImagess(businessImagesDto)
+		if len(businessImagesDtos) > 0 { // exits images
+			message += (zihaoAppImagesDto.Name + "已经存在,")
+			continue
+		}
+		businessImagesDto.CreateUserId = user.UserId
+		businessImagesDto.Id = seq.Generator()
+		businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_REMOTE
+		businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_PUBLIC
+		businessImagesDto.TypeUrl = zihaoAppImagesDto.Url
+
+		err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
+
+		if err != nil {
+			return result.Error(err.Error())
+		}
+
+	}
+
+	if message != "" {
+		return result.Error(message)
+	}
+
+	return result.Success()
+
+}
+
+func Urlencode(data map[string]string) string {
+	var buf bytes.Buffer
+	for k, v := range data {
+		buf.WriteString(k)
+		buf.WriteByte('=')
+		buf.WriteString(v)
+		buf.WriteByte('&')
+	}
+	s := buf.String()
+	return s[0 : len(s)-1]
 }

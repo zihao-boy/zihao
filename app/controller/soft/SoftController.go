@@ -46,6 +46,11 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Post("/deleteBusinessImages", hero.Handler(aus.DeleteBusinessImages))
 
 	adinMenu.Post("/generatorImages", hero.Handler(aus.GeneratorImages))
+
+	adinMenu.Get("/getImagesPool", hero.Handler(aus.getImagesPool))
+
+	adinMenu.Post("/installImages", hero.Handler(aus.installImages))
+
 }
 
 /**
@@ -166,3 +171,23 @@ func (aus *SoftController) GeneratorImages(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+查询远程镜像
+*/
+func (aus *SoftController) getImagesPool(ctx iris.Context) {
+	reslut := aus.businessImagesService.GetImagesPool(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+查询远程镜像
+*/
+func (aus *SoftController) installImages(ctx iris.Context) {
+	reslut := aus.businessImagesService.InstallImages(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
