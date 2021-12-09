@@ -37,6 +37,7 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 		err           error
 		appServiceDto appService.AppServiceDto
 		cmd           *exec.Cmd
+		param         string
 	)
 
 	if err = ctx.ReadJSON(&appServiceDto); err != nil {
@@ -78,13 +79,17 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 
 	if len(appServiceDto.AppServiceVars) > 0 {
 		for _, tmpVars := range appServiceDto.AppServiceVars {
+			if tmpVars.VarSpec == "--param" {
+				param += (" " + tmpVars.VarValue)
+				continue
+			}
 			dockerRun += (" -e \"" + tmpVars.VarSpec + "=" + tmpVars.VarValue + "\"")
 		}
 	}
 
 	//dockerRun += " --name=\"" + appServiceDto.AsName + "_" + seq.Generator() + "\" " + imagesUrl
 
-	dockerRun += (" " + imagesUrl)
+	dockerRun += (" " + imagesUrl + param)
 
 	//运行镜像
 	cmd = exec.Command("bash", "-c", dockerRun)
