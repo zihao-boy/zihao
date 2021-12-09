@@ -84,14 +84,14 @@
                                 <td class="text-center">{{_getStateName(host.state)}}</td>
                                 <td class="text-center">{{_getOnline(host.heartbeatTime)}}</td>
                                 <td class="text-center">
-                                    <!-- <div class="btn-group">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openMonitorHostAnalysis(host)">监控</button>
-                                    </div> -->
-                                    
                                     <div class="btn-group"  v-if="host.state=='2002'">
                                         <button class="btn-white btn btn-xs"
                                             v-on:click="_openConsole(host)">控制台</button>
+                                    </div>
+                                    <!--v-if="host.state=='2002'"-->
+                                     <div class="btn-group" >
+                                        <button class="btn-white btn btn-xs"
+                                            v-on:click="_openFileManager(host)">文件</button>
                                     </div>
                                     <div class="btn-group"  v-if="host.state=='1001'">
                                         <button class="btn-white btn btn-xs"

@@ -73,6 +73,9 @@
             _openMonitorHostAnalysis:function(_host){
                 vc.jumpToPage('/index.html#/pages/admin/monitorHostGroupManageAnalysis?hostId='+_host.hostId)
             },
+            _openFileManager:function(_host){
+                vc.jumpToPage('/index.html#/pages/admin/fileManager?hostId='+_host.hostId)
+            },
             _moreCondition: function () {
                 if (vc.component.hostManageInfo.moreCondition) {
                     vc.component.hostManageInfo.moreCondition = false;

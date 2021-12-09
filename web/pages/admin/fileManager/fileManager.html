@@ -1,0 +1,56 @@
+<div>
+    <div class="row white-bg padding-xs padding-top padding-bottom margin-xs">
+        <div class="col-md-5 padding-0 margin-0">
+            <input v-model="fileManagerInfo.curPath" type="text" class="form-control">
+        </div>
+        <div class="col-md-1 padding-left-xs ">
+            <button class="btn btn-white" type="button" v-on:click="copyAppService()">上级</button>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-primary float-right" type="button" v-on:click="copyAppService()">上传</button>
+        </div>
+    </div>
+
+    <div class="white-bg padding">
+        <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+            <thead>
+                <tr>
+                    <th class="text-center" width="60">类型</th>
+                    <th class="text-center">名称</th>
+                    <th class="text-left">权限</th>
+                    <th class="text-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="file in fileManagerInfo.files">
+                    <td class="text-center">{{file.groupName}}</td>
+                    <td class="text-center">{{file.name}}</td>
+                    <td class="text-center">{{file.ip}}</td>
+                    <td class="text-center">{{file.username}}</td>
+                    <td class="text-center">
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" v-on:click="_openConsole(file)">下载</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" v-on:click="_openFileManager(file)">修改</button>
+                        </div>
+                        <div class="btn-group" v-if="host.state=='1001'">
+                            <button class="btn-white btn btn-xs" v-on:click="_controlHost(file)">删除</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" v-on:click="_openEditHostModel(file)">重命名</button>
+                        </div>
+                    </td>
+
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <ul class="pagination float-right"></ul>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
