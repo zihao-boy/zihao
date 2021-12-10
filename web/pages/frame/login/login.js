@@ -1,22 +1,22 @@
-(function (vc) {
+(function(vc) {
     vc.extends({
         data: {
             loginInfo: {
                 logo: '',
-                username: 'zihao',
-                passwd: 'zihao',
+                username: '',
+                passwd: '',
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
             vc.component.clearCacheData();
         },
-        _initEvent: function () {
-            vc.component.$on('errorInfoEvent', function (_errorInfo) {
+        _initEvent: function() {
+            vc.component.$on('errorInfoEvent', function(_errorInfo) {
                 vc.component.loginInfo.errorInfo = _errorInfo;
                 console.log('errorInfoEvent 事件被监听', _errorInfo)
             });
 
-            vc.component.$on('validate_code_component_param_change_event', function (params) {
+            vc.component.$on('validate_code_component_param_change_event', function(params) {
                 for (var tmpAttr in params) {
                     vc.component.loginInfo[tmpAttr] = params[tmpAttr];
                 }
@@ -24,10 +24,10 @@
             });
         },
         methods: {
-            clearCacheData: function () {
+            clearCacheData: function() {
                 vc.clearCacheData();
             },
-            doLogin: function () {
+            doLogin: function() {
                 if (!vc.notNull(vc.component.loginInfo.username)) {
                     vc.toast('用户名不能为空');
                     return;
@@ -38,21 +38,20 @@
                 }
                 vc.http.apiPost(
                     '/user/login',
-                    JSON.stringify(vc.component.loginInfo),
-                    {
+                    JSON.stringify(vc.component.loginInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _data = JSON.parse(json);
                         if (_data.hasOwnProperty('code') && _data.code != '0') {
                             vc.toast(_data.msg);
                             return;
                         }
-                        vc.saveData('/nav/getUserInfo',_data.data)
+                        vc.saveData('/nav/getUserInfo', _data.data)
                         vc.jumpToPage("/index.html")
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                         vc.toast(errInfo);
                         vc.component.loginInfo.errorInfo = errInfo;
@@ -60,7 +59,7 @@
 
             }
         },
-        _destroyedMethod: function () {
+        _destroyedMethod: function() {
             console.log("登录页面销毁调用");
         }
     });
