@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	"os"
 	"path/filepath"
 	"strconv"
 
@@ -166,6 +167,11 @@ func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx
 	}
 
 	dest = filepath.Join(dest, fileHeader.Filename)
+
+	// remove file that exists
+	if utils.IsFile(dest){
+		os.Remove(dest)
+	}
 
 	_, err = ctx.SaveFormFile(fileHeader, dest)
 	if err != nil {
