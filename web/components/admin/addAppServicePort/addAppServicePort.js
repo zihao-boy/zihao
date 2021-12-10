@@ -1,4 +1,4 @@
-(function (vc) {
+(function(vc) {
 
     vc.extends({
         data: {
@@ -8,11 +8,11 @@
                 targetPort: ''
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('addAppServicePort', 'openAddAppServicePortModal', function (_param) {
+        _initEvent: function() {
+            vc.on('addAppServicePort', 'openAddAppServicePortModal', function(_param) {
                 $that.addAppServicePortInfo.asId = _param.asId;
                 $('#addAppServicePortModel').modal('show');
             });
@@ -22,8 +22,7 @@
                 return vc.validate.validate({
                     addAppServicePortInfo: vc.component.addAppServicePortInfo
                 }, {
-                    'addAppServicePortInfo.srcPort': [
-                        {
+                    'addAppServicePortInfo.srcPort': [{
                             limit: "required",
                             param: "",
                             errInfo: "宿主机端口不能为空"
@@ -34,8 +33,7 @@
                             errInfo: "宿主机端口为正数"
                         },
                     ],
-                    'addAppServicePortInfo.targetPort': [
-                        {
+                    'addAppServicePortInfo.targetPort': [{
                             limit: "required",
                             param: "",
                             errInfo: "容器端口不能为空"
@@ -48,38 +46,37 @@
                     ]
                 });
             },
-            saveAppServicePortInfo: function () {
+            saveAppServicePortInfo: function() {
                 if (!vc.component.addAppServicePortValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
                 }
                 vc.http.apiPost(
                     '/appService/saveAppServicePort',
-                    JSON.stringify(vc.component.addAppServicePortInfo),
-                    {
+                    JSON.stringify(vc.component.addAppServicePortInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
                             $('#addAppServicePortModel').modal('hide');
-                            vc.component.clearaddAppServicePortInfo();
                             vc.emit('appServiceControlPort', 'switch', $that.addAppServicePortInfo);
+                            vc.component.clearaddAppServicePortInfo();
                             return;
                         }
                         vc.message(_json.msg);
 
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.message(errInfo);
 
                     });
             },
-            clearaddAppServicePortInfo: function () {
+            clearaddAppServicePortInfo: function() {
                 vc.component.addAppServicePortInfo = {
                     asId: '',
                     srcPort: '',

@@ -33,7 +33,7 @@ func (userService *UserService) Login(ctx iris.Context) (result.ResultDto, *user
 
 	userDto, err = userService.userDao.GetUser(*userVo)
 	fmt.Print("userDto", userDto)
-	if err != nil {
+	if err != nil ||  len(userDto.UserId) < 1 {
 		return result.Error("用户名密码错误"), nil
 	}
 
@@ -52,11 +52,11 @@ func (userService *UserService) ChangePwd(ctx iris.Context) result.ResultDto {
 	if err = ctx.ReadJSON(&newUserVo); err != nil {
 		return result.Error("解析入参失败")
 	}
-	userVo1 := vo.LoginUserVo{UserId: userInfo.UserId, Passwd: encrypt.Md5(newUserVo.OldPwd)}
 	newUserVo.UserId = userInfo.UserId
-	_, err = userService.userDao.GetUser(userVo1)
+	userVo1 := vo.LoginUserVo{UserId: userInfo.UserId, Passwd: encrypt.Md5(newUserVo.OldPwd)}
+	userVo2, err := userService.userDao.GetUser(userVo1)
 
-	if err != nil {
+	if err != nil || len(userVo2.UserId) < 1 {
 		return result.Error("原始密码错误")
 	}
 

@@ -1,4 +1,4 @@
-(function (vc) {
+(function(vc) {
 
     vc.extends({
         data: {
@@ -6,14 +6,14 @@
                 asId: '',
                 varSpec: '',
                 varValue: '',
-                varName:''
+                varName: ''
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('addAppServiceVar', 'openAddAppServiceVarModal', function (_param) {
+        _initEvent: function() {
+            vc.on('addAppServiceVar', 'openAddAppServiceVarModal', function(_param) {
                 $that.addAppServiceVarInfo.asId = _param.asId;
                 $('#addAppServiceVarModel').modal('show');
             });
@@ -23,66 +23,60 @@
                 return vc.validate.validate({
                     addAppServiceVarInfo: vc.component.addAppServiceVarInfo
                 }, {
-                    'addAppServiceVarInfo.varSpec': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "变量名不能为空"
-                        }
-                    ],
-                    'addAppServiceVarInfo.varValue': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "变量值不能为空"
-                        }
-                    ],
-                    'addAppServiceVarInfo.varName': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "说明不能为空"
-                        }
-                    ]
+                    'addAppServiceVarInfo.varSpec': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "变量名不能为空"
+                    }],
+                    'addAppServiceVarInfo.varValue': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "变量值不能为空"
+                    }],
+                    'addAppServiceVarInfo.varName': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "说明不能为空"
+                    }]
                 });
             },
-            saveAppServiceVarInfo: function () {
+            saveAppServiceVarInfo: function() {
                 if (!vc.component.addAppServiceVarValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
                 }
                 vc.http.apiPost(
                     '/appService/saveAppServiceVar',
-                    JSON.stringify(vc.component.addAppServiceVarInfo),
-                    {
+                    JSON.stringify(vc.component.addAppServiceVarInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
                             $('#addAppServiceVarModel').modal('hide');
-                            vc.component.clearaddAppServiceVarInfo();
                             vc.emit('appServiceControlVar', 'switch', $that.addAppServiceVarInfo);
+                            vc.component.clearaddAppServiceVarInfo();
+
                             return;
                         }
                         vc.message(_json.msg);
 
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.message(errInfo);
 
                     });
             },
-            clearaddAppServiceVarInfo: function () {
+            clearaddAppServiceVarInfo: function() {
                 vc.component.addAppServiceVarInfo = {
                     asId: '',
                     varSpec: '',
                     varValue: '',
-                    varName:''
+                    varName: ''
                 };
             }
         }
