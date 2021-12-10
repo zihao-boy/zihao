@@ -156,7 +156,7 @@ func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx
 	}
 
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	businessPackageDto.Id = ctx.FormValue("name")
+	businessPackageDto.Id = ctx.FormValue("id")
 
 	curDest := filepath.Join("businessPackage",user.TenantId,businessPackageDto.Id)
 	dest := filepath.Join(config.WorkSpace,curDest)
