@@ -57,6 +57,7 @@
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                         <thead>
                             <tr>
+                                <th class="text-center">应用组</th>
                                 <th class="text-center">应用名称</th>
                                 <th class="text-center">服务类型</th>
                                 <th class="text-center">副本数</th>
@@ -68,6 +69,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="appService in appServiceManageInfo.appServices">
+                                <td class="text-center">{{appService.avgName}}</td>
                                 <td class="text-center">{{appService.asName}}</td>
                                 <td class="text-center">{{appService.asTypeName}}</td>
                                 <td class="text-center">{{appService.asCount}}</td>
