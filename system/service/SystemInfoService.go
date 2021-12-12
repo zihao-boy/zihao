@@ -144,7 +144,7 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 		return result.Error("解析入参失败"), err
 	}
 
-	shellStr := ("ls " + hostDto.CurPath)
+	shellStr := ("ls -alth " + hostDto.CurPath)
 
 	//停止容器
 	cmd = exec.Command("bash", "-c", shellStr)
