@@ -153,18 +153,30 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 
 	var lss = make([]ls.LsDto, 0)
 	for _, fil := range dir {
+		groupName := "d"
+		if fil.IsDir() {
+			lsDto := ls.LsDto{
+				GroupName: groupName,
+				Name:      fil.Name(),
+				Privilege: fil.Mode().String(),
+				Size:      fil.Size(),
+			}
+			lss = append(lss, lsDto)
+		}
+	}
 
+	for _, fil := range dir {
 		groupName := "d"
 		if !fil.IsDir() {
 			groupName = "-"
+			lsDto := ls.LsDto{
+				GroupName: groupName,
+				Name:      fil.Name(),
+				Privilege: fil.Mode().String(),
+				Size:      fil.Size(),
+			}
+			lss = append(lss, lsDto)
 		}
-		lsDto := ls.LsDto{
-			GroupName: groupName,
-			Name:      fil.Name(),
-			Privilege: fil.Mode().String(),
-			Size:      fil.Size(),
-		}
-		lss = append(lss, lsDto)
 	}
 
 	return result.SuccessData(lss), nil
