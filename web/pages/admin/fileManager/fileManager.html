@@ -15,18 +15,18 @@
         <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
             <thead>
                 <tr>
-                    <th class="text-center" width="60">类型</th>
                     <th class="text-center">名称</th>
                     <th class="text-left">权限</th>
+                    <th class="text-left">大小</th>
                     <th class="text-center">操作</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="file in fileManagerInfo.files" @dblclick="_changeDir(file)">
-                    <td class="text-center" v-if="file.groupName !='d'"><i class="fa fa-file-text"></i></td>
-                    <td class="text-center" v-else><i class="fa fa-folder-o"></i></td>
-                    <td class="text-center">{{file.name}}</td>
+                    <td class="text-center" v-if="file.groupName !='d'"><i class="fa fa-file-text" style="color:#ADADAD"></i>{{file.name}}</td>
+                    <td class="text-center" v-else><i class="fa fa-folder-o" style="color:#FFE791"></i>{{file.name}}</td>
                     <td class="text-left">{{file.privilege}}</td>
+                    <td class="text-left">{{file.size}}</td>
                     <td class="text-center">
                         <div class="btn-group" v-if="file.groupName !='d'">
                             <button class="btn-white btn btn-xs" v-on:click="_openConsole(file)">下载</button>
