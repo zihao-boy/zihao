@@ -11,6 +11,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/ls"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
+	"io/ioutil"
 	"os/exec"
 	"strings"
 )
@@ -152,29 +153,46 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 	cmd = exec.Command("bash", "-c", shellStr)
 	output, _ := cmd.CombinedOutput()
 
-	outParam = string(output)
-	fmt.Print("删除容器：" + outParam)
-
-	lines := strings.Split(outParam, "\n")
+	dir, err := ioutil.ReadDir(hostDto.CurPath)
 
 	var lss = make([]ls.LsDto, 0)
+	for _, fil := range dir {
 
-	for _, line := range lines {
-		newLine := strings.Split(line, " ")
 		groupName := "d"
-		if strings.HasSuffix(newLine[0], "-") {
+		if !fil.IsDir() {
 			groupName = "-"
-		}
-		if len(newLine) < 8 {
-			continue
 		}
 		lsDto := ls.LsDto{
 			GroupName: groupName,
-			Name:      newLine[8],
-			Privilege: newLine[0],
+			Name:      fil.Name(),
+			Privilege: fil.Mode().String(),
+			Size:      fil.Size(),
 		}
 		lss = append(lss, lsDto)
 	}
+
+	outParam = string(output)
+	fmt.Print("删除容器：" + outParam)
+
+	//lines := strings.Split(outParam, "\n")
+	//
+	//
+	//for _, line := range lines {
+	//	newLine := strings.Split(line, " ")
+	//	groupName := "d"
+	//	if strings.HasSuffix(newLine[0], "-") {
+	//		groupName = "-"
+	//	}
+	//	if len(newLine) < 8 {
+	//		continue
+	//	}
+	//	lsDto := ls.LsDto{
+	//		GroupName: groupName,
+	//		Name:      newLine[8],
+	//		Privilege: newLine[0],
+	//	}
+	//	lss = append(lss, lsDto)
+	//}
 
 	return result.SuccessData(lss), nil
 }
