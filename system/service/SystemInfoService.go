@@ -7,6 +7,7 @@ import (
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
 	"os/exec"
@@ -129,4 +130,27 @@ func (s *SystemInfoService) StopContainer(ctx iris.Context) (interface{}, error)
 	fmt.Print("删除容器：" + string(output))
 
 	return result.Success(), nil
+}
+
+// list files
+func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
+	var (
+		err     error
+		hostDto host.HostDto
+		cmd     *exec.Cmd
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+
+	shellStr := ("ls " + hostDto.CurPath)
+
+	//停止容器
+	cmd = exec.Command("bash", "-c", shellStr)
+	output, _ := cmd.CombinedOutput()
+
+	fmt.Print("删除容器：" + string(output))
+
+	return result.SuccessData(string(output)), nil
 }

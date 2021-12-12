@@ -667,6 +667,6 @@ func (hostService *HostService) ListFiles(ctx iris.Context) result.ResultDto {
 		return result.Error("主机不存在")
 	}
 
-	resultDto, _ := shell.ExecLisFiles(hostDto)
+	resultDto, _ := shell.ExecListFiles(hostDto)
 	return resultDto
 }

@@ -38,7 +38,7 @@ func ExecShell(host host.HostDto, cmd string) error {
 
 }
 
-func ExecLisFiles(host host.HostDto) (result.ResultDto, error){
+func ExecListFiles(host host.HostDto) (result.ResultDto, error){
 	data := make(map[string]interface{})
 	ip := host.Ip
 	var resultDto result.ResultDto
@@ -52,7 +52,7 @@ func ExecLisFiles(host host.HostDto) (result.ResultDto, error){
 
 	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
-	resp, err := httpReq.Post("http://"+ip+"/app/slave/lisFiles", data, nil)
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/listFiles", data, nil)
 	if err != nil {
 		return resultDto, err
 	}

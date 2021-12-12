@@ -26,6 +26,8 @@ func SlaveControllerRouter(party iris.Party) {
 
 	adinUser.Post("/stopContainer", hero.Handler(aus.stopContainer))
 
+	adinUser.Post("/listFiles", hero.Handler(aus.listFiles))
+
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -42,5 +44,11 @@ func (aus *SlaveController) startContainer(ctx iris.Context) {
 //开启容器
 func (aus *SlaveController) stopContainer(ctx iris.Context) {
 	relustDto, _ := aus.systenInfoService.StopContainer(ctx)
+	ctx.JSON(relustDto)
+}
+
+//开启容器
+func (aus *SlaveController) listFiles(ctx iris.Context) {
+	relustDto, _ := aus.systenInfoService.ListFiles(ctx)
 	ctx.JSON(relustDto)
 }
