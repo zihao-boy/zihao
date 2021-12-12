@@ -1,7 +1,7 @@
 <div>
     <div class="row white-bg padding-xs padding-top padding-bottom margin-xs">
         <div class="col-md-5 padding-0 margin-0">
-            <input v-model="fileManagerInfo.curPath" type="text" class="form-control">
+            <input v-model="fileManagerInfo.curPath" type="text" @keyup.enter="_listFiles()" class="form-control">
         </div>
         <div class="col-md-1 padding-left-xs ">
             <button class="btn btn-white" type="button" v-on:click="copyAppService()">上级</button>
@@ -22,15 +22,16 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="file in fileManagerInfo.files">
-                    <td class="text-center">{{file.groupName}}</td>
+                <tr v-for="file in fileManagerInfo.files" @dblclick="_changeDir(file)">
+                    <td class="text-center" v-if="file.groupName =='d'"><i class="fa fa-file-text"></i></td>
+                    <td class="text-center" v-else><i class="fa a-folder-o"></i></td>
                     <td class="text-center">{{file.name}}</td>
-                    <td class="text-center">{{file.privilege}}</td>
+                    <td class="text-left">{{file.privilege}}</td>
                     <td class="text-center">
-                        <div class="btn-group">
+                        <div class="btn-group" v-if="file.groupName !='d'">
                             <button class="btn-white btn btn-xs" v-on:click="_openConsole(file)">下载</button>
                         </div>
-                        <div class="btn-group">
+                        <div class="btn-group" v-if="file.groupName !='d'">
                             <button class="btn-white btn btn-xs" v-on:click="_openFileManager(file)">修改</button>
                         </div>
                         <div class="btn-group">
