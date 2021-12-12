@@ -62,3 +62,138 @@ func ExecListFiles(host host.HostDto) (result.ResultDto, error){
 	return resultDto, nil
 
 }
+
+func ExecRemoveFile(host host.HostDto) (result.ResultDto, error){
+	data := make(map[string]interface{})
+	ip := host.Ip
+	var resultDto result.ResultDto
+
+	appServiceDtoData, _ := json.Marshal(&host)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/removeFile", data, nil)
+	if err != nil {
+		return resultDto, err
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	return resultDto, nil
+
+}
+
+
+func ExecNewFile(host host.HostDto) (result.ResultDto, error){
+	data := make(map[string]interface{})
+	ip := host.Ip
+	var resultDto result.ResultDto
+
+	appServiceDtoData, _ := json.Marshal(&host)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/newFile", data, nil)
+	if err != nil {
+		return resultDto, err
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	return resultDto, nil
+
+}
+
+
+func ExecRenameFile(host host.HostDto) (result.ResultDto, error){
+	data := make(map[string]interface{})
+	ip := host.Ip
+	var resultDto result.ResultDto
+
+	appServiceDtoData, _ := json.Marshal(&host)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/renameFile", data, nil)
+	if err != nil {
+		return resultDto, err
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	return resultDto, nil
+
+}
+
+
+func ExecListFileContext(host host.HostDto) (result.ResultDto, error){
+	data := make(map[string]interface{})
+	ip := host.Ip
+	var resultDto result.ResultDto
+
+	appServiceDtoData, _ := json.Marshal(&host)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/listFileContext", data, nil)
+	if err != nil {
+		return resultDto, err
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	return resultDto, nil
+
+}
+
+func ExecEditFile(host host.HostDto) (result.ResultDto, error){
+	data := make(map[string]interface{})
+	ip := host.Ip
+	var resultDto result.ResultDto
+
+	appServiceDtoData, _ := json.Marshal(&host)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/editFile", data, nil)
+	if err != nil {
+		return resultDto, err
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	return resultDto, nil
+
+}
+
+
+
+
+
+
+

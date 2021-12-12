@@ -46,6 +46,20 @@ func HostControllerRouter(party iris.Party) {
 	adinMenu.Post("/slaveHealth", hero.Handler(aus.slaveHealth))
 
 	adinMenu.Get("/listFiles", hero.Handler(aus.listFiles))
+
+	adinMenu.Post("/removeFile", hero.Handler(aus.removeFile))
+
+	adinMenu.Post("/newFile", hero.Handler(aus.newFile))
+
+	adinMenu.Post("/renameFile", hero.Handler(aus.renameFile))
+
+
+	adinMenu.Get("/listFileContext", hero.Handler(aus.listFileContext))
+
+
+	adinMenu.Post("/editFile", hero.Handler(aus.editFile))
+
+
 }
 
 /**
@@ -191,4 +205,55 @@ func (aus *HostController) listFiles(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+查询文件
+**/
+func (aus *HostController) removeFile(ctx iris.Context) {
+	reslut := aus.hostService.RemoveFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+查询文件
+**/
+func (aus *HostController) newFile(ctx iris.Context) {
+	reslut := aus.hostService.NewFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+查询文件
+**/
+func (aus *HostController) renameFile(ctx iris.Context) {
+	reslut := aus.hostService.RenameFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+查询文件
+**/
+func (aus *HostController) listFileContext(ctx iris.Context) {
+	reslut := aus.hostService.ListFileContext(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+查询文件
+**/
+func (aus *HostController) editFile(ctx iris.Context) {
+	reslut := aus.hostService.EditFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
 

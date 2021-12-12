@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"github.com/kataras/iris/v12"
@@ -12,6 +13,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -137,21 +139,15 @@ func (s *SystemInfoService) StopContainer(ctx iris.Context) (interface{}, error)
 // list files
 func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 	var (
-		err      error
-		hostDto  host.HostDto
-		cmd      *exec.Cmd
-		outParam string
+		err     error
+		hostDto host.HostDto
+		//cmd      *exec.Cmd
+		//outParam string
 	)
 
 	if err = ctx.ReadJSON(&hostDto); err != nil {
 		return result.Error("解析入参失败"), err
 	}
-
-	shellStr := ("ls -lth " + hostDto.CurPath)
-
-	//停止容器
-	cmd = exec.Command("bash", "-c", shellStr)
-	output, _ := cmd.CombinedOutput()
 
 	dir, err := ioutil.ReadDir(hostDto.CurPath)
 
@@ -171,28 +167,130 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 		lss = append(lss, lsDto)
 	}
 
-	outParam = string(output)
-	fmt.Print("删除容器：" + outParam)
+	return result.SuccessData(lss), nil
+}
 
-	//lines := strings.Split(outParam, "\n")
-	//
-	//
-	//for _, line := range lines {
-	//	newLine := strings.Split(line, " ")
-	//	groupName := "d"
-	//	if strings.HasSuffix(newLine[0], "-") {
-	//		groupName = "-"
-	//	}
-	//	if len(newLine) < 8 {
-	//		continue
-	//	}
-	//	lsDto := ls.LsDto{
-	//		GroupName: groupName,
-	//		Name:      newLine[8],
-	//		Privilege: newLine[0],
-	//	}
-	//	lss = append(lss, lsDto)
+func (s *SystemInfoService) RemoveFile(ctx iris.Context) (interface{}, error) {
+	var (
+		err     error
+		hostDto host.HostDto
+		//cmd      *exec.Cmd
+		//outParam string
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+	if hostDto.FileGroupName == "d" {
+		err = os.RemoveAll(hostDto.FileName)
+	} else {
+		err = os.Remove(hostDto.FileName)
+	}
+
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) NewFile(ctx iris.Context) (interface{}, error) {
+	var (
+		err     error
+		hostDto host.HostDto
+		//cmd      *exec.Cmd
+		//outParam string
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+	if hostDto.FileGroupName == "d" {
+		err = os.Mkdir(hostDto.FileName, os.ModePerm)
+	} else {
+		file, _ := os.Create(hostDto.FileName)
+		defer file.Close()
+	}
+
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) RenameFile(ctx iris.Context) (interface{}, error) {
+	var (
+		err     error
+		hostDto host.HostDto
+		//cmd      *exec.Cmd
+		//outParam string
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+	//if hostDto.FileGroupName == "d"{
+	//	err = os.Mkdir(hostDto.FileName,os.ModePerm)
+	//}else{
+	os.Rename(hostDto.FileName, hostDto.NewFileName)
 	//}
 
-	return result.SuccessData(lss), nil
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) ListFileContext(ctx iris.Context) (interface{}, interface{}) {
+	var (
+		err     error
+		hostDto host.HostDto
+		//cmd      *exec.Cmd
+		//outParam string
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+
+	file, err := os.Open(hostDto.FileName)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	defer file.Close()
+	fi, _ := file.Stat()
+	if fi.Size() > 1024*1024 {
+		return result.Error("文件超过1M不能读取内容"), nil
+	}
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+
+	return result.SuccessData(string(content)), nil
+}
+
+func (s *SystemInfoService) EditFile(ctx iris.Context) (interface{}, interface{}) {
+	var (
+		err     error
+		hostDto host.HostDto
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+	f, err := os.OpenFile(hostDto.FileName, os.O_WRONLY|os.O_TRUNC, 0600)
+	defer f.Close()
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	writer := bufio.NewWriter(f)
+	_, err = writer.Write([]byte (hostDto.FileContext))
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	writer.Flush()
+	return result.Success(), nil
 }

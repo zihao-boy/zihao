@@ -670,3 +670,135 @@ func (hostService *HostService) ListFiles(ctx iris.Context) result.ResultDto {
 	resultDto, _ := shell.ExecListFiles(hostDto)
 	return resultDto
 }
+
+func (hostService *HostService) RemoveFile(ctx iris.Context) result.ResultDto {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto host.HostDto
+	)
+
+	if err := ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+
+	hostDto.TenantId = user.TenantId
+
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	resultDto, _ := shell.ExecRemoveFile(hostDto)
+	return resultDto
+}
+
+func (hostService *HostService) NewFile(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto host.HostDto
+	)
+
+	if err := ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+
+	hostDto.TenantId = user.TenantId
+
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	resultDto, _ := shell.ExecNewFile(hostDto)
+	return resultDto
+}
+
+func (hostService *HostService) RenameFile(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto host.HostDto
+	)
+
+	if err := ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+
+	hostDto.TenantId = user.TenantId
+
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	resultDto, _ := shell.ExecRenameFile(hostDto)
+	return resultDto
+}
+
+func (hostService *HostService) ListFileContext(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto = host.HostDto{
+			HostId:   ctx.URLParam("hostId"),
+			TenantId: user.TenantId,
+			FileName:  ctx.URLParam("fileName"),
+		}
+	)
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	resultDto, _ := shell.ExecListFileContext(hostDto)
+	return resultDto
+}
+
+func (hostService *HostService) EditFile(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto host.HostDto
+	)
+
+	if err := ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+
+	hostDto.TenantId = user.TenantId
+
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	resultDto, _ := shell.ExecEditFile(hostDto)
+	return resultDto
+}

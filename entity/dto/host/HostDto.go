@@ -32,4 +32,8 @@ type HostDto struct {
 	State         string `json:"state"`
 	HeartbeatTime string `json:"heartbeatTime" sql:"-"`
 	CurPath       string `json:"curPath" `
+	FileName      string `json:"fileName"`
+	FileGroupName string `json:"fileGroupName"`
+	NewFileName      string `json:"newFileName"`
+	FileContext  string `json:"fileContext"`
 }

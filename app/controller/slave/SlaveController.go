@@ -28,6 +28,17 @@ func SlaveControllerRouter(party iris.Party) {
 
 	adinUser.Post("/listFiles", hero.Handler(aus.listFiles))
 
+	adinUser.Post("/removeFile", hero.Handler(aus.removeFile))
+
+	adinUser.Post("/newFile", hero.Handler(aus.newFile))
+
+	adinUser.Post("/renameFile", hero.Handler(aus.renameFile))
+
+	adinUser.Post("/listFileContext", hero.Handler(aus.listFileContext))
+
+
+	adinUser.Post("/editFile", hero.Handler(aus.editFile))
+
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -52,3 +63,42 @@ func (aus *SlaveController) listFiles(ctx iris.Context) {
 	relustDto, _ := aus.systenInfoService.ListFiles(ctx)
 	ctx.JSON(relustDto)
 }
+
+//开启容器
+func (aus *SlaveController) removeFile(ctx iris.Context) {
+	relustDto, _ := aus.systenInfoService.RemoveFile(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+//开启容器
+func (aus *SlaveController) newFile(ctx iris.Context) {
+	relustDto, _ := aus.systenInfoService.NewFile(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+
+//开启容器
+func (aus *SlaveController) renameFile(ctx iris.Context) {
+	relustDto, _ := aus.systenInfoService.RenameFile(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+//开启容器
+func (aus *SlaveController) listFileContext(ctx iris.Context) {
+	relustDto, _ := aus.systenInfoService.ListFileContext(ctx)
+	ctx.JSON(relustDto)
+}
+
+//开启容器
+func (aus *SlaveController) editFile(ctx iris.Context) {
+	relustDto, _ := aus.systenInfoService.EditFile(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+
+
+

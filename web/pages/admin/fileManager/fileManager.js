@@ -17,11 +17,15 @@
 
         },
         _initEvent: function() {
+            vc.on('fileManager','listFiles',function(){
+                $that._listFiles();
+            });
 
         },
         methods: {
             _changeDir: function(_file) {
                 if (_file.groupName != 'd') {
+                    $that._openEditFile(_file);//修改文件
                     return;
                 }
                 if ($that.fileManagerInfo.curPath.endsWith('/')) {
@@ -73,6 +77,48 @@
                         console.log('请求失败处理');
                     }
                 );
+            },
+            _deleteFileOrDir:function(_file){
+                let _curPath = $that.fileManagerInfo.curPath;
+                if (!_curPath.endsWith('/')) {
+                    _curPath += ('/'+_file.name);
+                }
+                let _data = {
+                    hostId: $that.fileManagerInfo.hostId,
+                    fileName: _curPath,
+                    fileGroupName: _file.groupName
+                }
+                vc.emit('deleteFileOrDir','openDeleteFileOrDirModal',_data);
+            },
+            openNewFile:function(isFile){
+                let _curPath = $that.fileManagerInfo.curPath;
+                vc.emit('newFile', 'openNewFileModal',{
+                    hostId: $that.fileManagerInfo.hostId,
+                    fileGroupName: isFile,
+                    curPath:_curPath
+                })
+            },
+
+            _openRenameFileModel:function(_file){
+                let _curPath = $that.fileManagerInfo.curPath;
+                vc.emit('renameFile', 'openRenameFileModal',{
+                    hostId: $that.fileManagerInfo.hostId,
+                    fileGroupName: _file.groupName,
+                    fileName:_file.name,
+                    curPath:_curPath
+                })
+            },
+            _openEditFile:function(_file){
+                let _curPath = $that.fileManagerInfo.curPath;
+                if(_file.size > 1024*1024){
+                    vc.toast('文件超过1M,不能在线修改，请下载修改');
+                    return ;
+                }
+                vc.emit('editFile', 'openEditFileModal',{
+                    hostId: $that.fileManagerInfo.hostId,
+                    fileName:_file.name,
+                    curPath:_curPath
+                }) 
             }
         }
     });
