@@ -140,7 +140,6 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 		hostDto  host.HostDto
 		cmd      *exec.Cmd
 		outParam string
-		lss      []ls.LsDto
 	)
 
 	if err = ctx.ReadJSON(&hostDto); err != nil {
@@ -158,7 +157,9 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 
 	lines := strings.Split(outParam, "\n")
 
-	for index, line := range lines {
+	var lss = make([]ls.LsDto, 0)
+
+	for _, line := range lines {
 		newLine := strings.Split(line, " ")
 		groupName := "d"
 		if strings.HasSuffix(newLine[0], "-") {
@@ -172,7 +173,7 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 			Name:      newLine[8],
 			Privilege: newLine[0],
 		}
-		lss[index] = lsDto
+		lss = append(lss, lsDto)
 	}
 
 	return result.SuccessData(lss), nil
