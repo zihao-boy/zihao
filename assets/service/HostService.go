@@ -646,3 +646,27 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 	return result.Success()
 
 }
+
+func (hostService *HostService) ListFiles(ctx iris.Context) result.ResultDto {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto = host.HostDto{
+			HostId:   ctx.URLParam("hostId"),
+			TenantId: user.TenantId,
+			CurPath:  ctx.URLParam("curPath"),
+		}
+	)
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	resultDto, _ := shell.ExecLisFiles(hostDto)
+	return resultDto
+}
