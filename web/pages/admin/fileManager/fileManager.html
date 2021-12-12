@@ -4,7 +4,7 @@
             <input v-model="fileManagerInfo.curPath" type="text" @keyup.enter="_listFiles()" class="form-control">
         </div>
         <div class="col-md-1 padding-left-xs ">
-            <button class="btn btn-white" type="button" v-on:click="copyAppService()">上级</button>
+            <button class="btn btn-white" type="button" v-on:click="_parentDir()">上级</button>
         </div>
         <div class="col-md-6">
             <button class="btn btn-primary float-right" type="button" v-on:click="copyAppService()">上传</button>
@@ -23,8 +23,8 @@
             </thead>
             <tbody>
                 <tr v-for="file in fileManagerInfo.files" @dblclick="_changeDir(file)">
-                    <td class="text-center" v-if="file.groupName =='d'"><i class="fa fa-file-text"></i></td>
-                    <td class="text-center" v-else><i class="fa a-folder-o"></i></td>
+                    <td class="text-center" v-if="file.groupName !='d'"><i class="fa fa-file-text"></i></td>
+                    <td class="text-center" v-else><i class="fa fa-folder-o"></i></td>
                     <td class="text-center">{{file.name}}</td>
                     <td class="text-left">{{file.privilege}}</td>
                     <td class="text-center">
