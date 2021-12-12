@@ -15,7 +15,7 @@
         <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
             <thead>
                 <tr>
-                    <th class="text-center">名称</th>
+                    <th class="text-left">名称</th>
                     <th class="text-left">权限</th>
                     <th class="text-left">大小</th>
                     <th class="text-center">操作</th>
@@ -23,8 +23,8 @@
             </thead>
             <tbody>
                 <tr v-for="file in fileManagerInfo.files" @dblclick="_changeDir(file)">
-                    <td class="text-center" v-if="file.groupName !='d'"><i class="fa fa-file-text" style="color:#ADADAD"></i>{{file.name}}</td>
-                    <td class="text-center" v-else><i class="fa fa-folder-o" style="color:#FFE791"></i>{{file.name}}</td>
+                    <td class="text-left" v-if="file.groupName !='d'"><img src="/img/file.png"> {{file.name}}</td>
+                    <td class="text-left" v-else><img src="/img/folder.png"> {{file.name}}</td>
                     <td class="text-left">{{file.privilege}}</td>
                     <td class="text-left">{{file.size}}</td>
                     <td class="text-center">
