@@ -27,7 +27,7 @@
                 if ($that.fileManagerInfo.curPath.endsWith('/')) {
                     $that.fileManagerInfo.curPath += _file.name;
                 } else {
-                    $that.fileManagerInfo += ("/" + _file.name);
+                    $that.fileManagerInfo.curPath += ("/" + _file.name);
                 }
                 $that._listFiles();
             },
