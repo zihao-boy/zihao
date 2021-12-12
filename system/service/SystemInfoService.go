@@ -8,6 +8,7 @@ import (
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/host"
+	"github.com/zihao-boy/zihao/entity/dto/ls"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
 	"os/exec"
@@ -135,22 +136,44 @@ func (s *SystemInfoService) StopContainer(ctx iris.Context) (interface{}, error)
 // list files
 func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 	var (
-		err     error
-		hostDto host.HostDto
-		cmd     *exec.Cmd
+		err      error
+		hostDto  host.HostDto
+		cmd      *exec.Cmd
+		outParam string
+		lss      []ls.LsDto
 	)
 
 	if err = ctx.ReadJSON(&hostDto); err != nil {
 		return result.Error("解析入参失败"), err
 	}
 
-	shellStr := ("ls -alth " + hostDto.CurPath)
+	shellStr := ("ls -lth " + hostDto.CurPath)
 
 	//停止容器
 	cmd = exec.Command("bash", "-c", shellStr)
 	output, _ := cmd.CombinedOutput()
 
-	fmt.Print("删除容器：" + string(output))
+	outParam = string(output)
+	fmt.Print("删除容器：" + outParam)
 
-	return result.SuccessData(string(output)), nil
+	lines := strings.Split(outParam, "\n")
+
+	for index, line := range lines {
+		newLine := strings.Split(line, " ")
+		groupName := "d"
+		if strings.HasSuffix(newLine[0], "-") {
+			groupName = "-"
+		}
+		if len(newLine) < 8 {
+			continue
+		}
+		lsDto := ls.LsDto{
+			GroupName: groupName,
+			Name:      newLine[8],
+			Privilege: newLine[0],
+		}
+		lss[index] = lsDto
+	}
+
+	return result.SuccessData(lss), nil
 }
