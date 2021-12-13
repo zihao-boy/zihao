@@ -15,7 +15,9 @@ echo $pwd_cur'/restart_zihao.sh' >> /etc/rc.d/rc.local
 
 sleep 10s
 
-sh ./web/download/deploySlave.sh $local_ip $local_host
+chmod u+x ./web/download/deploySlave.sh
+
+./web/download/deploySlave.sh $local_ip $local_host
 
 chmod +x /etc/rc.d/rc.local
 echo '/zihao/slave/startSlave.sh' >> /etc/rc.d/rc.local
