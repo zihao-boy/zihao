@@ -15,7 +15,6 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/system"
 	"io"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -363,9 +362,10 @@ func (s *SystemInfoService) DownloadFile(ctx iris.Context) {
 	//	fmt.Print(err)
 	//	return
 	//}
+	stat, _ := file.Stat()
 	responseWriter := ctx.ResponseWriter()
-	responseWriter.Header().Set("Content-Type", http.DetectContentType(content))
-	responseWriter.Header().Set("Content-Length", strconv.FormatInt(int64(len(content)), 10))
+	responseWriter.Header().Set("Content-Type", "application/octet-stream")
+	responseWriter.Header().Set("Content-Length", strconv.FormatInt(stat.Size(), 10))
 	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+hostDto.FileName)
 	//responseWriter.Write(content)
 	io.Copy(responseWriter, file)
