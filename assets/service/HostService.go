@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -861,7 +862,7 @@ func (hostService *HostService) DownloadFile(ctx iris.Context) {
 	}
 
 	responseWriter := ctx.ResponseWriter()
-	hostDto.FileName = ctx.URLParam("fileName")
+	hostDto.FileName = path.Join(ctx.FormValue("curPath"),ctx.URLParam("fileName"))
 
 	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+hostDto.FileName)
 	//responseWriter.Header().Set("Content-Type", http.DetectContentType(fileHeader))
