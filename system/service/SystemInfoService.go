@@ -7,6 +7,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
@@ -15,6 +16,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -22,6 +24,7 @@ const (
 	SYSTEM_NAME string = "梓豪平台"
 	VERSION     string = "v1.0"
 )
+const maxSize = 1000 * iris.MB // 第二种方法
 
 type SystemInfoService struct {
 }
@@ -304,5 +307,31 @@ func (s *SystemInfoService) EditFile(ctx iris.Context) (interface{}, interface{}
 		return result.Error(err.Error()), nil
 	}
 	writer.Flush()
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) UploadFile(ctx iris.Context) (interface{}, error) {
+
+	ctx.SetMaxRequestBodySize(maxSize)
+
+	file, fileHeader, err := ctx.FormFile("uploadFile")
+	defer file.Close()
+	if err != nil {
+		return result.Error("上传失败" + err.Error()), nil
+	}
+
+	dest := ctx.FormValue("curPath")
+
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+
+	dest = filepath.Join(dest, fileHeader.Filename)
+
+	_, err = ctx.SaveFormFile(fileHeader, dest)
+	if err != nil {
+		return result.Error("上传失败" + err.Error()), nil
+	}
+
 	return result.Success(), nil
 }

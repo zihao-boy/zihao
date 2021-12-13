@@ -1,11 +1,16 @@
 package shell
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
+	"io"
+	"io/ioutil"
+	"mime/multipart"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -38,7 +43,7 @@ func ExecShell(host host.HostDto, cmd string) error {
 
 }
 
-func ExecListFiles(host host.HostDto) (result.ResultDto, error){
+func ExecListFiles(host host.HostDto) (result.ResultDto, error) {
 	data := make(map[string]interface{})
 	ip := host.Ip
 	var resultDto result.ResultDto
@@ -63,7 +68,7 @@ func ExecListFiles(host host.HostDto) (result.ResultDto, error){
 
 }
 
-func ExecRemoveFile(host host.HostDto) (result.ResultDto, error){
+func ExecRemoveFile(host host.HostDto) (result.ResultDto, error) {
 	data := make(map[string]interface{})
 	ip := host.Ip
 	var resultDto result.ResultDto
@@ -88,8 +93,7 @@ func ExecRemoveFile(host host.HostDto) (result.ResultDto, error){
 
 }
 
-
-func ExecNewFile(host host.HostDto) (result.ResultDto, error){
+func ExecNewFile(host host.HostDto) (result.ResultDto, error) {
 	data := make(map[string]interface{})
 	ip := host.Ip
 	var resultDto result.ResultDto
@@ -114,8 +118,7 @@ func ExecNewFile(host host.HostDto) (result.ResultDto, error){
 
 }
 
-
-func ExecRenameFile(host host.HostDto) (result.ResultDto, error){
+func ExecRenameFile(host host.HostDto) (result.ResultDto, error) {
 	data := make(map[string]interface{})
 	ip := host.Ip
 	var resultDto result.ResultDto
@@ -140,8 +143,7 @@ func ExecRenameFile(host host.HostDto) (result.ResultDto, error){
 
 }
 
-
-func ExecListFileContext(host host.HostDto) (result.ResultDto, error){
+func ExecListFileContext(host host.HostDto) (result.ResultDto, error) {
 	data := make(map[string]interface{})
 	ip := host.Ip
 	var resultDto result.ResultDto
@@ -166,7 +168,7 @@ func ExecListFileContext(host host.HostDto) (result.ResultDto, error){
 
 }
 
-func ExecEditFile(host host.HostDto) (result.ResultDto, error){
+func ExecEditFile(host host.HostDto) (result.ResultDto, error) {
 	data := make(map[string]interface{})
 	ip := host.Ip
 	var resultDto result.ResultDto
@@ -191,9 +193,26 @@ func ExecEditFile(host host.HostDto) (result.ResultDto, error){
 
 }
 
+func ExecUploadFile(host host.HostDto, file multipart.File, fileHeader *multipart.FileHeader) (result.ResultDto, error) {
+	var resultDto result.ResultDto
+	ip := host.Ip
+	bodyBuffer := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuffer)
+	bodyWriter.WriteField("curPath", host.CurPath)
+	fileWriter, _ := bodyWriter.CreateFormFile("uploadFile", fileHeader.Filename)
+	io.Copy(fileWriter, file) //将 客户端文件 复制给 用于传输的 fileWriter
 
+	contentType := bodyWriter.FormDataContentType() //contentType
+	bodyWriter.Close()
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+	resp, _ := http.Post("http://"+ip+"/app/slave/uploadFile", contentType, bodyBuffer)
 
-
-
-
-
+	defer resp.Body.Close()
+	// 4、结果读取
+	data, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(data), &resultDto)
+	return resultDto, nil
+}

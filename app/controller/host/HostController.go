@@ -59,6 +59,8 @@ func HostControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/editFile", hero.Handler(aus.editFile))
 
+	adinMenu.Post("/uploadFile", hero.Handler(aus.uploadFile))
+
 
 }
 
@@ -253,6 +255,16 @@ func (aus *HostController) editFile(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+查询文件
+**/
+func (aus *HostController) uploadFile(ctx iris.Context) {
+	reslut := aus.hostService.UploadFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 
 

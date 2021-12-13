@@ -17,7 +17,7 @@
 
         },
         _initEvent: function() {
-            vc.on('fileManager','listFiles',function(){
+            vc.on('fileManager', 'listFiles', function() {
                 $that._listFiles();
             });
 
@@ -25,7 +25,7 @@
         methods: {
             _changeDir: function(_file) {
                 if (_file.groupName != 'd') {
-                    $that._openEditFile(_file);//修改文件
+                    $that._openEditFile(_file); //修改文件
                     return;
                 }
                 if ($that.fileManagerInfo.curPath.endsWith('/')) {
@@ -78,47 +78,55 @@
                     }
                 );
             },
-            _deleteFileOrDir:function(_file){
+            _deleteFileOrDir: function(_file) {
                 let _curPath = $that.fileManagerInfo.curPath;
                 if (!_curPath.endsWith('/')) {
-                    _curPath += ('/'+_file.name);
+                    _curPath += ('/' + _file.name);
                 }
                 let _data = {
                     hostId: $that.fileManagerInfo.hostId,
                     fileName: _curPath,
                     fileGroupName: _file.groupName
                 }
-                vc.emit('deleteFileOrDir','openDeleteFileOrDirModal',_data);
+                vc.emit('deleteFileOrDir', 'openDeleteFileOrDirModal', _data);
             },
-            openNewFile:function(isFile){
+            openNewFile: function(isFile) {
                 let _curPath = $that.fileManagerInfo.curPath;
-                vc.emit('newFile', 'openNewFileModal',{
+                vc.emit('newFile', 'openNewFileModal', {
                     hostId: $that.fileManagerInfo.hostId,
                     fileGroupName: isFile,
-                    curPath:_curPath
+                    curPath: _curPath
                 })
             },
 
-            _openRenameFileModel:function(_file){
+            _openRenameFileModel: function(_file) {
                 let _curPath = $that.fileManagerInfo.curPath;
-                vc.emit('renameFile', 'openRenameFileModal',{
+                vc.emit('renameFile', 'openRenameFileModal', {
                     hostId: $that.fileManagerInfo.hostId,
                     fileGroupName: _file.groupName,
-                    fileName:_file.name,
-                    curPath:_curPath
+                    fileName: _file.name,
+                    curPath: _curPath
                 })
             },
-            _openEditFile:function(_file){
+            _openEditFile: function(_file) {
                 let _curPath = $that.fileManagerInfo.curPath;
-                if(_file.size > 1024*1024){
+                if (_file.size > 1024 * 1024) {
                     vc.toast('文件超过1M,不能在线修改，请下载修改');
-                    return ;
+                    return;
                 }
-                vc.emit('editFile', 'openEditFileModal',{
+                vc.emit('editFile', 'openEditFileModal', {
                     hostId: $that.fileManagerInfo.hostId,
-                    fileName:_file.name,
-                    curPath:_curPath
-                }) 
+                    fileName: _file.name,
+                    curPath: _curPath
+                })
+            },
+            _openFiles: function(isFile) {
+                let _curPath = $that.fileManagerInfo.curPath;
+                vc.emit('uploadFiles', 'openRenameFileModal', {
+                    hostId: $that.fileManagerInfo.hostId,
+                    fileGroupName: isFile,
+                    curPath: _curPath
+                });
             }
         }
     });

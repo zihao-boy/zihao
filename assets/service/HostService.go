@@ -20,6 +20,8 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+const maxSize = 1000 * iris.MB // 第二种方法
+
 type HostService struct {
 	hostDao dao.HostDao
 }
@@ -666,7 +668,7 @@ func (hostService *HostService) ListFiles(ctx iris.Context) result.ResultDto {
 	if len(hostDtos) < 1 {
 		return result.Error("主机不存在")
 	}
-
+	hostDto.Ip = hostDtos[0].Ip
 	resultDto, _ := shell.ExecListFiles(hostDto)
 	return resultDto
 }
@@ -693,12 +695,12 @@ func (hostService *HostService) RemoveFile(ctx iris.Context) result.ResultDto {
 	if len(hostDtos) < 1 {
 		return result.Error("主机不存在")
 	}
-
+	hostDto.Ip = hostDtos[0].Ip
 	resultDto, _ := shell.ExecRemoveFile(hostDto)
 	return resultDto
 }
 
-func (hostService *HostService) NewFile(ctx iris.Context) interface{} {
+func (hostService *HostService) NewFile(ctx iris.Context) result.ResultDto {
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
 	var (
@@ -720,12 +722,12 @@ func (hostService *HostService) NewFile(ctx iris.Context) interface{} {
 	if len(hostDtos) < 1 {
 		return result.Error("主机不存在")
 	}
-
+	hostDto.Ip = hostDtos[0].Ip
 	resultDto, _ := shell.ExecNewFile(hostDto)
 	return resultDto
 }
 
-func (hostService *HostService) RenameFile(ctx iris.Context) interface{} {
+func (hostService *HostService) RenameFile(ctx iris.Context) result.ResultDto {
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
 	var (
@@ -747,12 +749,12 @@ func (hostService *HostService) RenameFile(ctx iris.Context) interface{} {
 	if len(hostDtos) < 1 {
 		return result.Error("主机不存在")
 	}
-
+	hostDto.Ip = hostDtos[0].Ip
 	resultDto, _ := shell.ExecRenameFile(hostDto)
 	return resultDto
 }
 
-func (hostService *HostService) ListFileContext(ctx iris.Context) interface{} {
+func (hostService *HostService) ListFileContext(ctx iris.Context) result.ResultDto {
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
 	var (
@@ -771,12 +773,12 @@ func (hostService *HostService) ListFileContext(ctx iris.Context) interface{} {
 	if len(hostDtos) < 1 {
 		return result.Error("主机不存在")
 	}
-
+	hostDto.Ip = hostDtos[0].Ip
 	resultDto, _ := shell.ExecListFileContext(hostDto)
 	return resultDto
 }
 
-func (hostService *HostService) EditFile(ctx iris.Context) interface{} {
+func (hostService *HostService) EditFile(ctx iris.Context) result.ResultDto {
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
 	var (
@@ -799,6 +801,38 @@ func (hostService *HostService) EditFile(ctx iris.Context) interface{} {
 		return result.Error("主机不存在")
 	}
 
+	hostDto.Ip = hostDtos[0].Ip
+
 	resultDto, _ := shell.ExecEditFile(hostDto)
 	return resultDto
+}
+
+func (hostService *HostService) UploadFile(ctx iris.Context) result.ResultDto {
+
+	var(
+		hostDto host.HostDto
+	)
+
+	ctx.SetMaxRequestBodySize(maxSize)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	file, fileHeader, err := ctx.FormFile("uploadFile")
+	hostDto.HostId = ctx.FormValue("hostId")
+	hostDto.TenantId = user.TenantId
+
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	hostDto.CurPath = ctx.FormValue("curPath")
+	hostDto.Ip = hostDtos[0].Ip
+	resultDto, _ := shell.ExecUploadFile(hostDto,file,fileHeader)
+	return resultDto
+
 }
