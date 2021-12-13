@@ -228,10 +228,11 @@ func ExecDownloadFile(host host.HostDto, resWriter context.ResponseWriter) {
 	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 	resp, _ := http.Post("http://"+ip+"/app/slave/downloadFile", "application/json", body)
 
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	// 4、结果读取
 	//data, _ := ioutil.ReadAll(resp.Body)
-	resWriter.Header().Set("Content-Disposition", "attachment; filename=123123")
 	resWriter.Header().Set("Content-Type", "application/octet-stream")
 	resWriter.Header().Set("Content-Length", resp.Header.Get("Content-Length"))
 	io.Copy(resWriter, resp.Body)
