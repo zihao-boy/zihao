@@ -28,6 +28,10 @@ cp -r web ../zihao_release
 
 cp -r zihao ../zihao_release/
 
+cp -r restart_zihao.sh ../zihao_release/
+
+cp -r install_zihao.sh ../zihao_release/
+
 if [ ! -d "../zihao_release/conf" ]; then
     cp -r conf ../zihao_release/
 fi
@@ -35,5 +39,10 @@ fi
 if [ ! -d "../zihao_release/db" ]; then
     cp -r db ../zihao_release/
 fi
+
+
+
+
+
 
 
