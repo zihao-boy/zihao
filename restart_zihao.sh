@@ -8,7 +8,7 @@ ps -ef | grep zihao | grep -v 'restart_zihao.sh' | awk '{print $2}' | xargs kill
 chmod u+x zihao
 
 # start zihao
-./zihao > zihao.log &
+/zihao/master/zihao > zihao.log &
 
 
 

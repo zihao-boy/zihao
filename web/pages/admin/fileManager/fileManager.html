@@ -1,9 +1,9 @@
 <div>
     <div class="row white-bg padding-xs padding-top padding-bottom margin-xs">
-        <div class="col-md-5 padding-0 margin-0">
+        <div class="col-md-4 padding-0 margin-0">
             <input v-model="fileManagerInfo.curPath" type="text" @keyup.enter="_listFiles()" class="form-control">
         </div>
-        <div class="col-md-1 padding-left-xs ">
+        <div class="col-md-2 padding-left-xs ">
             <button class="btn btn-white" type="button" v-on:click="_parentDir()">上级</button>
             <button class="btn btn-white" type="button" v-on:click="_goBack()">返回</button>
         </div>
