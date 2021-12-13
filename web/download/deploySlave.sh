@@ -51,6 +51,7 @@ function docker_install()
 EOF
         systemctl daemon-reload
         systemctl restart docker
+        systemctl enable docker
         groupadd docker
         systemctl restart docker
     fi
