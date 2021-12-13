@@ -61,7 +61,7 @@ func HostControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/uploadFile", hero.Handler(aus.uploadFile))
 
-	adinMenu.Post("/downloadFile", hero.Handler(aus.downloadFile))
+	adinMenu.Get("/downloadFile", hero.Handler(aus.downloadFile))
 
 
 }
