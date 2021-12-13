@@ -41,6 +41,10 @@ func SlaveControllerRouter(party iris.Party) {
 
 	adinUser.Post("/uploadFile", hero.Handler(aus.uploadFile))
 
+	adinUser.Post("/downloadFile", hero.Handler(aus.downloadFile))
+
+
+
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -105,6 +109,12 @@ func (aus *SlaveController) uploadFile(ctx iris.Context) {
 	relustDto, _ := aus.systenInfoService.UploadFile(ctx)
 	ctx.JSON(relustDto)
 }
+
+//开启容器
+func (aus *SlaveController) downloadFile(ctx iris.Context) {
+	 aus.systenInfoService.DownloadFile(ctx)
+}
+
 
 
 

@@ -216,3 +216,23 @@ func ExecUploadFile(host host.HostDto, file multipart.File, fileHeader *multipar
 	json.Unmarshal([]byte(data), &resultDto)
 	return resultDto, nil
 }
+
+
+func ExecDownloadFile(host host.HostDto) ([]byte, http.Header) {
+	ip := host.Ip
+	appServiceDtoData, _ := json.Marshal(&host)
+	body := bytes.NewReader(appServiceDtoData)
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+	resp, _ := http.Post("http://"+ip+"/app/slave/downloadFile", "application/json", body)
+
+	defer resp.Body.Close()
+	// 4、结果读取
+	data, _ := ioutil.ReadAll(resp.Body)
+
+	return data, resp.Header
+}
+
+

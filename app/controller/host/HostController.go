@@ -61,6 +61,8 @@ func HostControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/uploadFile", hero.Handler(aus.uploadFile))
 
+	adinMenu.Post("/downloadFile", hero.Handler(aus.downloadFile))
+
 
 }
 
@@ -265,6 +267,10 @@ func (aus *HostController) uploadFile(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+//下载文件
+func (aus *HostController) downloadFile(ctx iris.Context) {
+	aus.hostService.DownloadFile(ctx)
+}
 
 
 

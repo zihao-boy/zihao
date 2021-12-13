@@ -127,6 +127,25 @@
                     fileGroupName: isFile,
                     curPath: _curPath
                 });
+            },
+            _downLoadFile: function(file) {
+                let param = {
+                        params: {
+                            hostId: $that.fileManagerInfo.hostId,
+                            curPath: $that.fileManagerInfo.curPath,
+                            fileName: $that.fileManagerInfo.fileName
+                        }
+                    }
+                    //发送get请求
+                vc.http.apiGet('/host/downloadFile',
+                    param,
+                    function(json, res) {
+
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
             }
         }
     });

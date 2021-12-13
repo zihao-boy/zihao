@@ -14,9 +14,11 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -334,4 +336,33 @@ func (s *SystemInfoService) UploadFile(ctx iris.Context) (interface{}, error) {
 	}
 
 	return result.Success(), nil
+}
+
+func (s *SystemInfoService) DownloadFile(ctx iris.Context) {
+	var (
+		err     error
+		hostDto host.HostDto
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		fmt.Print(err)
+		return
+	}
+	file, err := os.Open(hostDto.FileName)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	defer file.Close()
+
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	responseWriter := ctx.ResponseWriter()
+	responseWriter.Header().Set("Content-Type", http.DetectContentType(content))
+	responseWriter.Header().Set("Content-Length", strconv.FormatInt(int64(len(content)), 10))
+	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+hostDto.FileName)
+	responseWriter.Write(content)
 }

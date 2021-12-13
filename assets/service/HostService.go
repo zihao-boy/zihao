@@ -761,7 +761,7 @@ func (hostService *HostService) ListFileContext(ctx iris.Context) result.ResultD
 		hostDto = host.HostDto{
 			HostId:   ctx.URLParam("hostId"),
 			TenantId: user.TenantId,
-			FileName:  ctx.URLParam("fileName"),
+			FileName: ctx.URLParam("fileName"),
 		}
 	)
 	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
@@ -809,7 +809,7 @@ func (hostService *HostService) EditFile(ctx iris.Context) result.ResultDto {
 
 func (hostService *HostService) UploadFile(ctx iris.Context) result.ResultDto {
 
-	var(
+	var (
 		hostDto host.HostDto
 	)
 
@@ -832,7 +832,44 @@ func (hostService *HostService) UploadFile(ctx iris.Context) result.ResultDto {
 
 	hostDto.CurPath = ctx.FormValue("curPath")
 	hostDto.Ip = hostDtos[0].Ip
-	resultDto, _ := shell.ExecUploadFile(hostDto,file,fileHeader)
+	resultDto, _ := shell.ExecUploadFile(hostDto, file, fileHeader)
 	return resultDto
 
+}
+
+func (hostService *HostService) DownloadFile(ctx iris.Context) {
+
+	var (
+		hostDto host.HostDto
+	)
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	hostDto.HostId = ctx.URLParam("hostId")
+	hostDto.TenantId = user.TenantId
+
+	hostDtos, err := hostService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		ctx.WriteString(err.Error())
+		return
+	}
+
+	if len(hostDtos) < 1 {
+		ctx.WriteString("主机不存在")
+		return
+	}
+
+	responseWriter := ctx.ResponseWriter()
+	hostDto.FileName = ctx.URLParam("fileName")
+
+	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+hostDto.FileName)
+	//responseWriter.Header().Set("Content-Type", http.DetectContentType(fileHeader))
+
+	hostDto.CurPath = ctx.FormValue("curPath")
+	hostDto.Ip = hostDtos[0].Ip
+	data, header := shell.ExecDownloadFile(hostDto)
+	responseWriter.Header().Set("Content-Type", header.Get("Content-Type"))
+	responseWriter.Header().Set("Content-Length", strconv.FormatInt(int64(len(data)), 10))
+	responseWriter.Write(data)
 }
