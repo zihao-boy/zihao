@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#wget http://cdn.homecommunity.cn/zihao_release.tar
+
+tar -xvf zihao_release.tar
+
+cd zihao_release
+
 pwd_cur=$(pwd)
 
 local_ip=127.0.0.1:7000
@@ -18,6 +24,3 @@ sleep 10s
 chmod u+x ./web/download/deploySlave.sh
 
 ./web/download/deploySlave.sh $local_ip $local_host
-
-chmod +x /etc/rc.d/rc.local
-echo '/zihao/slave/startSlave.sh' >> /etc/rc.d/rc.local
