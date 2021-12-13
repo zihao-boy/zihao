@@ -862,15 +862,15 @@ func (hostService *HostService) DownloadFile(ctx iris.Context) {
 	}
 
 	responseWriter := ctx.ResponseWriter()
-	hostDto.FileName = path.Join(ctx.FormValue("curPath"),ctx.URLParam("fileName"))
+	hostDto.FileName = path.Join(ctx.FormValue("curPath"), ctx.URLParam("fileName"))
 
 	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+hostDto.FileName)
 	//responseWriter.Header().Set("Content-Type", http.DetectContentType(fileHeader))
 
 	hostDto.CurPath = ctx.FormValue("curPath")
 	hostDto.Ip = hostDtos[0].Ip
-	data, header := shell.ExecDownloadFile(hostDto)
-	responseWriter.Header().Set("Content-Type", header.Get("Content-Type"))
+	data, _ := shell.ExecDownloadFile(hostDto)
+	responseWriter.Header().Set("Content-Type", "application/octet-stream")
 	responseWriter.Header().Set("Content-Length", strconv.FormatInt(int64(len(data)), 10))
 	responseWriter.Write(data)
 }
