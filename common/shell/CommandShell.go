@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/kataras/iris/v12/context"
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
@@ -217,8 +218,7 @@ func ExecUploadFile(host host.HostDto, file multipart.File, fileHeader *multipar
 	return resultDto, nil
 }
 
-
-func ExecDownloadFile(host host.HostDto) ([]byte, http.Header) {
+func ExecDownloadFile(host host.HostDto, resWriter context.ResponseWriter) {
 	ip := host.Ip
 	appServiceDtoData, _ := json.Marshal(&host)
 	body := bytes.NewReader(appServiceDtoData)
@@ -230,9 +230,12 @@ func ExecDownloadFile(host host.HostDto) ([]byte, http.Header) {
 
 	defer resp.Body.Close()
 	// 4、结果读取
-	data, _ := ioutil.ReadAll(resp.Body)
+	//data, _ := ioutil.ReadAll(resp.Body)
+	resWriter.Header().Set("Content-Disposition", "attachment; filename=123123")
+	resWriter.Header().Set("Content-Type", "application/octet-stream")
+	resWriter.Header().Set("Content-Length", resp.Header.Get("Content-Length"))
+	io.Copy(resWriter, resp.Body)
 
-	return data, resp.Header
+	resWriter.Flush()
+	//return data, resp.Header
 }
-
-

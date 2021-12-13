@@ -353,7 +353,9 @@ func (s *SystemInfoService) DownloadFile(ctx iris.Context) {
 		fmt.Print(err)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	content, err := ioutil.ReadAll(file)
 	if err != nil {
