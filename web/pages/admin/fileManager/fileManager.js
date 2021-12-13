@@ -129,23 +129,7 @@
                 });
             },
             _downLoadFile: function(file) {
-                let param = {
-                        params: {
-                            hostId: $that.fileManagerInfo.hostId,
-                            curPath: $that.fileManagerInfo.curPath,
-                            fileName: file.name
-                        }
-                    }
-                    //发送get请求
-                vc.http.apiGet('/host/downloadFile',
-                    param,
-                    function(json, res) {
-
-                    },
-                    function(errInfo, error) {
-                        console.log('请求失败处理');
-                    }
-                );
+                vc.jumpToPage('/app/host/downloadFile?hostId=' + $that.fileManagerInfo.hostId + "&curPath=" + $that.fileManagerInfo.curPath + "&fileName=" + file.name);
             }
         }
     });
