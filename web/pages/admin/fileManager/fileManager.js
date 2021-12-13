@@ -133,7 +133,7 @@
                         params: {
                             hostId: $that.fileManagerInfo.hostId,
                             curPath: $that.fileManagerInfo.curPath,
-                            fileName: $that.fileManagerInfo.fileName
+                            fileName: file.name
                         }
                     }
                     //发送get请求
