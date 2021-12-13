@@ -130,6 +130,9 @@
             },
             _downLoadFile: function(file) {
                 vc.jumpToPage('/app/host/downloadFile?hostId=' + $that.fileManagerInfo.hostId + "&curPath=" + $that.fileManagerInfo.curPath + "&fileName=" + file.name);
+            },
+            _goBack: function() {
+                vc.goBack();
             }
         }
     });
