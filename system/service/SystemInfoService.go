@@ -334,7 +334,7 @@ func (s *SystemInfoService) UploadFile(ctx iris.Context) (interface{}, error) {
 		fileName = filepath.Base(fileName)
 	}
 
-	dest = filepath.Join(dest, fileHeader.Filename)
+	dest = filepath.Join(dest, fileName)
 
 	_, err = ctx.SaveFormFile(fileHeader, dest)
 	if err != nil {
