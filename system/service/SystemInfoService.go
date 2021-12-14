@@ -327,7 +327,7 @@ func (s *SystemInfoService) UploadFile(ctx iris.Context) (interface{}, error) {
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
-
+	fmt.Print("dest=", dest, " fileName=", fileHeader.Filename)
 	dest = filepath.Join(dest, fileHeader.Filename)
 
 	_, err = ctx.SaveFormFile(fileHeader, dest)
