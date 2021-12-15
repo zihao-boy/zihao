@@ -563,3 +563,26 @@ func (appVersionJobService *AppVersionJobService) DeleteAppVersionJobImages(ctx 
 
 	return result.SuccessData(appVersionJobImagesDto)
 }
+
+func (appVersionJobService *AppVersionJobService) GetJobLog(ctx iris.Context) interface{} {
+	var (
+		appVersionJobDetailDto  = appVersionJob.AppVersionJobDetailDto{}
+	)
+
+
+	appVersionJobDetailDto.Row = 1
+	appVersionJobDetailDto.Page = 0
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	appVersionJobDetailDto.TenantId = user.TenantId
+	appVersionJobDetailDto.JobId = ctx.URLParam("jobId")
+
+	appVersionJobDetailDtos, _ := appVersionJobService.appVersionJobDetailDao.GetAppVersionJobDetails(appVersionJobDetailDto)
+
+	if len(appVersionJobDetailDtos) < 1{
+		return result.Error("没有日志")
+	}
+
+	return result.SuccessData(appVersionJobDetailDtos[0].LogPath)
+}

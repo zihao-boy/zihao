@@ -1,6 +1,7 @@
 package defaultWebsocket
 
 import (
+	"github.com/zihao-boy/zihao/common/webLog"
 	"log"
 	"net/http"
 
@@ -40,3 +41,36 @@ func InitWebsocket(app *iris.Application) {
 
 	app.Get("/app/console/ssh", websocket.Handler(ws))
 }
+
+
+func InitLogWebsocket(app *iris.Application) {
+	// create our echo websocket server
+	ws := websocket.New(gorilla.Upgrader(gorillaWs.Upgrader{CheckOrigin: func(*http.Request) bool { return true }}), websocket.Events{
+		websocket.OnNativeMessage: func(nsConn *websocket.NSConn, msg websocket.Message) error {
+			log.Printf("Server got: %s from [%s]", msg.Body, nsConn.Conn.ID())
+
+			webLog.WebSocketHandler(msg.Body, nsConn.Conn.ID(), nsConn)
+
+			return nil
+		},
+	})
+
+	ws.OnConnect = func(c *websocket.Conn) error {
+
+		log.Printf("[%s] Connected to server!", c.ID())
+		return nil
+	}
+
+	ws.OnDisconnect = func(c *websocket.Conn) {
+		log.Printf("[%s] Disconnected from server", c.ID())
+		webLog.CloseTail(c.ID())
+	}
+
+	ws.OnUpgradeError = func(err error) {
+		log.Printf("Upgrade Error: %v", err)
+	}
+
+	app.Get("/app/console/tailLog", websocket.Handler(ws))
+}
+
+
