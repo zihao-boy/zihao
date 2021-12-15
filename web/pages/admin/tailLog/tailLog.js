@@ -43,7 +43,7 @@
             
                 _connection.onmessage = function (evt) {
                     let data = evt.data.toString();
-                    $that.tailLogInfo.log = data;
+                    $that.tailLogInfo.log += data;
                 };
             
             
