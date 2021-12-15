@@ -12,12 +12,22 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"os/exec"
 	"strconv"
 	"strings"
 
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"golang.org/x/crypto/ssh"
 )
+
+func ExecLocalShell(jobShell string) (string,error)  {
+	cmd := exec.Command("bash", "-c", jobShell)
+	fmt.Println(jobShell)
+	//cmd := exec.Command("nohup echo 1")
+	paramOut, err := cmd.Output()
+	fmt.Print("cmd 结果",string(paramOut))
+	return string(paramOut),err
+}
 
 func ExecShell(host host.HostDto, cmd string) error {
 	client, err := ssh.Dial("tcp", host.Ip, &ssh.ClientConfig{

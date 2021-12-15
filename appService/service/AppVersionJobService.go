@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path"
 	"strconv"
 	"strings"
@@ -327,10 +327,9 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 
 	jobShell := "nohup sh " + dest + " >" + path.Join(workDir, appVersionJobDto.JobId+".log") + " &"
-	cmd := exec.Command("bash", "-c", jobShell)
-	fmt.Println(jobShell)
-	//cmd := exec.Command("nohup echo 1")
-	_, err = cmd.Output()
+
+
+	go shell.ExecLocalShell(jobShell)
 
 	if err != nil {
 		fmt.Println(err)
@@ -350,10 +349,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	if err = ctx.ReadJSON(&appVersionJobDto); err != nil {
 		return result.Error("解析入参失败")
 	}
-	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	appVersionJobDto.TenantId = user.TenantId
 	appVersionJobDtos, err := appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
-
 	appVersionJobDto = *appVersionJobDtos[0]
 
 	if len(appVersionJobDtos) < 1 {
