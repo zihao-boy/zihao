@@ -23,6 +23,8 @@ func Hub(app *iris.Application) {
 	//处理websocket
 	defaultWebsocket.InitWebsocket(app)
 
+	defaultWebsocket.InitLogWebsocket(app)
+
 	party := preSettring(app)
 
 	//系统信息
