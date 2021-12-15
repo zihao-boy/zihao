@@ -45,8 +45,9 @@ func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 	go func() {
 		var msg *tail.Line
 		var ok bool
-		_,logOk:=tailLogs[connId];
+		logOk:=true;
 		for logOk {
+			_,logOk=tailLogs[connId];
 			msg, ok = <-taill.Lines //chan
 			if !ok {
 				// ok 是判断管道是否被关闭，如果关闭就是文件被重置了，需要重新读取新的管道
@@ -68,10 +69,6 @@ func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 func CloseTail(connId string) {
 	fmt.Println("----------------------------------------------------------> close tail")
 
-	tailLog := tailLogs[connId]
-	if tailLog.ConnId == "" {
-		return
-	}
 	if _, ok := tails[connId]; ok {
 		tails[connId].Stop()
 		delete(tails, connId)
