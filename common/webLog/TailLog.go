@@ -70,5 +70,7 @@ func CloseTail(connId string) {
 		return
 	}
 
+	fmt.Println("----------------------------------------------------------> tailLog.Conn",tailLog.Conn)
 	tailLog.Conn = false
+	tailLogs[connId] =tailLog
 }
