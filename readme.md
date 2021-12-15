@@ -1,4 +1,4 @@
-# 梓豪平台为一个docker 容器化管理平台 包括主机管理，手工制作镜像，镜像管理，ci/cd 构建和应用管理的paas平台。欢迎安装使用，也欢迎贡献！
+# 梓豪平台是一个docker 容器化管理平台 包括主机管理，手工制作镜像，镜像管理，ci/cd 构建和应用管理的paas平台。欢迎安装使用，也欢迎贡献！
 
 
 ## 1.0 手动安装(install)
@@ -43,11 +43,11 @@ yum install -y wget && wget https://homecommunity.oss-cn-beijing.aliyuncs.com/in
 
 http://zihao.homecommunity.cn/
 
-##4.0 视频教程（video）
+## 4.0 视频教程（video）
 
 https://www.bilibili.com/video/BV1BM4y1w7Ti?spm_id_from=333.999.0.0
 
-##5.0 系统截图
+## 5.0 系统截图
 
 ![image](doc/1.png)
 
