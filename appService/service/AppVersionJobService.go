@@ -3,9 +3,17 @@ package service
 import (
 	"fmt"
 	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
+	"github.com/zihao-boy/zihao/common/utils"
+	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
+	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
+	"io/ioutil"
+	"os"
 	"os/exec"
-	systemUser "os/user"
+	"path"
 	"strconv"
+	"strings"
 
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/appService/dao"
@@ -14,6 +22,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/appVersionJob"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
+	softDao "github.com/zihao-boy/zihao/softService/dao"
 )
 
 type AppVersionJobService struct {
@@ -111,13 +120,17 @@ func (appVersionJobService *AppVersionJobService) SaveAppVersionJobs(ctx iris.Co
 	appVersionJobDto.State = appVersionJob.STATE_wait
 	appVersionJobDto.JobTime = date.GetNowTimeString()
 
+	if appVersionJobDto.WorkDir == "" || appVersionJobDto.WorkDir == "/" {
+		return result.Error("工作目录错误，不能为空或者/")
+	}
+
 	err = appVersionJobService.appVersionJobDao.SaveAppVersionJob(appVersionJobDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
 	if len(appVersionJobDto.AppVersionJobImages) > 0 {
-		err = appVersionJobService.saveAppVersionJobImage(appVersionJobDto,appVersionJobDto.AppVersionJobImages)
+		err = appVersionJobService.saveAppVersionJobImage(appVersionJobDto, appVersionJobDto.AppVersionJobImages)
 		if err != nil {
 			return result.Error(err.Error())
 		}
@@ -186,7 +199,7 @@ func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobs(ctx iris.
 	if err != nil {
 		return result.Error(err.Error())
 	}
-	if len(appVersionJobDto.AppVersionJobImages) < 1{
+	if len(appVersionJobDto.AppVersionJobImages) < 1 {
 		return result.SuccessData(appVersionJobDto)
 	}
 	var appVersionJobImagesDto = appVersionJob.AppVersionJobImagesDto{
@@ -196,7 +209,7 @@ func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobs(ctx iris.
 	if err != nil {
 		return result.Error(err.Error())
 	}
-	err = appVersionJobService.saveAppVersionJobImage(appVersionJobDto,appVersionJobDto.AppVersionJobImages)
+	err = appVersionJobService.saveAppVersionJobImage(appVersionJobDto, appVersionJobDto.AppVersionJobImages)
 	if err != nil {
 		return result.Error(err.Error())
 	}
@@ -239,21 +252,71 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	appVersionJobDto.TenantId = user.TenantId
+	appVersionJobDtos, err := appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
+
+	if len(appVersionJobDtos) < 1 {
+		return result.Error("构建不存在")
+	}
+
+	appVersionJobDto.TenantId = user.TenantId
 	appVersionJobDto.State = appVersionJob.STATE_doing
 	err = appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	tmpUser, _ := systemUser.Current()
-	var path string = tmpUser.HomeDir + "/zihao/" + appVersionJobDto.JobId + "/"
-	var fileName string = path + appVersionJobDto.JobId + ".sh"
+	appVersionJobDto = *appVersionJobDtos[0]
+
+	workDir := path.Join(appVersionJobDto.WorkDir, appVersionJobDto.JobId)
+
+	//判断是否是 /开头
+
+	if !strings.HasPrefix(workDir, "/") {
+		workDir = "/" + workDir
+	}
+
+	//删除目录
+	if utils.IsDir(workDir) {
+		err = os.RemoveAll(workDir)
+	}
+	utils.CreateDir(workDir)
+
+	dest := path.Join(workDir, "build.sh")
+	// remove file that exists
+	if utils.IsFile(dest) {
+		os.Remove(dest)
+	}
+
+	file, err := os.Create(dest)
+	defer func() {
+		file.Close()
+	}()
+
+	//git 拉代码
+	var git_url string = "cd " + workDir + " \n git clone "
+	if len(appVersionJobDto.GitUsername) < 1 {
+		git_url += appVersionJobDto.GitUrl
+	} else {
+		git_url = strings.Replace(appVersionJobDto.GitUrl, ":\\", ":\\"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
+	}
+	git_url += "\n"
+	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
+
+	build_hook = strings.Replace(build_hook, "JOB_ID", appVersionJobDto.JobId, 1)
+	build_hook = strings.Replace(build_hook, "MASTER_SERVER", "http://127.0.0.1:"+strconv.FormatInt(int64(config.G_AppConfig.Port), 10), 1)
+
+	_, err = file.WriteString(git_url + appVersionJobDto.JobShell + build_hook)
+
+	if err != nil {
+		fmt.Print("err=", err.Error())
+		return result.Error(err.Error())
+	}
 
 	//插入构建记录
 	var appVersionJobDetailDto = appVersionJob.AppVersionJobDetailDto{
 		JobId:    appVersionJobDto.JobId,
 		State:    appVersionJob.STATE_wait,
-		LogPath:  path + appVersionJobDto.JobId + ".log",
+		LogPath:  path.Join(workDir, appVersionJobDto.JobId+".log"),
 		TenantId: user.TenantId,
 		DetailId: seq.Generator(),
 	}
@@ -263,7 +326,7 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 		return result.Error(err.Error())
 	}
 
-	jobShell := "nohup sh " + fileName + " " + appVersionJobDetailDto.DetailId + " >" + path + appVersionJobDto.JobId + ".log &"
+	jobShell := "nohup sh " + dest + " >" + path.Join(workDir, appVersionJobDto.JobId+".log") + " &"
 	cmd := exec.Command("bash", "-c", jobShell)
 	fmt.Println(jobShell)
 	//cmd := exec.Command("nohup echo 1")
@@ -271,13 +334,104 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 
 	if err != nil {
 		fmt.Println(err)
-	}
-	if err != nil {
 		appVersionJobDto.State = appVersionJob.STATE_error
 		err = appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
 	}
 	return result.SuccessData(appVersionJobDto)
 
+}
+
+func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) interface{} {
+	var (
+		err              error
+		appVersionJobDto appVersionJob.AppVersionJobDto
+	)
+
+	if err = ctx.ReadJSON(&appVersionJobDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appVersionJobDto.TenantId = user.TenantId
+	appVersionJobDtos, err := appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
+
+	appVersionJobDto = *appVersionJobDtos[0]
+
+	if len(appVersionJobDtos) < 1 {
+		return result.Error("构建不存在")
+	}
+
+	//插入构建记录
+	var appVersionJobDetailDto = appVersionJob.AppVersionJobDetailDto{
+		JobId: appVersionJobDto.JobId,
+	}
+
+	appVersionJobDetailDtos, err := appVersionJobService.appVersionJobDetailDao.GetAppVersionJobDetails(appVersionJobDetailDto)
+	if len(appVersionJobDetailDtos) < 1 {
+		return result.Error("构建日志不存在")
+	}
+	appVersionJobDetailDto = *appVersionJobDetailDtos[0]
+	//插入构建记录
+	var appVersionJobImagesDto = appVersionJob.AppVersionJobImagesDto{
+		JobId: appVersionJobDto.JobId,
+	}
+	appVersionJobImagesDtos, _ := appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImagesDto)
+
+	if len(appVersionJobImagesDtos) < 1 {
+		return result.Success()
+	}
+
+	for _, appVersionJobImagesDto := range appVersionJobImagesDtos {
+		appVersionJobService.doGeneratorImages(appVersionJobImagesDto, appVersionJobDetailDto, appVersionJobDto)
+	}
+	return result.Success()
+}
+
+func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto *appVersionJob.AppVersionJobImagesDto,
+	jobDetailDto appVersionJob.AppVersionJobDetailDto,
+	appVersionJobDto appVersionJob.AppVersionJobDto) {
+	workDir := path.Join(appVersionJobDto.WorkDir, appVersionJobDto.JobId)
+	//判断是否是 /开头
+	if !strings.HasPrefix(workDir, "/") {
+		workDir = "/" + workDir
+	}
+	businessJar := path.Join(workDir, jobImagesDto.PackageUrl)
+
+	//查询业务包
+	var businessPackageDao softDao.BusinessPackageDao
+
+	businessPackageDto := businessPackage.BusinessPackageDto{
+		Id: jobImagesDto.BusinessPackageId,
+	}
+	businessPackageDtos, _ := businessPackageDao.GetBusinessPackages(businessPackageDto)
+	if len(businessPackageDtos) < 1 {
+		return
+	}
+
+	targetPath := path.Join("/zihao/master/businessPackage", jobImagesDto.TenantId, businessPackageDtos[0].Path)
+
+	input, err := ioutil.ReadFile(businessJar)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = ioutil.WriteFile(targetPath, input, 0644)
+	if err != nil {
+		fmt.Println("Error creating", targetPath)
+		fmt.Println(err)
+		return
+	}
+	//查询业务包
+	var businessDockerfileDao softDao.BusinessDockerfileDao
+
+	businessDockerfileDto := businessDockerfile.BusinessDockerfileDto{
+		Id: jobImagesDto.BusinessDockerfileId,
+	}
+	businessDockerfileDtos, _ := businessDockerfileDao.GetBusinessDockerfiles(businessDockerfileDto)
+	if len(businessDockerfileDtos) < 1 {
+		return
+	}
+	//消息队列
+	dockerfileQueue.SendData(businessDockerfileDtos[0])
 }
 
 /**

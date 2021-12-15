@@ -37,6 +37,8 @@ func AppVersionControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/doJob", hero.Handler(aus.doJob))
 
+	adinMenu.Post("/doJobHook", hero.Handler(aus.doJobHook))
+
 	adinMenu.Get("/getAppVersionJobImages", hero.Handler(aus.getAppVersionJobImages))
 
 	adinMenu.Post("/saveAppVersionJobImages", hero.Handler(aus.saveAppVersionJobImages))
@@ -136,6 +138,16 @@ func (aus *AppVersionController) doJob(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+删除 主机组
+*/
+func (aus *AppVersionController) doJobHook(ctx iris.Context) {
+	reslut := aus.appVersionJobService.DoJobHook(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 
 
