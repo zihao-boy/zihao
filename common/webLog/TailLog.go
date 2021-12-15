@@ -63,6 +63,8 @@ func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 }
 
 func CloseTail(connId string) {
+	fmt.Println("----------------------------------------------------------> close tail")
+
 	tailLog := tailLogs[connId]
 	if tailLog.ConnId == "" {
 		return
