@@ -10,7 +10,7 @@ Configuration:
 own:
   separate: false
   port: 7000
-  ignore_urls: [/app/user/login, /app/user/logout,/app/system/info,/app/host/slaveHealth]
+  ignore_urls: [/app/user/login, /app/user/logout,/app/system/info,/app/host/slaveHealth,/app/appVersion/doJobHook]
   jwt_timeout: 120 #minute
   log_level: debug
   secret: xxx-Secret
