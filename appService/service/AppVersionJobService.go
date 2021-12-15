@@ -379,6 +379,12 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	for _, appVersionJobImagesDto := range appVersionJobImagesDtos {
 		appVersionJobService.doGeneratorImages(appVersionJobImagesDto, appVersionJobDetailDto, appVersionJobDto)
 	}
+
+	appVersionJobDto.State = appVersionJob.STATE_success
+	err = appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
 	return result.Success()
 }
 
