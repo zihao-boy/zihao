@@ -15,10 +15,14 @@ type AppVersionJobDto struct {
 	JobName    string `json:"jobName" sql:"-"`
 	JobShell   string `json:"jobShell" sql:"-"`
 	TenantId   string `json:"tenantId" sql:"-"`
-	PreJobTime string `json:"preJobTime" sql:"-"`
-	CurJobTime string `json:"curJobTime" sql:"-"`
 	State      string `json:"state"`
 	CreateTime string `json:"createTime" sql:"-"`
 	StatusCd   string `json:"statusCd" sql:"-"`
 	StateName  string `json:"stateName" sql:"-"`
+	GitUrl  string `json:"gitUrl" sql:"-"`
+	GitPasswd  string `json:"gitPasswd" sql:"-"`
+	GitUsername  string `json:"gitUsername" sql:"-"`
+	WorkDir  string `json:"workDir" sql:"-"`
+	JobTime  string `json:"jobTime" sql:"-"`
+	AppVersionJobImages[] AppVersionJobImagesDto `json:"appVersionJobImages"`
 }

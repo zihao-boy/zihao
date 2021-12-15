@@ -7,6 +7,7 @@
             chooseBusinessPackageInfo: {
                 businessPackages: [],
                 _currentBusinessPackageName: '',
+                data: {}
             }
         },
         _initMethod: function() {},
@@ -15,6 +16,7 @@
                 $('#chooseBusinessPackageModel').modal('show');
                 vc.component._refreshChooseBusinessPackageInfo();
                 vc.component._loadAllBusinessPackageInfo(1, 10, '');
+                $that.chooseBusinessPackageInfo.data = _param;
             });
 
             vc.on('chooseBusinessPackage', 'paginationPlus', 'page_event', function(_currentPage) {
@@ -51,6 +53,9 @@
                     _businessPackage.businessPackageName = _businessPackage.name;
                 }
                 vc.emit($props.emitChooseBusinessPackage, 'chooseBusinessPackage', _businessPackage);
+                vc.copyObject(_businessPackage, $that.chooseBusinessPackageInfo.data);
+                $that.chooseBusinessPackageInfo.data.businessPackageId = _businessPackage.id;
+                $that.chooseBusinessPackageInfo.data.businessPackageName = _businessPackage.name;
 
                 $('#chooseBusinessPackageModel').modal('hide');
             },

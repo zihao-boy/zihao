@@ -50,39 +50,48 @@ where t.status_cd = '0'
 	`
 
 	insert_appVersionJob string = `
-insert into app_version_job(job_id, job_name, job_shell, tenant_id, pre_job_time, cur_job_time,state) 
-VALUES(#JobId#, #JobName#, #JobShell#, #TenantId#, #PreJobTime#, #CurJobTime#,#State#) 
+insert into app_version_job(job_id, job_name, job_shell, tenant_id, state,git_url,git_username,git_passwd,work_dir,job_time) 
+VALUES(#JobId#, #JobName#, #JobShell#, #TenantId#, #State#,#GitUrl#,#GitUsername#,#GitPasswd#,#WorkDir#,#JobTime#) 
 `
 
 	update_appVersionJob string = `
-	update app_version_job t set
+	update app_version_job set
     $if Name != '' then 
-    t.job_name = #Name#,
+    job_name = #Name#,
     $endif
     $if JobShell != '' then 
-     t.job_shell =  #JobShell#,
+     job_shell =  #JobShell#,
      $endif
-    $if CurJobTime != '' then 
-     t.cur_job_time =  #CurJobTime#,
+     $if State != '' then 
+     state =  #State#,
      $endif
-        $if PreJobTime != '' then 
-     t.pre_job_time =  #PreJobTime#,
+  $if GitUrl != '' then 
+     git_url =  #GitUrl#,
      $endif
-        $if State != '' then 
-     t.state =  #State#,
+  $if GitUsername != '' then 
+     git_username =  #GitUsername#,
      $endif
-     t.status_cd = '0'
+  $if WorkDir != '' then 
+     work_dir =  #WorkDir#,
+     $endif
+$if GitPasswd != '' then 
+     git_passwd =  #GitPasswd#,
+     $endif
+        $if JobTime != '' then 
+     jobTime =  #JobTime#,
+     $endif
+     status_cd = '0'
 	where
-		t.status_cd = '0'
-	and t.job_id = #JobId#
-	and t.tenant_id = #TenantId#
+		status_cd = '0'
+	and job_id = #JobId#
+	and tenant_id = #TenantId#
 	`
 	delete_appVersionJob string = `
-	update app_version_job t set
-                          t.status_cd = '1'
-                          where t.status_cd = '0'
+	update app_version_job  set
+                          status_cd = '1'
+                          where status_cd = '0'
 		$if JobId != '' then
-			and t.job_id = #JobId#
+			and job_id = #JobId#
 		$endif
 	`
 	query_appVersionJobImages_count string = `
@@ -101,8 +110,10 @@ VALUES(#JobId#, #JobName#, #JobShell#, #TenantId#, #PreJobTime#, #CurJobTime#,#S
 	`
 
 	query_appVersionJobImages string = `
-				select t.*
-			    from app_version_job_images t
+				select t.*,bd.name business_dockerfile_name,bp.name business_package_name
+from app_version_job_images t
+left join business_dockerfile bd on t.business_dockerfile_id = bd.id and bd.status_cd = '0'
+left join business_package bp on t.business_package_id = bp.id and bp.status_cd = '0'
 					where t.status_cd = '0'
 					$if TenantId != '' then
 					and t.tenant_id= #TenantId#
@@ -120,35 +131,40 @@ VALUES(#JobId#, #JobName#, #JobShell#, #TenantId#, #PreJobTime#, #CurJobTime#,#S
 	`
 
 	insert_appVersionJobImages string = `
-insert into app_version_job_images(job_images_id, tenant_id, package_url, business_package_name, business_images_name,job_id) 
-VALUES(#JobImagesId#, #TenantId#, #PackageUrl#, #BusinessPackageName#, #BusinessImagesName#,#JobId#) 
+insert into app_version_job_images(job_images_id, tenant_id, package_url, business_package_id, business_dockerfile_id,job_id) 
+VALUES(#JobImagesId#, #TenantId#, #PackageUrl#, #BusinessPackageId#, #BusinessDockerfileId#,#JobId#) 
 `
 
 	update_appVersionJobImages string = `
-	update app_version_job_images t set
+	update app_version_job_images  set
     $if PackageUrl != '' then 
-    t.package_url = #PackageUrl#,
+    package_url = #PackageUrl#,
     $endif
-    $if BusinessPackageName != '' then 
-     t.business_package_name =  #BusinessPackageName#,
+    $if BusinessPackageId != '' then 
+     business_package_id =  #BusinessPackageId#,
      $endif
-    $if BusinessImagesName != '' then 
-     t.business_images_name =  #BusinessImagesName#,
+    $if BusinessDockerfileId != '' then 
+     business_dockerfile_id =  #BusinessDockerfileId#,
      $endif
-     t.status_cd = '0'
+     status_cd = '0'
 	where
-		t.status_cd = '0'
-	and t.job_images_id = #JobImagesId#
-	and t.tenant_id = #TenantId#
+		status_cd = '0'
+	and job_images_id = #JobImagesId#
+	and tenant_id = #TenantId#
 	$if JobId != '' then
-	and t.job_id = #JobId#
+	and job_id = #JobId#
 	$endif
 	`
 	delete_appVersionJobImages string = `
-	update app_version_job_images t set
-                          t.status_cd = '1'
-                          where t.status_cd = '0'
-		and t.job_images_id = #JobImagesId#
+	update app_version_job_images  set
+                          status_cd = '1'
+                          where status_cd = '0'
+$if JobImagesId != '' then
+		and job_images_id = #JobImagesId#
+	$endif
+$if JobId != '' then
+	and job_id = #JobId#
+	$endif
 	`
 )
 

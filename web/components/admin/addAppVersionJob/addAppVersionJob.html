@@ -1,37 +1,110 @@
-<div id="addAppVersionJobModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-body">
-                <h3 class="m-t-none m-b ">新建</h3>
-                <div class="ibox-content">
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>新建</h5>
+                <div class="ibox-tools" style="top:10px;">
+
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
                     <div>
-                        <div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">名称</label>
-                                <div class="col-sm-10">
-                                    <input v-model="addAppVersionJobInfo.jobName" type="text" placeholder="必填，请填写名称"
-                                        class="form-control">
-                                </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">名称</label>
+                            <div class="col-sm-10">
+                                <input v-model="addAppVersionJobInfo.jobName" type="text" placeholder="必填，请填写应用名称" class="form-control">
                             </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">脚本</label>
-                                <div class="col-sm-10">
-                                    <textarea v-model="addAppVersionJobInfo.jobShell"  rows="15" placeholder="必填，请填写脚本"
-                                        class="form-control"></textarea>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">git地址</label>
+                            <div class="col-sm-10">
+                                <input v-model="addAppVersionJobInfo.gitUrl" type="text" placeholder="必填，请填写代码地址" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">用户名</label>
+                            <div class="col-sm-10">
+                                <input v-model="addAppVersionJobInfo.gitUsername" type="text" placeholder="必填，请填写用户名" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">密码</label>
+                            <div class="col-sm-10">
+                                <input v-model="addAppVersionJobInfo.gitPasswd" type="text" placeholder="必填，请填写密码" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">工作空间</label>
+                            <div class="col-sm-10">
+                                <input v-model="addAppVersionJobInfo.workDir" type="text" placeholder="必填，请填写工作空间" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">构建脚本</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="addAppVersionJobInfo.jobShell" rows="15" placeholder="必填，请填写脚本" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>构建计划</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_addJobPlan()">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        添加
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div>
+                        <div class="form-group row" v-for="(item,index) in addAppVersionJobInfo.appVersionJobImages">
+                            <div class="col-sm-3">
+                                <input v-model="item.packageUrl" type="text" placeholder="必填，请填写构建新包路径" class="form-control">
+                            </div>
+                            <div class="col-sm-3">
+                                <input v-model="item.businessPackageName" type="text" disabled placeholder="必填，请选择业务包" class="form-control">
+                            </div>
+                            <div class="col-sm-1 padding-0">
+                                <button type="button" class="btn btn-white btn-sm" v-on:click="_appChooseBusinessPackage(item)">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    选择
+                                </button>
+                            </div>
+                            <div class="col-sm-3">
+                                <input v-model="item.businessDockerfileName" type="text" disabled placeholder="必填，请选择dockerfile" class="form-control">
+                            </div>
+                            <div class="col-sm-1 padding-0">
+                                <button type="button" class="btn btn-white btn-sm" v-on:click="_appChooseDockerfile(item)">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    选择
+                                </button>
+                                <a href="javascript:void(0)" class="col-form-label" v-on:click="_deleteJobPlan(index)">
+                                    <i class="glyphicon glyphicon-plus"></i> 删除
+                                </a>
                             </div>
 
-                            <div class="ibox-content">
-                                <button class="btn btn-primary float-right" type="button"
-                                    v-on:click="saveAppVersionJobInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
-                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;"
-                                    data-dismiss="modal">取消</button>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="col-lg-12 text-right">
+        <button class="btn btn-primary float-right" type="button" v-on:click="saveAppVersionJobInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
+        <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" @click="_goBack()">取消</button>
+    </div>
+
+    <vc:create path="admin/chooseBusinessPackage" emitChooseBusinessPackage="addAppVersionJob"></vc:create>
+    <vc:create path="admin/chooseDockerfile" emitChooseDockerfile="addAppVersionJob"></vc:create>
+
 </div>

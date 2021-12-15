@@ -1,23 +1,21 @@
-(function (vc) {
-
+(function(vc) {
     vc.extends({
-        propTypes: {
-            callBackListener: vc.propTypes.string, //父组件名称
-            callBackFunction: vc.propTypes.string //父组件监听方法
-        },
         data: {
             addAppVersionJobInfo: {
-                jobId: '',
                 jobName: '',
                 jobShell: '',
-
+                gitUrl: '',
+                gitUsername: '',
+                gitPasswd: '',
+                workDir: '',
+                appVersionJobImages: []
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('addAppVersionJob', 'openAddAppVersionJobModal', function () {
+        _initEvent: function() {
+            vc.on('addAppVersionJob', 'openAddAppVersionJobModal', function() {
                 $('#addAppVersionJobModel').modal('show');
             });
         },
@@ -26,8 +24,7 @@
                 return vc.validate.validate({
                     addAppVersionJobInfo: vc.component.addAppVersionJobInfo
                 }, {
-                    'addAppVersionJobInfo.jobName': [
-                        {
+                    'addAppVersionJobInfo.jobName': [{
                             limit: "required",
                             param: "",
                             errInfo: "名称不能为空"
@@ -38,8 +35,7 @@
                             errInfo: "名称太长"
                         },
                     ],
-                    'addAppVersionJobInfo.jobShell': [
-                        {
+                    'addAppVersionJobInfo.jobShell': [{
                             limit: "required",
                             param: "",
                             errInfo: "脚本不能为空"
@@ -50,33 +46,63 @@
                             errInfo: "脚本错误"
                         },
                     ],
-
-
-
-
+                    'addAppVersionJobInfo.gitUrl': [{
+                            limit: "required",
+                            param: "",
+                            errInfo: "git地址不能为空"
+                        },
+                        {
+                            limit: "maxLength",
+                            param: "512",
+                            errInfo: "git地址太长"
+                        },
+                    ],
+                    'addAppVersionJobInfo.gitUsername': [{
+                            limit: "required",
+                            param: "",
+                            errInfo: "git名称不能为空"
+                        },
+                        {
+                            limit: "maxLength",
+                            param: "128",
+                            errInfo: "git名称太长"
+                        },
+                    ],
+                    'addAppVersionJobInfo.gitPasswd': [{
+                            limit: "required",
+                            param: "",
+                            errInfo: "git密码不能为空"
+                        },
+                        {
+                            limit: "maxLength",
+                            param: "128",
+                            errInfo: "git密码太长"
+                        },
+                    ],
+                    'addAppVersionJobInfo.workDir': [{
+                            limit: "required",
+                            param: "",
+                            errInfo: "工作目录不能为空"
+                        },
+                        {
+                            limit: "maxLength",
+                            param: "128",
+                            errInfo: "工作目录太长"
+                        },
+                    ],
                 });
             },
-            saveAppVersionJobInfo: function () {
+            saveAppVersionJobInfo: function() {
                 if (!vc.component.addAppVersionJobValidate()) {
                     vc.toast(vc.validate.errInfo);
-
                     return;
                 }
-
-                //不提交数据将数据 回调给侦听处理
-                if (vc.notNull($props.callBackListener)) {
-                    vc.emit($props.callBackListener, $props.callBackFunction, vc.component.addAppVersionJobInfo);
-                    $('#addAppVersionJobModel').modal('hide');
-                    return;
-                }
-
                 vc.http.apiPost(
                     '/appVersion/saveAppVersionJob',
-                    JSON.stringify(vc.component.addAppVersionJobInfo),
-                    {
+                    JSON.stringify(vc.component.addAppVersionJobInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
@@ -90,19 +116,45 @@
                         vc.toast(_json.msg);
 
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.toast(errInfo);
 
                     });
             },
-            clearAddAppVersionJobInfo: function () {
+            clearAddAppVersionJobInfo: function() {
                 vc.component.addAppVersionJobInfo = {
                     jobName: '',
                     jobShell: '',
-
+                    gitUrl: '',
+                    gitUsername: '',
+                    gitPasswd: '',
+                    workDir: '',
+                    appVersionJobImages: []
                 };
+            },
+            _addJobPlan: function() {
+                $that.addAppVersionJobInfo.appVersionJobImages.push({
+                    packageUrl: '',
+                    businessPackageId: '',
+                    businessPackageName: '',
+                    businessDockerfileId: '',
+                    businessDockerfileName: ''
+                })
+            },
+            _deleteJobPlan: function(_index) {
+                $that.addAppVersionJobInfo.appVersionJobImages.splice(_index, 1);
+            },
+            _appChooseBusinessPackage: function(_data) {
+                vc.emit('chooseBusinessPackage', 'openChooseBusinessPackageModel', _data);
+            },
+            _appChooseDockerfile: function(_data) {
+                vc.emit('chooseDockerfile', 'openChooseDockerfileModel', _data);
+            },
+            _goBack: function() {
+                vc.emit('appVersionJobManage', 'listAppVersionJob', {});
+
             }
         }
     });

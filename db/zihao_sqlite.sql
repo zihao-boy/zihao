@@ -104,16 +104,18 @@ CREATE TABLE `app_version_attr` (
 -- ----------------------------
 DROP TABLE IF EXISTS `app_version_job`;
 CREATE TABLE `app_version_job` (
-  `job_id` varchar(64) NOT NULL,
-  `job_name` varchar(128) NOT NULL,
-  `job_shell` longtext NOT NULL,
-  `tenant_id` varchar(64) NOT NULL ,
-  `pre_job_time` datetime DEFAULT NULL,
-  `cur_job_time` datetime DEFAULT NULL,
-  `state` varchar(12) NOT NULL DEFAULT '10012' ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status_cd` varchar(2) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`job_id`)
+       `job_id` varchar(64) NOT NULL,
+       `job_name` varchar(128) NOT NULL,
+       git_url varchar(512) not null,
+       git_username varchar(128) ,
+       git_passwd varchar(128) ,
+       work_dir varchar(512) not null,
+       `job_shell` longtext NOT NULL,
+       `tenant_id` varchar(64) NOT NULL ,
+       `state` varchar(12) NOT NULL DEFAULT '10012' ,
+       `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       `status_cd` varchar(2) NOT NULL DEFAULT '0',
+       PRIMARY KEY (`job_id`)
 );
 
 -- ----------------------------
@@ -3582,8 +3584,9 @@ create table app_version_job_images(
        job_images_id varchar(64) not null,
        tenant_id varchar(64) not null,
        package_url varchar(512) not null ,
-       business_package_name varchar(256) not null ,
-       business_images_name varchar(256) not null,
+       business_package_id varchar(64) not null ,
+       business_dockerfile_id varchar(64) not null,
        create_time timestamp not null DEFAULT CURRENT_TIMESTAMP ,
-       status_cd varchar(2) not null DEFAULT '0'
+       status_cd varchar(2) not null DEFAULT '0',
+       job_id varchar(64) not null
 );

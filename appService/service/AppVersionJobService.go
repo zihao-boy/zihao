@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	"os"
+	"github.com/zihao-boy/zihao/common/date"
 	"os/exec"
 	systemUser "os/user"
 	"strconv"
@@ -10,7 +10,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/appService/dao"
 	"github.com/zihao-boy/zihao/common/constants"
-	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/appVersionJob"
 	"github.com/zihao-boy/zihao/entity/dto/result"
@@ -110,39 +109,63 @@ func (appVersionJobService *AppVersionJobService) SaveAppVersionJobs(ctx iris.Co
 	appVersionJobDto.TenantId = user.TenantId
 	appVersionJobDto.JobId = seq.Generator()
 	appVersionJobDto.State = appVersionJob.STATE_wait
-	appVersionJobDto.PreJobTime = date.GetNowTimeString()
-	appVersionJobDto.CurJobTime = date.GetNowTimeString()
+	appVersionJobDto.JobTime = date.GetNowTimeString()
 
 	err = appVersionJobService.appVersionJobDao.SaveAppVersionJob(appVersionJobDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	tmpUser, _ := systemUser.Current()
-	var path string = tmpUser.HomeDir + "/zihao/" + appVersionJobDto.JobId + "/"
-	var fileName string = appVersionJobDto.JobId + ".sh"
-
-	_, err = os.Stat(path)
-
-	if err != nil && os.IsNotExist(err) {
-		err = os.MkdirAll(path, 0777)
+	if len(appVersionJobDto.AppVersionJobImages) > 0 {
+		err = appVersionJobService.saveAppVersionJobImage(appVersionJobDto,appVersionJobDto.AppVersionJobImages)
+		if err != nil {
+			return result.Error(err.Error())
+		}
 	}
 
-	//当前用户目录下生成 文件夹
-	file, err := os.OpenFile(path+fileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0777)
-	defer func() { file.Close() }()
-	if err != nil && os.IsNotExist(err) {
-		file, err = os.Create(path + fileName)
-	}
-	_, err = file.WriteString("cd " + path + "\n")
-	_, err = file.WriteString(appVersionJobDto.JobShell)
-
-	if err != nil {
-		fmt.Print("err=", err.Error())
-	}
+	//var jobPath string = path.Join(appVersionJobDto.WorkDir, appVersionJobDto.JobId)
+	//var fileName string = "job.sh"
+	//
+	//_, err = os.Stat(jobPath)
+	//
+	//if err != nil && os.IsNotExist(err) {
+	//	err = os.MkdirAll(jobPath, 0777)
+	//}
+	//
+	////当前用户目录下生成 文件夹
+	//file, err := os.OpenFile(path.Join(jobPath, fileName), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0777)
+	//defer func() {
+	//	file.Close()
+	//}()
+	//if err != nil && os.IsNotExist(err) {
+	//	file, err = os.Create(path.Join(jobPath, fileName))
+	//}
+	//_, err = file.WriteString("cd " + jobPath + "\n")
+	//_, err = file.WriteString(appVersionJobDto.JobShell)
+	//
+	//if err != nil {
+	//	fmt.Print("err=", err.Error())
+	//}
 
 	return result.SuccessData(appVersionJobDto)
 
+}
+
+// 保存 构建计划
+func (appVersionJobService *AppVersionJobService) saveAppVersionJobImage(appVersionJobDto appVersionJob.AppVersionJobDto,
+	imagess []appVersionJob.AppVersionJobImagesDto) error {
+
+	for _, images := range imagess {
+		images.TenantId = appVersionJobDto.TenantId
+		images.JobId = appVersionJobDto.JobId
+		images.JobImagesId = seq.Generator()
+		err := appVersionJobService.appVersionJobDao.SaveAppVersionJobImages(images)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 /**
@@ -163,32 +186,43 @@ func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobs(ctx iris.
 	if err != nil {
 		return result.Error(err.Error())
 	}
-
-	tmpUser, _ := systemUser.Current()
-	var path string = tmpUser.HomeDir + "/zihao/" + appVersionJobDto.JobId + "/"
-	var fileName string = appVersionJobDto.JobId + ".sh"
-
-	_, err = os.Stat(path)
-
-	if err != nil && os.IsNotExist(err) {
-		err = os.MkdirAll(path, 0777)
+	if len(appVersionJobDto.AppVersionJobImages) < 1{
+		return result.SuccessData(appVersionJobDto)
 	}
-
-	//当前用户目录下生成 文件夹
-	file, err := os.OpenFile(path+fileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0777)
-	defer func() { file.Close() }()
-	if err != nil && os.IsNotExist(err) {
-		file, err = os.Create(path + fileName)
+	var appVersionJobImagesDto = appVersionJob.AppVersionJobImagesDto{
+		JobId: appVersionJobDto.JobId,
 	}
-	_, err = file.WriteString("cd " + path + "\n")
-	_, err = file.WriteString(appVersionJobDto.JobShell)
-
+	err = appVersionJobService.appVersionJobDao.DeleteAppVersionJobImages(appVersionJobImagesDto)
 	if err != nil {
-		fmt.Print("err=", err.Error())
+		return result.Error(err.Error())
 	}
-
+	err = appVersionJobService.saveAppVersionJobImage(appVersionJobDto,appVersionJobDto.AppVersionJobImages)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	//tmpUser, _ := systemUser.Current()
+	//var path string = tmpUser.HomeDir + "/zihao/" + appVersionJobDto.JobId + "/"
+	//var fileName string = appVersionJobDto.JobId + ".sh"
+	//
+	//_, err = os.Stat(path)
+	//
+	//if err != nil && os.IsNotExist(err) {
+	//	err = os.MkdirAll(path, 0777)
+	//}
+	//
+	////当前用户目录下生成 文件夹
+	//file, err := os.OpenFile(path+fileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0777)
+	//defer func() { file.Close() }()
+	//if err != nil && os.IsNotExist(err) {
+	//	file, err = os.Create(path + fileName)
+	//}
+	//_, err = file.WriteString("cd " + path + "\n")
+	//_, err = file.WriteString(appVersionJobDto.JobShell)
+	//
+	//if err != nil {
+	//	fmt.Print("err=", err.Error())
+	//}
 	return result.SuccessData(appVersionJobDto)
-
 }
 
 /**
@@ -270,10 +304,10 @@ func (appVersionJobService *AppVersionJobService) DeleteAppVersionJobs(ctx iris.
 
 func (appVersionJobService *AppVersionJobService) GetAppVersionJobImages(ctx iris.Context) interface{} {
 	var (
-		err               error
-		page              int64
-		row               int64
-		total             int64
+		err                     error
+		page                    int64
+		row                     int64
+		total                   int64
 		appVersionJobImagesDto  = appVersionJob.AppVersionJobImagesDto{}
 		appVersionJobImagesDtos []*appVersionJob.AppVersionJobImagesDto
 	)
@@ -296,6 +330,7 @@ func (appVersionJobService *AppVersionJobService) GetAppVersionJobImages(ctx iri
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
 	appVersionJobImagesDto.TenantId = user.TenantId
+	appVersionJobImagesDto.JobId = ctx.URLParam("jobId")
 
 	total, err = appVersionJobService.appVersionJobDao.GetAppVersionJobImagesCount(appVersionJobImagesDto)
 
@@ -317,7 +352,7 @@ func (appVersionJobService *AppVersionJobService) GetAppVersionJobImages(ctx iri
 
 func (appVersionJobService *AppVersionJobService) SaveAppVersionJobImages(ctx iris.Context) interface{} {
 	var (
-		err              error
+		err                    error
 		appVersionJobImagesDto appVersionJob.AppVersionJobImagesDto
 	)
 
@@ -338,7 +373,7 @@ func (appVersionJobService *AppVersionJobService) SaveAppVersionJobImages(ctx ir
 
 func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobImages(ctx iris.Context) interface{} {
 	var (
-		err              error
+		err                    error
 		appVersionJobImagesDto appVersionJob.AppVersionJobImagesDto
 	)
 
@@ -357,7 +392,7 @@ func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobImages(ctx 
 
 func (appVersionJobService *AppVersionJobService) DeleteAppVersionJobImages(ctx iris.Context) interface{} {
 	var (
-		err              error
+		err                    error
 		appVersionJobImagesDto appVersionJob.AppVersionJobImagesDto
 	)
 
