@@ -15,13 +15,14 @@ type TailLog struct {
 
 var (
 	tailLogs = make(map[string]*TailLog)
+	tails = make(map[string]*tail.Tail)
 )
 
 func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 
 	path := string(data)
 
-	tails, err := tail.TailFile(path, tail.Config{
+	taill, err := tail.TailFile(path, tail.Config{
 		ReOpen: true, // 文件被移除或被打包，需要重新打开,基础库会检测，如果文件有改变，会重新打开
 		Follow: true, // 实时跟踪
 		//Location:  &tail.SeekInfo{Offset: 0, Whence: 2}, // 如果程序出现异常，保存上次读取的位置，避免重新读取
@@ -39,15 +40,17 @@ func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 		Conn:   true,
 	}
 	tailLogs[connId] = &tailLog
+	tails[connId] = taill
 
 	go func() {
 		var msg *tail.Line
 		var ok bool
-		for tailLogs[connId].Conn {
-			msg, ok = <-tails.Lines //chan
+		_,logOk:=tailLogs[connId];
+		for logOk {
+			msg, ok = <-taill.Lines //chan
 			if !ok {
 				// ok 是判断管道是否被关闭，如果关闭就是文件被重置了，需要重新读取新的管道
-				fmt.Printf("tail file close reopen, filename:%s\n", tails.Filename)
+				fmt.Printf("tail file close reopen, filename:%s\n", taill.Filename)
 				time.Sleep(100 * time.Millisecond)
 				continue
 			}
@@ -69,8 +72,12 @@ func CloseTail(connId string) {
 	if tailLog.ConnId == "" {
 		return
 	}
+	if _, ok := tails[connId]; ok {
+		tails[connId].Stop()
+		delete(tails, connId)
+	}
 
-	fmt.Println("----------------------------------------------------------> tailLog.Conn",tailLog.Conn)
-	tailLog.Conn = false
-	tailLogs[connId] =tailLog
+	if _, ok := tailLogs[connId]; ok {
+		delete(tailLogs, connId)
+	}
 }
