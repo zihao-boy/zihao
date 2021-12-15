@@ -115,6 +115,7 @@ CREATE TABLE `app_version_job` (
        `state` varchar(12) NOT NULL DEFAULT '10012' ,
        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
        `status_cd` varchar(2) NOT NULL DEFAULT '0',
+       `job_time` datetime NOT NULL ,
        PRIMARY KEY (`job_id`)
 );
 

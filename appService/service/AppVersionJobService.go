@@ -295,9 +295,9 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	//git 拉代码
 	var git_url string = "cd " + workDir + " \n git clone "
 	if len(appVersionJobDto.GitUsername) < 1 {
-		git_url += appVersionJobDto.GitUrl
+		git_url = git_url + appVersionJobDto.GitUrl
 	} else {
-		git_url = strings.Replace(appVersionJobDto.GitUrl, ":\\", ":\\"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
+		git_url = git_url + strings.Replace(appVersionJobDto.GitUrl, ":\\", ":\\"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
 	}
 	git_url += "\n"
 	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
