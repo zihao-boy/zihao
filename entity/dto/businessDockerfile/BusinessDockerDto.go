@@ -13,4 +13,5 @@ type BusinessDockerfileDto struct {
 	StatusCd     string `json:"statusCd" sql:"-"`
 	TenantId     string `json:"tenantId" sql:"-"`
 	Username     string `json:"username" sql:"-"`
+	LogPath      string `json:"logPath"`
 }

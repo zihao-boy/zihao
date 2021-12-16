@@ -1,6 +1,7 @@
 package dockerfileQueue
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/common/date"
@@ -12,6 +13,7 @@ import (
 	"github.com/zihao-boy/zihao/softService/dao"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"sync"
 )
@@ -57,7 +59,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		f                 *os.File
 		err               error
 		cmd               *exec.Cmd
-		version string = "V"+date.GetNowAString()
+		version           string = "V" + date.GetNowAString()
 	)
 
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
@@ -70,12 +72,11 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	dest += "/Dockerfile"
 
-	if  utils.IsFile(dest) {
+	if utils.IsFile(dest) {
 		//f, err = os.OpenFile(dest, os.O_RDWR, 0600)
 		os.Remove(dest)
 	}
-		f, err = os.Create(dest)
-
+	f, err = os.Create(dest)
 
 	defer f.Close()
 	if err != nil {
@@ -89,33 +90,55 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	imageRepository, _ := factory.GetMappingValue("IMAGES_REPOSITORY")
 
-	imageName := imageRepository + businessDockerfileDto.Name + ":" +version
+	imageName := imageRepository + businessDockerfileDto.Name + ":" + version
 
 	shellScript := "docker build -f " + dest + " -t " + imageName + " ."
 	//生成镜像
-	cmd = exec.Command("bash", "-c",shellScript)
+	cmd = exec.Command("bash", "-c", shellScript)
 	cmd.Dir = tenantDesc
 	output, _ := cmd.CombinedOutput()
-	fmt.Print("构建镜像：" + shellScript +" 返回："+  string(output))
+
+	//打开日志文件
+	var logFile *os.File
+	if businessDockerfileDto.LogPath == ""{
+		businessDockerfileDto.LogPath = path.Join(tenantDesc,seq.Generator()+".log")
+		logFile, err = os.Create(businessDockerfileDto.LogPath)
+	}else{
+		logFile, err = os.OpenFile(businessDockerfileDto.LogPath, os.O_WRONLY|os.O_CREATE, 0666)
+	}
+	defer func() {
+		logFile.Close()
+	}()
+	if err != nil {
+		fmt.Println("文件打开失败", err)
+	}
+	//及时关闭file句柄
+
+	write := bufio.NewWriter(logFile)
+	fmt.Print("构建镜像：" + shellScript + " 返回：" + string(output))
+	write.WriteString("构建镜像：" + shellScript + " 返回：" + string(output))
 
 	dockerRepositoryUrl, _ := factory.GetMappingValue("DOCKER_REPOSITORY_URL")
 	username, _ := factory.GetMappingValue("DOCKER_USERNAME")
 	password, _ := factory.GetMappingValue("DOCKER_PASSWORD")
 	//登录镜像仓库
 	shellScript = "docker login --username=" + username + " --password=" + password + " " + dockerRepositoryUrl
-	cmd = exec.Command("bash", "-c",shellScript)
+	cmd = exec.Command("bash", "-c", shellScript)
 
 	output, _ = cmd.CombinedOutput()
-	fmt.Print("登录：" + shellScript +" 返回："+  string(output))
+	fmt.Print("登录：" + shellScript + " 返回：" + string(output))
+	write.WriteString("登录：" + shellScript + " 返回：" + string(output))
 
 	//推镜像
 	shellScript = "docker push " + imageName
 
-	cmd = exec.Command("bash", "-c",shellScript)
+	cmd = exec.Command("bash", "-c", shellScript)
 
 	output, _ = cmd.CombinedOutput()
 
-	fmt.Print("推镜像：" + shellScript +" 返回："+ string(output))
+	fmt.Print("推镜像：" + shellScript + " 返回：" + string(output))
+	write.WriteString("推镜像：" + shellScript + " 返回：" + string(output))
+	write.Flush()
 
 	businessImagesDto := businessImages.BusinessImagesDto{}
 	businessImagesDto.TenantId = businessDockerfileDto.TenantId

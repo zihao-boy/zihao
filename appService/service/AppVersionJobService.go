@@ -440,6 +440,7 @@ func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto
 		return
 	}
 	//消息队列
+	businessDockerfileDtos[0].LogPath = jobDetailDto.LogPath
 	dockerfileQueue.SendData(businessDockerfileDtos[0])
 }
 
