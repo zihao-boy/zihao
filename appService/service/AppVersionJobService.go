@@ -276,10 +276,10 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 
 	//删除目录
-	if utils.IsDir(workDir) {
-		err = os.RemoveAll(workDir)
+	if !utils.IsDir(workDir) {
+		//err = os.RemoveAll(workDir)
+		utils.CreateDir(workDir)
 	}
-	utils.CreateDir(workDir)
 
 	dest := path.Join(workDir, "build.sh")
 	// remove file that exists
@@ -293,12 +293,19 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}()
 
 	//git 拉代码
-	var git_url string = "cd " + workDir + " \n git clone "
+	var git_url string = ""
 	if appVersionJobDto.GitUsername == "" {
-		git_url = git_url + appVersionJobDto.GitUrl
+		git_url =  appVersionJobDto.GitUrl
 	} else {
-		git_url = git_url + strings.Replace(appVersionJobDto.GitUrl, "://", "://"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
+		git_url =  strings.Replace(appVersionJobDto.GitUrl, "://", "://"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
 	}
+
+	if !utils.IsDir(path.Join(workDir,"job")) {
+		git_url =  "cd " + workDir + " \n git clone " +git_url + " job"
+	}else{
+		git_url =  "cd " + path.Join(workDir,"job") + "\n git pull " +git_url
+	}
+
 	git_url += "\n"
 	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
 
