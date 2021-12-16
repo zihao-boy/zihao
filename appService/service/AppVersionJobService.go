@@ -297,7 +297,7 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	if appVersionJobDto.GitUsername == "" {
 		git_url = git_url + appVersionJobDto.GitUrl
 	} else {
-		git_url = git_url + strings.Replace(appVersionJobDto.GitUrl, ":\\", ":\\"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
+		git_url = git_url + strings.Replace(appVersionJobDto.GitUrl, "://", "://"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
 	}
 	git_url += "\n"
 	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
