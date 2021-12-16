@@ -104,7 +104,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		businessDockerfileDto.LogPath = path.Join(tenantDesc,seq.Generator()+".log")
 		logFile, err = os.Create(businessDockerfileDto.LogPath)
 	}else{
-		logFile, err = os.OpenFile(businessDockerfileDto.LogPath, os.O_WRONLY|os.O_CREATE, 0666)
+		logFile, err = os.OpenFile(businessDockerfileDto.LogPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
 	}
 	defer func() {
 		logFile.Close()
