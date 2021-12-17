@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const timeLimit = 3
+const timeLimit = 0
 
 func TimeoutWarning(tag, detailed string, start time.Time) {
 	dis := time.Now().Sub(start).Seconds()
