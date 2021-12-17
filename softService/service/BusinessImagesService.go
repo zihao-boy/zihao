@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
@@ -18,6 +19,7 @@ import (
 	"github.com/zihao-boy/zihao/softService/dao"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 type BusinessImagesService struct {
@@ -192,6 +194,8 @@ func (businessImagesService *BusinessImagesService) GeneratorImages(ctx iris.Con
 		err                   error
 		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
+	defer costTime.TimeoutWarning("BusinessImagesService","GeneratorImages",time.Now())
+
 
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 

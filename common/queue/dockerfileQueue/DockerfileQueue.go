@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/zihao-boy/zihao/common/cache/factory"
+	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/utils"
@@ -16,6 +17,7 @@ import (
 	"path"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 var lock sync.Mutex
@@ -38,6 +40,7 @@ func initQueue() {
 }
 
 func SendData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
+	defer costTime.TimeoutWarning("DockerfileQueue","SendData",time.Now())
 	initQueue()
 	que <- businessDockerfileDto
 }
@@ -61,6 +64,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		cmd               *exec.Cmd
 		version           string = "V" + date.GetNowAString()
 	)
+	defer costTime.TimeoutWarning("DockerfileQueue","businessDockerfileDto",time.Now())
 
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
 

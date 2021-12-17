@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
 	"github.com/zihao-boy/zihao/common/shell"
@@ -14,6 +15,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/appService/dao"
@@ -398,6 +400,9 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto *appVersionJob.AppVersionJobImagesDto,
 	jobDetailDto appVersionJob.AppVersionJobDetailDto,
 	appVersionJobDto appVersionJob.AppVersionJobDto) {
+
+	defer costTime.TimeoutWarning("AppVersionJobService","doGeneratorImages",time.Now())
+
 	workDir := path.Join(appVersionJobDto.WorkDir, appVersionJobDto.JobId)
 	//判断是否是 /开头
 	if !strings.HasPrefix(workDir, "/") {
