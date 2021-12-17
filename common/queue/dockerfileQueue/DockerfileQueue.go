@@ -27,13 +27,19 @@ var que chan *businessDockerfile.BusinessDockerfileDto
 初始化
 */
 func initQueue() {
-	lock.Lock()
+
+
 	if que != nil {
+		return
+	}
+	lock.Lock()
+	defer func() {
 		lock.Unlock()
+	}()
+	if que != nil {
 		return
 	}
 	que = make(chan *businessDockerfile.BusinessDockerfileDto, 100)
-	lock.Unlock()
 
 	go readData(que)
 
