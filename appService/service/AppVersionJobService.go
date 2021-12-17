@@ -296,16 +296,16 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 
 	//git 拉代码
 	var git_url string = ""
-	if appVersionJobDto.GitUsername == "" || strings.Trim(appVersionJobDto.GitUsername," ") == "无" {
-		git_url =  appVersionJobDto.GitUrl
+	if appVersionJobDto.GitUsername == "" || strings.Trim(appVersionJobDto.GitUsername, " ") == "无" {
+		git_url = appVersionJobDto.GitUrl
 	} else {
-		git_url =  strings.Replace(appVersionJobDto.GitUrl, "://", "://"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
+		git_url = strings.Replace(appVersionJobDto.GitUrl, "://", "://"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
 	}
 
-	if !utils.IsDir(path.Join(workDir,"job")) {
-		git_url =  "cd " + workDir + " \n git clone " +git_url + " job \n cd job"
-	}else{
-		git_url =  "cd " + path.Join(workDir,"job") + "\n git pull " +git_url
+	if !utils.IsDir(path.Join(workDir, "job")) {
+		git_url = "cd " + workDir + " \n git clone " + git_url + " job \n cd job"
+	} else {
+		git_url = "cd " + path.Join(workDir, "job") + "\n git pull " + git_url
 	}
 
 	git_url += "\n"
@@ -336,7 +336,6 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 
 	jobShell := "nohup sh " + dest + " >" + path.Join(workDir, appVersionJobDto.JobId+".log") + " &"
-
 
 	go shell.ExecLocalShell(jobShell)
 
@@ -397,17 +396,20 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	return result.Success()
 }
 
+// to do generator images
 func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto *appVersionJob.AppVersionJobImagesDto,
 	jobDetailDto appVersionJob.AppVersionJobDetailDto,
 	appVersionJobDto appVersionJob.AppVersionJobDto) {
 
-	defer costTime.TimeoutWarning("AppVersionJobService","doGeneratorImages",time.Now())
+	defer costTime.TimeoutWarning("AppVersionJobService", "doGeneratorImages", time.Now())
 
 	workDir := path.Join(appVersionJobDto.WorkDir, appVersionJobDto.JobId)
 	//判断是否是 /开头
 	if !strings.HasPrefix(workDir, "/") {
 		workDir = "/" + workDir
 	}
+
+	workDir = path.Join(workDir, "job")
 	businessJar := path.Join(workDir, jobImagesDto.PackageUrl)
 
 	//查询业务包
@@ -428,7 +430,7 @@ func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto
 		fmt.Println(err)
 		return
 	}
-	err = ioutil.WriteFile(targetPath, input, 0644)
+	err = ioutil.WriteFile(targetPath, input, 0777)
 	if err != nil {
 		fmt.Println("Error creating", targetPath)
 		fmt.Println(err)
@@ -579,9 +581,8 @@ func (appVersionJobService *AppVersionJobService) DeleteAppVersionJobImages(ctx 
 
 func (appVersionJobService *AppVersionJobService) GetJobLog(ctx iris.Context) interface{} {
 	var (
-		appVersionJobDetailDto  = appVersionJob.AppVersionJobDetailDto{}
+		appVersionJobDetailDto = appVersionJob.AppVersionJobDetailDto{}
 	)
-
 
 	appVersionJobDetailDto.Row = 1
 	appVersionJobDetailDto.Page = 0
@@ -593,7 +594,7 @@ func (appVersionJobService *AppVersionJobService) GetJobLog(ctx iris.Context) in
 
 	appVersionJobDetailDtos, _ := appVersionJobService.appVersionJobDetailDao.GetAppVersionJobDetails(appVersionJobDetailDto)
 
-	if len(appVersionJobDetailDtos) < 1{
+	if len(appVersionJobDetailDtos) < 1 {
 		return result.Error("没有日志")
 	}
 

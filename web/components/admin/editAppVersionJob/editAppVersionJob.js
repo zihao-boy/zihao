@@ -138,6 +138,9 @@
                 };
             },
             _addEditJobPlan: function() {
+                if (!$that.editAppVersionJobInfo.appVersionJobImages) {
+                    $that.editAppVersionJobInfo.appVersionJobImages = []
+                }
                 $that.editAppVersionJobInfo.appVersionJobImages.push({
                     packageUrl: '',
                     businessPackageId: '',

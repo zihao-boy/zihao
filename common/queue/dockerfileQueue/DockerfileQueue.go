@@ -64,7 +64,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		cmd               *exec.Cmd
 		version           string = "V" + date.GetNowAString()
 	)
-	defer costTime.TimeoutWarning("DockerfileQueue","businessDockerfileDto",time.Now())
+	defer costTime.TimeoutWarning("DockerfileQueue","dealData",time.Now())
 
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
 
