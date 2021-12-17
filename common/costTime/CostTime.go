@@ -17,7 +17,7 @@ func TimeoutWarning(tag, detailed string, start time.Time) {
 		//pubstr := fmt.Sprintf("%s count %v, using %f seconds", tag, count, dis)
 		//stats.Publish(tag, pubstr)
 	}
-	logfile, err := os.OpenFile("/zihao/timeout.log", os.O_RDWR|os.O_CREATE, 0666)
+	logfile, err := os.OpenFile("/zihao/timeout.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer logfile.Close()
 	if err != nil {
 		fmt.Printf("%s\r\n", err.Error())
