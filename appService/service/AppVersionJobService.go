@@ -294,7 +294,7 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 
 	//git 拉代码
 	var git_url string = ""
-	if appVersionJobDto.GitUsername == "" {
+	if appVersionJobDto.GitUsername == "" || strings.Trim(appVersionJobDto.GitUsername," ") == "无" {
 		git_url =  appVersionJobDto.GitUrl
 	} else {
 		git_url =  strings.Replace(appVersionJobDto.GitUrl, "://", "://"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
