@@ -34,6 +34,8 @@ git config --global --unset https.proxy
 
 yum install -y wget && wget https://homecommunity.oss-cn-beijing.aliyuncs.com/install.sh && sh install.sh
 
+yum install -y wget && wget https://homecommunity.oss-cn-beijing.aliyuncs.com/install.sh -O zihaoinstall.sh && sh zihaoinstall.sh
+
 访问地址 http://ip:7000
 
 账号为 zihao 

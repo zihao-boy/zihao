@@ -301,7 +301,7 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 
 	if !utils.IsDir(path.Join(workDir,"job")) {
-		git_url =  "cd " + workDir + " \n git clone " +git_url + " job"
+		git_url =  "cd " + workDir + " \n git clone " +git_url + " job \n cd job"
 	}else{
 		git_url =  "cd " + path.Join(workDir,"job") + "\n git pull " +git_url
 	}
