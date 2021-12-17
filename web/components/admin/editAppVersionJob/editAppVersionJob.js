@@ -61,28 +61,6 @@
                             errInfo: "git地址太长"
                         },
                     ],
-                    'editAppVersionJobInfo.gitUsername': [{
-                            limit: "required",
-                            param: "",
-                            errInfo: "git名称不能为空"
-                        },
-                        {
-                            limit: "maxLength",
-                            param: "128",
-                            errInfo: "git名称太长"
-                        },
-                    ],
-                    'editAppVersionJobInfo.gitPasswd': [{
-                            limit: "required",
-                            param: "",
-                            errInfo: "git密码不能为空"
-                        },
-                        {
-                            limit: "maxLength",
-                            param: "128",
-                            errInfo: "git密码太长"
-                        },
-                    ],
                     'editAppVersionJobInfo.workDir': [{
                             limit: "required",
                             param: "",
