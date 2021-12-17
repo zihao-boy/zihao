@@ -121,7 +121,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	write := bufio.NewWriter(logFile)
 	fmt.Print("构建镜像：" + shellScript + " 返回：" + string(output))
 	write.WriteString("构建镜像：" + shellScript + " 返回：" + string(output))
-
+	write.Flush()
 	dockerRepositoryUrl, _ := factory.GetMappingValue("DOCKER_REPOSITORY_URL")
 	username, _ := factory.GetMappingValue("DOCKER_USERNAME")
 	password, _ := factory.GetMappingValue("DOCKER_PASSWORD")
@@ -132,7 +132,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	output, _ = cmd.CombinedOutput()
 	fmt.Print("登录：" + shellScript + " 返回：" + string(output))
 	write.WriteString("登录：" + shellScript + " 返回：" + string(output))
-
+	write.Flush()
 	//推镜像
 	shellScript = "docker push " + imageName
 
