@@ -12,7 +12,7 @@
         },
         _initMethod: function() {
             $that.fileManagerInfo.hostId = vc.getParam('hostId');
-            let _cacheCurPath = vc.getData('curPath');
+            let _cacheCurPath = vc.getData($that.fileManagerInfo.hostId + '_curPath');
             if (_cacheCurPath) {
                 $that.fileManagerInfo.curPath = _cacheCurPath;
             }
@@ -63,7 +63,7 @@
                     return;
                 }
                 //存起来方便操作
-                vc.saveData('curPath', $that.fileManagerInfo.curPath);
+                vc.saveData($that.fileManagerInfo.hostId + '_curPath', $that.fileManagerInfo.curPath);
                 let param = {
                     params: {
                         hostId: $that.fileManagerInfo.hostId,
