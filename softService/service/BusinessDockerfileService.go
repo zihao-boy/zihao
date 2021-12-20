@@ -65,6 +65,9 @@ func (businessDockerfileService *BusinessDockerfileService) GetBusinessDockerfil
 	businessDockerfileDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessDockerfileDto.TenantId = user.TenantId
+	businessDockerfileDto.Name = ctx.URLParam("name")
+	businessDockerfileDto.Version = ctx.URLParam("version")
+	businessDockerfileDto.Id = ctx.URLParam("id")
 
 	total, err = businessDockerfileService.businessDockerfileDao.GetBusinessDockerfileCount(businessDockerfileDto)
 

@@ -142,6 +142,9 @@
                 }
 
                 return "离线"
+            },
+            _toHosts: function(_container) {
+                vc.jumpToPage('/index.html#/pages/admin/hostDetailManage?hostId=' + _container.hostId)
             }
 
 

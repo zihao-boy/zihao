@@ -26,7 +26,10 @@ const (
 			and t.state = #State#
 			$endif
 			$if AsName != '' then
-			and t.as_name = #AsName#
+			and t.as_name like '%'|| #AsName# || '%'
+			$endif
+			$if AsGroupId != '' then
+			and t.as_group_id = #AsGroupId#
 			$endif
 	`
 
@@ -54,7 +57,10 @@ where t.status_cd = '0'
 					and t.state = #State#
 					$endif
 					$if AsName != '' then
-					and t.as_name = #AsName#
+					and t.as_name like '%'|| #AsName# || '%'
+					$endif
+					$if AsGroupId != '' then
+					and t.as_group_id = #AsGroupId#
 					$endif
 					order by t.create_time desc
 					$if Row != 0 then

@@ -1,7 +1,6 @@
-function WSSHClient() {
-};
+function WSSHClient() {};
 
-WSSHClient.prototype._generateEndpoint = function () {
+WSSHClient.prototype._generateEndpoint = function() {
     if (window.location.protocol == 'https:') {
         var protocol = 'wss://';
     } else {
@@ -14,7 +13,7 @@ WSSHClient.prototype._generateEndpoint = function () {
     return endpoint;
 };
 
-WSSHClient.prototype.connect = function (options) {
+WSSHClient.prototype.connect = function(options) {
     var endpoint = this._generateEndpoint();
 
     if (window.WebSocket) {
@@ -26,39 +25,39 @@ WSSHClient.prototype.connect = function (options) {
         return;
     }
 
-    this._connection.onopen = function () {
+    this._connection.onopen = function() {
         options.onConnect();
     };
 
-    this._connection.onmessage = function (evt) {
+    this._connection.onmessage = function(evt) {
         var data = evt.data.toString();
         //data = base64.decode(data);
         options.onData(data);
     };
 
 
-    this._connection.onclose = function (evt) {
+    this._connection.onclose = function(evt) {
         options.onClose();
     };
 };
 
-WSSHClient.prototype.send = function (data) {
+WSSHClient.prototype.send = function(data) {
     this._connection.send(JSON.stringify(data));
 };
 
-WSSHClient.prototype.sendInitData = function (options) {
+WSSHClient.prototype.sendInitData = function(options) {
     //连接参数
     this._connection.send(JSON.stringify(options));
 }
 
-WSSHClient.prototype.sendClientData = function (data) {
+WSSHClient.prototype.sendClientData = function(data) {
     //发送指令
     this._connection.send(JSON.stringify({ "operate": "command", "command": data }))
 }
 
 var client = new WSSHClient();
 
-getParam = function (_key) {
+getParam = function(_key) {
     //返回当前 URL 的查询部分（问号 ? 之后的部分）。
     let urlParameters = location.search;
     if (urlParameters != null && urlParameters != undefined && urlParameters != '') {
@@ -102,12 +101,17 @@ function initShell() {
 
     if (command != null && val == 'restart') {
 
-        command = 'docker restart ' + command +'\n docker logs -f --tail 1 ' +command;
+        command = 'docker restart ' + command + '\n docker logs -f --tail 1 ' + command;
+    }
+
+    if (command != null && val == 'cd') {
+
+        command = 'cd ' + command;
     }
     //document.body.clientWidth ||
-    let winWidth =  document.documentElement.clientWidth;
+    let winWidth = document.documentElement.clientWidth;
     //document.body.clientHeight ||
-    let winHeight =  document.documentElement.clientHeight;
+    let winHeight = document.documentElement.clientHeight;
 
     openTerminal({
         operate: 'connect',
@@ -117,10 +121,11 @@ function initShell() {
         winWidth: winWidth,
         winHeight: winHeight,
     });
+
     function openTerminal(options) {
         var client = new WSSHClient();
-        let _cols = Math.floor(winWidth / 9) -5;
-        let _rows = Math.floor(winHeight / 16) -4;
+        let _cols = Math.floor(winWidth / 9) - 5;
+        let _rows = Math.floor(winHeight / 16) - 4;
         var term = new Terminal({
             cols: _cols,
             rows: _rows,
@@ -133,7 +138,7 @@ function initShell() {
             winWidth: winWidth
         });
 
-        term.on('data', function (data) {
+        term.on('data', function(data) {
             //键盘输入时的回调函数
             client.sendClientData(data);
         });
@@ -142,22 +147,22 @@ function initShell() {
         term.write('connection...');
         //执行连接操作
         client.connect({
-            onError: function (error) {
+            onError: function(error) {
                 //连接失败回调
                 term.write('error: ' + error + '\r\n');
             },
-            onConnect: function () {
+            onConnect: function() {
                 //连接成功回调
                 client.sendInitData(options);
-                if(command != null && command != undefined && command != ''){
+                if (command != null && command != undefined && command != '') {
                     client.sendClientData(command + '\n')
                 }
             },
-            onClose: function () {
+            onClose: function() {
                 //连接关闭回调
                 term.write("\connection close ....");
             },
-            onData: function (data) {
+            onData: function(data) {
                 //收到数据时回调
                 term.write(data);
             }

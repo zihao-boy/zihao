@@ -15,7 +15,8 @@
                 component: 'businessDockerfileManage',
                 conditions: {
                     id: '',
-                    name: ''
+                    name: '',
+                    version: ''
                 }
             }
         },

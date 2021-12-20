@@ -24,13 +24,16 @@
                     <td class="text-center">{{event.createTime}}</td>
                     <td class="text-center">
                         <div class="btn-group">
-                            <button class="btn-white btn btn-xs" v-on:click="_enterContainer(event)">进入容器</button>
+                            <button class="btn-white btn btn-xs" v-on:click="_enterContainer(event)">进入</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn-white btn btn-xs" v-on:click="_restartContainer(event)">重启容器</button>
+                            <button class="btn-white btn btn-xs" v-on:click="_restartContainer(event)">重启</button>
                         </div>
                         <div class="btn-group">
-                            <button class="btn-white btn btn-xs" v-on:click="_viewContainerLog(event)">查看日志</button>
+                            <button class="btn-white btn btn-xs" v-on:click="_viewContainerLog(event)">日志</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" v-on:click="_toHosts(event)">主机</button>
                         </div>
                     </td>
 

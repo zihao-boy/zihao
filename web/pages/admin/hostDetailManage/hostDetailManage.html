@@ -38,25 +38,47 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label class="col-form-label">内存：</label>
+                                <label class="col-form-label">总内存：</label>
                                 <label class="">{{hostDetailManageInfo.mem}}</label>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label class="col-form-label">磁盘：</label>
-                                <label class="fix-width"  >{{hostDetailManageInfo.disk}}</label>
+                                <label class="col-form-label">总磁盘：</label>
+                                <label class="fix-width">{{hostDetailManageInfo.disk}}</label>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group" v-if="hostDetailManageInfo.hostId">
-                                <button class="btn-white btn btn-xs"
-                                v-on:click="_goBack()">返回</button>
-                                <button class="btn-primary btn btn-xs"
-                                v-on:click="_openSsh()">连接</button>
-                                
+                                <button class="btn-white btn btn-xs" v-on:click="_goBack()">返回</button>
+                                <button class="btn-white btn btn-xs" v-on:click="_openFileManager()">文件</button>
+                                <button class="btn-primary btn btn-xs" v-on:click="_openSsh()">连接</button>
+
                             </div>
-                            
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">CPU使用率：</label>
+                                <label class="">{{hostDetailManageInfo.useCpu}}%</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">使用内存：</label>
+                                <label class="">{{hostDetailManageInfo.useMem}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-form-label">使用磁盘：</label>
+                                <label class="fix-width">{{hostDetailManageInfo.useDisk}}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+
                         </div>
                     </div>
                 </div>
@@ -66,28 +88,22 @@
         <div class="margin-top">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostEvents'}"
-                        v-on:click="changeTab('hostEvents')">主机事件</a>
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostEvents'}" v-on:click="changeTab('hostEvents')">主机事件</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostContainers'}"
-                        v-on:click="changeTab('hostContainers')">主机容器</a>
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostContainers'}" v-on:click="changeTab('hostContainers')">主机容器</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostMonitors'}"
-                        v-on:click="changeTab('hostMonitors')">主机监控</a>
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostMonitors'}" v-on:click="changeTab('hostMonitors')">主机监控</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostResources'}"
-                        v-on:click="changeTab('hostResources')">主机资源</a>
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostResources'}" v-on:click="changeTab('hostResources')">主机资源</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostPorts'}"
-                        v-on:click="changeTab('hostPorts')">主机端口</a>
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostPorts'}" v-on:click="changeTab('hostPorts')">主机端口</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostDisks'}"
-                        v-on:click="changeTab('hostDisks')">磁盘信息</a>
+                    <a class="nav-link" v-bind:class="{active:hostDetailManageInfo._currentTab == 'hostDisks'}" v-on:click="changeTab('hostDisks')">磁盘信息</a>
                 </li>
             </ul>
         </div>

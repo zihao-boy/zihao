@@ -13,16 +13,18 @@
                 moreCondition: false,
                 component: 'appServiceManage',
                 asId: '',
+                asGroups: [],
                 conditions: {
                     asName: '',
                     asType: '',
                     asCount: '',
-
+                    asGroupId: ''
                 }
             }
         },
         _initMethod: function() {
             vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
+            $that._listListAppVarGroups();
         },
         _initEvent: function() {
             vc.on('appServiceManage', 'listAppService', function(_param) {
@@ -30,6 +32,7 @@
                 vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
             });
             vc.on('pagination', 'page_event', function(_currentPage) {
+                DEFAULT_PAGE = _currentPage;
                 vc.component._listAppServices(_currentPage, DEFAULT_ROWS);
             });
         },
@@ -60,6 +63,25 @@
                     }
                 );
             },
+            _listListAppVarGroups: function(_page, _rows) {
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 50
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/appService/getAppVarGroup',
+                    param,
+                    function(json, res) {
+                        var _appVarGroupManageInfo = JSON.parse(json);
+                        vc.component.appServiceManageInfo.asGroups = _appVarGroupManageInfo.data;
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
             _openAddAppServiceModal: function() {
                 $that.appServiceManageInfo.component = 'addAppService';
                 vc.emit('addAppService', 'openAddAppServiceModal', {});
@@ -82,6 +104,46 @@
                 } else {
                     vc.component.appServiceManageInfo.moreCondition = true;
                 }
+            },
+            _startAppService: function(_appService) {
+                vc.http.apiPost(
+                    '/appService/startAppService',
+                    JSON.stringify(_appService), {
+                        emulateJSON: true
+                    },
+                    function(json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            vc.emit('appServiceManage', 'listAppService', {});
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                        vc.toast(errInfo);
+                    });
+            },
+            _stopAppService: function(_appService) {
+                vc.http.apiPost(
+                    '/appService/stopAppService',
+                    JSON.stringify(_appService), {
+                        emulateJSON: true
+                    },
+                    function(json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            vc.emit('appServiceManage', 'listAppService', {});
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                        vc.toast(errInfo);
+                    });
             }
 
 

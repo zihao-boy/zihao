@@ -17,10 +17,10 @@ const (
 	and t.tenant_id = #TenantId#
 	$endif
 	$if Name != '' then
-	and t.name = #Name#
+	and t.name like '%' || #Name# || '%'
 	$endif
 	$if Version != '' then
-	and t.version = #Version#
+	and t.version like '%' || #Version# || '%'
 	$endif
 	$if CreateUserId != '' then
 	and t.create_user_id = #CreateUserId#
@@ -39,10 +39,10 @@ const (
 				and t.tenant_id = #TenantId#
 				$endif
 				$if Name != '' then
-				and t.name = #Name#
+				and t.name like '%' || #Name# || '%'
 				$endif
 				$if Version != '' then
-				and t.version = #Version#
+				and t.version like '%' || #Version# || '%'
 				$endif
 				$if CreateUserId != '' then
 				and t.create_user_id = #CreateUserId#

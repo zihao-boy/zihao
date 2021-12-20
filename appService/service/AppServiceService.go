@@ -69,6 +69,9 @@ func (appServiceService *AppServiceService) GetAppServices(ctx iris.Context) res
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	appServiceDto.TenantId = user.TenantId
 	appServiceDto.AsId = ctx.URLParam("asId")
+	appServiceDto.AsGroupId = ctx.URLParam("asGroupId")
+	appServiceDto.AsType = ctx.URLParam("asType")
+	appServiceDto.AsName = ctx.URLParam("asName")
 
 	total, err = appServiceService.appServiceDao.GetAppServiceCount(appServiceDto)
 
