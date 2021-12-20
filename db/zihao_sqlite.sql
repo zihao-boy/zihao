@@ -3508,6 +3508,7 @@ create table business_dockerfile(
     `status_cd` varchar(2) NOT NULL DEFAULT '0',
     `tenant_id` varchar(64) NOT NULL
 );
+alter table business_dockerfile add log_path varchar(512);
 
 CREATE TABLE business_images(
      `id` varchar(64) PRIMARY KEY  NOT NULL,

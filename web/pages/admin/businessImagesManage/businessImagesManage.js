@@ -1,7 +1,7 @@
 /**
     入驻小区
 **/
-(function (vc) {
+(function(vc) {
     var DEFAULT_PAGE = 1;
     var DEFAULT_ROWS = 10;
     vc.extends({
@@ -17,23 +17,24 @@
                     name: '',
                     imagesType: '',
                     imagesFlag: '',
+                    version: ''
                 }
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
             vc.component._listBusinessImagess(DEFAULT_PAGE, DEFAULT_ROWS);
         },
-        _initEvent: function () {
+        _initEvent: function() {
 
-            vc.on('businessImagesManage', 'listBusinessImages', function (_param) {
+            vc.on('businessImagesManage', 'listBusinessImages', function(_param) {
                 vc.component._listBusinessImagess(DEFAULT_PAGE, DEFAULT_ROWS);
             });
-            vc.on('pagination', 'page_event', function (_currentPage) {
+            vc.on('pagination', 'page_event', function(_currentPage) {
                 vc.component._listBusinessImagess(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listBusinessImagess: function (_page, _rows) {
+            _listBusinessImagess: function(_page, _rows) {
 
                 vc.component.businessImagesManageInfo.conditions.page = _page;
                 vc.component.businessImagesManageInfo.conditions.row = _rows;
@@ -44,7 +45,7 @@
                 //发送get请求
                 vc.http.apiGet('/soft/getBusinessImages',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _businessImagesManageInfo = JSON.parse(json);
                         vc.component.businessImagesManageInfo.total = _businessImagesManageInfo.total;
                         vc.component.businessImagesManageInfo.records = _businessImagesManageInfo.records;
@@ -53,35 +54,36 @@
                             total: vc.component.businessImagesManageInfo.records,
                             currentPage: _page
                         });
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _openAddBusinessImagesModal: function () {
+            _openAddBusinessImagesModal: function() {
                 vc.emit('addBusinessImages', 'openAddBusinessImagesModal', {});
             },
-            _openEditBusinessImagesModel: function (_businessImages) {
+            _openEditBusinessImagesModel: function(_businessImages) {
                 vc.emit('editBusinessImages', 'openEditBusinessImagesModal', _businessImages);
             },
-            _openDeleteBusinessImagesModel: function (_businessImages) {
+            _openDeleteBusinessImagesModel: function(_businessImages) {
                 vc.emit('deleteBusinessImages', 'openDeleteBusinessImagesModal', _businessImages);
             },
-            _queryBusinessImagesMethod: function () {
+            _queryBusinessImagesMethod: function() {
                 vc.component._listBusinessImagess(DEFAULT_PAGE, DEFAULT_ROWS);
 
             },
-            _moreCondition: function () {
+            _moreCondition: function() {
                 if (vc.component.businessImagesManageInfo.moreCondition) {
                     vc.component.businessImagesManageInfo.moreCondition = false;
                 } else {
                     vc.component.businessImagesManageInfo.moreCondition = true;
                 }
             },
-            _getImagesType:function(_imagesType){
-                if(_imagesType == "1"){
+            _getImagesType: function(_imagesType) {
+                if (_imagesType == "1") {
                     return "远程镜像";
-                }else if(_imagesType == "2"){
+                } else if (_imagesType == "2") {
                     return "dockfile生成镜像"
                 }
 

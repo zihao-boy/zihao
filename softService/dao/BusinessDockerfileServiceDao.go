@@ -44,6 +44,7 @@ const (
 				$if Version != '' then
 				and t.version like '%' || #Version# || '%'
 				$endif
+			
 				$if CreateUserId != '' then
 				and t.create_user_id = #CreateUserId#
 				$endif
@@ -57,8 +58,8 @@ const (
 	`
 
 	insert_businessDockerfile string = `
-	insert into business_dockerfile(id, name, version, dockerfile, create_user_id,tenant_id)
-VALUES(#Id#,#Name#,#Version#,#Dockerfile#,#CreateUserId#,#TenantId#)
+	insert into business_dockerfile(id, name, version, dockerfile, create_user_id,tenant_id,log_path)
+VALUES(#Id#,#Name#,#Version#,#Dockerfile#,#CreateUserId#,#TenantId#,#LogPath#)
 `
 
 	update_businessDockerfile string = `

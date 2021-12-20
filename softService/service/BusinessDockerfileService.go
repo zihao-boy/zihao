@@ -1,6 +1,8 @@
 package service
 
 import (
+	"github.com/zihao-boy/zihao/config"
+	"path/filepath"
 	"strconv"
 
 	"github.com/kataras/iris/v12"
@@ -104,6 +106,12 @@ func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfi
 	businessDockerfileDto.CreateUserId = user.UserId
 	businessDockerfileDto.Id = seq.Generator()
 	businessDockerfileDto.Version = "V" + date.GetNowAString()
+
+	//save log
+
+	logPath := filepath.Join(config.WorkSpace, "businessPackage/"+user.TenantId,businessDockerfileDto.Id,"generatorImages.log")
+
+	businessDockerfileDto.LogPath = logPath
 
 	err = businessDockerfileService.businessDockerfileDao.SaveBusinessDockerfile(businessDockerfileDto)
 	if err != nil {

@@ -3,9 +3,9 @@ package businessImages
 import "github.com/zihao-boy/zihao/entity/dto"
 
 const(
-	IMAGES_TYPE_REMOTE = "1"
-	IMAGES_TYPE_DOCKER = "2"
-	IMAGES_TYPE_IMPORT = "3"
+	IMAGES_TYPE_REMOTE = "1" //远程
+	IMAGES_TYPE_DOCKER = "2" //dockerfile生成镜像
+	IMAGES_TYPE_IMPORT = "3" // 导入
 	IMAGES_FLAG_PUBLIC ="P"
 	IMAGES_FLAG_CUSTOM = "C"
 )

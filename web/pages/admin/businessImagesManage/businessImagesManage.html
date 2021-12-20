@@ -5,26 +5,28 @@
                 <div class="ibox-title">
                     <h5>查询条件</h5>
                     <div class="ibox-tools" style="top:10px;">
-                        <button type="button" class="btn btn-link btn-sm" style="margin-right:10px;" v-on:click="_moreCondition()">{{businessImagesManageInfo.moreCondition ==
-                            true?'隐藏':'更多'}}</button>
+
                     </div>
                 </div>
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入编号" v-model="businessImagesManageInfo.conditions.id" class=" form-control">
+                                <input type="text" placeholder="请输入名称" v-model="businessImagesManageInfo.conditions.name" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入名称" v-model="businessImagesManageInfo.conditions.name" class=" form-control">
+                                <input type="text" placeholder="请输入版本" v-model="businessImagesManageInfo.conditions.version" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
-                                <input type="text" placeholder="请输入镜像类型" v-model="businessImagesManageInfo.conditions.imagesType" class=" form-control">
-                            </div>
+                            <select class="custom-select" v-model="businessImagesManageInfo.conditions.imagesType">
+                                <option selected value="">请选择镜像类型</option>
+                                <option value="1">远程镜像</option>
+                                <option value="2">dockfile生成镜像</option>
+                                <option value="3">导入</option>
+                            </select>
                         </div>
                         <div class="col-sm-1">
                             <button type="button" class="btn btn-primary btn-sm" v-on:click="_queryBusinessImagesMethod()">
@@ -33,10 +35,12 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-4" v-if="businessImagesManageInfo.moreCondition == true">
-                            <div class="form-group">
-                                <input type="text" placeholder="请输入imagesFlag" v-model="businessImagesManageInfo.conditions.imagesFlag" class=" form-control">
-                            </div>
+                        <div class="col-sm-4">
+                            <select class="custom-select" v-model="businessImagesManageInfo.conditions.imagesFlag">
+                                <option selected value="">请选择镜像标识</option>
+                                <option value="P">公共</option>
+                                <option value="C">自定义</option>
+                            </select>
                         </div>
                     </div>
 

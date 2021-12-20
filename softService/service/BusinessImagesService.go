@@ -75,6 +75,10 @@ func (businessImagesService *BusinessImagesService) GetBusinessImages(ctx iris.C
 	businessImagesDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessImagesDto.TenantId = user.TenantId
+	businessImagesDto.Name=ctx.URLParam("name")
+	businessImagesDto.ImagesType=ctx.URLParam("imagesType")
+	businessImagesDto.Version=ctx.URLParam("version")
+	businessImagesDto.ImagesFlag = ctx.URLParam("imagesFlag")
 
 	total, err = businessImagesService.businessImagesDao.GetBusinessImagesCount(businessImagesDto)
 

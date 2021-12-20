@@ -100,6 +100,13 @@
                         vc.toast(errInfo);
 
                     });
+            },
+            _viewLog: function(dockerfile) {
+                if (!dockerfile.logPath) {
+                    vc.toast('没有日志,请删除后重新添加！');
+                    return;
+                }
+                vc.jumpToPage('/index.html#/pages/admin/tailLog?path=' + dockerfile.logPath)
             }
         }
     });
