@@ -35,20 +35,36 @@
                     name: 'dockerfile',
                     url: '/index.html#/pages/admin/businessDockerfileManage',
                     icon: '/img/dockerfile.png'
+                }, {
+                    name: 'shell',
+                    url: 'action',
+                    action: 'shell',
+                    icon: '/img/shell.png'
+                }, {
+                    name: '文件',
+                    url: 'action',
+                    action: 'file',
+                    icon: '/img/folder.png'
                 }],
-                apps: []
+                apps: [],
+                action: '',
             }
         },
         _initMethod: function() {
             $that._loadPlatfromData();
         },
         _initEvent: function() {
-            vc.on('home', 'listMyCommunity', function(_param) {
-                vc.component.listMyCommunity();
+            vc.on('home', 'chooseHost', function(_param) {
+                $that._doShellOrFile(_param);
             });
         },
         methods: {
             newFlow: function(item) {
+                if (item.url == 'action') {
+                    $that.homeInfo.action = item.action;
+                    vc.emit('chooseHost', 'openChooseHostModel', {})
+                    return;
+                }
                 vc.jumpToPage(item.url);
             },
             _loadPlatfromData: function() {
@@ -68,6 +84,30 @@
                             return;
                         }
                         vc.copyObject(_hostManageInfo.data, $that.homeInfo);
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
+            _doShellOrFile: function(_param) {
+                if ($that.homeInfo.action == 'file') {
+                    vc.jumpToPage('/index.html#/pages/admin/fileManager?hostId=' + _param.hostId);
+                    return;
+                }
+                //shell
+                let param = {
+                    params: {
+                        hostId: _param.hostId
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/host/getHostToken',
+                    param,
+                    function(json, res) {
+                        let _hostManageInfo = JSON.parse(json);
+                        let _zihaoToken = _hostManageInfo.data;
+                        window.open("/webshell/console.html?hostId=" + _param.hostId + "&zihaoToken=" + _zihaoToken, '_blank')
                     },
                     function(errInfo, error) {
                         console.log('请求失败处理');
