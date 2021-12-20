@@ -109,7 +109,7 @@ func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfi
 
 	//save log
 
-	logPath := filepath.Join(config.WorkSpace, "businessPackage/"+user.TenantId,businessDockerfileDto.Id,"generatorImages.log")
+	logPath := filepath.Join(config.WorkSpace, "businessPackage/"+user.TenantId, businessDockerfileDto.Id+".log")
 
 	businessDockerfileDto.LogPath = logPath
 
