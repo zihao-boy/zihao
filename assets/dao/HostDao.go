@@ -19,6 +19,12 @@ const (
 	save_host      string = "hostDao.SaveHost"
 	update_host    string = "hostDao.UpdateHost"
 	delete_host    string = "hostDao.DeleteHost"
+	getHostCpuMemDistTotal string =`
+	select sum(cpu) cpu,sum(mem) mem,sum(disk) disk 
+		from host
+		where status_cd = '0'
+		and tenant_id = #TenantId#
+`
 )
 
 type HostDao struct {
@@ -127,4 +133,12 @@ func (*HostDao) UpdateHost(hostDto host.HostDto) error {
 */
 func (*HostDao) DeleteHost(hostDto host.HostDto) error {
 	return sqlTemplate.Delete(delete_host, objectConvert.Struct2Map(hostDto), true)
+}
+
+func (d *HostDao) GetHostCpuMemDistTotal(hostDto host.HostDto) ( host.HostDto,  error) {
+	var err error
+	sqlTemplate.SelectOne(getHostCpuMemDistTotal, objectConvert.Struct2Map(hostDto), func(db *gorm.DB) {
+		err = db.Scan(&hostDto).Error
+	}, false)
+	return hostDto, err
 }

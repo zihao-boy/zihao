@@ -1,5 +1,108 @@
 <div>
-    
-    
+    <div class="margin-bottom-lg" style="font-size: 24px;">平台数据</div>
+    <div class="row">
+        <div class="col-lg-2">
+            <div class="white-bg text-center padding-top-sm" style="height:140px;border: 1px solid #e0e5eb;">
+                <div style="font-size: 38px;font-weight: 600;color: #1acda1;">{{homeInfo.hostCount}}</div>
+                <div class="margin-top-lg" style="font-size: 20px;font-weight: 100;">主机数(台)</div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="white-bg text-center padding-top-sm" style="height:140px;border: 1px solid #e0e5eb;">
+                <div style="font-size: 38px;font-weight: 600;color: #ffae11;">{{homeInfo.cpuCount}}
+                </div>
+                <div class="margin-top-lg" style="font-size: 20px;font-weight: 100;">cpu核数 (核)</div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="white-bg text-center padding-top-sm" style="height:140px;border: 1px solid #e0e5eb;">
+                <div style="font-size: 38px;font-weight: 600;color: #ff7911;">{{homeInfo.memCount}}</div>
+                <div class="margin-top-lg" style="font-size: 20px;font-weight: 100;">总内存(GB)</div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="white-bg text-center padding-top-sm" style="height:140px;border: 1px solid #e0e5eb;">
+                <div style="font-size: 38px;font-weight: 600;color: #3a68f2;">{{homeInfo.diskCount}}</div>
+                <div class="margin-top-lg" style="font-size: 20px;font-weight: 100;">总磁盘(GB)</div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="white-bg text-center padding-top-sm" style="height:140px;border: 1px solid #e0e5eb;">
+                <div style="font-size: 38px;font-weight: 600;color: #ff7911;">{{homeInfo.appCount}}</div>
+                <div class="margin-top-lg" style="font-size: 20px;font-weight: 100;">总应用(个)</div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="white-bg text-center padding-top-sm" style="height:140px;border: 1px solid #e0e5eb;">
+                <div style="font-size: 38px;font-weight: 600;color: #3a68f2;">{{homeInfo.dockerCount}}</div>
+                <div class="margin-top-lg" style="font-size: 20px;font-weight: 100;">总容器(个)</div>
+            </div>
+        </div>
+    </div>
+    <div class="row margin-top">
+        <div class="col-lg-6">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>常用功能</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row white-bg padding margin-xs">
+                        <div class="col-md-3 text-center  margin-top margin-bottom" style="cursor:pointer" v-for="(item,index) in homeInfo.pages" @click="newFlow(item)">
+                            <div>
+                                <img :src="item.icon" width="60px" />
+                            </div>
+                            <div class="margin-top-sm">
+                                <span>{{item.name}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>推荐安装</h5>
+                </div>
+                <div class="ibox-content">
+                    <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+                        <thead>
+                            <tr>
+                                <th class="text-center">应用名称</th>
+                                <th class="text-center">版本号</th>
+                                <th class="text-center">开发者</th>
+                                <th class="text-center">上架时间</th>
+                                <th class="text-center">安装次数</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="product in homeInfo.apps">
+                                <td class="text-center">{{product.appName}}</td>
+                                <td class="text-center">{{product.version}}</td>
+                                <td class="text-center">{{product.author}}</td>
+                                <td class="text-center">{{product.createTime}}</td>
+                                <td class="text-center">{{product.installCount}}</td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" v-on:click="_install(product)">安装</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <ul class="pagination float-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>

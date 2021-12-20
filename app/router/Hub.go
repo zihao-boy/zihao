@@ -6,6 +6,7 @@ import (
 	rcover "github.com/kataras/iris/v12/middleware/recover"
 	"github.com/zihao-boy/zihao/app/controller/appService"
 	"github.com/zihao-boy/zihao/app/controller/appVersion"
+	"github.com/zihao-boy/zihao/app/controller/home"
 	"github.com/zihao-boy/zihao/app/controller/host"
 	"github.com/zihao-boy/zihao/app/controller/menu"
 	"github.com/zihao-boy/zihao/app/controller/monitor"
@@ -50,6 +51,9 @@ func Hub(app *iris.Application) {
 
 	//版本
 	appVersion.AppVersionControllerRouter(party)
+
+	//首页
+	home.HomeControllerRouter(party)
 
 	//软件中心
 	soft.SoftControllerRouter(party)
