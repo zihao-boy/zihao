@@ -149,7 +149,7 @@
                         let _hostManageInfo = JSON.parse(json);
                         let _zihaoToken = _hostManageInfo.data;
                         window.open("/webshell/console.html?hostId=" +
-                            _container.hostId +
+                            $that.fileManagerInfo.hostId +
                             "&zihaoToken=" + _zihaoToken +
                             "&val=cd&command=" + $that.fileManagerInfo.curPath,
                             '_blank')
