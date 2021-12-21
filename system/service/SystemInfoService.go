@@ -18,6 +18,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -61,7 +62,13 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 	dockerpull := "docker pull " + imagesUrl
 
 	//从镜像仓库拉去镜像
-	cmd = exec.Command("bash", "-c", dockerpull)
+	sysType := runtime.GOOS
+	if sysType == "windows" {
+		cmd = exec.Command("cmd", "/C", dockerpull)
+	} else {
+		cmd = exec.Command("bash", "-c", dockerpull)
+	}
+
 	output, _ := cmd.CombinedOutput()
 
 	fmt.Print("构建镜像：" + dockerpull + " 返回：" + string(output))
@@ -93,7 +100,7 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 				param += (" " + tmpVars.VarValue)
 				continue
 			}
-			dockerRun += (" -e \"" + tmpVars.VarSpec + "=" + tmpVars.VarValue + "\"")
+			dockerRun += (" -e " + tmpVars.VarSpec + "=" + tmpVars.VarValue)
 		}
 	}
 
@@ -102,7 +109,12 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 	dockerRun += (" " + imagesUrl + param)
 
 	//运行镜像
-	cmd = exec.Command("bash", "-c", dockerRun)
+	if sysType == "windows" {
+		cmd = exec.Command("cmd", "/C", dockerRun)
+	} else {
+		cmd = exec.Command("bash", "-c", dockerRun)
+	}
+	//cmd = exec.Command("bash", "-c", dockerRun)
 	output, _ = cmd.CombinedOutput()
 	fmt.Print("启动容器：" + dockerRun + " 返回：" + string(output))
 	paramOut := map[string]interface{}{
@@ -125,7 +137,13 @@ func (s *SystemInfoService) StopContainer(ctx iris.Context) (interface{}, error)
 	dockerpull := "docker stop " + appServiceContainerDto.DockerContainerId
 
 	//停止容器
-	cmd = exec.Command("bash", "-c", dockerpull)
+	sysType := runtime.GOOS
+	if sysType == "windows" {
+		cmd = exec.Command("cmd", "/C", dockerpull)
+	} else {
+		cmd = exec.Command("bash", "-c", dockerpull)
+	}
+	//cmd = exec.Command("bash", "-c", dockerpull)
 	output, _ := cmd.CombinedOutput()
 
 	fmt.Print("停止容器：" + string(output))
@@ -133,7 +151,12 @@ func (s *SystemInfoService) StopContainer(ctx iris.Context) (interface{}, error)
 	dockerpull = "docker rm " + appServiceContainerDto.DockerContainerId
 
 	//停止容器
-	cmd = exec.Command("bash", "-c", dockerpull)
+	if sysType == "windows" {
+		cmd = exec.Command("cmd", "/C", dockerpull)
+	} else {
+		cmd = exec.Command("bash", "-c", dockerpull)
+	}
+	//cmd = exec.Command("bash", "-c", dockerpull)
 	output, _ = cmd.CombinedOutput()
 
 	fmt.Print("删除容器：" + string(output))

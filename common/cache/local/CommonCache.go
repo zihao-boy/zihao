@@ -36,7 +36,7 @@ func (r *Local) GetValue(key string) (string, error) {
 func (r *Local) GetValueAndRemove(key string) (string, error) {
 	mutex.Lock()
 	token, _ := r.client.Get(key)
-	if token == "" {
+	if token == "" || token == nil{
 		return "", nil
 	}
 	r.client.Delete(key)
