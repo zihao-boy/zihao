@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>梓豪平台</title>
+    <vc:create path="frame/commonTop" location="head"></vc:create>
     <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css" />
     <script src="/js/vue/vue.min.js"></script>
     <script src="/js/vue/vue-resource.min.js"></script>
@@ -19,14 +20,12 @@
 </head>
 
 <body class="text-center bg-light h-100">
-    <vc:create path="frame/bodyTop" ></vc:create>
-    <div id="component" >
+    <vc:create path="frame/bodyTop"></vc:create>
+    <div id="component">
         <vc:create path="frame/login"></vc:create>
     </div>
-   
-    <script src="/js/vcCore/vc-zh.js"></script>
-    <script src="/js/vcCore/vcFramework.js"></script>
-
 </body>
+<script src="/js/vcCore/vc-zh.js"></script>
+<script src="/js/vcCore/vcFramework.js"></script>
 
 </html>
