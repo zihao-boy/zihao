@@ -828,8 +828,8 @@ func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) in
 	}
 
 	//修改应用为启动中
-	appServiceDto.State = appService.STATE_DOING
-	appServiceService.appServiceDao.UpdateAppService(appServiceDto)
+	//appServiceDto.State = appService.STATE_DOING
+	//appServiceService.appServiceDao.UpdateAppService(appServiceDto)
 
 	tmpAppServiceDto := appServiceDtos[0]
 
@@ -869,8 +869,8 @@ func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) int
 	}
 
 	//修改应用为启动中
-	appServiceDto.State = appService.STATE_DOING
-	appServiceService.appServiceDao.UpdateAppService(appServiceDto)
+	//appServiceDto.State = appService.STATE_DOING
+	//appServiceService.appServiceDao.UpdateAppService(appServiceDto)
 
 	tmpAppServiceDto := appServiceDtos[0]
 
