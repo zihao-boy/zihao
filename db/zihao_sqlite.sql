@@ -3244,7 +3244,7 @@ INSERT INTO `privilege_rel` VALUES ('33', '500201904018', '600201904002', '2019-
 -- ----------------------------
 DROP TABLE IF EXISTS `privilege_user`;
 CREATE TABLE `privilege_user` (
-  `pu_id` int(11) NOT NULL ,
+  `pu_id` INTEGER PRIMARY KEY  AUTOINCREMENT NOT NULL ,
   `p_id` varchar(64) NOT NULL,
   `privilege_flag` varchar(4) NOT NULL DEFAULT '0' ,
   `user_id` varchar(64) NOT NULL,

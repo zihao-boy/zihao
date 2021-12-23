@@ -60,39 +60,39 @@ VALUES(#TenantId#, #TenantName#, #Address#, #PersonName#, #Phone#, #Remark#)
 `
 
 	update_tenant string = `
-	update tenant t set
+	update tenant set
 			$if TenantName != '' then
-			 t.tenant_name = #TenantName#,
+			 tenant_name = #TenantName#,
 			$endif
 			$if TenantType != '' then
-			 t.tenant_type = #TenantType#,
+			 tenant_type = #TenantType#,
 			$endif
 			$if Phone != '' then
-			 t.phone = #Phone#,
+			 phone = #Phone#,
 			$endif
 			$if State != '' then
-			 t.state = #State#,
+			 state = #State#,
 			$endif
 			$if Address != '' then
-			 t.address = #Address#,
+			 address = #Address#,
 			$endif
 			$if PersonName != '' then
-			 t.person_name = #PersonName#,
+			 person_name = #PersonName#,
 			$endif
 			$if Remark != '' then
-			 t.remark = #Remark#,
+			 remark = #Remark#,
 			$endif
-			t.status_cd = '0'
-			where t.status_cd = '0'
+			status_cd = '0'
+			where status_cd = '0'
 			$if TenantId != '' then
-			and t.tenant_id = #TenantId#
+			and tenant_id = #TenantId#
 			$endif
 	`
 	delete_tenant string = `
-	update tenant t set
-			t.status_cd = '1'
-			where t.status_cd = '0'
-			and t.tenant_id = #TenantId#
+	update tenant set
+			status_cd = '1'
+			where status_cd = '0'
+			and tenant_id = #TenantId#
 	`
 )
 
