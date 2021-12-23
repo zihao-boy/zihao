@@ -430,6 +430,16 @@ func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto
 		fmt.Println(err)
 		return
 	}
+	if !utils.IsFile(targetPath){
+		targetPathDir := path.Dir(targetPath)
+		if !utils.IsDir(targetPathDir){
+			os.MkdirAll(targetPathDir,0777)
+		}
+		file,_:=os.Create(targetPath)
+		defer func() {
+			file.Close()
+		}()
+	}
 	err = ioutil.WriteFile(targetPath, input, 0777)
 	if err != nil {
 		fmt.Println("Error creating", targetPath)
