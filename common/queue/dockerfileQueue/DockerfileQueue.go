@@ -28,7 +28,6 @@ var que chan *businessDockerfile.BusinessDockerfileDto
 */
 func initQueue() {
 
-
 	if que != nil {
 		return
 	}
@@ -46,7 +45,7 @@ func initQueue() {
 }
 
 func SendData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
-	defer costTime.TimeoutWarning("DockerfileQueue","SendData",time.Now())
+	defer costTime.TimeoutWarning("DockerfileQueue", "SendData", time.Now())
 	initQueue()
 	que <- businessDockerfileDto
 }
@@ -70,11 +69,25 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		cmd               *exec.Cmd
 		version           string = "V" + date.GetNowAString()
 	)
-	defer costTime.TimeoutWarning("DockerfileQueue","dealData",time.Now())
-
+	defer costTime.TimeoutWarning("DockerfileQueue", "dealData", time.Now())
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
 
 	tenantDesc := dest
+	//打开日志文件
+	var logFile *os.File
+	if businessDockerfileDto.LogPath == "" {
+		businessDockerfileDto.LogPath = path.Join(tenantDesc, seq.Generator()+".log")
+		logFile, err = os.Create(businessDockerfileDto.LogPath)
+	} else {
+		logFile, err = os.OpenFile(businessDockerfileDto.LogPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	}
+	defer func() {
+		logFile.Close()
+	}()
+	//及时关闭file句柄
+	write := bufio.NewWriter(logFile)
+	write.WriteString(">>>>>>>>>>>>>>>>>>>开始制作镜像" + businessDockerfileDto.Name)
+	write.Flush()
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
@@ -108,23 +121,10 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	cmd.Dir = tenantDesc
 	output, _ := cmd.CombinedOutput()
 
-	//打开日志文件
-	var logFile *os.File
-	if businessDockerfileDto.LogPath == ""{
-		businessDockerfileDto.LogPath = path.Join(tenantDesc,seq.Generator()+".log")
-		logFile, err = os.Create(businessDockerfileDto.LogPath)
-	}else{
-		logFile, err = os.OpenFile(businessDockerfileDto.LogPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-	}
-	defer func() {
-		logFile.Close()
-	}()
 	if err != nil {
 		fmt.Println("文件打开失败", err)
 	}
-	//及时关闭file句柄
 
-	write := bufio.NewWriter(logFile)
 	fmt.Print("构建镜像：" + shellScript + " 返回：" + string(output))
 	write.WriteString("构建镜像：" + shellScript + " 返回：" + string(output))
 	write.Flush()
@@ -163,5 +163,10 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	err = businessImagesDao.SaveBusinessImages(businessImagesDto)
 	if err != nil {
 		fmt.Println("保存镜像失败" + err.Error())
+		write.WriteString("保存镜像失败" + err.Error())
+		write.Flush()
 	}
+
+	write.WriteString(">>>>>>>>>>>>>>>>>>>制作镜像（" + businessDockerfileDto.Name + "）完成")
+	write.Flush()
 }

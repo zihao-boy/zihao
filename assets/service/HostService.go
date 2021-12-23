@@ -2,12 +2,14 @@ package service
 
 import (
 	"encoding/json"
+	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"path"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/kataras/iris/v12"
+	appServiceDao "github.com/zihao-boy/zihao/appService/dao"
 	"github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/common/constants"
@@ -25,6 +27,7 @@ const maxSize = 1000 * iris.MB // 第二种方法
 
 type HostService struct {
 	hostDao dao.HostDao
+	appServiceDao appServiceDao.AppServiceDao
 }
 
 const (
@@ -646,7 +649,12 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 	hostDto.HeartbeatTime = time.Now().Format("2006-01-02 15:04:05")
 	hostService.hostDao.UpdateHost(hostDto)
 
-	return result.Success()
+	 container := appService.AppServiceContainerDto{
+	 	HostId: hostDtos[0].HostId,
+	 }
+	containers , _ :=hostService.appServiceDao.GetAppServiceContainer(container)
+
+	return result.SuccessData(containers)
 
 }
 

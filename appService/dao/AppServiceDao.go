@@ -444,6 +444,9 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 					$if ContainerId != '' then
 					and t.container_id = #ContainerId#
 					$endif
+					$if HostId != '' then
+					and t.host_id = #HostId#
+					$endif
 					order by t.create_time desc
 					$if Row != 0 then
 						limit #Page#,#Row#

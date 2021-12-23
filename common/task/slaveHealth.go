@@ -1,11 +1,14 @@
 package task
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shopspring/decimal"
+	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
 	"time"
 
@@ -56,17 +59,35 @@ func doSlaveHealth() {
 	data := map[string]interface{}{
 		"hostId":  slaveId,
 		"cpu":     strconv.FormatInt(int64(cpuCore), 10),
-		"mem":     fmt.Sprintf("%.2f",totalMemValue),
-		"disk":    fmt.Sprintf("%.2f",totalDiskValue),
-		"useCpu":  fmt.Sprintf("%.2f",useCpu),
-		"useMem":  fmt.Sprintf("%.2f",totalMemUseValue),
-		"useDisk": fmt.Sprintf("%.2f",totalDiskUseValue),
+		"mem":     fmt.Sprintf("%.2f", totalMemValue),
+		"disk":    fmt.Sprintf("%.2f", totalDiskValue),
+		"useCpu":  fmt.Sprintf("%.2f", useCpu),
+		"useMem":  fmt.Sprintf("%.2f", totalMemUseValue),
+		"useDisk": fmt.Sprintf("%.2f", totalDiskUseValue),
 	}
 	resp, err := httpReq.Post(url, data, nil)
 	if err != nil {
 		fmt.Print(err.Error(), url, data)
 	}
 	fmt.Print(resp)
+	var (
+		resultDto  result.ResultDto
+		containers []appService.AppServiceContainerDto
+	)
+	json.Unmarshal([]byte(resp), resultDto)
+
+	dataByte, err := json.Marshal(resultDto.Data)
+	if err != nil {
+		fmt.Print("解析报文异常", err)
+		return
+	}
+
+	json.Unmarshal(dataByte, containers)
+
+	if len(containers) < 1 {
+		fmt.Print("主机没有容器")
+		return
+	}
 }
 
 // slave 心跳
