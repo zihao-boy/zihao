@@ -62,9 +62,9 @@
                                 <th class="text-center">应用名称</th>
                                 <th class="text-center">服务类型</th>
                                 <th class="text-center">副本数</th>
-                                <th class="text-center">状态</th>
                                 <th class="text-center">服务描述</th>
                                 <th class="text-center">创建时间</th>
+                                <th class="text-center">状态</th>
                                 <th class="text-center">操作</th>
                             </tr>
                         </thead>
@@ -74,9 +74,13 @@
                                 <td class="text-center">{{appService.asName}}</td>
                                 <td class="text-center">{{appService.asTypeName}}</td>
                                 <td class="text-center">{{appService.asCount}}</td>
-                                <td class="text-center">{{appService.stateName}}</td>
                                 <td class="text-center">{{appService.asDesc}}</td>
-                                <td class="text-center">{{appService.createTime}}</td>
+                                <td class="text-center">{{vc.formatUTCTime(appService.createTime)}}</td>
+                                <td class="text-center" style="color: #FFF;">
+                                    <span class="badge bg-success" v-if="appService.state == '10015'"> {{appService.stateName}}</span>
+                                    <span class="badge bg-warning" v-else-if="appService.state == '10014'"> {{appService.stateName}}</span>
+                                    <span class="badge bg-danger" v-else> {{appService.stateName}}</span>
+                                </td>
                                 <td class="text-center">
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_openControl(appService)">控制台</button>

@@ -1,4 +1,4 @@
-(function (vc, vm) {
+(function(vc, vm) {
 
     vc.extends({
         data: {
@@ -20,11 +20,11 @@
 
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('editAppService', 'openEditAppServiceModal', function (_params) {
+        _initEvent: function() {
+            vc.on('editAppService', 'openEditAppServiceModal', function(_params) {
                 vc.component.refreshEditAppServiceInfo();
                 $that._listEditAppVarGroups();
                 $that._listEditHostGroups();
@@ -34,12 +34,11 @@
             });
         },
         methods: {
-            editAppServiceValidate: function () {
+            editAppServiceValidate: function() {
                 return vc.validate.validate({
                     editAppServiceInfo: vc.component.editAppServiceInfo
                 }, {
-                    'editAppServiceInfo.asName': [
-                        {
+                    'editAppServiceInfo.asName': [{
                             limit: "required",
                             param: "",
                             errInfo: "应用名称不能为空"
@@ -50,8 +49,7 @@
                             errInfo: "应用名称太长"
                         },
                     ],
-                    'editAppServiceInfo.asType': [
-                        {
+                    'editAppServiceInfo.asType': [{
                             limit: "required",
                             param: "",
                             errInfo: "服务类型不能为空"
@@ -62,8 +60,7 @@
                             errInfo: "服务类型格式错误"
                         },
                     ],
-                    'editAppServiceInfo.asCount': [
-                        {
+                    'editAppServiceInfo.asCount': [{
                             limit: "required",
                             param: "",
                             errInfo: "副本数不能为空"
@@ -74,28 +71,20 @@
                             errInfo: "副本数不是有效数字"
                         },
                     ],
-                    'editAppServiceInfo.asDesc': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "服务描述不能为空"
-                        },
-                        {
-                            limit: "maxLength",
-                            param: "512",
-                            errInfo: "描述太长"
-                        },
-                    ],
-                    'editAppServiceInfo.asId': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "ID不能为空"
-                        }]
+                    'editAppServiceInfo.asDesc': [{
+                        limit: "maxLength",
+                        param: "512",
+                        errInfo: "描述太长"
+                    }, ],
+                    'editAppServiceInfo.asId': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "ID不能为空"
+                    }]
 
                 });
             },
-            editAppService: function () {
+            editAppService: function() {
                 if (!vc.component.editAppServiceValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
@@ -103,11 +92,10 @@
 
                 vc.http.apiPost(
                     '/appService/updateAppService',
-                    JSON.stringify(vc.component.editAppServiceInfo),
-                    {
+                    JSON.stringify(vc.component.editAppServiceInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
@@ -118,13 +106,13 @@
                         }
                         vc.toast(_json.msg);
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.message(errInfo);
                     });
             },
-            refreshEditAppServiceInfo: function () {
+            refreshEditAppServiceInfo: function() {
                 vc.component.editAppServiceInfo = {
                     asId: '',
                     asName: '',
@@ -142,7 +130,7 @@
                     images: []
                 }
             },
-            _listEditAppVarGroups: function (_page, _rows) {
+            _listEditAppVarGroups: function(_page, _rows) {
                 var param = {
                     params: {
                         page: 1,
@@ -152,16 +140,16 @@
                 //发送get请求
                 vc.http.apiGet('/appService/getAppVarGroup',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _appVarGroupManageInfo = JSON.parse(json);
                         vc.component.editAppServiceInfo.asGroups = _appVarGroupManageInfo.data;
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _listEditHostGroups: function () {
+            _listEditHostGroups: function() {
                 let param = {
                     params: {
                         page: 1,
@@ -171,19 +159,19 @@
                 //发送get请求
                 vc.http.apiGet('/host/getHostGroup',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         let _hostGroupManageInfo = JSON.parse(json);
                         vc.component.editAppServiceInfo.hostGroups = _hostGroupManageInfo.data;
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _changeHostGroup: function () {
+            _changeHostGroup: function() {
                 $that._listEditHosts();
             },
-            _listEditHosts: function () {
+            _listEditHosts: function() {
 
 
                 var param = {
@@ -197,17 +185,17 @@
                 //发送get请求
                 vc.http.apiGet('/host/getHosts',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _hostManageInfo = JSON.parse(json);
                         vc.component.editAppServiceInfo.hosts = _hostManageInfo.data;
 
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _listEditBusinessImagess: function (_page, _rows) {
+            _listEditBusinessImagess: function(_page, _rows) {
                 var param = {
                     params: {
                         page: 1,
@@ -218,11 +206,11 @@
                 //发送get请求
                 vc.http.apiGet('/soft/getBusinessImages',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _businessImagesManageInfo = JSON.parse(json);
                         vc.component.editAppServiceInfo.images = _businessImagesManageInfo.data;
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );

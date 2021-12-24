@@ -1570,6 +1570,9 @@
         return m < 10 ? '0' + m : m
     }
 
+    vcFramework.formatUTCTime = function(_str) {
+        return _str.replace('T', ' ').replace('Z', '')
+    }
 
 
     vcFramework.dateTimeFormat = function(shijianchuo) {

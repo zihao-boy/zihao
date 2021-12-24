@@ -5,4 +5,6 @@ min_mem=$MIN_MEM
 
 max_mem=$MAX_MEM
 
-java -jar $min_mem $max_mem /root/service-$1.jar
+active=$ACTIVE
+
+java -jar -Dspring.profiles.active=$active $min_mem $max_mem /root/service-$1.jar
