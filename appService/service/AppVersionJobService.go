@@ -362,7 +362,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	appVersionJobDto = *appVersionJobDtos[0]
 
 	if len(appVersionJobDtos) < 1 {
-		appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_error)
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_error)
 		return result.Error("构建不存在")
 	}
 
@@ -373,7 +373,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 
 	appVersionJobDetailDtos, err := appVersionJobService.appVersionJobDetailDao.GetAppVersionJobDetails(appVersionJobDetailDto)
 	if len(appVersionJobDetailDtos) < 1 {
-		appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_error)
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_error)
 		return result.Error("构建日志不存在")
 	}
 	appVersionJobDetailDto = *appVersionJobDetailDtos[0]
@@ -384,7 +384,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	appVersionJobImagesDtos, _ := appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImagesDto)
 
 	if len(appVersionJobImagesDtos) < 1 {
-		appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_success)
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_success)
 		return result.Success()
 	}
 
@@ -398,15 +398,16 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	//	appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_error)
 	//	return result.Error(err.Error())
 	//}
-	appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_success)
+	appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_success)
 	return result.Success()
 }
 
-func (appVersionJobService *AppVersionJobService) updateAppVersionJobState(jobId, state string) {
+func (appVersionJobService *AppVersionJobService) updateAppVersionJobState(job appVersionJob.AppVersionJobDto, state string) {
 	var (
 		appVersionJobDto appVersionJob.AppVersionJobDto
 	)
-	appVersionJobDto.JobId = jobId
+	appVersionJobDto.JobId = job.JobId
+	appVersionJobDto.TenantId = job.TenantId
 	appVersionJobDto.State = state
 	appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
 }
