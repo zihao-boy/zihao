@@ -1,6 +1,9 @@
 package host
 
-import "github.com/zihao-boy/zihao/entity/dto"
+import (
+	"github.com/zihao-boy/zihao/common/docker"
+	"github.com/zihao-boy/zihao/entity/dto"
+)
 
 const (
 	State_w string = "1001" // 未管理
@@ -36,4 +39,5 @@ type HostDto struct {
 	FileGroupName string `json:"fileGroupName"`
 	NewFileName      string `json:"newFileName"`
 	FileContext  string `json:"fileContext"`
+	Containers []docker.Container
 }

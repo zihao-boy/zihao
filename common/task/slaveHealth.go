@@ -57,14 +57,17 @@ func doSlaveHealth() {
 	totalDiskUseDec = totalDiskUseDec.Div(decimal.NewFromInt(1024 * 1024))
 	totalDiskUseValue, _ := totalMemUseDec.Float64()
 
+	relContainers, _ := docker.ReadContainer()
+
 	data := map[string]interface{}{
-		"hostId":  slaveId,
-		"cpu":     strconv.FormatInt(int64(cpuCore), 10),
-		"mem":     fmt.Sprintf("%.2f", totalMemValue),
-		"disk":    fmt.Sprintf("%.2f", totalDiskValue),
-		"useCpu":  fmt.Sprintf("%.2f", useCpu),
-		"useMem":  fmt.Sprintf("%.2f", totalMemUseValue),
-		"useDisk": fmt.Sprintf("%.2f", totalDiskUseValue),
+		"hostId":     slaveId,
+		"cpu":        strconv.FormatInt(int64(cpuCore), 10),
+		"mem":        fmt.Sprintf("%.2f", totalMemValue),
+		"disk":       fmt.Sprintf("%.2f", totalDiskValue),
+		"useCpu":     fmt.Sprintf("%.2f", useCpu),
+		"useMem":     fmt.Sprintf("%.2f", totalMemUseValue),
+		"useDisk":    fmt.Sprintf("%.2f", totalDiskUseValue),
+		"containers": relContainers,
 	}
 	resp, err := httpReq.Post(url, data, nil)
 	if err != nil {
@@ -90,32 +93,32 @@ func doSlaveHealth() {
 		return
 	}
 
-	relContainers, err := docker.ReadContainer()
+	//relContainers, err := docker.ReadContainer()
 
-	if err != nil && err.Error() == "noContainers" {
-		fmt.Print(err.Error())
-		for _, container := range containers {
-			docker.StartContainer(container.ContainerId)
-		}
-		return
-	}
-	if err != nil {
-		fmt.Print(err.Error())
-		return
-	}
-	for _, container := range containers {
-		if hasInRealContainers(container, relContainers) {
-			continue
-		}
-		docker.StartContainer(container.ContainerId)
-	}
+	//if err != nil && err.Error() == "noContainers" {
+	//	fmt.Print(err.Error())
+	//	for _, container := range containers {
+	//		docker.StartContainer(container.ContainerId)
+	//	}
+	//	return
+	//}
+	//if err != nil {
+	//	fmt.Print(err.Error())
+	//	return
+	//}
+	//for _, container := range containers {
+	//	if hasInRealContainers(container, relContainers) {
+	//		continue
+	//	}
+	//	docker.StartContainer(container.ContainerId)
+	//}
 
 }
 
 func hasInRealContainers(container appService.AppServiceContainerDto, realContainers []docker.Container) bool {
 	for _, realContainer := range realContainers {
 		//container exists include restarting and running
-		if realContainer.Id == container.ContainerId  {
+		if realContainer.Id == container.ContainerId {
 			return true
 		}
 	}

@@ -459,12 +459,7 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 
 	update_appServiceContainer string = `
 	update app_service_container set
-		$if HostId != '' then
-		 host_id = #HostId#,
-		$endif
-		$if DockerContainerId != '' then
-		 docker_container_id = #DockerContainerId#,
-		$endif
+		
 		$if State != '' then
 		 state = #State#,
 		$endif
@@ -481,6 +476,12 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 		$endif
 		$if ContainerId != '' then
 		and container_id = #ContainerId#
+		$endif
+		$if DockerContainerId != '' then
+		and docker_container_id = #DockerContainerId#,
+		$endif
+		$if HostId != '' then
+		 and host_id = #HostId#,
 		$endif
 	`
 	delete_appServiceContainer string = `
