@@ -7,6 +7,7 @@ import (
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shopspring/decimal"
+	"github.com/zihao-boy/zihao/common/docker"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
@@ -89,7 +90,35 @@ func doSlaveHealth() {
 		return
 	}
 
+	relContainers, err := docker.ReadContainer()
 
+	if err != nil && err.Error() == "noContainers" {
+		fmt.Print(err.Error())
+		for _, container := range containers {
+			docker.StartContainer(container.ContainerId)
+		}
+		return
+	}
+	if err != nil {
+		fmt.Print(err.Error())
+		return
+	}
+	for _, container := range containers {
+		if hasInRealContainers(container, relContainers) {
+			continue
+		}
+		docker.StartContainer(container.ContainerId)
+	}
+
+}
+
+func hasInRealContainers(container appService.AppServiceContainerDto, realContainers []docker.Container) bool {
+	for _, realContainer := range realContainers {
+		if realContainer.Id == container.ContainerId {
+			return true
+		}
+	}
+	return false
 }
 
 // slave 心跳
