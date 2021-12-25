@@ -1,7 +1,6 @@
 package task
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
@@ -9,7 +8,6 @@ import (
 	"github.com/shopspring/decimal"
 	"github.com/zihao-boy/zihao/common/docker"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
-	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
 	"time"
 
@@ -74,24 +72,24 @@ func doSlaveHealth() {
 		fmt.Print(err.Error(), url, data)
 	}
 	fmt.Print(resp)
-	var (
-		resultDto  result.ResultDto
-		containers []appService.AppServiceContainerDto
-	)
-	json.Unmarshal([]byte(resp), resultDto)
-
-	dataByte, err := json.Marshal(resultDto.Data)
-	if err != nil {
-		fmt.Print("解析报文异常", err)
-		return
-	}
-
-	json.Unmarshal(dataByte, containers)
-
-	if len(containers) < 1 {
-		fmt.Print("主机没有容器")
-		return
-	}
+	//var (
+	//	resultDto  result.ResultDto
+	//	containers []appService.AppServiceContainerDto
+	//)
+	//json.Unmarshal([]byte(resp), resultDto)
+	//
+	//dataByte, err := json.Marshal(resultDto.Data)
+	//if err != nil {
+	//	fmt.Print("解析报文异常", err)
+	//	return
+	//}
+	//
+	//json.Unmarshal(dataByte, containers)
+	//
+	//if len(containers) < 1 {
+	//	fmt.Print("主机没有容器")
+	//	return
+	//}
 
 	//relContainers, err := docker.ReadContainer()
 

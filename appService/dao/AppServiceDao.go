@@ -478,10 +478,10 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 		and container_id = #ContainerId#
 		$endif
 		$if DockerContainerId != '' then
-		and docker_container_id = #DockerContainerId#,
+		and docker_container_id = #DockerContainerId#
 		$endif
 		$if HostId != '' then
-		 and host_id = #HostId#,
+		 and host_id = #HostId#
 		$endif
 	`
 	delete_appServiceContainer string = `
