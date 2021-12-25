@@ -662,7 +662,7 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 		container := appService.AppServiceContainerDto{
 			HostId: hostDtos[0].HostId,
 			DockerContainerId:tempContainer.Id,
-			State: tempContainer.Status,
+			State: tempContainer.State,
 			UpdateTime: hostDto.HeartbeatTime,
 		}
 		hostService.appServiceDao.UpdateAppServiceContainer(container)
