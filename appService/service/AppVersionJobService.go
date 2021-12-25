@@ -335,6 +335,9 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 
 	err = appVersionJobService.appVersionJobDetailDao.SaveAppVersionJobDetail(appVersionJobDetailDto)
 	if err != nil {
+		fmt.Println(err)
+		appVersionJobDto.State = appVersionJob.STATE_error
+		err = appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
 		return result.Error(err.Error())
 	}
 
@@ -342,11 +345,6 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 
 	go shell.ExecLocalShell(jobShell)
 
-	if err != nil {
-		fmt.Println(err)
-		appVersionJobDto.State = appVersionJob.STATE_error
-		err = appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
-	}
 	return result.SuccessData(appVersionJobDto)
 
 }
@@ -364,6 +362,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	appVersionJobDto = *appVersionJobDtos[0]
 
 	if len(appVersionJobDtos) < 1 {
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_error)
 		return result.Error("构建不存在")
 	}
 
@@ -374,6 +373,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 
 	appVersionJobDetailDtos, err := appVersionJobService.appVersionJobDetailDao.GetAppVersionJobDetails(appVersionJobDetailDto)
 	if len(appVersionJobDetailDtos) < 1 {
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_error)
 		return result.Error("构建日志不存在")
 	}
 	appVersionJobDetailDto = *appVersionJobDetailDtos[0]
@@ -384,6 +384,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	appVersionJobImagesDtos, _ := appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImagesDto)
 
 	if len(appVersionJobImagesDtos) < 1 {
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_success)
 		return result.Success()
 	}
 
@@ -391,12 +392,23 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 		appVersionJobService.doGeneratorImages(appVersionJobImagesDto, appVersionJobDetailDto, appVersionJobDto)
 	}
 
-	appVersionJobDto.State = appVersionJob.STATE_success
-	err = appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
-	if err != nil {
-		return result.Error(err.Error())
-	}
+	//appVersionJobDto.State = appVersionJob.STATE_success
+	//err = appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
+	//if err != nil {
+	//	appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_error)
+	//	return result.Error(err.Error())
+	//}
+	appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_success)
 	return result.Success()
+}
+
+func (appVersionJobService *AppVersionJobService) updateAppVersionJobState(jobId, state string) {
+	var (
+		appVersionJobDto appVersionJob.AppVersionJobDto
+	)
+	appVersionJobDto.JobId = jobId
+	appVersionJobDto.State = state
+	appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
 }
 
 // to do generator images
