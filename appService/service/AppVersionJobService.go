@@ -299,7 +299,10 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	if appVersionJobDto.GitUsername == "" || strings.Trim(appVersionJobDto.GitUsername, " ") == "无" {
 		git_url = appVersionJobDto.GitUrl
 	} else {
-		git_url = strings.Replace(appVersionJobDto.GitUrl, "://", "://"+appVersionJobDto.GitUsername+":"+appVersionJobDto.GitPasswd+"@", 1)
+		git_url = strings.Replace(appVersionJobDto.GitUrl,
+			"://",
+			"://"+strings.ReplaceAll(appVersionJobDto.GitUsername, "@", "%40")+":"+strings.ReplaceAll(appVersionJobDto.GitPasswd, "@", "%40")+"@",
+			1)
 	}
 
 	if !utils.IsDir(path.Join(workDir, "job")) {
@@ -430,12 +433,12 @@ func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto
 		fmt.Println(err)
 		return
 	}
-	if !utils.IsFile(targetPath){
+	if !utils.IsFile(targetPath) {
 		targetPathDir := path.Dir(targetPath)
-		if !utils.IsDir(targetPathDir){
-			os.MkdirAll(targetPathDir,0777)
+		if !utils.IsDir(targetPathDir) {
+			os.MkdirAll(targetPathDir, 0777)
 		}
-		file,_:=os.Create(targetPath)
+		file, _ := os.Create(targetPath)
 		defer func() {
 			file.Close()
 		}()
