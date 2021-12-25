@@ -106,7 +106,8 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 
 	//dockerRun += " --name=\"" + appServiceDto.AsName + "_" + seq.Generator() + "\" " + imagesUrl
 
-	dockerRun += (" " + imagesUrl + param)
+	dockerRun += (" " + imagesUrl + param +" --restart=always")
+
 
 	//运行镜像
 	if sysType == "windows" {

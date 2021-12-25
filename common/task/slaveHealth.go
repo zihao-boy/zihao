@@ -114,7 +114,8 @@ func doSlaveHealth() {
 
 func hasInRealContainers(container appService.AppServiceContainerDto, realContainers []docker.Container) bool {
 	for _, realContainer := range realContainers {
-		if realContainer.Id == container.ContainerId {
+		//container exists include restarting and running
+		if realContainer.Id == container.ContainerId  {
 			return true
 		}
 	}
