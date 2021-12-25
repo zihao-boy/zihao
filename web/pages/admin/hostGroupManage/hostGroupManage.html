@@ -12,14 +12,12 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入组名称" v-model="hostGroupManageInfo.conditions.name"
-                                    class=" form-control">
+                                <input type="text" placeholder="请输入组名称" v-model="hostGroupManageInfo.conditions.name" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入组ID" v-model="hostGroupManageInfo.conditions.groupId"
-                                    class=" form-control">
+                                <input type="text" placeholder="请输入组ID" v-model="hostGroupManageInfo.conditions.groupId" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-1">
@@ -51,7 +49,7 @@
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                         <thead>
                             <tr>
-                                
+
                                 <th class="text-center">组名称</th>
                                 <th class="text-center">描述</th>
                                 <th class="text-center">组ID</th>
@@ -62,18 +60,19 @@
                         </thead>
                         <tbody>
                             <tr v-for="hostGroup in hostGroupManageInfo.hostGroups">
-                               
+
                                 <td class="text-center">{{hostGroup.name}}</td>
                                 <td class="text-center">{{hostGroup.description}}</td>
                                 <td class="text-center">{{hostGroup.groupId}}</td>
                                 <td class="text-center">
-                                    <div class="btn-group">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openEditHostGroupModel(hostGroup)">修改</button>
+                                    <div class="btn-group" v-if="hostGroup.groupId != 'fd96a59e-f04b-49d7-bd6a-0c9d284940e2'">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openEditHostGroupModel(hostGroup)">修改</button>
                                     </div>
-                                    <div class="btn-group">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openDeleteHostGroupModel(hostGroup)">删除</button>
+                                    <div class="btn-group" v-if="hostGroup.groupId != 'fd96a59e-f04b-49d7-bd6a-0c9d284940e2'">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteHostGroupModel(hostGroup)">删除</button>
+                                    </div>
+                                    <div class="btn-group" v-if="hostGroup.groupId == 'fd96a59e-f04b-49d7-bd6a-0c9d284940e2'">
+                                        <span>本机</span>
                                     </div>
                                 </td>
 

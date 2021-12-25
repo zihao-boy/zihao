@@ -19,14 +19,12 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入主机名称" v-model="hostManageInfo.conditions.name"
-                                    class=" form-control">
+                                <input type="text" placeholder="请输入主机名称" v-model="hostManageInfo.conditions.name" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入IP" v-model="hostManageInfo.conditions.ip"
-                                    class=" form-control">
+                                <input type="text" placeholder="请输入IP" v-model="hostManageInfo.conditions.ip" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-1">
@@ -84,26 +82,21 @@
                                 <td class="text-center">{{_getStateName(host.state)}}</td>
                                 <td class="text-center">{{_getOnline(host.heartbeatTime)}}</td>
                                 <td class="text-center">
-                                    <div class="btn-group"  v-if="host.state=='2002'">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openConsole(host)">控制台</button>
+                                    <div class="btn-group" v-if="host.state=='2002'">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openConsole(host)">控制台</button>
                                     </div>
                                     <!--v-if="host.state=='2002'"-->
-                                     <div class="btn-group" >
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openFileManager(host)">文件</button>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openFileManager(host)">文件</button>
                                     </div>
-                                    <div class="btn-group"  v-if="host.state=='1001'">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_controlHost(host)">管理主机</button>
+                                    <div class="btn-group" v-if="host.state=='1001'">
+                                        <button class="btn-white btn btn-xs" v-on:click="_controlHost(host)">管理主机</button>
                                     </div>
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openEditHostModel(host)">修改</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openEditHostModel(host)">修改</button>
                                     </div>
-                                    <div class="btn-group">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openDeleteHostModel(host)">删除</button>
+                                    <div class="btn-group" v-if="host.hostId != '5f3761ed-008a-475b-ad37-8cc35c88402c'">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteHostModel(host)">删除</button>
                                     </div>
                                 </td>
 
