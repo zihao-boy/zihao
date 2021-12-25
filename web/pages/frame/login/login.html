@@ -1,10 +1,10 @@
 <form class="text-left mx-auto card p-4 w-100 p-2" autocomplete="off">
     <h1 class="h3 mb-3 text-center">梓豪平台</h1>
     <label for="username" class="text-left ml-0">用户名</label>
-    <input type="text" v-model="loginInfo.username" class="form-control mb-3" required autofocus>
+    <input type="text" v-model="loginInfo.username" class="form-control mb-3" @keyup.enter="doLogin" required autofocus>
     <label for="password">密码</label>
     <div class="input-group">
-        <input type="password" name="current-password" v-model="loginInfo.passwd" autocomplete="current-password"
+        <input type="password" name="current-password" v-model="loginInfo.passwd" @keyup.enter="doLogin" autocomplete="current-password"
             class="form-control rounded-right" spellcheck="false" autocorrect="off" autocapitalize="off" required>
         <button id="toggle-password" type="button" class="d-none"
             aria-label="Show password as plain text. Warning: this will display your password on the screen."></button>
