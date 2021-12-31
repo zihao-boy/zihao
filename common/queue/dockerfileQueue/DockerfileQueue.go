@@ -167,6 +167,6 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		write.Flush()
 	}
 
-	write.WriteString(">>>>>>>>>>>>>>>>>>>制作镜像（" + businessDockerfileDto.Name + "）完成")
+	write.WriteString(">>>>>>>>>>>>>>>>>>>制作镜像（" + businessDockerfileDto.Name + "）完成\n")
 	write.Flush()
 }
