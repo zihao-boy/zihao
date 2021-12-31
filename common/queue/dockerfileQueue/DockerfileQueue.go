@@ -16,6 +16,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 )
@@ -106,6 +107,45 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		fmt.Println(err.Error())
 	} else {
 		_, err = f.Write([]byte(dockerfile))
+		if err != nil {
+			fmt.Print(err.Error())
+		}
+	}
+	//ignore file
+	dockerignore := dest + "/.dockerignore"
+
+	if utils.IsFile(dockerignore) {
+		//f, err = os.OpenFile(dest, os.O_RDWR, 0600)
+		os.Remove(dockerignore)
+	}
+	fIgnore, err := os.Create(dockerignore)
+
+	defer fIgnore.Close()
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		dockerfileLines := strings.Split(dockerfile, "\n")
+		ignoreContext := "*\n"
+		for _, dockerfileLine := range dockerfileLines {
+			dockerfileLine = strings.TrimLeft(dockerfileLine, " ")
+			dockerfileLine = strings.TrimRight(dockerfileLine, " ")
+
+			// comment
+			if strings.HasPrefix(dockerfileLine, "#") {
+				continue
+			}
+
+			if strings.HasPrefix(dockerfileLine, "ADD") || strings.HasPrefix(dockerfileLine, "COPY") {
+				start := strings.Index(dockerfileLine, " ")
+				end := strings.LastIndex(dockerfileLine, " ")
+				addLine := strings.TrimLeft(dockerfileLine[start:end], " ")
+				addLine = strings.TrimRight(addLine, " ")
+				fmt.Println(addLine)
+				ignoreContext += ("!" + addLine+"\n")
+			}
+		}
+		_, err = fIgnore.Write([]byte(ignoreContext))
+
 		if err != nil {
 			fmt.Print(err.Error())
 		}
