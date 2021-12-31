@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/notifyMessage"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
@@ -90,6 +91,8 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	write.WriteString(">>>>>>>>>>>>>>>>>>>开始制作镜像" + businessDockerfileDto.Name)
 	write.Flush()
 
+	notifyMessage.SendMsg(tenantId,"开始制作镜像>" + businessDockerfileDto.Name)
+
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
@@ -168,6 +171,8 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	fmt.Print("构建镜像：" + shellScript + " 返回：" + string(output))
 	write.WriteString("构建镜像：" + shellScript + " 返回：" + string(output))
 	write.Flush()
+	notifyMessage.SendMsg(tenantId,"构建镜像完成>" + businessDockerfileDto.Name)
+
 	dockerRepositoryUrl, _ := factory.GetMappingValue("DOCKER_REPOSITORY_URL")
 	username, _ := factory.GetMappingValue("DOCKER_USERNAME")
 	password, _ := factory.GetMappingValue("DOCKER_PASSWORD")
@@ -180,6 +185,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	write.WriteString("登录：" + shellScript + " 返回：" + string(output))
 	write.Flush()
 	//推镜像
+	notifyMessage.SendMsg(tenantId,"开始推镜像>" + businessDockerfileDto.Name)
 	shellScript = "docker push " + imageName
 
 	cmd = exec.Command("bash", "-c", shellScript)
@@ -189,6 +195,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	fmt.Print("推镜像：" + shellScript + " 返回：" + string(output))
 	write.WriteString("推镜像：" + shellScript + " 返回：" + string(output))
 	write.Flush()
+	notifyMessage.SendMsg(tenantId,"推镜像完成>" + businessDockerfileDto.Name)
 
 	businessImagesDto := businessImages.BusinessImagesDto{}
 	businessImagesDto.TenantId = businessDockerfileDto.TenantId

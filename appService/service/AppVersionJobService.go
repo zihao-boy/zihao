@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/notifyMessage"
 	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
@@ -342,6 +343,7 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 
 	jobShell := "nohup sh " + dest + " >" + path.Join(workDir, appVersionJobDto.JobId+".log") + " &"
+	notifyMessage.SendMsg(user.TenantId, "开始构建>"+appVersionJobDto.JobName)
 
 	go shell.ExecLocalShell(jobShell)
 
@@ -362,9 +364,10 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	appVersionJobDto = *appVersionJobDtos[0]
 
 	if len(appVersionJobDtos) < 1 {
-		appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_error)
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto, appVersionJob.STATE_error)
 		return result.Error("构建不存在")
 	}
+	notifyMessage.SendMsg(appVersionJobDto.TenantId, "代码编译完成>"+appVersionJobDto.JobName)
 
 	//插入构建记录
 	var appVersionJobDetailDto = appVersionJob.AppVersionJobDetailDto{
@@ -373,7 +376,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 
 	appVersionJobDetailDtos, err := appVersionJobService.appVersionJobDetailDao.GetAppVersionJobDetails(appVersionJobDetailDto)
 	if len(appVersionJobDetailDtos) < 1 {
-		appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_error)
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto, appVersionJob.STATE_error)
 		return result.Error("构建日志不存在")
 	}
 	appVersionJobDetailDto = *appVersionJobDetailDtos[0]
@@ -384,7 +387,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	appVersionJobImagesDtos, _ := appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImagesDto)
 
 	if len(appVersionJobImagesDtos) < 1 {
-		appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_success)
+		appVersionJobService.updateAppVersionJobState(appVersionJobDto, appVersionJob.STATE_success)
 		return result.Success()
 	}
 
@@ -398,7 +401,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	//	appVersionJobService.updateAppVersionJobState(appVersionJobDto.JobId,appVersionJob.STATE_error)
 	//	return result.Error(err.Error())
 	//}
-	appVersionJobService.updateAppVersionJobState(appVersionJobDto,appVersionJob.STATE_success)
+	appVersionJobService.updateAppVersionJobState(appVersionJobDto, appVersionJob.STATE_success)
 	return result.Success()
 }
 
