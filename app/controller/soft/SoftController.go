@@ -10,6 +10,7 @@ type SoftController struct {
 	businessPackageService service.BusinessPackageService
 	businessDockerService service.BusinessDockerfileService
 	businessImagesService service.BusinessImagesService
+	businessImagesVerService service.BusinessImagesVerService
 }
 
 func SoftControllerRouter(party iris.Party) {
@@ -50,6 +51,15 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Get("/getImagesPool", hero.Handler(aus.getImagesPool))
 
 	adinMenu.Post("/installImages", hero.Handler(aus.installImages))
+
+	adinMenu.Get("/getBusinessImagesVer", hero.Handler(aus.GetBusinessImagesVer))
+
+	adinMenu.Post("/saveBusinessImagesVer", hero.Handler(aus.SaveBusinessImagesVer))
+
+	adinMenu.Post("/updateBusinessImagesVer", hero.Handler(aus.UpdateBusinessImagesVer))
+
+	adinMenu.Post("/deleteBusinessImagesVer", hero.Handler(aus.DeleteBusinessImagesVer))
+
 
 }
 
@@ -190,4 +200,41 @@ func (aus *SoftController) installImages(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+
+
+/**
+查询 dockerfile
+*/
+func (aus *SoftController) GetBusinessImagesVer(ctx iris.Context) {
+	reslut := aus.businessImagesVerService.GetBusinessImagesVer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 业务包
+*/
+func (aus *SoftController) SaveBusinessImagesVer(ctx iris.Context) {
+	reslut := aus.businessImagesVerService.SaveBusinessImagesVer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 业务包
+*/
+func (aus *SoftController) UpdateBusinessImagesVer(ctx iris.Context) {
+	reslut := aus.businessImagesVerService.UpdateBusinessImagesVer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 业务包
+*/
+func (aus *SoftController) DeleteBusinessImagesVer(ctx iris.Context) {
+	reslut := aus.businessImagesVerService.DeleteBusinessImagesVer(ctx)
+
+	ctx.JSON(reslut)
+}
 
