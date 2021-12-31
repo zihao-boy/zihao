@@ -43,7 +43,7 @@ func sendToCompanyWechat(tenantId, message string) (string, error) {
 	var url string = tenantSettingDtos[0].Value
 	// 1、构建需要的参数
 	context := map[string]string{
-		"content": "[梓豪平台告警]" + message,
+		"content": "[梓豪平台]" + message,
 	}
 	data := map[string]interface{}{
 		"msgtype": "text",
@@ -71,7 +71,7 @@ func sendToDingDing(tenantId, message string) (string, error) {
 	var url string = tenantSettingDtos[0].Value
 	// 1、构建需要的参数
 	context := map[string]string{
-		"content": "[梓豪平台告警]" + message,
+		"content": "[梓豪平台]" + message,
 	}
 	data := map[string]interface{}{
 		"msgtype": "text",
