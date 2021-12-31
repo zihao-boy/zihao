@@ -37,6 +37,7 @@ type AppServiceDto struct {
 	ImagesId  string `json:"imagesId" sql:"-"`
 	ImagesName  string `json:"imagesName" sql:"-"`
 	ImagesVersion  string `json:"imagesVersion" sql:"-"`
+	VerId string `json:"verId" sql:"-"`
 	AvgName  string `json:"avgName" sql:"-"`
 	HostGroupName  string `json:"hostGroupName" sql:"-"`
 	HostName  string `json:"hostName" sql:"-"`

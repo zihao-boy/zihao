@@ -28,8 +28,9 @@ const (
     	
 	`
 	query_businessImagesVer string = `
-				select t.*
-				from business_images_ver t
+				select t.*,bi.name
+from business_images_ver t
+left join business_images bi on t.images_id = bi.Id and bi.status_cd = '0'
 					where t.status_cd = '0'
 					$if TenantId != '' then
 					and t.tenant_id = #TenantId#

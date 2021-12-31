@@ -11,4 +11,5 @@ type BusinessImagesVerDto struct {
 	CreateTime   string `json:"createTime" sql:"-"`
 	StatusCd     string `json:"statusCd" sql:"-"`
 	TenantId     string `json:"tenantId" sql:"-"`
+	Name string `json:"name"`
 }

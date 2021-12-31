@@ -20,7 +20,9 @@
                 hosts: [],
                 hostId: '',
                 imagesId: '',
+                verId:'',
                 images: [],
+                vers: [],
                 appServicePorts: [],
                 appServiceDirs: [],
                 appServiceHosts: [],
@@ -142,10 +144,14 @@
                     hosts: [],
                     hostId: '',
                     imagesId: '',
+                    verId:'',
+                    images: [],
+                    vers: [],
                     appServicePorts: [],
                     appServiceDirs: [],
                     appServiceHosts: [],
-                    appServiceVars: []
+                    appServiceVars: [],
+                    
                 };
             },
             _listAddAppVarGroups: function(_page, _rows) {
@@ -269,6 +275,27 @@
             },
             _deleteVar: function(_index) {
                 $that.addAppServiceInfo.appServiceVars.splice(_index, 1);
+            },
+            _addChangeImages:function(){
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 50,
+                        imagesId:$that.addAppServiceInfo.imagesId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/soft/getBusinessImagesVer',
+                    param,
+                    function (json) {
+                        var _verInfo = JSON.parse(json);
+                        vc.component.addAppServiceInfo.vers = _verInfo.data;
+                        
+                    }, function () {
+                        console.log('请求失败处理');
+                    }
+                );
             }
         }
     });

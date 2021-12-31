@@ -24,6 +24,7 @@ import (
 
 type BusinessImagesService struct {
 	businessImagesDao     dao.BusinessImagesDao
+	businessImagesVerDao     dao.BusinessImagesVerDao
 	businessDockerfileDao dao.BusinessDockerfileDao
 }
 
@@ -106,6 +107,8 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 	var (
 		err               error
 		businessImagesDto businessImages.BusinessImagesDto
+
+
 	)
 	ctx.SetMaxRequestBodySize(maxSize)
 
@@ -142,6 +145,18 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 		return result.Error(err.Error())
 	}
 
+	//save images version
+	businessImagesVerDto := businessImages.BusinessImagesVerDto{
+		Id:seq.Generator(),
+		ImagesId:businessImagesDto.Id,
+		Version:businessImagesDto.Version,
+		TypeUrl:dest,
+		TenantId:user.TenantId,
+	}
+	err = businessImagesService.businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
 	return result.SuccessData(businessImagesDto)
 
 }
@@ -310,20 +325,45 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 		businessImagesDto := businessImages.BusinessImagesDto{}
 		businessImagesDto.TenantId = user.TenantId
 		businessImagesDto.Name = zihaoAppImagesDto.Name
-		businessImagesDto.Version = imagesPoolsDtos[0].Version
+		//
 		businessImagesDtos, _ := businessImagesService.businessImagesDao.GetBusinessImagess(businessImagesDto)
-		if len(businessImagesDtos) > 0 { // exits images
-			message += (zihaoAppImagesDto.Name + "已经存在,")
+		if len(businessImagesDtos) < 1 { // no exits images
+			businessImagesDto.CreateUserId = user.UserId
+			businessImagesDto.Id = seq.Generator()
+			businessImagesDto.Version = imagesPoolsDtos[0].Version
+			businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_REMOTE
+			businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_PUBLIC
+			businessImagesDto.TypeUrl = zihaoAppImagesDto.Url
+			err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
+		}else{
+			businessImagesDto.Id = businessImagesDtos[0].Id
+			businessImagesDto.Version = imagesPoolsDtos[0].Version
+			businessImagesDto.TypeUrl = zihaoAppImagesDto.Url
+			err = businessImagesService.businessImagesDao.UpdateBusinessImages(businessImagesDto)
+			businessImagesDto = *businessImagesDtos[0]
+		}
+
+		//if exits images version
+		businessImagesVerDto := businessImages.BusinessImagesVerDto{
+			TenantId:user.TenantId,
+			ImagesId: businessImagesDto.Id,
+			Version:imagesPoolsDtos[0].Version,
+		}
+		businessImagesVerDtos, _ := businessImagesService.businessImagesVerDao.GetBusinessImagesVers(businessImagesVerDto)
+
+		if len(businessImagesVerDtos) >0{
+			message += (businessImagesDto.Name+":"+imagesPoolsDtos[0].Version+"已存在，")
 			continue
 		}
-		businessImagesDto.CreateUserId = user.UserId
-		businessImagesDto.Id = seq.Generator()
-		businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_REMOTE
-		businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_PUBLIC
-		businessImagesDto.TypeUrl = zihaoAppImagesDto.Url
 
-		err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
-
+		businessImagesVerDto = businessImages.BusinessImagesVerDto{
+			Id:seq.Generator(),
+			ImagesId:businessImagesDto.Id,
+			Version:imagesPoolsDtos[0].Version,
+			TypeUrl:zihaoAppImagesDto.Url,
+			TenantId:user.TenantId,
+		}
+		err = businessImagesService.businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
 		if err != nil {
 			return result.Error(err.Error())
 		}

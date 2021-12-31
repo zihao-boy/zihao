@@ -77,8 +77,11 @@ VALUES(#Id#,#Name#,#Version#,#ImagesType#,#TypeUrl#,#ImagesFlag#,#CreateUserId#,
 		$if Name != '' then
 		name = #Name#,
 		$endif
-		$if Dockerfile != '' then
-		dockerfile = #Dockerfile#,
+		$if Version != '' then
+		version = #Version#,
+		$endif
+		$if TypeUrl != '' then
+		type_url = #TypeUrl#,
 		$endif
 		status_cd = '0'
 		where status_cd = '0'

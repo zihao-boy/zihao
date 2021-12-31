@@ -22,6 +22,7 @@
                 asGroupId: '',
                 hostId: '',
                 imagesId: '',
+                verId: '',
                 state: '',
                 asDesc: ''
             }
@@ -57,6 +58,7 @@
                     hostGroupName: '',
                     hostName: '',
                     imagesId: '',
+                    verId: '',
                     state: '',
                     asDesc: ''
                 }

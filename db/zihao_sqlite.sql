@@ -12,6 +12,8 @@ CREATE TABLE `app_service` (
   PRIMARY KEY (`as_id`)
 );
 
+alter table app_service add column ver_id varchar(64) ;
+
 -- ----------------------------
 -- Records of app_service
 -- ----------------------------

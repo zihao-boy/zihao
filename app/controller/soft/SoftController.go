@@ -174,7 +174,8 @@ func (aus *SoftController) DeleteBusinessImages(ctx iris.Context) {
 }
 
 /**
-删除 业务包
+custom generator docker images
+base on dockerfile
 */
 func (aus *SoftController) GeneratorImages(ctx iris.Context) {
 	reslut := aus.businessImagesService.GeneratorImages(ctx)

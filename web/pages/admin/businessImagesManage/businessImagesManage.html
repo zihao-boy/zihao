@@ -68,9 +68,9 @@
                             <tr>
                                 <!-- <th class="text-center">编号</th> -->
                                 <th class="text-center">镜像名称</th>
-                                <th class="text-center">版本</th>
+                                <th class="text-center">最新版本</th>
                                 <th class="text-center">镜像类型</th>
-                                <th class="text-center" width="120">类型地址</th>
+                                <th class="text-center" width="120">最新地址</th>
                                 <th class="text-center">镜像标识</th>
                                 <th class="text-center">时间</th>
                                 <th class="text-center">添加人</th>
@@ -88,6 +88,9 @@
                                 <td class="text-center">{{businessImages.createTime}}</td>
                                 <td class="text-center">{{businessImages.username}}</td>
                                 <td class="text-center">
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" v-on:click="_versionImagesVers(businessImages)">版本</button>
+                                    </div>
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_openEditBusinessImagesModel(businessImages)">修改</button>
                                     </div>
@@ -118,5 +121,8 @@
     <vc:create path="admin/addBusinessImages" callBackListener="" callBackFunction=""></vc:create>
     <vc:create path="admin/editBusinessImages"></vc:create>
     <vc:create path="admin/deleteBusinessImages"></vc:create>
+    <vc:create path="admin/viewBusinessImagesVers"></vc:create>
+
+    
 
 </div>

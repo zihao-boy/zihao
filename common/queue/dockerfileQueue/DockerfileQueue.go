@@ -66,6 +66,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		dockerfile        = businessDockerfileDto.Dockerfile
 		tenantId          = businessDockerfileDto.TenantId
 		businessImagesDao dao.BusinessImagesDao
+		businessImagesVerDao dao.BusinessImagesVerDao
 		f                 *os.File
 		err               error
 		cmd               *exec.Cmd
@@ -194,23 +195,47 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	fmt.Print("推镜像：" + shellScript + " 返回：" + string(output))
 	write.WriteString("推镜像：" + shellScript + " 返回：" + string(output))
 	write.Flush()
-
+	//if exits docker images
+	tempBusinessImagesDto := businessImages.BusinessImagesDto{
+		TenantId: businessDockerfileDto.TenantId,
+		Name: businessDockerfileDto.Name,
+	}
+	tempBusinessImagesDtos ,_:= businessImagesDao.GetBusinessImagess(tempBusinessImagesDto)
 	businessImagesDto := businessImages.BusinessImagesDto{}
-	businessImagesDto.TenantId = businessDockerfileDto.TenantId
-	businessImagesDto.CreateUserId = businessDockerfileDto.CreateUserId
-	businessImagesDto.Id = seq.Generator()
-	businessImagesDto.Version = version
-	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_DOCKER
-	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
-	businessImagesDto.TypeUrl = imageName
-	businessImagesDto.Name = businessDockerfileDto.Name
-
-	err = businessImagesDao.SaveBusinessImages(businessImagesDto)
+	if len(tempBusinessImagesDtos)>0{
+		businessImagesDto.TenantId = businessDockerfileDto.TenantId
+		businessImagesDto.Id = tempBusinessImagesDtos[0].Id
+		businessImagesDto.Version = version
+		businessImagesDto.TypeUrl = imageName
+		err = businessImagesDao.UpdateBusinessImages(businessImagesDto)
+	}else{
+		businessImagesDto.TenantId = businessDockerfileDto.TenantId
+		businessImagesDto.CreateUserId = businessDockerfileDto.CreateUserId
+		businessImagesDto.Id = seq.Generator()
+		businessImagesDto.Version = version
+		businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_DOCKER
+		businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
+		businessImagesDto.TypeUrl = imageName
+		businessImagesDto.Name = businessDockerfileDto.Name
+		err = businessImagesDao.SaveBusinessImages(businessImagesDto)
+	}
 	if err != nil {
 		fmt.Println("保存镜像失败" + err.Error())
 		write.WriteString("保存镜像失败" + err.Error())
 		write.Flush()
 	}
+
+	// save docker images version
+	// dj
+	businessImagesVerDto := businessImages.BusinessImagesVerDto{
+		Id:seq.Generator(),
+		ImagesId:businessImagesDto.Id,
+		Version:businessImagesDto.Version,
+		TypeUrl:dest,
+		TenantId:businessDockerfileDto.TenantId,
+	}
+	businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
+
 	notifyMessage.SendMsg(tenantId,"推镜像完成>" + businessDockerfileDto.Name)
 	write.WriteString(">>>>>>>>>>>>>>>>>>>制作镜像（" + businessDockerfileDto.Name + "）完成\n")
 	write.Flush()

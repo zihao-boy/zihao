@@ -73,6 +73,10 @@
                 vc.component._listBusinessImagess(DEFAULT_PAGE, DEFAULT_ROWS);
 
             },
+            _versionImagesVers:function(_businessImages){
+                vc.emit('viewBusinessImagesVers', 'open', _businessImages);
+
+            },
             _moreCondition: function() {
                 if (vc.component.businessImagesManageInfo.moreCondition) {
                     vc.component.businessImagesManageInfo.moreCondition = false;
