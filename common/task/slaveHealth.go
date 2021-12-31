@@ -1,7 +1,6 @@
 package task
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
@@ -9,7 +8,6 @@ import (
 	"github.com/shopspring/decimal"
 	"github.com/zihao-boy/zihao/common/docker"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
-	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
 	"time"
 
@@ -57,65 +55,68 @@ func doSlaveHealth() {
 	totalDiskUseDec = totalDiskUseDec.Div(decimal.NewFromInt(1024 * 1024))
 	totalDiskUseValue, _ := totalMemUseDec.Float64()
 
+	relContainers, _ := docker.ReadContainer()
+
 	data := map[string]interface{}{
-		"hostId":  slaveId,
-		"cpu":     strconv.FormatInt(int64(cpuCore), 10),
-		"mem":     fmt.Sprintf("%.2f", totalMemValue),
-		"disk":    fmt.Sprintf("%.2f", totalDiskValue),
-		"useCpu":  fmt.Sprintf("%.2f", useCpu),
-		"useMem":  fmt.Sprintf("%.2f", totalMemUseValue),
-		"useDisk": fmt.Sprintf("%.2f", totalDiskUseValue),
+		"hostId":     slaveId,
+		"cpu":        strconv.FormatInt(int64(cpuCore), 10),
+		"mem":        fmt.Sprintf("%.2f", totalMemValue),
+		"disk":       fmt.Sprintf("%.2f", totalDiskValue),
+		"useCpu":     fmt.Sprintf("%.2f", useCpu),
+		"useMem":     fmt.Sprintf("%.2f", totalMemUseValue),
+		"useDisk":    fmt.Sprintf("%.2f", totalDiskUseValue),
+		"containers": relContainers,
 	}
 	resp, err := httpReq.Post(url, data, nil)
 	if err != nil {
 		fmt.Print(err.Error(), url, data)
 	}
 	fmt.Print(resp)
-	var (
-		resultDto  result.ResultDto
-		containers []appService.AppServiceContainerDto
-	)
-	json.Unmarshal([]byte(resp), resultDto)
+	//var (
+	//	resultDto  result.ResultDto
+	//	containers []appService.AppServiceContainerDto
+	//)
+	//json.Unmarshal([]byte(resp), resultDto)
+	//
+	//dataByte, err := json.Marshal(resultDto.Data)
+	//if err != nil {
+	//	fmt.Print("解析报文异常", err)
+	//	return
+	//}
+	//
+	//json.Unmarshal(dataByte, containers)
+	//
+	//if len(containers) < 1 {
+	//	fmt.Print("主机没有容器")
+	//	return
+	//}
 
-	dataByte, err := json.Marshal(resultDto.Data)
-	if err != nil {
-		fmt.Print("解析报文异常", err)
-		return
-	}
+	//relContainers, err := docker.ReadContainer()
 
-	json.Unmarshal(dataByte, containers)
-
-	if len(containers) < 1 {
-		fmt.Print("主机没有容器")
-		return
-	}
-
-	relContainers, err := docker.ReadContainer()
-
-	if err != nil && err.Error() == "noContainers" {
-		fmt.Print(err.Error())
-		for _, container := range containers {
-			docker.StartContainer(container.ContainerId)
-		}
-		return
-	}
-	if err != nil {
-		fmt.Print(err.Error())
-		return
-	}
-	for _, container := range containers {
-		if hasInRealContainers(container, relContainers) {
-			continue
-		}
-		docker.StartContainer(container.ContainerId)
-	}
+	//if err != nil && err.Error() == "noContainers" {
+	//	fmt.Print(err.Error())
+	//	for _, container := range containers {
+	//		docker.StartContainer(container.ContainerId)
+	//	}
+	//	return
+	//}
+	//if err != nil {
+	//	fmt.Print(err.Error())
+	//	return
+	//}
+	//for _, container := range containers {
+	//	if hasInRealContainers(container, relContainers) {
+	//		continue
+	//	}
+	//	docker.StartContainer(container.ContainerId)
+	//}
 
 }
 
 func hasInRealContainers(container appService.AppServiceContainerDto, realContainers []docker.Container) bool {
 	for _, realContainer := range realContainers {
 		//container exists include restarting and running
-		if realContainer.Id == container.ContainerId  {
+		if realContainer.Id == container.ContainerId {
 			return true
 		}
 	}

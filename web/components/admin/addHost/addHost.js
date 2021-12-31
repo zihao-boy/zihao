@@ -13,9 +13,9 @@
                 ip: '',
                 username: 'root',
                 passwd: '',
-                cpu: '',
-                mem: '',
-                disk: '',
+                cpu: '0',
+                mem: '0',
+                disk: '0',
                 hostGroups:[]
 
             }

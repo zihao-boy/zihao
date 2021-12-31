@@ -143,6 +143,20 @@
 
                 return "离线"
             },
+            _getStateName:function(_state){
+                if(_state == 'running'){
+                    return '正在运行';
+                }else if(_state == 'created'){
+                    return '创建';
+                }else if(_state == 'paused'){
+                    return '暂停';
+                }else if(_state == 'stopped'){
+                    return '停止';
+                }else if(_state == 'deleted'){
+                    return '删除';
+                }
+                return _state;
+            },
             _toHosts: function(_container) {
                 vc.jumpToPage('/index.html#/pages/admin/hostDetailManage?hostId=' + _container.hostId)
             }

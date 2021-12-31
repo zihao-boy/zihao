@@ -649,12 +649,27 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 	hostDto.HeartbeatTime = time.Now().Format("2006-01-02 15:04:05")
 	hostService.hostDao.UpdateHost(hostDto)
 
-	 container := appService.AppServiceContainerDto{
-	 	HostId: hostDtos[0].HostId,
-	 }
-	containers , _ :=hostService.appServiceDao.GetAppServiceContainer(container)
+	// container := appService.AppServiceContainerDto{
+	// 	HostId: hostDtos[0].HostId,
+	// }
+	//containers , _ :=hostService.appServiceDao.GetAppServiceContainer(container)
 
-	return result.SuccessData(containers)
+	if len(hostDto.Containers) < 1 {
+		return result.Success();
+	}
+
+	for _,tempContainer := range hostDto.Containers{
+		container := appService.AppServiceContainerDto{
+			HostId: hostDtos[0].HostId,
+			DockerContainerId:tempContainer.Id,
+			State: tempContainer.State,
+			UpdateTime: hostDto.HeartbeatTime,
+		}
+		hostService.appServiceDao.UpdateAppServiceContainer(container)
+	}
+
+
+	return result.Success()
 
 }
 

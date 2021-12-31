@@ -3,11 +3,12 @@
         <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
             <thead>
                 <tr>
+                    <th class="text-center">容器ID</th>
                     <th class="text-center">主机</th>
                     <th class="text-center">IP</th>
-                    <th class="text-center">容器ID</th>
                     <th class="text-center">说明</th>
-                    <th class="text-center">在线</th>
+                    <th class="text-center">状态</th>
+                    <th class="text-center">检测时间</th>
                     <th class="text-center">创建时间</th>
                     <th class="text-center">操作</th>
                     <!-- <th class="text-center">状态</th> -->
@@ -15,12 +16,12 @@
             </thead>
             <tbody>
                 <tr v-for="event in appServiceControlContainerInfo.appServiceControlContainers">
-
+                    <td class="text-center" style="width:250px;word-break: break-all;">{{event.dockerContainerId}}</td>
                     <td class="text-center">{{event.hostname}}</td>
                     <td class="text-center">{{event.ip}}</td>
-                    <td class="text-center">{{event.dockerContainerId}}</td>
                     <td class="text-center">{{event.message}}</td>
-                    <td class="text-center">{{_getOnline(event.updateTime)}}</td>
+                    <td class="text-center">{{_getStateName(event.state)}}</td>
+                    <td class="text-center">{{event.updateTime}}</td>
                     <td class="text-center">{{event.createTime}}</td>
                     <td class="text-center">
                         <div class="btn-group">
