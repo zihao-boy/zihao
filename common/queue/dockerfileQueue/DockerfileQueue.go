@@ -112,7 +112,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		}
 	}
 	//ignore file
-	dockerignore := dest + "/.dockerignore"
+	dockerignore := tenantDesc + "/.dockerignore"
 
 	if utils.IsFile(dockerignore) {
 		//f, err = os.OpenFile(dest, os.O_RDWR, 0600)
