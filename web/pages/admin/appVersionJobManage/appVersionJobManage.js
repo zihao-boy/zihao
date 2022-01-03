@@ -84,23 +84,8 @@
                 }
             },
             _toJob: function (_appVersionJob) {
-                let data = {
-                    jobId: _appVersionJob.jobId
-                }
-                //发送get请求
-                vc.http.apiPost('/appVersion/doJob',
-                    JSON.stringify(data), {
-                    emulateJSON: true
-                },
-                    function (json, res) {
-                        var _appVersionJobManageInfo = JSON.parse(json);
-                        vc.toast(_appVersionJobManageInfo.msg);
-                        vc.emit('appVersionJobManage', 'listAppVersionJob', {})
-                    },
-                    function (errInfo, error) {
-                        console.log('请求失败处理');
-                    }
-                );
+                vc.emit('doBuildJob','openDoBuildJobModal',_appVersionJob);
+                
             },
             _showJobLog: function (_appVersionJob) {
                 let param = {

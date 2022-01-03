@@ -26,3 +26,9 @@ type AppVersionJobDto struct {
 	JobTime  string `json:"jobTime" sql:"-"`
 	AppVersionJobImages[] AppVersionJobImagesDto `json:"appVersionJobImages"`
 }
+// do build param
+type AppVersionJobParam struct {
+	JobId      string `json:"jobId" `
+	Action     string `json:"action"`
+	Images string `json:"images"`
+}

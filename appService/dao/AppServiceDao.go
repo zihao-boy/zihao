@@ -63,6 +63,9 @@ where t.status_cd = '0'
 					$if AsGroupId != '' then
 					and t.as_group_id = #AsGroupId#
 					$endif
+					$if ImagesId != '' then
+					and t.images_id = #ImagesId#
+					$endif
 					order by t.create_time desc
 					$if Row != 0 then
 						limit #Page#,#Row#

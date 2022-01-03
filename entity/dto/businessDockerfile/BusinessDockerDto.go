@@ -2,6 +2,11 @@ package businessDockerfile
 
 import "github.com/zihao-boy/zihao/entity/dto"
 
+const (
+	ActionBuild = "build"
+	ActionBuildStart = "buildAndStart"
+)
+
 type BusinessDockerfileDto struct {
 	dto.PageDto
 	Id           string `json:"id" sql:"-"`
@@ -14,4 +19,5 @@ type BusinessDockerfileDto struct {
 	TenantId     string `json:"tenantId" sql:"-"`
 	Username     string `json:"username" sql:"-"`
 	LogPath      string `json:"logPath"`
+	Action string 	`json:"action"`
 }

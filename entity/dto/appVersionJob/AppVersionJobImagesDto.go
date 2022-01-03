@@ -14,4 +14,5 @@ type AppVersionJobImagesDto struct {
 	StatusCd             string `json:"statusCd" sql:"-"`
 	BusinessDockerfileName             string `json:"businessDockerfileName" sql:"-"`
 	BusinessPackageName             string `json:"businessPackageName" sql:"-"`
+	Action string `json:"action"`
 }

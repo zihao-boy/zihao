@@ -75,7 +75,6 @@
             },
             _versionImagesVers:function(_businessImages){
                 vc.emit('viewBusinessImagesVers', 'open', _businessImages);
-
             },
             _moreCondition: function() {
                 if (vc.component.businessImagesManageInfo.moreCondition) {

@@ -246,15 +246,18 @@ func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobs(ctx iris.
 */
 func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result.ResultDto {
 	var (
-		err              error
-		appVersionJobDto appVersionJob.AppVersionJobDto
+		err                error
+		appVersionJobParam appVersionJob.AppVersionJobParam
 	)
 
-	if err = ctx.ReadJSON(&appVersionJobDto); err != nil {
+	if err = ctx.ReadJSON(&appVersionJobParam); err != nil {
 		return result.Error("解析入参失败")
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appVersionJobDto := appVersionJob.AppVersionJobDto{
+	}
 	appVersionJobDto.TenantId = user.TenantId
+	appVersionJobDto.JobId = appVersionJobParam.JobId
 	appVersionJobDtos, err := appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
 
 	if len(appVersionJobDtos) < 1 {
@@ -313,9 +316,11 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 
 	git_url += "\n"
-	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
+	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\",\"action\":\"ACTION\",\"images\":\"IMAGES\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
 
 	build_hook = strings.Replace(build_hook, "JOB_ID", appVersionJobDto.JobId, 1)
+	build_hook = strings.Replace(build_hook, "ACTION", appVersionJobParam.Action, 1)
+	build_hook = strings.Replace(build_hook, "IMAGES", appVersionJobParam.Images, 1)
 	build_hook = strings.Replace(build_hook, "MASTER_SERVER", "http://127.0.0.1:"+strconv.FormatInt(int64(config.G_AppConfig.Port), 10), 1)
 
 	_, err = file.WriteString(git_url + appVersionJobDto.JobShell + build_hook)
@@ -351,14 +356,18 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 
 }
 
+// do job build
 func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) interface{} {
 	var (
-		err              error
-		appVersionJobDto appVersionJob.AppVersionJobDto
+		err                error
+		appVersionJobParam appVersionJob.AppVersionJobParam
 	)
 
-	if err = ctx.ReadJSON(&appVersionJobDto); err != nil {
+	if err = ctx.ReadJSON(&appVersionJobParam); err != nil {
 		return result.Error("解析入参失败")
+	}
+	appVersionJobDto := appVersionJob.AppVersionJobDto{
+		JobId: appVersionJobParam.JobId,
 	}
 	appVersionJobDtos, err := appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
 	appVersionJobDto = *appVersionJobDtos[0]
@@ -380,7 +389,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 		return result.Error("构建日志不存在")
 	}
 	appVersionJobDetailDto = *appVersionJobDetailDtos[0]
-	//插入构建记录
+	// save build log
 	var appVersionJobImagesDto = appVersionJob.AppVersionJobImagesDto{
 		JobId: appVersionJobDto.JobId,
 	}
@@ -392,6 +401,10 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	}
 
 	for _, appVersionJobImagesDto := range appVersionJobImagesDtos {
+		if !hasAppVersionJob(appVersionJobImagesDto, appVersionJobParam) {
+			continue
+		}
+		appVersionJobImagesDto.Action = appVersionJobParam.Action
 		appVersionJobService.doGeneratorImages(appVersionJobImagesDto, appVersionJobDetailDto, appVersionJobDto)
 	}
 
@@ -403,6 +416,17 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 	//}
 	appVersionJobService.updateAppVersionJobState(appVersionJobDto, appVersionJob.STATE_success)
 	return result.Success()
+}
+
+// container images
+func hasAppVersionJob(jobImagesDto *appVersionJob.AppVersionJobImagesDto, jobParam appVersionJob.AppVersionJobParam) bool {
+	for _, images := range strings.Split(jobParam.Images, ",") {
+		if images == jobImagesDto.JobImagesId {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (appVersionJobService *AppVersionJobService) updateAppVersionJobState(job appVersionJob.AppVersionJobDto, state string) {
@@ -477,6 +501,8 @@ func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto
 	}
 	//消息队列
 	businessDockerfileDtos[0].LogPath = jobDetailDto.LogPath
+	// action
+	businessDockerfileDtos[0].Action = jobImagesDto.Action
 	dockerfileQueue.SendData(businessDockerfileDtos[0])
 }
 

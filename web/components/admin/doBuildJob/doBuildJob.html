@@ -1,0 +1,32 @@
+<div class="modal fade" id="doBuildJobModel"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">请确认您的操作!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="checkbox custom-control-inline">
+                        <label>
+                            <input type="checkbox" v-model="doBuildJobInfo.isAll"  @change="changeAll()" >全部
+                        </label>
+                    </div>
+                    <div class="checkbox custom-control-inline" v-for="(item,index) in doBuildJobInfo.appVersionJobImages">
+                        <label>
+                            <input type="checkbox" v-model="doBuildJobInfo.images" @change="changeItem()"
+                                   :value="item.jobImagesId"> {{item.businessDockerfileName}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal" v-on:click="closeDoBuildJobModel()">点错了</button>
+                <button type="button" class="btn btn-white" v-on:click="_build('buildAndStart')">构建发布</button>
+                <button type="button" class="btn btn-primary" v-on:click="_build('build')">构建</button>
+            </div>
+        </div>
+    </div>
+</div>

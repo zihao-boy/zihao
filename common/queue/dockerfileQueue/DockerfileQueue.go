@@ -3,15 +3,20 @@ package dockerfileQueue
 import (
 	"bufio"
 	"fmt"
+	appServiceDao "github.com/zihao-boy/zihao/appService/dao"
+	hostDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/common/cache/factory"
+	"github.com/zihao-boy/zihao/common/containerScheduling"
 	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/notifyMessage"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"github.com/zihao-boy/zihao/entity/dto/businessImages"
+	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/softService/dao"
 	"os"
 	"os/exec"
@@ -67,6 +72,8 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		tenantId          = businessDockerfileDto.TenantId
 		businessImagesDao dao.BusinessImagesDao
 		businessImagesVerDao dao.BusinessImagesVerDao
+		appServiceDao appServiceDao.AppServiceDao
+		hostDao hostDao.HostDao
 		f                 *os.File
 		err               error
 		cmd               *exec.Cmd
@@ -239,4 +246,50 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	notifyMessage.SendMsg(tenantId,"推镜像完成>" + businessDockerfileDto.Name)
 	write.WriteString(">>>>>>>>>>>>>>>>>>>制作镜像（" + businessDockerfileDto.Name + "）完成\n")
 	write.Flush()
+
+	// if ActionBuildStart
+	if businessDockerfileDto.Action != businessDockerfile.ActionBuildStart{
+		return ;
+	}
+
+	appServiceDto := appService.AppServiceDto{
+		ImagesId: businessImagesDto.Id,
+	}
+	appServiceDtos,err := appServiceDao.GetAppServices(appServiceDto)
+
+	if err != nil || len(appServiceDtos) <1{
+		fmt.Println("查询服务失败")
+		return ;
+	}
+	var hosts []*host.HostDto
+	for _,appServiceDto := range appServiceDtos{
+		tmpAppServiceDto := appService.AppServiceDto{
+			AsId: appServiceDto.AsId,
+			VerId: businessImagesVerDto.Id,
+		}
+		appServiceDao.UpdateAppService(tmpAppServiceDto)
+
+		//stop app service
+		containerScheduling.StopContainer(appServiceDto)
+
+		//start app service
+
+		if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST{
+			hostDto :=host.HostDto{
+				HostId: tmpAppServiceDto.AsDeployId,
+			}
+			hosts, _ = hostDao.GetHosts(hostDto)
+		}else{
+			hostDto :=host.HostDto{
+				GroupId: tmpAppServiceDto.AsDeployId,
+			}
+			hosts, _ = hostDao.GetHosts(hostDto)
+		}
+
+		containerScheduling.ContainerScheduling(hosts,appServiceDto)
+
+	}
+
+
+
 }
