@@ -9,7 +9,9 @@
                 gitUsername: '',
                 gitPasswd: '',
                 workDir: '',
-                appVersionJobImages: []
+                appVersionJobImages: [],
+                webhooks:'',
+                webhooksRestart:''
             }
         },
         _initMethod: function() {
@@ -21,6 +23,8 @@
                 $('#editAppVersionJobModel').modal('show');
                 vc.copyObject(_param, $that.editAppVersionJobInfo);
                 $that._loadImages();
+                $that.editAppVersionJobInfo.webhooks = location.origin+"/app/appVersion/payload?jobId="+_param.jobId+"&event=push"
+                $that.editAppVersionJobInfo.webhooksRestart = location.origin+"/app/appVersion/payload?jobId="+_param.jobId+"&event=pushAndRestart"
             });
         },
         methods: {
@@ -134,7 +138,9 @@
                     gitUsername: '',
                     gitPasswd: '',
                     workDir: '',
-                    appVersionJobImages: []
+                    appVersionJobImages: [],
+                    webhooks:'',
+                    webhooksRestart:''
                 };
             },
             _addEditJobPlan: function() {
