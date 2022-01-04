@@ -254,15 +254,22 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 		return result.Error("解析入参失败")
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	return appVersionJobService.commonJob(appVersionJobParam,user)
+
+}
+
+func (appVersionJobService *AppVersionJobService) commonJob(appVersionJobParam appVersionJob.AppVersionJobParam,user *user.UserDto) result.ResultDto{
+
 	appVersionJobDto := appVersionJob.AppVersionJobDto{
 	}
 	appVersionJobDto.TenantId = user.TenantId
 	appVersionJobDto.JobId = appVersionJobParam.JobId
 	appVersionJobDtos, err := appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
-
 	if len(appVersionJobDtos) < 1 {
 		return result.Error("构建不存在")
 	}
+
 
 	appVersionJobDto.TenantId = user.TenantId
 	appVersionJobDto.State = appVersionJob.STATE_doing
@@ -353,7 +360,6 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	go shell.ExecLocalShell(jobShell)
 
 	return result.SuccessData(appVersionJobDto)
-
 }
 
 // do job build
@@ -654,4 +660,63 @@ func (appVersionJobService *AppVersionJobService) GetJobLog(ctx iris.Context) in
 	}
 
 	return result.SuccessData(appVersionJobDetailDtos[0].LogPath)
+}
+
+// webhooks
+// add by wuxw 2022-01-05
+func (appVersionJobService *AppVersionJobService) Payload(ctx iris.Context) interface{} {
+
+	var (
+		imagesIds string
+	)
+
+	//come from
+	event := ctx.URLParam("event")
+	//job Id
+	jobId := ctx.URLParam("jobId")
+
+	appVersionJobDto := appVersionJob.AppVersionJobDto{
+		JobId: jobId,
+	}
+	appVersionJobDtos, _ := appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
+	if len(appVersionJobDtos) < 1 {
+		return result.Error("构建不存在")
+	}
+
+	// save build log
+	var appVersionJobImagesDto = appVersionJob.AppVersionJobImagesDto{
+		JobId: appVersionJobDto.JobId,
+	}
+	appVersionJobImagesDtos, _ := appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImagesDto)
+
+	if len(appVersionJobImagesDtos) > 0{
+		for _,appversionJobImagesDto := range appVersionJobImagesDtos{
+			imagesIds += (appversionJobImagesDto.JobImagesId+",")
+		}
+	}
+
+	if strings.HasSuffix(imagesIds,","){
+		imagesIds = imagesIds[0:len(imagesIds)-1]
+	}
+
+
+	appVersionJobParam := appVersionJob.AppVersionJobParam{
+		JobId: jobId,
+		Images: imagesIds,
+	}
+
+	user := user.UserDto{
+		TenantId: appVersionJobDtos[0].TenantId,
+		UserId: "1",
+	}
+
+	if event == appVersionJob.EVENT_PUSH{
+		appVersionJobParam.Action = businessDockerfile.ActionBuild
+		return appVersionJobService.commonJob(appVersionJobParam,&user)
+	}else if event == appVersionJob.EVENT_PUSH_AND_RESTART{
+		appVersionJobParam.Action = businessDockerfile.ActionBuildStart
+		return appVersionJobService.commonJob(appVersionJobParam,&user)
+	}
+
+	return result.Error("no support")
 }

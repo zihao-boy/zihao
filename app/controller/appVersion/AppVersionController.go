@@ -49,7 +49,8 @@ func AppVersionControllerRouter(party iris.Party) {
 
 	adinMenu.Get("/getJobLog", hero.Handler(aus.getJobLog))
 
-
+	//web hooks
+	adinMenu.Post("/payload", hero.Handler(aus.payload))
 
 }
 
@@ -152,9 +153,6 @@ func (aus *AppVersionController) doJobHook(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
-
-
-
 /**
 查询 主机组
 */
@@ -191,12 +189,18 @@ func (aus *AppVersionController) deleteAppVersionJobImages(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
-
 /**
 查询 主机组
 */
 func (aus *AppVersionController) getJobLog(ctx iris.Context) {
 	reslut := aus.appVersionJobService.GetJobLog(ctx)
+
+	ctx.JSON(reslut)
+}
+
+// webhooks
+func (aus *AppVersionController) payload(ctx iris.Context) {
+	reslut := aus.appVersionJobService.Payload(ctx)
 
 	ctx.JSON(reslut)
 }

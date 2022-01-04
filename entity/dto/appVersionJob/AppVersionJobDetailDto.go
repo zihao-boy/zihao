@@ -12,3 +12,4 @@ type AppVersionJobDetailDto struct {
 	CreateTime string `json:"createTime" sql:"-"`
 	StatusCd   string `json:"statusCd" sql:"-"`
 }
+

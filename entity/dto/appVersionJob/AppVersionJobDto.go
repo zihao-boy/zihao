@@ -7,6 +7,12 @@ const (
 	STATE_doing   string = "2002"
 	STATE_success string = "4004"
 	STATE_error   string = "3003"
+	WEBHOOKS_FROM_GITEE string ="gitee" // gitee
+	WEBHOOKS_FROM_GITHUB string ="github" // github
+	WEBHOOKS_FROM_GITLAB string ="gitlab" // gitlab
+
+	EVENT_PUSH string ="push"
+	EVENT_PUSH_AND_RESTART = "pushAndRestart"
 )
 
 type AppVersionJobDto struct {
@@ -31,4 +37,8 @@ type AppVersionJobParam struct {
 	JobId      string `json:"jobId" `
 	Action     string `json:"action"`
 	Images string `json:"images"`
+}
+// gitee webhooks
+type GiteeWebHooksDto struct {
+	HookName string `json:"hook_name"`
 }
