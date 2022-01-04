@@ -1,4 +1,4 @@
-(function (vc, vm) {
+(function(vc, vm) {
 
     vc.extends({
         data: {
@@ -9,18 +9,15 @@
                 ip: '',
                 username: '',
                 passwd: '',
-                cpu: '',
-                mem: '',
-                disk: '',
-                hostGroups:[]
+                hostGroups: []
 
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('editHost', 'openEditHostModal', function (_params) {
+        _initEvent: function() {
+            vc.on('editHost', 'openEditHostModal', function(_params) {
                 vc.component.refreshEditHostInfo();
                 $that.loadEditHostHostGroup();
                 $('#editHostModel').modal('show');
@@ -28,12 +25,11 @@
             });
         },
         methods: {
-            editHostValidate: function () {
+            editHostValidate: function() {
                 return vc.validate.validate({
                     editHostInfo: vc.component.editHostInfo
                 }, {
-                    'editHostInfo.groupId': [
-                        {
+                    'editHostInfo.groupId': [{
                             limit: "required",
                             param: "",
                             errInfo: "主机组不能为空"
@@ -44,8 +40,7 @@
                             errInfo: "主机组格式错误"
                         },
                     ],
-                    'editHostInfo.name': [
-                        {
+                    'editHostInfo.name': [{
                             limit: "required",
                             param: "",
                             errInfo: "主机名称不能为空"
@@ -56,8 +51,7 @@
                             errInfo: "主机名称太长"
                         },
                     ],
-                    'editHostInfo.ip': [
-                        {
+                    'editHostInfo.ip': [{
                             limit: "required",
                             param: "",
                             errInfo: "主机IP不能为空"
@@ -68,8 +62,7 @@
                             errInfo: "主机IP太长"
                         },
                     ],
-                    'editHostInfo.username': [
-                        {
+                    'editHostInfo.username': [{
                             limit: "required",
                             param: "",
                             errInfo: "用户名不能为空"
@@ -80,8 +73,7 @@
                             errInfo: "用户名太长"
                         },
                     ],
-                    'editHostInfo.passwd': [
-                        {
+                    'editHostInfo.passwd': [{
                             limit: "required",
                             param: "",
                             errInfo: "密码不能为空"
@@ -92,52 +84,15 @@
                             errInfo: "密码太长"
                         },
                     ],
-                    'editHostInfo.cpu': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "CPU核数不能为空"
-                        },
-                        {
-                            limit: "num",
-                            param: "",
-                            errInfo: "cpu 不是有效数字"
-                        },
-                    ],
-                    'editHostInfo.mem': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "内存不能为空"
-                        },
-                        {
-                            limit: "money",
-                            param: "",
-                            errInfo: "内存格式错误"
-                        },
-                    ],
-                    'editHostInfo.disk': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "磁盘大小不能为空"
-                        },
-                        {
-                            limit: "num",
-                            param: "",
-                            errInfo: "磁盘大小不是有效数字"
-                        },
-                    ],
-                    'editHostInfo.hostId': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "主机ID不能为空"
-                        }]
+                    'editHostInfo.hostId': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "主机ID不能为空"
+                    }]
 
                 });
             },
-            editHost: function () {
+            editHost: function() {
                 if (!vc.component.editHostValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
@@ -145,11 +100,10 @@
 
                 vc.http.apiPost(
                     '/host/updateHost',
-                    JSON.stringify(vc.component.editHostInfo),
-                    {
+                    JSON.stringify(vc.component.editHostInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
@@ -160,13 +114,13 @@
                         }
                         vc.toast(_json.msg);
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.toast(errInfo);
                     });
             },
-            refreshEditHostInfo: function () {
+            refreshEditHostInfo: function() {
                 vc.component.editHostInfo = {
                     hostId: '',
                     groupId: '',
@@ -174,28 +128,26 @@
                     ip: '',
                     username: '',
                     passwd: '',
-                    cpu: '',
-                    mem: '',
-                    disk: '',
-                    hostGroups:[]
+                    hostGroups: []
                 }
             },
-            loadEditHostHostGroup:function(){
+            loadEditHostHostGroup: function() {
                 var param = {
                     params: {
-                        page:1,
-                        row:50
+                        page: 1,
+                        row: 50
                     }
                 };
 
                 //发送get请求
                 vc.http.apiGet('/host/getHostGroup',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _hostGroupManageInfo = JSON.parse(json);
                         vc.component.editHostInfo.hostGroups = _hostGroupManageInfo.data;
-                        
-                    }, function (errInfo, error) {
+
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );

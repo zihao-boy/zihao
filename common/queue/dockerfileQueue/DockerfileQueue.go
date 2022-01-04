@@ -238,7 +238,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		Id:seq.Generator(),
 		ImagesId:businessImagesDto.Id,
 		Version:businessImagesDto.Version,
-		TypeUrl:dest,
+		TypeUrl:imageName,
 		TenantId:businessDockerfileDto.TenantId,
 	}
 	businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
