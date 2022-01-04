@@ -499,6 +499,47 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 		and container_id = #ContainerId#
 		$endif
 	`
+
+	query_fasterDeploy_count string = `
+		select count(1) total
+			from faster_deploy t
+			where t.status_cd = '0'
+			$if TenantId != '' then
+			and t.tenant_id = #TenantId#
+			$endif
+			$if DeployId != '' then
+			and t.deploy_id = #DeployId#
+			$endif
+			$if AppName != '' then
+			and t.app_name like '%'|| #AppName# || '%'
+			$endif
+			$if AsGroupId != '' then
+			and t.as_group_id = #AsGroupId#
+			$endif
+	`
+
+	query_fasterDeploy string = `
+				select t.*
+from faster_deploy t
+			where t.status_cd = '0'
+			$if TenantId != '' then
+			and t.tenant_id = #TenantId#
+			$endif
+			$if DeployId != '' then
+			and t.deploy_id = #DeployId#
+			$endif
+			$if AppName != '' then
+			and t.app_name like '%'|| #AppName# || '%'
+			$endif
+			$if AsGroupId != '' then
+			and t.as_group_id = #AsGroupId#
+			$endif
+					order by t.create_time desc
+					$if Row != 0 then
+						limit #Page#,#Row#
+					$endif
+	`
+
 )
 
 type AppServiceDao struct {
@@ -745,4 +786,26 @@ func (d *AppServiceDao) UpdateAppServiceContainer(containerDto appService.AppSer
 
 func (d *AppServiceDao) DeleteAppServiceContainer(containerDto appService.AppServiceContainerDto) error {
 	return sqlTemplate.Delete(delete_appServiceContainer, objectConvert.Struct2Map(containerDto), false)
+}
+
+func (d *AppServiceDao) GetFasterDeployCount(deployDto appService.FasterDeployDto) (int64, error) {
+	var (
+		pageDto dto.PageDto
+		err     error
+	)
+
+	sqlTemplate.SelectOne(query_fasterDeploy_count, objectConvert.Struct2Map(deployDto), func(db *gorm.DB) {
+		err = db.Scan(&pageDto).Error
+	}, false)
+
+	return pageDto.Total, err
+}
+
+func (d *AppServiceDao) GetFasterDeploys(deployDto appService.FasterDeployDto) ([]*appService.FasterDeployDto, error) {
+	var fasterDeployDtos []*appService.FasterDeployDto
+	sqlTemplate.SelectList(query_fasterDeploy, objectConvert.Struct2Map(deployDto), func(db *gorm.DB) {
+		db.Scan(&fasterDeployDtos)
+	}, false)
+
+	return fasterDeployDtos, nil
 }

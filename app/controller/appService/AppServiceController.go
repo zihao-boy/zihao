@@ -92,6 +92,14 @@ func AppServiceControllerRouter(party iris.Party) {
 	adinMenu.Post("/copyAppService", hero.Handler(aus.copyAppService))
 
 
+	//get faster deploy app service
+	adinMenu.Get("/getFasterDeploy", hero.Handler(aus.getFasterDeploy))
+
+	adinMenu.Post("/saveFasterDeploy", hero.Handler(aus.saveFasterDeploy))
+
+	adinMenu.Post("/updateFasterDeploy", hero.Handler(aus.updateFasterDeploy))
+
+	adinMenu.Post("/deleteFasterDeploy", hero.Handler(aus.deleteFasterDeploy))
 }
 
 /**
@@ -421,3 +429,37 @@ func (aus *AppServiceController) stopAppService(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+
+// get faster deploy app service log
+func (aus *AppServiceController) getFasterDeploy(ctx iris.Context) {
+	reslut := aus.appServiceService.GetFasterDeploys(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *AppServiceController) saveFasterDeploy(ctx iris.Context) {
+	reslut := aus.appServiceService.SaveFasterDeploys(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *AppServiceController) updateFasterDeploy(ctx iris.Context) {
+	reslut := aus.appServiceService.UpdateFasterDeploys(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *AppServiceController) deleteFasterDeploy(ctx iris.Context) {
+	reslut := aus.appServiceService.DeleteFasterDeploys(ctx)
+
+	ctx.JSON(reslut)
+}

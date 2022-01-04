@@ -881,4 +881,67 @@ func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) int
 	return param
 }
 
+// get faster deploy app service log
+func (appServiceService *AppServiceService) GetFasterDeploys(ctx iris.Context) result.ResultDto {
+	var (
+		err            error
+		page           int64
+		row            int64
+		total          int64
+		fasterDeployDto  = appService.FasterDeployDto{}
+		fasterDeployDtos []*appService.FasterDeployDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	fasterDeployDto.Row = row * page
+
+	fasterDeployDto.Page = (page - 1) * row
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	fasterDeployDto.TenantId = user.TenantId
+	fasterDeployDto.AsGroupId = ctx.URLParam("asGroupId")
+
+	total, err = appServiceService.appServiceDao.GetFasterDeployCount(fasterDeployDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	fasterDeployDtos, err = appServiceService.appServiceDao.GetFasterDeploys(fasterDeployDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(fasterDeployDtos, total, row)
+}
+
+func (appServiceService *AppServiceService) SaveFasterDeploys(ctx iris.Context) result.ResultDto {
+
+	return result.Success()
+}
+
+func (appServiceService *AppServiceService) UpdateFasterDeploys(ctx iris.Context) result.ResultDto {
+	return result.Success()
+
+}
+
+func (appServiceService *AppServiceService) DeleteFasterDeploys(ctx iris.Context) result.ResultDto {
+	return result.Success()
+
+}
+
 

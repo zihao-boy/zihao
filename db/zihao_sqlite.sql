@@ -3594,3 +3594,19 @@ create table app_version_job_images(
        status_cd varchar(2) not null DEFAULT '0',
        job_id varchar(64) not null
 );
+
+create table faster_deploy
+(
+    deploy_id          varchar(64)  not null,
+    app_name        varchar(128) not null,
+    deploy_type        varchar(12)  not null,
+    tenant_id      varchar(64)  not null,
+    package_id        varchar(64) not null,
+    shell_package_id          varchar(64) not null,
+    create_time    timestamp    default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2)   default 0 not null,
+    as_group_id    VARCHAR(64) not null,
+    as_deploy_type VARCHAR(64) not null,
+    as_deploy_id   VARCHAR(64) not null,
+    open_port varchar(64)
+);
