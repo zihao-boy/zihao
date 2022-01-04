@@ -442,6 +442,7 @@ func (appVersionJobService *AppVersionJobService) updateAppVersionJobState(job a
 	appVersionJobDto.JobId = job.JobId
 	appVersionJobDto.TenantId = job.TenantId
 	appVersionJobDto.State = state
+	appVersionJobDto.JobTime= date.GetNowTimeString()
 	appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
 }
 
