@@ -229,6 +229,10 @@ func (hostService *HostService) SaveHost(ctx iris.Context) result.ResultDto {
 	hostDto.HostId = seq.Generator()
 	hostDto.State = "1001"
 	hostDto.HeartbeatTime = time.Now().Format("2006-01-02 15:04:05")
+	// default add 22 port
+	if strings.Index(hostDto.Ip,":") < 0{
+		hostDto.Ip = hostDto.Ip +":22"
+	}
 
 	err = hostService.hostDao.SaveHost(hostDto)
 	if err != nil {

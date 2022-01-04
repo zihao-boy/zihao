@@ -58,7 +58,7 @@
                         },
                         {
                             limit: "maxLength",
-                            param: "20",
+                            param: "128",
                             errInfo: "主机IP太长"
                         },
                     ],
