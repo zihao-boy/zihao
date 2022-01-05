@@ -540,6 +540,54 @@ from faster_deploy t
 					$endif
 	`
 
+	insert_fasterDeploy string =`
+	insert into faster_deploy(deploy_id,app_name,deploy_type,tenant_id,package_id,shell_package_id,as_group_id,as_deploy_type,as_deploy_id,open_port)
+	VALUES(#DeployId#,#AppName#,#DeployType#,#TenantId#,#PackageId#,#ShellPackageId#,#AsGroupId#,#AsDeployType#,#AsDeployId#,#OpenPort#)
+`
+
+	update_fasterDeploy string = `
+	update faster_deploy set
+		$if AppName != '' then
+		 app_name = #AppName#,
+		$endif
+		$if DeployType != '' then
+		 deploy_type = #DeployType#,
+		$endif
+		$if PackageId != '' then
+		 package_id = #PackageId#,
+		$endif
+		$if ShellPackageId != '' then
+		 shell_package_id = #ShellPackageId#,
+		$endif
+		$if AsGroupId != '' then
+		 as_group_id = #AsGroupId#,
+		$endif
+		$if AsDeployType != '' then
+		 as_deploy_type = #AsDeployType#,
+		$endif
+		$if AsDeployId != '' then
+		 as_deploy_id = #AsDeployId#,
+		$endif
+		$if OpenPort != '' then
+		 open_port = #OpenPort#,
+		$endif
+		status_cd = '0'
+		where status_cd = '0'
+		$if TenantId != '' then
+		and tenant_id = #TenantId#
+		$endif
+		$if DeployId != '' then
+		and deploy_id = #DeployId#
+		$endif
+	`
+	delete_fasterDeploy string = `
+	update faster_deploy  set
+            status_cd = '1'
+	    where status_cd = '0'
+		$if DeployId != '' then
+		and deploy_id = #DeployId#
+		$endif
+	`
 )
 
 type AppServiceDao struct {
@@ -808,4 +856,17 @@ func (d *AppServiceDao) GetFasterDeploys(deployDto appService.FasterDeployDto) (
 	}, false)
 
 	return fasterDeployDtos, nil
+}
+
+//save faster deploy
+func (d *AppServiceDao) SaveFasterDeploy(deployDto appService.FasterDeployDto) error {
+	return sqlTemplate.Insert(insert_fasterDeploy, objectConvert.Struct2Map(deployDto), false)
+}
+
+func (d *AppServiceDao) UpdateFasterDeploy(deployDto appService.FasterDeployDto) error {
+	return sqlTemplate.Update(update_fasterDeploy, objectConvert.Struct2Map(deployDto), false)
+}
+
+func (d *AppServiceDao) DeleteFasterDeploy(deployDto appService.FasterDeployDto) error {
+	return sqlTemplate.Delete(delete_fasterDeploy, objectConvert.Struct2Map(deployDto), false)
 }

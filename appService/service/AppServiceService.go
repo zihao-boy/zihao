@@ -931,16 +931,60 @@ func (appServiceService *AppServiceService) GetFasterDeploys(ctx iris.Context) r
 
 func (appServiceService *AppServiceService) SaveFasterDeploys(ctx iris.Context) result.ResultDto {
 
-	return result.Success()
+	var (
+		err           error
+		fasterDeployDto appService.FasterDeployDto
+	)
+
+	if err = ctx.ReadJSON(&fasterDeployDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	fasterDeployDto.TenantId = user.TenantId
+
+	err = appServiceService.appServiceDao.SaveFasterDeploy(fasterDeployDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(fasterDeployDto)
 }
 
 func (appServiceService *AppServiceService) UpdateFasterDeploys(ctx iris.Context) result.ResultDto {
-	return result.Success()
+	var (
+		err           error
+		fasterDeployDto appService.FasterDeployDto
+	)
+
+	if err = ctx.ReadJSON(&fasterDeployDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.UpdateFasterDeploy(fasterDeployDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(fasterDeployDto)
 
 }
 
 func (appServiceService *AppServiceService) DeleteFasterDeploys(ctx iris.Context) result.ResultDto {
-	return result.Success()
+	var (
+		err           error
+		fasterDeployDto appService.FasterDeployDto
+	)
+
+	if err = ctx.ReadJSON(&fasterDeployDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	err = appServiceService.appServiceDao.DeleteFasterDeploy(fasterDeployDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(fasterDeployDto)
 
 }
 
