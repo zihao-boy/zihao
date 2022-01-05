@@ -68,16 +68,16 @@ func readData(que chan *businessDockerfile.BusinessDockerfileDto) {
 
 func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	var (
-		dockerfile        = businessDockerfileDto.Dockerfile
-		tenantId          = businessDockerfileDto.TenantId
-		businessImagesDao dao.BusinessImagesDao
+		dockerfile           = businessDockerfileDto.Dockerfile
+		tenantId             = businessDockerfileDto.TenantId
+		businessImagesDao    dao.BusinessImagesDao
 		businessImagesVerDao dao.BusinessImagesVerDao
-		appServiceDao appServiceDao.AppServiceDao
-		hostDao hostDao.HostDao
-		f                 *os.File
-		err               error
-		cmd               *exec.Cmd
-		version           string = "V" + date.GetNowAString()
+		appServiceDao        appServiceDao.AppServiceDao
+		hostDao              hostDao.HostDao
+		f                    *os.File
+		err                  error
+		cmd                  *exec.Cmd
+		version              string = "V" + date.GetNowAString()
 	)
 	defer costTime.TimeoutWarning("DockerfileQueue", "dealData", time.Now())
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
@@ -99,7 +99,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	write.WriteString(">>>>>>>>>>>>>>>>>>>开始制作镜像" + businessDockerfileDto.Name)
 	write.Flush()
 
-	notifyMessage.SendMsg(tenantId,"开始制作镜像>" + businessDockerfileDto.Name)
+	notifyMessage.SendMsg(tenantId, "开始制作镜像>"+businessDockerfileDto.Name)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
@@ -152,7 +152,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 				addLine := strings.TrimLeft(dockerfileLine[start:end], " ")
 				addLine = strings.TrimRight(addLine, " ")
 				fmt.Println(addLine)
-				ignoreContext += ("!" + addLine+"\n")
+				ignoreContext += ("!" + addLine + "\n")
 			}
 		}
 		_, err = fIgnore.Write([]byte(ignoreContext))
@@ -192,7 +192,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	write.WriteString("登录：" + shellScript + " 返回：" + string(output))
 	write.Flush()
 	//推镜像
-	notifyMessage.SendMsg(tenantId,"构建镜像完成并开始推镜像>" + businessDockerfileDto.Name)
+	notifyMessage.SendMsg(tenantId, "构建镜像完成并开始推镜像>"+businessDockerfileDto.Name)
 	shellScript = "docker push " + imageName
 
 	cmd = exec.Command("bash", "-c", shellScript)
@@ -205,17 +205,17 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	//if exits docker images
 	tempBusinessImagesDto := businessImages.BusinessImagesDto{
 		TenantId: businessDockerfileDto.TenantId,
-		Name: businessDockerfileDto.Name,
+		Name:     businessDockerfileDto.Name,
 	}
-	tempBusinessImagesDtos ,_:= businessImagesDao.GetBusinessImagess(tempBusinessImagesDto)
+	tempBusinessImagesDtos, _ := businessImagesDao.GetBusinessImagess(tempBusinessImagesDto)
 	businessImagesDto := businessImages.BusinessImagesDto{}
-	if len(tempBusinessImagesDtos)>0{
+	if len(tempBusinessImagesDtos) > 0 {
 		businessImagesDto.TenantId = businessDockerfileDto.TenantId
 		businessImagesDto.Id = tempBusinessImagesDtos[0].Id
 		businessImagesDto.Version = version
 		businessImagesDto.TypeUrl = imageName
 		err = businessImagesDao.UpdateBusinessImages(businessImagesDto)
-	}else{
+	} else {
 		businessImagesDto.TenantId = businessDockerfileDto.TenantId
 		businessImagesDto.CreateUserId = businessDockerfileDto.CreateUserId
 		businessImagesDto.Id = seq.Generator()
@@ -235,36 +235,36 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	// save docker images version
 	// dj
 	businessImagesVerDto := businessImages.BusinessImagesVerDto{
-		Id:seq.Generator(),
-		ImagesId:businessImagesDto.Id,
-		Version:businessImagesDto.Version,
-		TypeUrl:imageName,
-		TenantId:businessDockerfileDto.TenantId,
+		Id:       seq.Generator(),
+		ImagesId: businessImagesDto.Id,
+		Version:  businessImagesDto.Version,
+		TypeUrl:  imageName,
+		TenantId: businessDockerfileDto.TenantId,
 	}
 	businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
 
-	notifyMessage.SendMsg(tenantId,"推镜像完成>" + businessDockerfileDto.Name)
+	notifyMessage.SendMsg(tenantId, "推镜像完成>"+businessDockerfileDto.Name)
 	write.WriteString(">>>>>>>>>>>>>>>>>>>制作镜像（" + businessDockerfileDto.Name + "）完成\n")
 	write.Flush()
 
 	// if ActionBuildStart
-	if businessDockerfileDto.Action != businessDockerfile.ActionBuildStart{
-		return ;
+	if businessDockerfileDto.Action != businessDockerfile.ActionBuildStart {
+		return
 	}
 
 	appServiceDto := appService.AppServiceDto{
 		ImagesId: businessImagesDto.Id,
 	}
-	appServiceDtos,err := appServiceDao.GetAppServices(appServiceDto)
+	appServiceDtos, err := appServiceDao.GetAppServices(appServiceDto)
 
-	if err != nil || len(appServiceDtos) <1{
+	if err != nil || len(appServiceDtos) < 1 {
 		fmt.Println("查询服务失败")
-		return ;
+		return
 	}
 	var hosts []*host.HostDto
-	for _,appServiceDto := range appServiceDtos{
+	for _, appServiceDto := range appServiceDtos {
 		tmpAppServiceDto := appService.AppServiceDto{
-			AsId: appServiceDto.AsId,
+			AsId:  appServiceDto.AsId,
 			VerId: businessImagesVerDto.Id,
 		}
 		appServiceDao.UpdateAppService(tmpAppServiceDto)
@@ -274,22 +274,24 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 		//start app service
 
-		if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST{
-			hostDto :=host.HostDto{
-				HostId: tmpAppServiceDto.AsDeployId,
+		if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST {
+			hostDto := host.HostDto{
+				HostId: appServiceDto.AsDeployId,
 			}
 			hosts, _ = hostDao.GetHosts(hostDto)
-		}else{
-			hostDto :=host.HostDto{
-				GroupId: tmpAppServiceDto.AsDeployId,
+		} else {
+			hostDto := host.HostDto{
+				GroupId: appServiceDto.AsDeployId,
 			}
 			hosts, _ = hostDao.GetHosts(hostDto)
 		}
 
-		containerScheduling.ContainerScheduling(hosts,appServiceDto)
+		if len(hosts) < 1 {
+			return
+		}
+
+		containerScheduling.ContainerScheduling(hosts, appServiceDto)
 
 	}
-
-
 
 }
