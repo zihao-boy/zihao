@@ -212,3 +212,49 @@ func (businessPackageService *BusinessPackageService) DeleteBusinessPackages(ctx
 	return result.SuccessData(businessPackageDto)
 
 }
+
+func (businessPackageService *BusinessPackageService) Upload(ctx iris.Context) interface{} {
+	var (
+		err                error
+		businessPackageDto businessPackage.BusinessPackageDto
+	)
+
+	ctx.SetMaxRequestBodySize(maxSize)
+
+	file, fileHeader, err := ctx.FormFile("uploadFile")
+	defer file.Close()
+	if err != nil {
+		return result.Error("上传失败" + err.Error())
+	}
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	businessPackageDto.Id = seq.Generator()
+
+	curDest := filepath.Join("businessPackage",user.TenantId,businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace,curDest)
+
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+
+	dest = filepath.Join(dest, fileHeader.Filename)
+
+	_, err = ctx.SaveFormFile(fileHeader, dest)
+	if err != nil {
+		return result.Error("上传失败" + err.Error())
+	}
+
+	businessPackageDto.TenantId = user.TenantId
+	businessPackageDto.CreateUserId = user.UserId
+	//businessPackageDto.Path = filepath.Join(curDest, fileHeader.Filename)
+	businessPackageDto.Path = filepath.Join(businessPackageDto.Id, fileHeader.Filename)
+	businessPackageDto.Varsion = "V" + date.GetNowAString()
+	businessPackageDto.Name = fileHeader.Filename
+
+	err = businessPackageService.businessPackageDao.SaveBusinessPackage(businessPackageDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(businessPackageDto)
+}

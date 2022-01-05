@@ -144,7 +144,11 @@
                         console.log('请求失败处理');
                         vc.toast(errInfo);
                     });
+            },
+            _openFasterDeploy: function() {
+                vc.jumpToPage('/index.html#/pages/admin/fasterDeploy')
             }
+
 
 
         }

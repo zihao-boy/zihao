@@ -60,7 +60,7 @@ func SoftControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteBusinessImagesVer", hero.Handler(aus.DeleteBusinessImagesVer))
 
-
+	adinMenu.Post("/upload", hero.Handler(aus.upload))
 }
 
 /**
@@ -235,6 +235,13 @@ func (aus *SoftController) UpdateBusinessImagesVer(ctx iris.Context) {
 */
 func (aus *SoftController) DeleteBusinessImagesVer(ctx iris.Context) {
 	reslut := aus.businessImagesVerService.DeleteBusinessImagesVer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+// upload file
+func (aus *SoftController) upload(ctx iris.Context) {
+	reslut := aus.businessPackageService.Upload(ctx)
 
 	ctx.JSON(reslut)
 }

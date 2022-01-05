@@ -80,6 +80,8 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		version              string = "V" + date.GetNowAString()
 	)
 	defer costTime.TimeoutWarning("DockerfileQueue", "dealData", time.Now())
+
+
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
 
 	tenantDesc := dest
@@ -219,6 +221,9 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		businessImagesDto.TenantId = businessDockerfileDto.TenantId
 		businessImagesDto.CreateUserId = businessDockerfileDto.CreateUserId
 		businessImagesDto.Id = seq.Generator()
+		if businessDockerfileDto.ImagesId != ""{
+			businessImagesDto.Id = businessDockerfileDto.ImagesId
+		}
 		businessImagesDto.Version = version
 		businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_DOCKER
 		businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
@@ -241,6 +246,10 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		TypeUrl:  imageName,
 		TenantId: businessDockerfileDto.TenantId,
 	}
+
+	if businessDockerfileDto.VerId != ""{
+		businessImagesVerDto.Id = businessDockerfileDto.VerId
+	}
 	businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
 
 	notifyMessage.SendMsg(tenantId, "推镜像完成>"+businessDockerfileDto.Name)
@@ -254,11 +263,12 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	appServiceDto := appService.AppServiceDto{
 		ImagesId: businessImagesDto.Id,
+		State:    appService.STATE_ONLINE,
 	}
 	appServiceDtos, err := appServiceDao.GetAppServices(appServiceDto)
 
 	if err != nil || len(appServiceDtos) < 1 {
-		fmt.Println("查询服务失败")
+		fmt.Println("服务不存在或者未运行状态")
 		return
 	}
 	var hosts []*host.HostDto

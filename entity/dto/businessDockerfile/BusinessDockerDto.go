@@ -9,6 +9,7 @@ const (
 
 type BusinessDockerfileDto struct {
 	dto.PageDto
+	ImagesVersion
 	Id           string `json:"id" sql:"-"`
 	Name         string `json:"name" sql:"-"`
 	Version      string `json:"version" sql:"-"`
@@ -20,4 +21,9 @@ type BusinessDockerfileDto struct {
 	Username     string `json:"username" sql:"-"`
 	LogPath      string `json:"logPath"`
 	Action string 	`json:"action"`
+}
+
+type ImagesVersion struct {
+	ImagesId string `json:"imagesId"`
+	VerId string `json:"verId"`
 }

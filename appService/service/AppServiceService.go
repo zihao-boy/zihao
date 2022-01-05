@@ -1,23 +1,34 @@
 package service
 
 import (
-	"github.com/zihao-boy/zihao/common/containerScheduling"
-	"github.com/zihao-boy/zihao/entity/dto/host"
-	"strconv"
-
+	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/appService/dao"
 	assetsDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/containerScheduling"
+	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/utils"
+	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
+	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
+	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
+	dao2 "github.com/zihao-boy/zihao/softService/dao"
+	"os"
+	"path/filepath"
+	"strconv"
 )
 
 type AppServiceService struct {
-	appServiceDao dao.AppServiceDao
-	hostDao assetsDao.HostDao
+	appServiceDao         dao.AppServiceDao
+	hostDao               assetsDao.HostDao
+	businessPackageDao    dao2.BusinessPackageDao
+	businessDockerfileDao dao2.BusinessDockerfileDao
 }
 
 /**
@@ -109,15 +120,13 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 	appServiceDto.State = appService.STATE_STOP
 	appServiceDto.AsId = seq.Generator()
 
-
-
 	err = appServiceService.appServiceDao.SaveAppService(appServiceDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	if len(appServiceDto.AppServicePorts) > 0{
-		for _,appServicePort := range appServiceDto.AppServicePorts{
+	if len(appServiceDto.AppServicePorts) > 0 {
+		for _, appServicePort := range appServiceDto.AppServicePorts {
 			appServicePort.PortId = seq.Generator()
 			appServicePort.TenantId = user.TenantId
 			appServicePort.AsId = appServiceDto.AsId
@@ -125,8 +134,8 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 		}
 	}
 
-	if len(appServiceDto.AppServiceHosts) > 0{
-		for _,appServiceHost := range appServiceDto.AppServiceHosts{
+	if len(appServiceDto.AppServiceHosts) > 0 {
+		for _, appServiceHost := range appServiceDto.AppServiceHosts {
 			appServiceHost.HostsId = seq.Generator()
 			appServiceHost.TenantId = user.TenantId
 			appServiceHost.AsId = appServiceDto.AsId
@@ -134,8 +143,8 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 		}
 	}
 
-	if len(appServiceDto.AppServiceDirs) > 0{
-		for _,appServiceDir := range appServiceDto.AppServiceDirs{
+	if len(appServiceDto.AppServiceDirs) > 0 {
+		for _, appServiceDir := range appServiceDto.AppServiceDirs {
 			appServiceDir.DirId = seq.Generator()
 			appServiceDir.TenantId = user.TenantId
 			appServiceDir.AsId = appServiceDto.AsId
@@ -143,8 +152,8 @@ func (appServiceService *AppServiceService) SaveAppServices(ctx iris.Context) re
 		}
 	}
 
-	if len(appServiceDto.AppServiceVars) > 0{
-		for _,appServiceVar := range appServiceDto.AppServiceVars{
+	if len(appServiceDto.AppServiceVars) > 0 {
+		for _, appServiceVar := range appServiceDto.AppServiceVars {
 			appServiceVar.AvId = seq.Generator()
 			appServiceVar.TenantId = user.TenantId
 			appServiceVar.AsId = appServiceDto.AsId
@@ -180,8 +189,8 @@ func (appServiceService *AppServiceService) UpdateAppServices(ctx iris.Context) 
 func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) result.ResultDto {
 
 	var (
-		err           error
-		appServiceDto appService.AppServiceDto
+		err              error
+		appServiceDto    appService.AppServiceDto
 		newAppServiceDto *appService.AppServiceDto
 	)
 
@@ -195,7 +204,7 @@ func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) re
 
 	appServiceDtos, err := appServiceService.appServiceDao.GetAppServices(oldAppServiceDto)
 
-	if len(appServiceDtos) < 1{
+	if len(appServiceDtos) < 1 {
 		return result.Error("应用不存在")
 	}
 
@@ -215,10 +224,10 @@ func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) re
 	portDto := appService.AppServicePortDto{
 		AsId: appServiceDto.AsId,
 	}
-	portDtos,_ := appServiceService.appServiceDao.GetAppServicePort(portDto)
+	portDtos, _ := appServiceService.appServiceDao.GetAppServicePort(portDto)
 
-	if len(portDtos) > 0{
-		for _,appServicePort := range portDtos{
+	if len(portDtos) > 0 {
+		for _, appServicePort := range portDtos {
 			appServicePort.PortId = seq.Generator()
 			appServicePort.TenantId = newAppServiceDto.TenantId
 			appServicePort.AsId = newAppServiceDto.AsId
@@ -229,10 +238,10 @@ func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) re
 	hostsDto := appService.AppServiceHostsDto{
 		AsId: appServiceDto.AsId,
 	}
-	hostsDtos,_ := appServiceService.appServiceDao.GetAppServiceHosts(hostsDto)
+	hostsDtos, _ := appServiceService.appServiceDao.GetAppServiceHosts(hostsDto)
 
-	if len(hostsDtos) > 0{
-		for _,appServiceHost := range hostsDtos{
+	if len(hostsDtos) > 0 {
+		for _, appServiceHost := range hostsDtos {
 			appServiceHost.HostsId = seq.Generator()
 			appServiceHost.TenantId = newAppServiceDto.TenantId
 			appServiceHost.AsId = newAppServiceDto.AsId
@@ -242,10 +251,10 @@ func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) re
 	dirDto := appService.AppServiceDirDto{
 		AsId: appServiceDto.AsId,
 	}
-	dirDtos,_ := appServiceService.appServiceDao.GetAppServiceDir(dirDto)
+	dirDtos, _ := appServiceService.appServiceDao.GetAppServiceDir(dirDto)
 
-	if len(dirDtos) > 0{
-		for _,appServiceDir := range dirDtos{
+	if len(dirDtos) > 0 {
+		for _, appServiceDir := range dirDtos {
 			appServiceDir.DirId = seq.Generator()
 			appServiceDir.TenantId = newAppServiceDto.TenantId
 			appServiceDir.AsId = newAppServiceDto.AsId
@@ -256,9 +265,9 @@ func (appServiceService *AppServiceService) CopyAppServices(ctx iris.Context) re
 	varDto := appService.AppServiceVarDto{
 		AsId: appServiceDto.AsId,
 	}
-	varDtos,_ := appServiceService.appServiceDao.GetAppServiceVars(varDto)
-	if len(varDtos) > 0{
-		for _,appServiceVar := range varDtos{
+	varDtos, _ := appServiceService.appServiceDao.GetAppServiceVars(varDto)
+	if len(varDtos) > 0 {
+		for _, appServiceVar := range varDtos {
 			appServiceVar.AvId = seq.Generator()
 			appServiceVar.TenantId = newAppServiceDto.TenantId
 			appServiceVar.AsId = newAppServiceDto.AsId
@@ -293,10 +302,10 @@ func (appServiceService *AppServiceService) DeleteAppServices(ctx iris.Context) 
 
 func (appServiceService *AppServiceService) GetAppServiceVars(ctx iris.Context) result.ResultDto {
 	var (
-		err            error
-		page           int64
-		row            int64
-		total          int64
+		err               error
+		page              int64
+		row               int64
+		total             int64
 		appServiceVarDto  = appService.AppServiceVarDto{}
 		appServiceVarDtos []*appService.AppServiceVarDto
 	)
@@ -339,7 +348,7 @@ func (appServiceService *AppServiceService) GetAppServiceVars(ctx iris.Context) 
 
 func (appServiceService *AppServiceService) SaveAppServiceVars(ctx iris.Context) result.ResultDto {
 	var (
-		err           error
+		err              error
 		appServiceVarDto appService.AppServiceVarDto
 	)
 
@@ -360,7 +369,7 @@ func (appServiceService *AppServiceService) SaveAppServiceVars(ctx iris.Context)
 
 func (appServiceService *AppServiceService) UpdateAppServiceVars(ctx iris.Context) result.ResultDto {
 	var (
-		err           error
+		err              error
 		appServiceVarDto appService.AppServiceVarDto
 	)
 
@@ -378,7 +387,7 @@ func (appServiceService *AppServiceService) UpdateAppServiceVars(ctx iris.Contex
 
 func (appServiceService *AppServiceService) DeleteAppServiceVars(ctx iris.Context) result.ResultDto {
 	var (
-		err           error
+		err              error
 		appServiceVarDto appService.AppServiceVarDto
 	)
 
@@ -396,10 +405,10 @@ func (appServiceService *AppServiceService) DeleteAppServiceVars(ctx iris.Contex
 
 func (appServiceService *AppServiceService) GetAppServiceHosts(ctx iris.Context) interface{} {
 	var (
-		err            error
-		page           int64
-		row            int64
-		total          int64
+		err                 error
+		page                int64
+		row                 int64
+		total               int64
 		appServiceHostsDto  = appService.AppServiceHostsDto{}
 		appServiceHostsDtos []*appService.AppServiceHostsDto
 	)
@@ -442,7 +451,7 @@ func (appServiceService *AppServiceService) GetAppServiceHosts(ctx iris.Context)
 
 func (appServiceService *AppServiceService) SaveAppServiceHosts(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err                error
 		appServiceHostsDto appService.AppServiceHostsDto
 	)
 
@@ -463,7 +472,7 @@ func (appServiceService *AppServiceService) SaveAppServiceHosts(ctx iris.Context
 
 func (appServiceService *AppServiceService) UpdateAppServiceHosts(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err                error
 		appServiceHostsDto appService.AppServiceHostsDto
 	)
 
@@ -481,7 +490,7 @@ func (appServiceService *AppServiceService) UpdateAppServiceHosts(ctx iris.Conte
 
 func (appServiceService *AppServiceService) DeleteAppServiceHosts(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err                error
 		appServiceHostsDto appService.AppServiceHostsDto
 	)
 
@@ -499,10 +508,10 @@ func (appServiceService *AppServiceService) DeleteAppServiceHosts(ctx iris.Conte
 
 func (appServiceService *AppServiceService) GetAppServiceDir(ctx iris.Context) interface{} {
 	var (
-		err            error
-		page           int64
-		row            int64
-		total          int64
+		err               error
+		page              int64
+		row               int64
+		total             int64
 		appServiceDirDto  = appService.AppServiceDirDto{}
 		appServiceDirDtos []*appService.AppServiceDirDto
 	)
@@ -545,7 +554,7 @@ func (appServiceService *AppServiceService) GetAppServiceDir(ctx iris.Context) i
 
 func (appServiceService *AppServiceService) SaveAppServiceDir(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err              error
 		appServiceDirDto appService.AppServiceDirDto
 	)
 
@@ -566,7 +575,7 @@ func (appServiceService *AppServiceService) SaveAppServiceDir(ctx iris.Context) 
 
 func (appServiceService *AppServiceService) UpdateAppServiceDir(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err              error
 		appServiceDirDto appService.AppServiceDirDto
 	)
 
@@ -584,7 +593,7 @@ func (appServiceService *AppServiceService) UpdateAppServiceDir(ctx iris.Context
 
 func (appServiceService *AppServiceService) DeleteAppServiceDir(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err              error
 		appServiceDirDto appService.AppServiceDirDto
 	)
 
@@ -602,10 +611,10 @@ func (appServiceService *AppServiceService) DeleteAppServiceDir(ctx iris.Context
 
 func (appServiceService *AppServiceService) GetAppServicePort(ctx iris.Context) interface{} {
 	var (
-		err            error
-		page           int64
-		row            int64
-		total          int64
+		err                error
+		page               int64
+		row                int64
+		total              int64
 		appServicePortDto  = appService.AppServicePortDto{}
 		appServicePortDtos []*appService.AppServicePortDto
 	)
@@ -649,7 +658,7 @@ func (appServiceService *AppServiceService) GetAppServicePort(ctx iris.Context) 
 
 func (appServiceService *AppServiceService) SaveAppServicePort(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err               error
 		appServicePortDto appService.AppServicePortDto
 	)
 
@@ -670,7 +679,7 @@ func (appServiceService *AppServiceService) SaveAppServicePort(ctx iris.Context)
 
 func (appServiceService *AppServiceService) UpdateAppServicePort(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err               error
 		appServicePortDto appService.AppServicePortDto
 	)
 
@@ -688,7 +697,7 @@ func (appServiceService *AppServiceService) UpdateAppServicePort(ctx iris.Contex
 
 func (appServiceService *AppServiceService) DeleteAppServicePort(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err               error
 		appServicePortDto appService.AppServicePortDto
 	)
 
@@ -706,10 +715,10 @@ func (appServiceService *AppServiceService) DeleteAppServicePort(ctx iris.Contex
 
 func (appServiceService *AppServiceService) GetAppServiceContainer(ctx iris.Context) interface{} {
 	var (
-		err            error
-		page           int64
-		row            int64
-		total          int64
+		err                     error
+		page                    int64
+		row                     int64
+		total                   int64
 		appServiceContainerDto  = appService.AppServiceContainerDto{}
 		appServiceContainerDtos []*appService.AppServiceContainerDto
 	)
@@ -752,7 +761,7 @@ func (appServiceService *AppServiceService) GetAppServiceContainer(ctx iris.Cont
 
 func (appServiceService *AppServiceService) SaveAppServiceContainer(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err                    error
 		appServiceContainerDto appService.AppServiceContainerDto
 	)
 
@@ -773,7 +782,7 @@ func (appServiceService *AppServiceService) SaveAppServiceContainer(ctx iris.Con
 
 func (appServiceService *AppServiceService) UpdateAppServiceContainer(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err                    error
 		appServiceContainerDto appService.AppServiceContainerDto
 	)
 
@@ -791,7 +800,7 @@ func (appServiceService *AppServiceService) UpdateAppServiceContainer(ctx iris.C
 
 func (appServiceService *AppServiceService) DeleteAppServiceContainer(ctx iris.Context) interface{} {
 	var (
-		err           error
+		err                    error
 		appServiceContainerDto appService.AppServiceContainerDto
 	)
 
@@ -813,7 +822,7 @@ func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) in
 	var (
 		err           error
 		appServiceDto appService.AppServiceDto
-		hosts []*host.HostDto
+		hosts         []*host.HostDto
 	)
 
 	if err = ctx.ReadJSON(&appServiceDto); err != nil {
@@ -821,9 +830,9 @@ func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) in
 	}
 
 	//appServiceDto.State = appService.STATE_STOP //避免 状态不一致导致的坑
-	appServiceDtos,_ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
+	appServiceDtos, _ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
 
-	if len(appServiceDtos) <1{
+	if len(appServiceDtos) < 1 {
 		return result.Error("应用不存在")
 	}
 
@@ -833,19 +842,19 @@ func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) in
 
 	tmpAppServiceDto := appServiceDtos[0]
 
-	if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST{
-		hostDto :=host.HostDto{
+	if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST {
+		hostDto := host.HostDto{
 			HostId: tmpAppServiceDto.AsDeployId,
 		}
 		hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
-	}else{
-		hostDto :=host.HostDto{
+	} else {
+		hostDto := host.HostDto{
 			GroupId: tmpAppServiceDto.AsDeployId,
 		}
 		hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
 	}
 
-	param,err:=containerScheduling.ContainerScheduling(hosts,tmpAppServiceDto)
+	param, err := containerScheduling.ContainerScheduling(hosts, tmpAppServiceDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
@@ -862,9 +871,9 @@ func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) int
 	}
 
 	//appServiceDto.State = appService.STATE_ONLINE //避免 状态不一致导致的坑
-	appServiceDtos,_ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
+	appServiceDtos, _ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
 
-	if len(appServiceDtos) <1{
+	if len(appServiceDtos) < 1 {
 		return result.Error("应用不存在")
 	}
 
@@ -884,10 +893,10 @@ func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) int
 // get faster deploy app service log
 func (appServiceService *AppServiceService) GetFasterDeploys(ctx iris.Context) result.ResultDto {
 	var (
-		err            error
-		page           int64
-		row            int64
-		total          int64
+		err              error
+		page             int64
+		row              int64
+		total            int64
 		fasterDeployDto  = appService.FasterDeployDto{}
 		fasterDeployDtos []*appService.FasterDeployDto
 	)
@@ -929,22 +938,145 @@ func (appServiceService *AppServiceService) GetFasterDeploys(ctx iris.Context) r
 	return result.SuccessData(fasterDeployDtos, total, row)
 }
 
+// faster deploy
 func (appServiceService *AppServiceService) SaveFasterDeploys(ctx iris.Context) result.ResultDto {
 
 	var (
-		err           error
-		fasterDeployDto appService.FasterDeployDto
+		err                   error
+		fasterDeployDto       appService.FasterDeployDto
+		businessPackageDto    businessPackage.BusinessPackageDto
+		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
+		appServiceDto         appService.AppServiceDto
+		appServicePort        appService.AppServicePortDto
 	)
 
 	if err = ctx.ReadJSON(&fasterDeployDto); err != nil {
 		return result.Error("解析入参失败")
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	businessPackageDto.Id = fasterDeployDto.PackageId
+	businessPackageDto.TenantId = user.TenantId
+	businessPackageDtos, _ := appServiceService.businessPackageDao.GetBusinessPackages(businessPackageDto)
+	if businessPackageDtos == nil || len(businessPackageDtos) < 1 {
+		return result.Error("项目包不存在")
+	}
+
 	fasterDeployDto.TenantId = user.TenantId
+	businessPackageDto.Id = seq.Generator()
+	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace, curDest)
+
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+	dest = filepath.Join(dest, "start_"+fasterDeployDto.AppName+".sh")
+	if utils.IsFile(dest) {
+		//f, err = os.OpenFile(dest, os.O_RDWR, 0600)
+		os.Remove(dest)
+	}
+	fDest, err := os.Create(dest)
+
+	defer fDest.Close()
+
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		_, err = fDest.Write([]byte(fasterDeployDto.ShellPackageId))
+		if err != nil {
+			fmt.Print(err.Error())
+		}
+	}
+
+	businessPackageDto.TenantId = user.TenantId
+	businessPackageDto.CreateUserId = user.UserId
+	//businessPackageDto.Path = filepath.Join(curDest, fileHeader.Filename)
+	businessPackageDto.Path = filepath.Join(businessPackageDto.Id, "start_"+fasterDeployDto.AppName+".sh")
+	businessPackageDto.Varsion = "V" + date.GetNowAString()
+	businessPackageDto.Name = "start_" + fasterDeployDto.AppName + ".sh"
+
+	err = appServiceService.businessPackageDao.SaveBusinessPackage(businessPackageDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	fasterDeployDto.ShellPackageId = businessPackageDto.Id
 
 	err = appServiceService.appServiceDao.SaveFasterDeploy(fasterDeployDto)
 	if err != nil {
 		return result.Error(err.Error())
+	}
+
+	//generator dockerfile
+	if err = ctx.ReadJSON(&businessDockerfileDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	businessDockerfileDto.TenantId = user.TenantId
+	businessDockerfileDto.CreateUserId = user.UserId
+	businessDockerfileDto.Id = seq.Generator()
+	businessDockerfileDto.Version = "V" + date.GetNowAString()
+	businessDockerfileDto.Name = fasterDeployDto.AppName
+
+	var dockerfile = ""
+	if fasterDeployDto.DeployType == appService.DeployTypeJava {
+		dockerfile += "FROM registry.cn-beijing.aliyuncs.com/sxd/ubuntu-java8:1.0\n"
+	} else {
+		dockerfile += "FROM centos:centos7\n"
+	}
+	dockerfile += "MAINTAINER zihao <928255095@qq.com>\n"
+	dockerfile += "ADD " + businessPackageDtos[0].Path + " /root \n"
+	dockerfile += "ADD " + businessPackageDto.Path + " /root \n"
+
+	dockerfile += "RUN chmod u+x /root/" + businessPackageDto.Name + "\n"
+
+	dockerfile += "CMD [\"/root/" + businessPackageDto.Name + "\"]\n"
+
+	businessDockerfileDto.Dockerfile = dockerfile
+	//save log
+	logPath := filepath.Join(config.WorkSpace, "businessPackage/"+user.TenantId, businessDockerfileDto.Id+".log")
+
+	businessDockerfileDto.LogPath = logPath
+
+	err = appServiceService.businessDockerfileDao.SaveBusinessDockerfile(businessDockerfileDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	//generator images
+	businessDockerfileDto.TenantId = user.TenantId
+	businessDockerfileDto.CreateUserId = user.UserId
+	//queue
+	businessDockerfileDto.ImagesId = seq.Generator()
+	businessDockerfileDto.VerId = seq.Generator()
+
+	dockerfileQueue.SendData(&businessDockerfileDto)
+
+	// save app
+	appServiceDto.TenantId = user.TenantId
+	appServiceDto.State = appService.STATE_STOP
+	appServiceDto.AsId = seq.Generator()
+	appServiceDto.AsName = fasterDeployDto.AppName
+	appServiceDto.AsType = appService.AS_TYPE_SERVICE
+	appServiceDto.AsDesc = fasterDeployDto.AppName
+	appServiceDto.AsCount = "1"
+	appServiceDto.AsGroupId = fasterDeployDto.AsGroupId
+	appServiceDto.AsDeployType = fasterDeployDto.AsDeployType
+	appServiceDto.AsDeployId = fasterDeployDto.AsDeployId
+	appServiceDto.ImagesId = businessDockerfileDto.ImagesId
+	appServiceDto.VerId = businessDockerfileDto.VerId
+
+	err = appServiceService.appServiceDao.SaveAppService(appServiceDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if fasterDeployDto.OpenPort != "" {
+		appServicePort.PortId = seq.Generator()
+		appServicePort.TenantId = user.TenantId
+		appServicePort.AsId = appServiceDto.AsId
+		appServicePort.SrcPort = fasterDeployDto.OpenPort
+		appServicePort.TargetPort = fasterDeployDto.OpenPort
+		appServiceService.appServiceDao.SaveAppServicePort(appServicePort)
 	}
 
 	return result.SuccessData(fasterDeployDto)
@@ -952,7 +1084,7 @@ func (appServiceService *AppServiceService) SaveFasterDeploys(ctx iris.Context) 
 
 func (appServiceService *AppServiceService) UpdateFasterDeploys(ctx iris.Context) result.ResultDto {
 	var (
-		err           error
+		err             error
 		fasterDeployDto appService.FasterDeployDto
 	)
 
@@ -971,7 +1103,7 @@ func (appServiceService *AppServiceService) UpdateFasterDeploys(ctx iris.Context
 
 func (appServiceService *AppServiceService) DeleteFasterDeploys(ctx iris.Context) result.ResultDto {
 	var (
-		err           error
+		err             error
 		fasterDeployDto appService.FasterDeployDto
 	)
 
@@ -987,5 +1119,3 @@ func (appServiceService *AppServiceService) DeleteFasterDeploys(ctx iris.Context
 	return result.SuccessData(fasterDeployDto)
 
 }
-
-

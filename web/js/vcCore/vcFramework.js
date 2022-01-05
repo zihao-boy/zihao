@@ -1120,7 +1120,7 @@
         },
         upload: function(componentCode, componentMethod, param, options, successCallback, errorCallback) {
             vcFramework.loading('open');
-            Vue.http.post('/callComponent/upload/' + componentCode + "/" + componentMethod, param, options)
+            Vue.http.post('/app/' + componentCode + "/" + componentMethod, param, options)
                 .then(function(res) {
                     try {
                         successCallback(res.bodyText, res);

@@ -60,9 +60,9 @@
                                 <th class="text-center">主机名称</th>
                                 <th class="text-center">主机IP</th>
                                 <th class="text-center">用户名</th>
-                                <th class="text-center">CPU核数</th>
-                                <th class="text-center">内存</th>
-                                <th class="text-center">磁盘大小</th>
+                                <th class="text-center">CPU核数/使用</th>
+                                <th class="text-center">内存/使用</th>
+                                <th class="text-center">磁盘大小/使用</th>
                                 <th class="text-center">状态</th>
                                 <th class="text-center">在线</th>
                                 <th class="text-center">操作</th>
@@ -76,9 +76,9 @@
                                 <td class="text-center">{{host.name}}</td>
                                 <td class="text-center">{{host.ip}}</td>
                                 <td class="text-center">{{host.username}}</td>
-                                <td class="text-center">{{host.cpu}}</td>
-                                <td class="text-center">{{host.mem}}</td>
-                                <td class="text-center">{{host.disk}}</td>
+                                <td class="text-center">{{host.cpu}}/{{host.useCpu}}%</td>
+                                <td class="text-center">{{host.mem}}/{{host.useMem}}</td>
+                                <td class="text-center">{{host.disk}}/{{host.useDisk}}</td>
                                 <td class="text-center">{{_getStateName(host.state)}}</td>
                                 <td class="text-center">{{_getOnline(host.heartbeatTime)}}</td>
                                 <td class="text-center">

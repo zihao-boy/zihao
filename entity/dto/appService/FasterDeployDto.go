@@ -2,6 +2,10 @@ package appService
 
 import "github.com/zihao-boy/zihao/entity/dto"
 
+const(
+	DeployTypeJava string = "java"
+	DeployTypeCommon string = "common"
+)
 
 // faster deploy struct
 
