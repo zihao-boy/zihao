@@ -1008,9 +1008,7 @@ func (appServiceService *AppServiceService) SaveFasterDeploys(ctx iris.Context) 
 	}
 
 	//generator dockerfile
-	if err = ctx.ReadJSON(&businessDockerfileDto); err != nil {
-		return result.Error("解析入参失败")
-	}
+
 	businessDockerfileDto.TenantId = user.TenantId
 	businessDockerfileDto.CreateUserId = user.UserId
 	businessDockerfileDto.Id = seq.Generator()

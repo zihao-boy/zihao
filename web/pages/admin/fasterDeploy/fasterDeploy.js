@@ -30,7 +30,7 @@
                 return vc.validate.validate({
                     fasterDeployInfo: vc.component.fasterDeployInfo
                 }, {
-                    'fasterDeployInfo.asName': [{
+                    'fasterDeployInfo.appName': [{
                             limit: "required",
                             param: "",
                             errInfo: "应用名称不能为空"
