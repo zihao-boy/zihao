@@ -7,7 +7,9 @@
                 asName: '',
                 asDesc: '',
                 imagesId: '',
-                images: []
+                verId: '',
+                images: [],
+                vers: [],
 
             }
         },
@@ -20,6 +22,7 @@
                 $that._listEditBusinessImagess();
                 $('#copyAppServiceModel').modal('show');
                 vc.copyObject(_params, vc.component.copyAppServiceInfo);
+                $that._copyChangeImages();
             });
         },
         methods: {
@@ -91,7 +94,9 @@
                     asName: '',
                     asDesc: '',
                     imagesId: '',
-                    images: []
+                    verId: '',
+                    images: [],
+                    vers: [],
                 }
             },
             _listEditBusinessImagess: function(_page, _rows) {
@@ -114,6 +119,28 @@
                     }
                 );
             },
+            _copyChangeImages: function() {
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 50,
+                        imagesId: $that.copyAppServiceInfo.imagesId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/soft/getBusinessImagesVer',
+                    param,
+                    function(json) {
+                        var _verInfo = JSON.parse(json);
+                        vc.component.copyAppServiceInfo.vers = _verInfo.data;
+
+                    },
+                    function() {
+                        console.log('请求失败处理');
+                    }
+                );
+            }
         }
     });
 
