@@ -23,4 +23,9 @@ type FasterDeployDto struct {
 	AsDeployType   string `json:"asDeployType" sql:"-"`
 	AsDeployId     string `json:"asDeployId" sql:"-"`
 	OpenPort       string `json:"openPort" sql:"-"`
+	AvgName       string `json:"avgName" sql:"-"`
+	HostGroupName       string `json:"hostGroupName" sql:"-"`
+	HostName       string `json:"hostName" sql:"-"`
+	PackageName       string `json:"packageName" sql:"-"`
+	ShellPackageName       string `json:"shellPackageName" sql:"-"`
 }

@@ -59,11 +59,11 @@
             _openAddFasterDeployLogModal: function() {
                 vc.emit('addFasterDeployLog', 'openAddFasterDeployLogModal', {});
             },
-            _openEditFasterDeployLogModel: function(_host) {
-                vc.emit('editFasterDeployLog', 'openEditFasterDeployLogModal', _host);
+            _openEditFasterDeployLogModel: function(_fasterDeploy) {
+                vc.emit('editFasterDeply', 'openEditFasterDeplyModal', _fasterDeploy);
             },
-            _openDeleteFasterDeployLogModel: function(_host) {
-                vc.emit('deleteFasterDeployLog', 'openDeleteFasterDeployLogModal', _host);
+            _openDeleteFasterDeployLogModel: function(_fasterDeploy) {
+                vc.emit('deleteFasterDeployLog', 'openDeleteFasterDeployLogModal', _fasterDeploy);
             },
             _queryFasterDeployLogMethod: function() {
                 vc.component._listFasterDeployLogs(DEFAULT_PAGE, DEFAULT_ROWS);
@@ -77,6 +77,9 @@
             },
             _goBack: function() {
                 vc.goBack();
+            },
+            _toDockerfile: function(_fasterDeploy) {
+                vc.jumpToPage('/index.html#/pages/admin/businessDockerfileManage')
             }
         }
     });

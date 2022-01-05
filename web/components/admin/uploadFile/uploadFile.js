@@ -10,7 +10,8 @@
                 vedio: {},
                 fileName: '',
                 realFileName: '',
-                progress: 0
+                progress: 0,
+                id: ''
             }
         },
         watch: {
@@ -87,12 +88,13 @@
                             vc.toast("上传文件失败");
                             return;
                         }
-                        var _json = JSON.parse(json);
+                        var _json = JSON.parse(json).data;
                         this.uploadFileInfo.progress = 100.00;
                         vc.toast("文件上传成功");
 
                         this.uploadFileInfo.fileName = _json.name;
                         this.uploadFileInfo.realFileName = _json.path;
+                        this.uploadFileInfo.id = _json.id
                         vc.emit($props.callBackListener, $props.callBackFunction, _json);
                     },
                     function(errInfo, error) {

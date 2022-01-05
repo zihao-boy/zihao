@@ -13,7 +13,8 @@
                 groupId: '',
                 asDeployType: '1001',
                 hosts: [],
-                hostId: ''
+                hostId: '',
+                openPort: ''
             }
         },
         _initMethod: function() {

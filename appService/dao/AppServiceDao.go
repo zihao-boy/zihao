@@ -519,8 +519,13 @@ VALUES(#AvId#,#AsId#,#TenantId#,#VarSpec#,#VarName#,#VarValue#)
 	`
 
 	query_fasterDeploy string = `
-				select t.*
+		select t.*,asv.avg_name,hg.name host_group_name,h.name host_name,bp.name package_name,bps.name shell_package_name
 from faster_deploy t
+ left join app_var_group asv on asv.avg_id = t.as_group_id and asv.status_cd ='0'
+ left join host_group hg on hg.group_id = t.as_deploy_id and hg.status_cd ='0'
+ left join host h on h.host_id = t.as_deploy_id and h.status_cd ='0'
+left join business_package bp on t.package_id = bp.id and bp.status_cd = '0'
+ left join business_package bps on t.shell_package_id = bps.id and bp.status_cd = '0'
 			where t.status_cd = '0'
 			$if TenantId != '' then
 			and t.tenant_id = #TenantId#
