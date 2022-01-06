@@ -45,6 +45,14 @@
                     url: 'action',
                     action: 'file',
                     icon: '/img/folder.png'
+                }, {
+                    name: '快速部署',
+                    url: '/index.html#/pages/admin/fasterDeploy',
+                    icon: '/img/fasterDeploy.png'
+                }, {
+                    name: 'mysql客户端',
+                    url: '/index.html#/pages/admin/mysqlClient',
+                    icon: '/img/mysql.png'
                 }],
                 apps: [],
                 action: '',
