@@ -45,7 +45,7 @@
             refreshEditFasterDeplyInfo: function() {
                 vc.component.editFasterDeplyInfo = {
                     shellPackageId: '',
-                    shellConext: '',
+                    shellContext: '',
                 }
             },
             loadShellContext: function() {

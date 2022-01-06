@@ -1110,10 +1110,37 @@ func (appServiceService *AppServiceService) DeleteFasterDeploys(ctx iris.Context
 		return result.Error("解析入参失败")
 	}
 
+	// query fasterDeployDto
+	//
+	//tempFasterDeployDto := appService.FasterDeployDto{
+	//	DeployId: fasterDeployDto.DeployId,
+	//}
+	//
+	//fasterDeployDtos, _ := appServiceService.appServiceDao.GetFasterDeploys(tempFasterDeployDto)
+	//
+	//if len(fasterDeployDtos) < 1 {
+	//	return result.Error("未找到快速部署")
+	//}
+	//
+	////delete business package
+	//tempBusinessPackageDto := businessPackage.BusinessPackageDto{
+	//	Id: fasterDeployDtos[0].PackageId,
+	//}
+	//appServiceService.businessPackageDao.DeleteBusinessPackage(tempBusinessPackageDto)
+	////delete business package shell
+	//tempBusinessPackageDto = businessPackage.BusinessPackageDto{
+	//	Id: fasterDeployDtos[0].ShellPackageId,
+	//}
+	//appServiceService.businessPackageDao.DeleteBusinessPackage(tempBusinessPackageDto)
+
+	//delete app service
+
 	err = appServiceService.appServiceDao.DeleteFasterDeploy(fasterDeployDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
+
+	//delete
 
 	return result.SuccessData(fasterDeployDto)
 

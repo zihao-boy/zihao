@@ -63,7 +63,7 @@
                 vc.emit('editFasterDeply', 'openEditFasterDeplyModal', _fasterDeploy);
             },
             _openDeleteFasterDeployLogModel: function(_fasterDeploy) {
-                vc.emit('deleteFasterDeployLog', 'openDeleteFasterDeployLogModal', _fasterDeploy);
+                vc.emit('deleteFasterDeploy', 'openDeleteFasterDeployModal', _fasterDeploy);
             },
             _queryFasterDeployLogMethod: function() {
                 vc.component._listFasterDeployLogs(DEFAULT_PAGE, DEFAULT_ROWS);
