@@ -6,7 +6,7 @@
         <span>{{this.uploadFileInfo.fileName}}</span>
     </div>
     <div>
-        <a class="btn btn-primary text-white" v-on:click="this._uploadFile()">上传附件</a>
+        <a class="btn btn-primary text-white" v-on:click="this._uploadFile()">上传</a>
         <input type="file" class="file" accept=".zip,rar" capture="camcorder" id="uploadFile" hidden v-on:change="this._chooseFile($event)">
     </div>
 </div>

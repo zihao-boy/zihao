@@ -78,7 +78,7 @@ $if GitPasswd != '' then
      git_passwd =  #GitPasswd#,
      $endif
         $if JobTime != '' then 
-     jobTime =  #JobTime#,
+     job_time =  #JobTime#,
      $endif
      status_cd = '0'
 	where
