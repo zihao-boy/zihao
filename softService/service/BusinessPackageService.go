@@ -92,6 +92,17 @@ func (businessPackageService *BusinessPackageService) GetBusinessPackages(ctx ir
 		return result.Error(err.Error())
 	}
 
+	curDest := filepath.Join("businessPackage", user.TenantId)
+	dest := filepath.Join(config.WorkSpace, curDest)
+
+	if businessPackageDtos == nil || len(businessPackageDtos) < 1 {
+		return result.SuccessData(businessPackageDtos, total, row)
+	}
+
+	for _, tmpBusinessPackageDto := range businessPackageDtos {
+		tmpBusinessPackageDto.BasePath = dest
+	}
+
 	return result.SuccessData(businessPackageDtos, total, row)
 
 }

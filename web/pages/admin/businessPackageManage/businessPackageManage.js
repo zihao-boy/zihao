@@ -77,6 +77,10 @@
                 } else {
                     vc.component.businessPackageManageInfo.moreCondition = true;
                 }
+            },
+            _toFileSystem: function(_businessPackage) {
+                vc.saveData('5f3761ed-008a-475b-ad37-8cc35c88402c_curPath', _businessPackage.basePath + "/" + _businessPackage.id);
+                vc.jumpToPage('/index.html#/pages/admin/fileManager?hostId=5f3761ed-008a-475b-ad37-8cc35c88402c');
             }
 
 
