@@ -61,6 +61,10 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Post("/deleteBusinessImagesVer", hero.Handler(aus.DeleteBusinessImagesVer))
 
 	adinMenu.Post("/upload", hero.Handler(aus.upload))
+
+	adinMenu.Get("/listBusinessPackageContext", hero.Handler(aus.listBusinessPackageContext))
+
+	adinMenu.Post("/editBusinessPackageContext", hero.Handler(aus.editBusinessPackageContext))
 }
 
 /**
@@ -245,4 +249,24 @@ func (aus *SoftController) upload(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+查询文件
+**/
+func (aus *SoftController) listBusinessPackageContext(ctx iris.Context) {
+	reslut := aus.businessPackageService.ListBusinessPackageContext(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+查询文件
+**/
+func (aus *SoftController) editBusinessPackageContext(ctx iris.Context) {
+	reslut := aus.businessPackageService.EditBusinessPackageContext(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
 

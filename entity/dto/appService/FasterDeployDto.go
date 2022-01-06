@@ -28,4 +28,5 @@ type FasterDeployDto struct {
 	HostName       string `json:"hostName" sql:"-"`
 	PackageName       string `json:"packageName" sql:"-"`
 	ShellPackageName       string `json:"shellPackageName" sql:"-"`
+	ShellContext       string `json:"shellContext" sql:"-"`
 }

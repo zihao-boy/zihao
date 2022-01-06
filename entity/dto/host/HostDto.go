@@ -9,6 +9,8 @@ const (
 	State_w string = "1001" // 未管理
 	State_N string = "2002" // 正常
 	State_D string = "3003" // 处理中
+
+	MASTER_HOST_ID = "5f3761ed-008a-475b-ad37-8cc35c88402c"
 )
 
 /**

@@ -963,6 +963,7 @@ func (appServiceService *AppServiceService) SaveFasterDeploys(ctx iris.Context) 
 	}
 
 	fasterDeployDto.TenantId = user.TenantId
+	fasterDeployDto.DeployId = seq.Generator()
 	businessPackageDto.Id = seq.Generator()
 	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
 	dest := filepath.Join(config.WorkSpace, curDest)

@@ -1,8 +1,12 @@
 package service
 
 import (
+	hostDao "github.com/zihao-boy/zihao/assets/dao"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/host"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -19,6 +23,7 @@ import (
 
 type BusinessPackageService struct {
 	businessPackageDao dao.BusinessPackageDao
+	hostDao            hostDao.HostDao
 }
 
 const maxSize = 1000 * iris.MB // 第二种方法
@@ -111,8 +116,8 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.Id = seq.Generator()
 
-	curDest := filepath.Join("businessPackage",user.TenantId,businessPackageDto.Id)
-	dest := filepath.Join(config.WorkSpace,curDest)
+	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace, curDest)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
@@ -159,8 +164,8 @@ func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.Id = ctx.FormValue("id")
 
-	curDest := filepath.Join("businessPackage",user.TenantId,businessPackageDto.Id)
-	dest := filepath.Join(config.WorkSpace,curDest)
+	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace, curDest)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
@@ -169,7 +174,7 @@ func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx
 	dest = filepath.Join(dest, fileHeader.Filename)
 
 	// remove file that exists
-	if utils.IsFile(dest){
+	if utils.IsFile(dest) {
 		os.Remove(dest)
 	}
 
@@ -230,8 +235,8 @@ func (businessPackageService *BusinessPackageService) Upload(ctx iris.Context) i
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.Id = seq.Generator()
 
-	curDest := filepath.Join("businessPackage",user.TenantId,businessPackageDto.Id)
-	dest := filepath.Join(config.WorkSpace,curDest)
+	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace, curDest)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
@@ -257,4 +262,86 @@ func (businessPackageService *BusinessPackageService) Upload(ctx iris.Context) i
 	}
 
 	return result.SuccessData(businessPackageDto)
+}
+
+func (businessPackageService *BusinessPackageService) ListBusinessPackageContext(ctx iris.Context) interface{} {
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	shellPackageId := ctx.URLParam("shellPackageId")
+	businessPackageDto := businessPackage.BusinessPackageDto{
+		Id: shellPackageId,
+	}
+	businessPackageDtos, err := businessPackageService.businessPackageDao.GetBusinessPackages(businessPackageDto)
+	if err != nil || len(businessPackageDtos) < 1 {
+		return result.Error(err.Error())
+	}
+
+	curDest := filepath.Join("businessPackage", user.TenantId)
+	dest := filepath.Join(config.WorkSpace, curDest, businessPackageDtos[0].Path)
+	var (
+		hostDto = host.HostDto{
+			HostId:   host.MASTER_HOST_ID,
+			TenantId: user.TenantId,
+			FileName: dest,
+		}
+	)
+	hostDtos, err := businessPackageService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+	hostDto.Ip = hostDtos[0].Ip
+	resultDto, _ := shell.ExecListFileContext(hostDto)
+	return resultDto
+}
+
+func (businessPackageService *BusinessPackageService) EditBusinessPackageContext(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		hostDto         host.HostDto
+		fasterDeployDto appService.FasterDeployDto
+	)
+
+	if err := ctx.ReadJSON(&fasterDeployDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+	businessPackageDto := businessPackage.BusinessPackageDto{
+		Id: fasterDeployDto.ShellPackageId,
+	}
+
+	businessPackageDtos, err := businessPackageService.businessPackageDao.GetBusinessPackages(businessPackageDto)
+	if err != nil || len(businessPackageDtos) < 1 {
+		return result.Error(err.Error())
+	}
+
+	curDest := filepath.Join("businessPackage", user.TenantId)
+	dest := filepath.Join(config.WorkSpace, curDest, businessPackageDtos[0].Path)
+
+	hostDto = host.HostDto{
+		HostId:      host.MASTER_HOST_ID,
+		TenantId:    user.TenantId,
+		FileName:    dest,
+		FileContext: fasterDeployDto.ShellContext,
+	}
+
+	hostDtos, err := businessPackageService.hostDao.GetHosts(hostDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(hostDtos) < 1 {
+		return result.Error("主机不存在")
+	}
+
+	hostDto.Ip = hostDtos[0].Ip
+
+	resultDto, _ := shell.ExecEditFile(hostDto)
+	return resultDto
 }

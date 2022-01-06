@@ -3,10 +3,8 @@
     vc.extends({
         data: {
             editFasterDeplyInfo: {
-                hostId: '',
-                groupId: '',
-
-
+                shellPackageId: '',
+                shellContext: '',
             }
         },
         _initMethod: function() {
@@ -15,7 +13,7 @@
         _initEvent: function() {
             vc.on('editFasterDeply', 'openEditFasterDeplyModal', function(_params) {
                 vc.component.refreshEditFasterDeplyInfo();
-                // $that.loadEditFasterDeplyFasterDeplyGroup();
+                $that.loadShellContext();
                 $('#editFasterDeplyModel').modal('show');
                 vc.copyObject(_params, vc.component.editFasterDeplyInfo);
             });
@@ -23,7 +21,7 @@
         methods: {
             editFasterDeply: function() {
                 vc.http.apiPost(
-                    '/host/updateFasterDeply',
+                    '/soft/editBusinessPackageContext',
                     JSON.stringify(vc.component.editFasterDeplyInfo), {
                         emulateJSON: true
                     },
@@ -46,29 +44,25 @@
             },
             refreshEditFasterDeplyInfo: function() {
                 vc.component.editFasterDeplyInfo = {
-                    hostId: '',
-                    groupId: '',
-                    name: '',
-                    ip: '',
-                    username: '',
-                    passwd: '',
-                    hostGroups: []
+                    shellPackageId: '',
+                    shellConext: '',
                 }
             },
-            loadEditFasterDeplyFasterDeplyGroup: function() {
+            loadShellContext: function() {
                 var param = {
                     params: {
                         page: 1,
-                        row: 50
+                        row: 1,
+                        shellPackageId: $that.editFasterDeplyInfo.shellPackageId
                     }
                 };
 
                 //发送get请求
-                vc.http.apiGet('/host/getFasterDeplyGroup',
+                vc.http.apiGet('/soft/listBusinessPackageContext',
                     param,
                     function(json, res) {
                         var _hostGroupManageInfo = JSON.parse(json);
-                        vc.component.editFasterDeplyInfo.hostGroups = _hostGroupManageInfo.data;
+                        vc.component.editFasterDeplyInfo.shellContext = _hostGroupManageInfo.data;
 
                     },
                     function(errInfo, error) {
