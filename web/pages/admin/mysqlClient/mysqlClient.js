@@ -52,7 +52,15 @@
             },
             _openNewDbLinkModal: function() {
                 vc.emit('newDbLink', 'openNewDbLinkModal', {})
-            }
+            },
+            _openEditDbLinkModal:function(_dbLink){
+                vc.emit('editDbLink', 'openEditDbLinkModal',_dbLink);
+            },
+            _openDeleteDbLinkModal:function(_dbLink){
+                vc.emit( 'deleteDbLink','openDeleteDbLinkModal',_dbLink);
+            },
+
+           
         }
     });
 

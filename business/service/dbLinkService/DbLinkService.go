@@ -5,6 +5,7 @@ import (
 	hostDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/business/dao/dbLinkDao"
 	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/dbLink"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
@@ -99,6 +100,7 @@ func (dbLinkService *DbLinkService) SaveDbLinks(ctx iris.Context) result.ResultD
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	dbLinkDto.TenantId = user.TenantId
 	dbLinkDto.CreateUserId = user.UserId
+	dbLinkDto.Id = seq.Generator()
 	//DbLinkDto.Path = filepath.Join(curDest, fileHeader.Filename)
 
 	err = dbLinkService.dbLinkDao.SaveDbLink(dbLinkDto)

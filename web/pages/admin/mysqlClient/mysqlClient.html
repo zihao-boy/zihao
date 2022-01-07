@@ -2,31 +2,48 @@
     <div>
         <div class="bg-white padding">
             <button type="button" class="btn btn-white btn-sm" v-on:click="_openNewDbLinkModal()">
-            新建连接
-        </button>
+                新建连接
+            </button>
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
-            新建用户
-        </button>
+                新建用户
+            </button>
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
-            新建查询
-        </button>
+                新建查询
+            </button>
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
-            新建表
-        </button>
-
+                新建表
+            </button>
             <button type="button" class="btn btn-primary btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
-            运行
-        </button>
+                运行
+            </button>
         </div>
     </div>
     <div class="row padding">
         <div class="col-md-2 bg-white " style="min-height: 600px; border-right:8px solid #F3F3F4">
             <h3 class="margin-top">数据库</h3>
-            <div class="margin span-line" style="cursor:pointer" v-for="(item,index) in mysqlClientInfo.dbLinks">
-                <img src="/img/mysql.png" style="width: 13px;" />
-                <span class="margin-left-xs">{{item.name}}</span>
+            <div class=" span-line margin-bottom-sm"
+                style="cursor:pointer;display: flex; flex-direction: row; justify-content: space-between;"
+                v-for="(item,index) in mysqlClientInfo.dbLinks">
+                <div>
+                    <img src="/img/mysql.png" style="width: 13px;" />
+                    <span class="margin-left-xs">{{item.name}}</span>
+                </div>
+                <div>
+                    <img src="/img/editDb.png" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false" style="width: 13px;" />
+                    <div class="dropdown-menu p-4 text-muted" style="max-width: 200px;">
+                        <p style="margin:0px 0;">
+                            <a href="javascript:void(0)" v-on:click="_openEditDbLinkModal(item)">修改</a>
+                            <span>|</span>
+                            <a href="javascript:void(0)" v-on:click="_openDeleteDbLinkModal(item)">删除</a>
+                            <span>|</span>
+                            <a href="javascript:void(0)" v-on:click="_openAddOwnerRoom(item)">查看表</a>
+                        </p>
+                    </div>
+                </div>
+
             </div>
-            <div class="margin " v-if="!mysqlClientInfo.dbLinks || mysqlClientInfo.dbLinks.length <1">
+            <div class=" " v-if="!mysqlClientInfo.dbLinks || mysqlClientInfo.dbLinks.length <1">
                 <span class="margin-left-xs">请先添加数据库</span>
             </div>
         </div>
@@ -36,10 +53,15 @@
                 <h3 class="margin-top">sql语句</h3>
             </div>
             <div>
-                <textarea type="text" id="text" class="text" @keyup.ctrl.66="_customKeypress()" placeholder="请输入sql，选中sql语句，ctrl+B运行" style="width: 100%; background-color: #FFF; height: 600px; padding-top: 10px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px; overflow: auto; color: green; font-size: 16px;border: solid 0px;outline:none;"></textarea>
+                <textarea type="text" id="text" class="text" @keyup.ctrl.66="_customKeypress()"
+                    placeholder="请输入sql，选中sql语句，ctrl+B运行"
+                    style="width: 100%; background-color: #FFF; height: 600px; padding-top: 10px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px; overflow: auto; color: green; font-size: 16px;border: solid 0px;outline:none;"></textarea>
             </div>
         </div>
 
     </div>
     <vc:create path="admin/newDbLink"></vc:create>
+    <vc:create path="admin/editDbLink"></vc:create>
+    <vc:create path="admin/deleteDbLink"></vc:create>
+
 </div>
