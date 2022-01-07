@@ -3,7 +3,10 @@
     vc.extends({
         data: {
             mysqlClientInfo: {
-                dbLinks: []
+                dbLinks: [],
+                curDbId:'',
+                curDbName:'无',
+                _currentTab:''
 
             }
         },
@@ -26,7 +29,10 @@
 
         },
         methods: {
-
+            changeTab: function(_tab) {
+                $that.mysqlClientInfo._currentTab = _tab;
+                
+            },
             _customKeypress: function() {
                 let typeSql = window.getSelection().toString();
                 console.log(typeSql);
@@ -59,6 +65,10 @@
             _openDeleteDbLinkModal:function(_dbLink){
                 vc.emit( 'deleteDbLink','openDeleteDbLinkModal',_dbLink);
             },
+            _chooseDb:function(_dbLink){
+                $that.mysqlClientInfo.curDbId = _dbLink.curDbId;
+                $that.mysqlClientInfo.curDbName = _dbLink.name;
+            }
 
            
         }

@@ -16,6 +16,7 @@
             <button type="button" class="btn btn-primary btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
                 运行
             </button>
+            <span class="margin-left">当前数据库：{{mysqlClientInfo.curDbName}}</span>
         </div>
     </div>
     <div class="row padding">
@@ -26,7 +27,7 @@
                 v-for="(item,index) in mysqlClientInfo.dbLinks">
                 <div>
                     <img src="/img/mysql.png" style="width: 13px;" />
-                    <span class="margin-left-xs">{{item.name}}</span>
+                    <span class="margin-left-xs" @click="_chooseDb(item)">{{item.name}}</span>
                 </div>
                 <div>
                     <img src="/img/editDb.png" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -49,8 +50,12 @@
         </div>
 
         <div class="col-md-10 padding-left bg-white " style="min-height: 600px;">
-            <div class=" ">
-                <h3 class="margin-top">sql语句</h3>
+            <div class="margin-top">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" v-bind:class="{active:mysqlClientInfo._currentTab == ''}" v-on:click="changeTab('hostEvents')">主机事件</a>
+                    </li>
+                </ul>
             </div>
             <div>
                 <textarea type="text" id="text" class="text" @keyup.ctrl.66="_customKeypress()"
