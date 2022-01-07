@@ -3610,3 +3610,18 @@ create table faster_deploy
     as_deploy_id   VARCHAR(64) not null,
     open_port varchar(64)
 );
+
+create table db_link
+(
+    id        varchar(64)  not null primary key,
+    name      varchar(10)  not null,
+    ip        varchar(128)  not null,
+    port      varchar(12)  not null,
+    username  varchar(64)  not null,
+    password  varchar(128) not NULL,
+    db_name   varchar(64) not null,
+    tenant_id varchar(64) not null ,
+    create_user_id varchar(64) not null,
+    create_time timestamp    default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2)   default '0' not null
+)

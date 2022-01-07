@@ -12,8 +12,9 @@ import (
 )
 
 /**
- * 项目地址：https://github.com/zihao-boy/zihao.git
- *  作者：吴学文
+ * project address：https://github.com/zihao-boy/zihao.git
+ * author ：wuxw
+ * email: 928255095@qq.com
  */
 func main() {
 

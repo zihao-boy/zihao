@@ -6,6 +6,7 @@ import (
 	rcover "github.com/kataras/iris/v12/middleware/recover"
 	"github.com/zihao-boy/zihao/app/controller/appService"
 	"github.com/zihao-boy/zihao/app/controller/appVersion"
+	"github.com/zihao-boy/zihao/app/controller/dbClient"
 	"github.com/zihao-boy/zihao/app/controller/home"
 	"github.com/zihao-boy/zihao/app/controller/host"
 	"github.com/zihao-boy/zihao/app/controller/menu"
@@ -57,6 +58,9 @@ func Hub(app *iris.Application) {
 
 	//软件中心
 	soft.SoftControllerRouter(party)
+
+	//db client
+	dbClient.DbClientControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {
