@@ -1,7 +1,7 @@
 <div>
     <div>
         <div class="bg-white padding">
-            <button type="button" class="btn btn-white btn-sm" v-on:click="_openAddMonitorHostModal()">
+            <button type="button" class="btn btn-white btn-sm" v-on:click="_openNewDbLinkModal()">
             新建连接
         </button>
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
@@ -22,25 +22,12 @@
     <div class="row padding">
         <div class="col-md-2 bg-white " style="min-height: 600px; border-right:8px solid #F3F3F4">
             <h3 class="margin-top">数据库</h3>
-            <div class="margin span-line" style="cursor:pointer">
+            <div class="margin span-line" style="cursor:pointer" v-for="(item,index) in mysqlClientInfo.dbLinks">
                 <img src="/img/mysql.png" style="width: 13px;" />
-                <span class="margin-left-xs">物业系统tt库</span>
+                <span class="margin-left-xs">{{item.name}}</span>
             </div>
-            <div class="margin span-line" style="cursor:pointer">
-                <img src="/img/mysql.png" style="width: 13px;" />
-                <span class="margin-left-xs">物业系统tt库</span>
-            </div>
-            <div class="margin span-line" style="cursor:pointer">
-                <img src="/img/mysql.png" style="width: 13px;" />
-                <span class="margin-left-xs">物业系统tt库</span>
-            </div>
-            <div class="margin span-line" style="cursor:pointer">
-                <img src="/img/mysql.png" style="width: 13px;" />
-                <span class="margin-left-xs">物业系统tt库</span>
-            </div>
-            <div class="margin span-line" style="cursor:pointer">
-                <img src="/img/mysql.png" style="width: 13px;" />
-                <span class="margin-left-xs">物业系统tt库</span>
+            <div class="margin " v-if="!mysqlClientInfo.dbLinks || mysqlClientInfo.dbLinks.length <1">
+                <span class="margin-left-xs">请先添加数据库</span>
             </div>
         </div>
 
@@ -54,5 +41,5 @@
         </div>
 
     </div>
-
+    <vc:create path="admin/newDbLink"></vc:create>
 </div>

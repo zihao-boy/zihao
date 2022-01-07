@@ -28,7 +28,7 @@ const (
     	
 	`
 	query_dbLink string = `
-				select t.*,uu.username
+				select t.*
 				from db_link t
 				where t.status_cd = '0'
 				$if TenantId != '' then
@@ -51,7 +51,7 @@ const (
 
 	insert_dbLink string = `
 	insert into db_link(id, name, ip, port,username,password,db_name, create_user_id,tenant_id)
-VALUES(#Id#,#Name#,#Ip#,#Port#,#Username#,#Password#,#CreateUserId#,#TenantId#)
+VALUES(#Id#,#Name#,#Ip#,#Port#,#Username#,#Password#,#DbName#,#CreateUserId#,#TenantId#)
 `
 
 	update_dbLink string = `

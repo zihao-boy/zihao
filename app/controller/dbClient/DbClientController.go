@@ -18,6 +18,13 @@ func DbClientControllerRouter(party iris.Party) {
 		}
 	)
 	adinMenu.Get("/getDbLink", hero.Handler(aus.getDbLink))
+
+	adinMenu.Post("/saveDbLink", hero.Handler(aus.saveDbLink))
+
+	adinMenu.Post("/updateDbLink", hero.Handler(aus.updateDbLink))
+
+	adinMenu.Post("/deleteDbLink", hero.Handler(aus.deleteDbLink))
+
 }
 
 /**
@@ -31,7 +38,7 @@ func (aus *DbClientController) getDbLink(ctx iris.Context) {
 /**
 添加 业务包
 */
-func (aus *DbClientController) SaveBusinessPackages(ctx iris.Context) {
+func (aus *DbClientController) saveDbLink(ctx iris.Context) {
 	reslut := aus.dbLinkService.SaveDbLinks(ctx)
 
 	ctx.JSON(reslut)
@@ -40,7 +47,7 @@ func (aus *DbClientController) SaveBusinessPackages(ctx iris.Context) {
 /**
 修改 业务包
 */
-func (aus *DbClientController) UpdateBusinessImagesVer(ctx iris.Context) {
+func (aus *DbClientController) updateDbLink(ctx iris.Context) {
 	reslut := aus.dbLinkService.UpdateDbLinks(ctx)
 
 	ctx.JSON(reslut)
@@ -49,7 +56,7 @@ func (aus *DbClientController) UpdateBusinessImagesVer(ctx iris.Context) {
 /**
 删除 业务包
 */
-func (aus *DbClientController) DeleteBusinessImagesVer(ctx iris.Context) {
+func (aus *DbClientController) deleteDbLink(ctx iris.Context) {
 	reslut := aus.dbLinkService.DeleteDbLinks(ctx)
 
 	ctx.JSON(reslut)
