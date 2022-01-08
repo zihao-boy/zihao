@@ -9,6 +9,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"reflect"
 	"strings"
 	"sync"
 )
@@ -53,9 +54,11 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 	sql = strings.ReplaceAll(sql, " ", "")
 	sql = strings.ReplaceAll(sql, "/r", "")
 	sql = strings.ReplaceAll(sql, "/n", "")
-
-	if strings.HasPrefix(sql, "select") {
-		rows, _ := db.Exec(dbSqlDto.Sql).Rows()
+	if strings.HasPrefix(sql, "select") || strings.HasPrefix(sql,"show"){
+		rows, err := db.Raw(dbSqlDto.Sql).Rows()
+		if err != nil{
+			return result.Error(err.Error())
+		}
 		cols, _ := rows.Columns()
 		for rows.Next() {
 			columns := make([]interface{}, len(cols))
@@ -72,7 +75,13 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 			m := make(map[string]interface{})
 			for i, colName := range cols {
 				val := columnPointers[i].(*interface{})
-				m[colName] = *val
+				//m[colName] = string((*val).([]byte))
+				//fmt.Println(reflect.TypeOf(*val).String())
+				if *val != nil && reflect.TypeOf(*val).String() == "[]uint8"{
+					m[colName] = string((*val).([]byte))
+				}else{
+					m[colName] = *val
+				}
 			}
 			// Outputs: map[columnName:value columnName2:value2 columnName3:value3 ...]
 			fmt.Print(m)

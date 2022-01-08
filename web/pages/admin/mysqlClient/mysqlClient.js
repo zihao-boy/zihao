@@ -8,7 +8,9 @@
                 curDbName: '无',
                 _currentTab: {},
                 _currentSql: '',
-                sqlTabs: []
+                sqlTabs: [],
+                dataCols:[],
+                data:[]
 
             }
         },
@@ -53,6 +55,10 @@
                     vc.toast('请先选择数据库');
                     return;
                 }
+                if(!typeSql){
+                    typeSql = $that.mysqlClientInfo._currentTab.sqlText;
+                }
+                $that.mysqlClientInfo.data = [];
                 let _data = {
                     dbId: $that.mysqlClientInfo.curDbId,
                     sql: typeSql
@@ -65,16 +71,23 @@
                     function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
-                        if (_json.code == 0) {
-                            //关闭model
-                            return;
-                        }
                         vc.toast(_json.msg);
+                        if (_json.code == 0) {
+                            $that._dealSqlData(_json.data);
+                        }
                     },
                     function(errInfo, error) {
                         console.log('请求失败处理');
                         vc.toast(errInfo);
                     });
+            },
+            _dealSqlData:function(data){
+                //关闭model
+                if(data.length <1){
+                    return ;
+                }
+                $that.mysqlClientInfo.dataCols = Object.keys(data[0]);
+                $that.mysqlClientInfo.data = data;
             },
             _loadDbLink: function() {
                 let _param = {
@@ -94,6 +107,12 @@
                         console.log('请求失败处理');
                     }
                 );
+            },
+            _openViewDbDataModel:function(data){
+                vc.emit('viewDbData', 'openViewDbDataModal',{
+                    dataCols:$that.mysqlClientInfo.dataCols,
+                    data:data
+                })
             },
             _openNewDbLinkModal: function() {
                 vc.emit('newDbLink', 'openNewDbLinkModal', {})
