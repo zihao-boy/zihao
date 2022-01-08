@@ -18,3 +18,9 @@ type DbLinkDto struct {
 	TenantId     string `json:"tenantId" sql:"-"`
 	CreateUserId string `json:"createUserId" sql:"-"`
 }
+
+// sql
+type DbSqlDto struct {
+	DbId string `json:"dbId"`
+	Sql string `json:"sql"`
+}

@@ -71,6 +71,9 @@ VALUES(#Id#,#Name#,#Ip#,#Port#,#Username#,#Password#,#DbName#,#CreateUserId#,#Te
 		$if Password != '' then
 		password = #Password#,
 		$endif
+		$if DbName != '' then
+		db_name = #DbName#,
+		$endif
 		status_cd = '0'
 		where status_cd = '0'
 		$if TenantId != '' then

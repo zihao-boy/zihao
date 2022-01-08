@@ -5,6 +5,7 @@ import (
 	hostDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/business/dao/dbLinkDao"
 	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/db/dbFactory"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/dbLink"
 	"github.com/zihao-boy/zihao/entity/dto/result"
@@ -128,7 +129,7 @@ func (dbLinkService *DbLinkService) UpdateDbLinks(ctx iris.Context) result.Resul
 
 	dbLinkDto.TenantId = user.TenantId
 	dbLinkDto.CreateUserId = user.UserId
-	dbLinkDto.Name = ctx.FormValue("name")
+	//dbLinkDto.Name = ctx.FormValue("name")
 
 	err = dbLinkService.dbLinkDao.UpdateDbLink(dbLinkDto)
 	if err != nil {
@@ -158,4 +159,41 @@ func (dbLinkService *DbLinkService) DeleteDbLinks(ctx iris.Context) result.Resul
 
 	return result.SuccessData(dbLinkDto)
 
+}
+
+func (dbLinkService *DbLinkService) ExecSql(ctx iris.Context) interface{} {
+	var (
+		err       error
+		dbSqlDto  dbLink.DbSqlDto
+		dbLinkDto dbLink.DbLinkDto
+	)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	if err = ctx.ReadJSON(&dbSqlDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	if dbSqlDto.DbId == "" {
+		return result.Error("无效数据库")
+	}
+
+	if dbSqlDto.Sql == "" {
+		return result.Error("无效sql")
+	}
+
+	dbLinkDto.Row = 1
+	dbLinkDto.Page = 0
+	dbLinkDto.TenantId = user.TenantId
+	dbLinkDto.CreateUserId = user.UserId
+	dbLinkDto.Id = dbSqlDto.DbId
+
+	dblinkDtos, err := dbLinkService.dbLinkDao.GetDbLinks(dbLinkDto)
+
+	if err != nil || len(dblinkDtos) < 1 {
+		return result.Error("无效数据库")
+	}
+
+	// execute sql
+	data := dbFactory.ExecSql(*dblinkDtos[0], dbSqlDto)
+
+	return data
 }

@@ -7,13 +7,13 @@
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
                 新建用户
             </button>
-            <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
+            <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_newDbQuery()">
                 新建查询
             </button>
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
                 新建表
             </button>
-            <button type="button" class="btn btn-primary btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
+            <button type="button" class="btn btn-primary btn-sm margin-left-sm" v-on:click="_customKeypress()">
                 运行
             </button>
             <span class="margin-left">当前数据库：{{mysqlClientInfo.curDbName}}</span>
@@ -22,16 +22,13 @@
     <div class="row padding">
         <div class="col-md-2 bg-white " style="min-height: 600px; border-right:8px solid #F3F3F4">
             <h3 class="margin-top">数据库</h3>
-            <div class=" span-line margin-bottom-sm"
-                style="cursor:pointer;display: flex; flex-direction: row; justify-content: space-between;"
-                v-for="(item,index) in mysqlClientInfo.dbLinks">
+            <div class=" span-line margin-bottom-sm" style="cursor:pointer;display: flex; flex-direction: row; justify-content: space-between;" v-for="(item,index) in mysqlClientInfo.dbLinks">
                 <div>
                     <img src="/img/mysql.png" style="width: 13px;" />
                     <span class="margin-left-xs" @click="_chooseDb(item)">{{item.name}}</span>
                 </div>
                 <div>
-                    <img src="/img/editDb.png" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false" style="width: 13px;" />
+                    <img src="/img/editDb.png" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 13px;" />
                     <div class="dropdown-menu p-4 text-muted" style="max-width: 200px;">
                         <p style="margin:0px 0;">
                             <a href="javascript:void(0)" v-on:click="_openEditDbLinkModal(item)">修改</a>
@@ -49,18 +46,19 @@
             </div>
         </div>
 
-        <div class="col-md-10 padding-left bg-white " style="min-height: 600px;">
+        <div class="col-md-10 padding-left bg-white " style="min-height: 600px;width: 100%;">
             <div class="margin-top">
                 <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link" v-bind:class="{active:mysqlClientInfo._currentTab == ''}" v-on:click="changeTab('hostEvents')">主机事件</a>
+                    <li class="nav-item" v-for="(item,index) in mysqlClientInfo.sqlTabs">
+                        <a class="nav-link" v-bind:class="{active:mysqlClientInfo._currentTab.id == item.id}" v-on:click="changeTab(item)">{{item.name}}</a>
+                    </li>
+                    <li class="nav-item" v-if="!mysqlClientInfo.sqlTabs ||mysqlClientInfo.sqlTabs.length <1">
+                        <a class="nav-link" class="active">请新建查询</a>
                     </li>
                 </ul>
             </div>
             <div>
-                <textarea type="text" id="text" class="text" @keyup.ctrl.66="_customKeypress()"
-                    placeholder="请输入sql，选中sql语句，ctrl+B运行"
-                    style="width: 100%; background-color: #FFF; height: 600px; padding-top: 10px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px; overflow: auto; color: green; font-size: 16px;border: solid 0px;outline:none;"></textarea>
+                <textarea type="text" id="text" class="text" v-model="mysqlClientInfo._currentSql" @keyup.ctrl.66="_customKeypress()" placeholder="请输入sql，选中sql语句，ctrl+B运行" style="width: 100%; background-color: #FFF; height: 600px; padding-top: 10px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px; overflow: auto; color: green; font-size: 16px;border: solid 0px;outline:none;"></textarea>
             </div>
         </div>
 

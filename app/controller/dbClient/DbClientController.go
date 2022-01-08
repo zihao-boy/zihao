@@ -25,6 +25,8 @@ func DbClientControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteDbLink", hero.Handler(aus.deleteDbLink))
 
+	//execute sql
+	adinMenu.Post("/execSql", hero.Handler(aus.execSql))
 }
 
 /**
@@ -58,6 +60,15 @@ func (aus *DbClientController) updateDbLink(ctx iris.Context) {
 */
 func (aus *DbClientController) deleteDbLink(ctx iris.Context) {
 	reslut := aus.dbLinkService.DeleteDbLinks(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 业务包
+*/
+func (aus *DbClientController) execSql(ctx iris.Context) {
+	reslut := aus.dbLinkService.ExecSql(ctx)
 
 	ctx.JSON(reslut)
 }
