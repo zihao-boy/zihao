@@ -4,8 +4,8 @@
             <button type="button" class="btn btn-white btn-sm" v-on:click="_openNewDbLinkModal()">
                 新建连接
             </button>
-            <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
-                新建用户
+            <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_newDataBase()">
+                新建数据库
             </button>
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_newDbQuery()">
                 新建查询
@@ -35,7 +35,7 @@
                             <span>|</span>
                             <a href="javascript:void(0)" v-on:click="_openDeleteDbLinkModal(item)">删除</a>
                             <span>|</span>
-                            <a href="javascript:void(0)" v-on:click="_openAddOwnerRoom(item)">查看表</a>
+                            <a href="javascript:void(0)" v-on:click="_openViewDbTablesModal(item)">查看表</a>
                         </p>
                     </div>
                 </div>
@@ -50,7 +50,10 @@
             <div class="margin-top">
                 <ul class="nav nav-tabs">
                     <li class="nav-item" v-for="(item,index) in mysqlClientInfo.sqlTabs">
-                        <a class="nav-link" v-bind:class="{active:mysqlClientInfo._currentTab.id == item.id}" v-on:click="changeTab(item)">{{item.name}}</a>
+                        <a class="nav-link" v-bind:class="{active:mysqlClientInfo._currentTab.id == item.id}" 
+                        v-on:click="changeTab(item)">{{item.name}}
+                        <i class="fa fa-trash" aria-hidden="true" @click.stop="_deleteTab(item,index)"></i>
+                    </a>
                     </li>
                     <li class="nav-item" v-if="!mysqlClientInfo.sqlTabs ||mysqlClientInfo.sqlTabs.length <1">
                         <a class="nav-link" class="active">请新建查询</a>
@@ -81,5 +84,7 @@
     <vc:create path="admin/editDbLink"></vc:create>
     <vc:create path="admin/deleteDbLink"></vc:create>
     <vc:create path="admin/viewDbData"></vc:create>
+    <vc:create path="admin/newDataBase"></vc:create>
+    <vc:create path="admin/viewDbTables"></vc:create>
 
 </div>

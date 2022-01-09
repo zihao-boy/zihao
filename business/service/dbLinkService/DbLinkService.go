@@ -125,7 +125,7 @@ func (dbLinkService *DbLinkService) UpdateDbLinks(ctx iris.Context) result.Resul
 		return result.Error("解析入参失败")
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	dbLinkDto.Id = ctx.FormValue("id")
+	//dbLinkDto.Id = ctx.FormValue("id")
 
 	dbLinkDto.TenantId = user.TenantId
 	dbLinkDto.CreateUserId = user.UserId

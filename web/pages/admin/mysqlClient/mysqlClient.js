@@ -31,6 +31,19 @@
                 $that._loadDbLink();
             })
 
+            vc.on('mysqlClient','execSql',function(_data){
+                $that._doExecSql(_data);
+            })
+            vc.on('mysqlClient','execQuerySql',function(_data){
+                $that._chooseDb({
+                    id:_data.dbId,
+                    name:_data.curDbName,
+                    sqlText:_data.sql
+                });
+                $that._doExecSql(_data);
+                
+            })
+
         },
         watch: {
             'mysqlClientInfo._currentSql': {
@@ -47,7 +60,16 @@
                 $that.mysqlClientInfo._currentSql = _tab.sqlText;
                 $that.mysqlClientInfo.curDbId = _tab.curDbId;
                 $that.mysqlClientInfo.curDbName = _tab.name;
-
+            },
+            _deleteTab:function(_tab,_index){
+                $that.mysqlClientInfo.sqlTabs.splice(_index,1);
+                if($that.mysqlClientInfo.sqlTabs.length < 1){
+                    $that.mysqlClientInfo.curDbId = '';
+                    $that.mysqlClientInfo.curDbName = '无';
+                    $that.mysqlClientInfo._currentTab={};
+                    return;
+                }
+                $that.changeTab($that.mysqlClientInfo.sqlTabs[0])
             },
             _customKeypress: function() {
                 let typeSql = window.getSelection().toString();
@@ -63,6 +85,9 @@
                     dbId: $that.mysqlClientInfo.curDbId,
                     sql: typeSql
                 }
+                $that._doExecSql(_data);
+            },
+            _doExecSql:function(_data){
                 vc.http.apiPost(
                     '/dbClient/execSql',
                     JSON.stringify(_data), {
@@ -120,6 +145,12 @@
             _openEditDbLinkModal: function(_dbLink) {
                 vc.emit('editDbLink', 'openEditDbLinkModal', _dbLink);
             },
+            _openViewDbTablesModal:function(_dbLink){
+                vc.emit('viewDbTables', 'openViewDbDataModal', {
+                    curDbId:_dbLink.id,
+                    curDbName: _dbLink.name
+                });
+            },
             _openDeleteDbLinkModal: function(_dbLink) {
                 vc.emit('deleteDbLink', 'openDeleteDbLinkModal', _dbLink);
             },
@@ -128,6 +159,9 @@
                 $that.mysqlClientInfo.curDbName = _dbLink.name;
                 let _id = vc.uuid();
                 let _sqlText = '';
+                if(_dbLink.sqlText){
+                    _sqlText = _dbLink.sqlText;
+                }
                 $that.mysqlClientInfo._currentTab = {
                     id: _id,
                     name: _dbLink.name,
@@ -158,6 +192,18 @@
                 $that.mysqlClientInfo.sqlTabs.push($that.mysqlClientInfo._currentTab);
                 //$that.mysqlClientInfo._currentTab = _id;
                 $that.mysqlClientInfo._currentSql = _sqlText;
+            },
+            _newDataBase:function(){
+                if (!$that.mysqlClientInfo.curDbId) {
+                    vc.toast('请先选择数据库');
+                    return;
+                }
+
+                vc.emit('newDataBase', 'openNewDataBaseModal',{
+                    curDbId:$that.mysqlClientInfo.curDbId,
+                    curDbName:$that.mysqlClientInfo.curDbId,
+                })
+
             }
 
         }

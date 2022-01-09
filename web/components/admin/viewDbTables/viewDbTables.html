@@ -1,0 +1,30 @@
+<div id="viewDbTablesModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 class="m-t-none m-b ">{{viewDbTablesInfo.curDbName}}表</h3>
+                <div class="ibox-content">
+                    <div>
+                        <div>
+                            <div >
+                                <div class="row">
+                                    <div class="col-md-2 margin-top-sm" style="word-break: break-all; word-wrap: break-word;" v-if="viewDbTablesInfo.tables && viewDbTablesInfo.tables.length>1" v-for="(t,index) in viewDbTablesInfo.tables">
+                                        <a href="javascirpt:void(0)" @click="_selectTable(t)">{{t}}</a>
+                                    </div>
+                                    <div v-else class="col-md-12">
+                                        当前数据库没有表
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <button type="button" class="btn btn-warning float-right margin-right-sm"
+                                    style="margin-right:20px;" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

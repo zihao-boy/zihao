@@ -41,7 +41,8 @@ func Init() {
 func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 
 	var (
-		datas []map[string]interface{}
+		resultDto result.ResultDto
+		err error
 	)
 	db, err := initDbLink(dblinkDto)
 
@@ -49,15 +50,42 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 		return result.Error(err.Error())
 	}
 
+	sqls := strings.Split(dbSqlDto.Sql,";")
+
+	for _,sql := range sqls{
+		dbSqlDto.Sql = sql
+		sql = strings.ReplaceAll(sql, " ", "")
+		sql = strings.ReplaceAll(sql, "/r", "")
+		sql = strings.ReplaceAll(sql, "/n", "")
+		if sql == ""{
+			continue
+		}
+		resultDto, err = execOneSql(dbSqlDto,db)
+		if err != nil{
+			return result.Error(err.Error())
+		}
+	}
+
+	return resultDto
+
+
+}
+
+func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
+
+	var (
+		datas []map[string]interface{}
+	)
 	sql := strings.ToLower(dbSqlDto.Sql)
 
 	sql = strings.ReplaceAll(sql, " ", "")
 	sql = strings.ReplaceAll(sql, "/r", "")
 	sql = strings.ReplaceAll(sql, "/n", "")
+
 	if strings.HasPrefix(sql, "select") || strings.HasPrefix(sql,"show"){
 		rows, err := db.Raw(dbSqlDto.Sql).Rows()
 		if err != nil{
-			return result.Error(err.Error())
+			return result.Error(err.Error()),err
 		}
 		cols, _ := rows.Columns()
 		for rows.Next() {
@@ -68,7 +96,7 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 			}
 			// Scan the result into the column pointers...
 			if err := rows.Scan(columnPointers...); err != nil {
-				return err
+				return result.Error(err.Error()),err
 			}
 			// Create our map, and retrieve the value for each column from the pointers slice,
 			// storing it in the map with the name of the column as the key.
@@ -87,13 +115,20 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 			fmt.Print(m)
 			datas = append(datas, m)
 		}
-		return result.SuccessData(datas)
+		if len(datas) < 1{
+			m := make(map[string]interface{})
+			for  _,colName := range cols {
+					m[colName] = ""
+			}
+			datas = append(datas, m)
+		}
+		return result.SuccessData(datas),nil
 	} else {
 		err := db.Exec(dbSqlDto.Sql).Error
 		if err != nil {
-			return result.Error(err.Error())
+			return result.Error(err.Error()),err
 		}
-		return result.Success()
+		return result.Success(),nil
 	}
 
 }
