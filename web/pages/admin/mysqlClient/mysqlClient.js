@@ -204,7 +204,20 @@
                     curDbName:$that.mysqlClientInfo.curDbId,
                 })
 
-            }
+            },
+            _newTable:function(){
+                if (!$that.mysqlClientInfo.curDbId) {
+                    vc.toast('请先选择数据库');
+                    return;
+                }
+
+                vc.emit('newTable', 'openNewTableModal',{
+                    curDbId:$that.mysqlClientInfo.curDbId,
+                    curDbName:$that.mysqlClientInfo.curDbId,
+                })
+
+            },
+            
 
         }
     });

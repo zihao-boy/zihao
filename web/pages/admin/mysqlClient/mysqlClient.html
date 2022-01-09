@@ -10,7 +10,7 @@
             <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_newDbQuery()">
                 新建查询
             </button>
-            <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_openAddMonitorHostModal()">
+            <button type="button" class="btn btn-white btn-sm margin-left-sm" v-on:click="_newTable()">
                 新建表
             </button>
             <button type="button" class="btn btn-primary btn-sm margin-left-sm" v-on:click="_customKeypress()">
@@ -47,7 +47,7 @@
         </div>
 
         <div class="col-md-10 padding-xs bg-white " style="min-height: 600px;width: 100%;">
-            <div class="margin-top">
+            <div class="">
                 <ul class="nav nav-tabs">
                     <li class="nav-item" v-for="(item,index) in mysqlClientInfo.sqlTabs">
                         <a class="nav-link" v-bind:class="{active:mysqlClientInfo._currentTab.id == item.id}" 
@@ -86,5 +86,6 @@
     <vc:create path="admin/viewDbData"></vc:create>
     <vc:create path="admin/newDataBase"></vc:create>
     <vc:create path="admin/viewDbTables"></vc:create>
+    <vc:create path="admin/newTable"></vc:create>
 
 </div>
