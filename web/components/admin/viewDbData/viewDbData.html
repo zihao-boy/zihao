@@ -16,8 +16,8 @@
                                 </div>
                             </div>
                             <div v-else>
-                                <span v-html="viewDbDataInfo.sql">
-                                </span>
+                                <textarea v-model="viewDbDataInfo.sql" rows="15" class="form-control">
+                                </textarea>
                             </div>
                             <div class="ibox-content">
                                 <button type="button" class="btn btn-warning float-right margin-right-sm"

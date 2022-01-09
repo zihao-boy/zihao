@@ -10,7 +10,8 @@
                 _currentSql: '',
                 sqlTabs: [],
                 dataCols:[],
-                data:[]
+                data:[],
+                error:''
 
             }
         },
@@ -80,7 +81,7 @@
                 if(!typeSql){
                     typeSql = $that.mysqlClientInfo._currentTab.sqlText;
                 }
-                $that.mysqlClientInfo.data = [];
+                
                 let _data = {
                     dbId: $that.mysqlClientInfo.curDbId,
                     sql: typeSql
@@ -88,6 +89,8 @@
                 $that._doExecSql(_data);
             },
             _doExecSql:function(_data){
+                $that.mysqlClientInfo.data = [];
+                $that.mysqlClientInfo.error = ''
                 vc.http.apiPost(
                     '/dbClient/execSql',
                     JSON.stringify(_data), {
@@ -96,14 +99,17 @@
                     function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
-                        vc.toast(_json.msg);
+                        //vc.toast(_json.msg);
                         if (_json.code == 0) {
                             $that._dealSqlData(_json.data);
+                            return ;
                         }
+                        $that.mysqlClientInfo.error = _json.msg;
                     },
                     function(errInfo, error) {
                         console.log('请求失败处理');
-                        vc.toast(errInfo);
+                        //vc.toast(errInfo);
+                        $that.mysqlClientInfo.error = _json.msg;
                     });
             },
             _dealSqlData:function(data){

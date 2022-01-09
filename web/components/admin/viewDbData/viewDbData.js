@@ -35,38 +35,38 @@
             },
             _copyInsertSql:function(){
                 $that.viewDbDataInfo.view = "sql";
-                let _sql = " insert into  (</br>";
+                let _sql = " insert into xx(\n";
 
-                let _values = " </br>) values (</br>";
+                let _values = " \n) values (\n";
 
                 $that.viewDbDataInfo.dataCols.forEach((item)=>{
 
-                    _sql += (item.name+",</br>")
-                    _values += ("'"+item.value +"',</br>")
+                    _sql += (item.name+",\n")
+                    _values += ("'"+item.value +"',\n")
                 });
 
-                if(_sql.endsWith(",</br>")){
-                    _sql = _sql.substring(0,_sql.length -6);
-                    _values = _values.substring(0,_values.length -6);
+                if(_sql.endsWith(",\n")){
+                    _sql = _sql.substring(0,_sql.length -2);
+                    _values = _values.substring(0,_values.length -2);
                 }
 
-                _sql += (_values +"</br>);</br>");
+                _sql += (_values +"\n);\n");
 
                 $that.viewDbDataInfo.sql = _sql;
             },
             _copyUpdateSql:function(){
                 $that.viewDbDataInfo.view = "sql";
-                let _sql = " update xx set </br>";
+                let _sql = " update xx set \n";
 
-                let _where = " </br> where 1=1 </br>";
+                let _where = " \n where 1=1 \n";
 
                 $that.viewDbDataInfo.dataCols.forEach((item)=>{
-                    _sql += (item.name+"='"+item.value+"',</br>")
-                    _where += (" and "+item.name+"='"+item.value+"'</br>")
+                    _sql += (item.name+"='"+item.value+"',\n")
+                    _where += (" and "+item.name+"='"+item.value+"'\n")
                 });
 
-                if(_sql.endsWith(",</br>")){
-                    _sql = _sql.substring(0,_sql.length -6);
+                if(_sql.endsWith(",\n")){
+                    _sql = _sql.substring(0,_sql.length -2);
                 }
 
                 _sql += (_where +";");
@@ -75,10 +75,10 @@
             },
             _copyDeleteSql:function(){
                 $that.viewDbDataInfo.view = "sql";
-                let _sql = " delete from xx </br>";
-                let _where = " </br> where 1=1 </br>";
+                let _sql = " delete from xx \n";
+                let _where = " \n where 1=1 \n";
                 $that.viewDbDataInfo.dataCols.forEach((item)=>{
-                    _where += (" and "+item.name+"='"+item.value+"'</br>")
+                    _where += (" and "+item.name+"='"+item.value+"'\n")
                 });
                 _sql += (_where +";");
 

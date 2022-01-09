@@ -75,14 +75,22 @@ func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
 
 	var (
 		datas []map[string]interface{}
+		hasLimit bool = false
 	)
 	sql := strings.ToLower(dbSqlDto.Sql)
 
+	sql = strings.ReplaceAll(sql, "\r", " ")
+	sql = strings.ReplaceAll(sql, "\n", " ")
+	if strings.Contains(sql," limit "){
+		hasLimit = true
+	}
 	sql = strings.ReplaceAll(sql, " ", "")
-	sql = strings.ReplaceAll(sql, "/r", "")
-	sql = strings.ReplaceAll(sql, "/n", "")
 
 	if strings.HasPrefix(sql, "select") || strings.HasPrefix(sql,"show"){
+		// if no exists limit default limit 1000
+		if strings.HasPrefix(sql, "select") && !hasLimit{
+			dbSqlDto.Sql = dbSqlDto.Sql + " limit 1000"
+		}
 		rows, err := db.Raw(dbSqlDto.Sql).Rows()
 		if err != nil{
 			return result.Error(err.Error()),err
