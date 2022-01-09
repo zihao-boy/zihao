@@ -2,6 +2,7 @@ package dbFactory
 
 import (
 	"fmt"
+	"github.com/zihao-boy/zihao/common/date"
 	mysqlUtil "github.com/zihao-boy/zihao/common/db/mysql"
 	"github.com/zihao-boy/zihao/common/db/sqlite"
 	"github.com/zihao-boy/zihao/config"
@@ -12,6 +13,7 @@ import (
 	"reflect"
 	"strings"
 	"sync"
+	"time"
 )
 
 const (
@@ -112,9 +114,11 @@ func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
 			for i, colName := range cols {
 				val := columnPointers[i].(*interface{})
 				//m[colName] = string((*val).([]byte))
-				//fmt.Println(reflect.TypeOf(*val).String())
+				fmt.Println(reflect.TypeOf(*val).String())
 				if *val != nil && reflect.TypeOf(*val).String() == "[]uint8"{
 					m[colName] = string((*val).([]byte))
+				}else if *val != nil && reflect.TypeOf(*val).String() == "time.Time"{
+					m[colName] = date.GetTimeString((*val).(time.Time));
 				}else{
 					m[colName] = *val
 				}

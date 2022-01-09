@@ -28,6 +28,11 @@ func GetNowTimeString() string {
 	return nowStr
 }
 
+func GetTimeString(time2 time.Time) string  {
+	nowStr := time2.Format(DEFAULT_FORMAT_A)
+	return nowStr
+}
+
 func GetNowDateString() string {
 	now := time.Now()
 	nowStr := now.Format(DEFAULT_FORMAT_B)
