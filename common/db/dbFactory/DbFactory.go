@@ -57,8 +57,8 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 	for _,sql := range sqls{
 		dbSqlDto.Sql = sql
 		sql = strings.ReplaceAll(sql, " ", "")
-		sql = strings.ReplaceAll(sql, "/r", "")
-		sql = strings.ReplaceAll(sql, "/n", "")
+		sql = strings.ReplaceAll(sql, "\r", "")
+		sql = strings.ReplaceAll(sql, "\n", "")
 		if sql == ""{
 			continue
 		}
