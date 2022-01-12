@@ -54,7 +54,7 @@ func initQueue() {
 func SendData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	defer costTime.TimeoutWarning("DockerfileQueue", "SendData", time.Now())
 	initQueue()
-	fmt.Print("build queue save data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", businessDockerfileDto.Name)
+	fmt.Print("build queue save data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", businessDockerfileDto.Name,len(que),&que,"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 	que <- businessDockerfileDto
 }
 
@@ -62,7 +62,7 @@ func readData(que chan *businessDockerfile.BusinessDockerfileDto) {
 	for {
 		select {
 		case data := <-que:
-			fmt.Print("build queue deal data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", data.Name)
+			fmt.Print("build queue deal data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", data.Name,len(que),&que,"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 			dealData(data)
 		}
 	}
