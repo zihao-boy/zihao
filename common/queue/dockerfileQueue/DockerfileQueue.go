@@ -61,6 +61,7 @@ func readData(que chan *businessDockerfile.BusinessDockerfileDto) {
 	for {
 		select {
 		case data := <-que:
+			fmt.Print("build queue >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", data.Name)
 			dealData(data)
 		}
 	}
@@ -80,7 +81,6 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		version              string = "V" + date.GetNowAString()
 	)
 	defer costTime.TimeoutWarning("DockerfileQueue", "dealData", time.Now())
-
 
 	dest := filepath.Join(config.WorkSpace, "businessPackage/"+tenantId)
 
@@ -221,7 +221,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		businessImagesDto.TenantId = businessDockerfileDto.TenantId
 		businessImagesDto.CreateUserId = businessDockerfileDto.CreateUserId
 		businessImagesDto.Id = seq.Generator()
-		if businessDockerfileDto.ImagesId != ""{
+		if businessDockerfileDto.ImagesId != "" {
 			businessImagesDto.Id = businessDockerfileDto.ImagesId
 		}
 		businessImagesDto.Version = version
@@ -247,7 +247,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		TenantId: businessDockerfileDto.TenantId,
 	}
 
-	if businessDockerfileDto.VerId != ""{
+	if businessDockerfileDto.VerId != "" {
 		businessImagesVerDto.Id = businessDockerfileDto.VerId
 	}
 	businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
