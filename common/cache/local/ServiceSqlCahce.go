@@ -32,7 +32,7 @@ func InitServiceSql() {
 
 	serviceSqlDtos, err = serviceSqlAllMapper.GetServiceSqls(serviceSqlDto)
 
-	fmt.Print("123123", serviceSqlDtos)
+	//fmt.Print("123123", serviceSqlDtos)
 
 	if err != nil {
 		fmt.Print("加载sql 失败", err)

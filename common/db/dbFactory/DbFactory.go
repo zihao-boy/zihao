@@ -124,7 +124,7 @@ func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
 				}
 			}
 			// Outputs: map[columnName:value columnName2:value2 columnName3:value3 ...]
-			fmt.Print(m)
+			//fmt.Print(m)
 			datas = append(datas, m)
 		}
 		if len(datas) < 1{

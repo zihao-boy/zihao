@@ -70,12 +70,12 @@ func ParseSql(sql string, param map[string]interface{}) (string, []interface{}) 
 
 	}
 
-	fmt.Print(newSql)
+	//fmt.Print(newSql)
 
 	//处理参数
 	newSql, sqlParams = parseParam(newSql, param)
 
-	fmt.Print("------------------sql:", newSql, "-----------param:", sqlParams)
+	//fmt.Print("------------------sql:", newSql, "-----------param:", sqlParams)
 
 	return newSql, sqlParams
 }
@@ -271,7 +271,7 @@ func SelectOne(sql string, param map[string]interface{}, callback func(db *gorm.
 	if cacheSql {
 		serviceSql := utils.GetServiceSql(sql)
 		sql = strings.ReplaceAll(serviceSql.SqlText, "\\n", " ")
-		fmt.Print("new sql = " + sql)
+		// fmt.Print("new sql = " + sql)
 	}
 	newSql, sqlParams = ParseSql(sql, param)
 	// db := mysql.G_DB.Raw(newSql, sqlParams...)

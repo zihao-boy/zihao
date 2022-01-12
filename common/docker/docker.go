@@ -74,7 +74,7 @@ func StartContainer(id string) error {
 	}
 
 	start := fmt.Sprintf(startContainerSock, id)
-	fmt.Println(start)
+	//fmt.Println(start)
 	cmd := []byte(start)
 	code, err := conn.Write(cmd)
 	if err != nil {

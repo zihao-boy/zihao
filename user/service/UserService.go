@@ -32,7 +32,7 @@ func (userService *UserService) Login(ctx iris.Context) (result.ResultDto, *user
 	userVo.Passwd = encrypt.Md5(userVo.Passwd)
 
 	userDto, err = userService.userDao.GetUser(*userVo)
-	fmt.Print("userDto", userDto)
+	//fmt.Print("userDto", userDto)
 	if err != nil ||  len(userDto.UserId) < 1 {
 		return result.Error("用户名密码错误"), nil
 	}

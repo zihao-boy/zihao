@@ -8,7 +8,7 @@ import (
 func Encode(data string) string {
 	// Base64 Standard Encoding
 	sEnc := base64.StdEncoding.EncodeToString([]byte(data))
-	fmt.Println(sEnc) // aGVsbG8gd29ybGQxMjM0NSE/JComKCknLUB+
+	//fmt.Println(sEnc) // aGVsbG8gd29ybGQxMjM0NSE/JComKCknLUB+
 	return sEnc
 }
 

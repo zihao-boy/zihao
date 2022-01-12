@@ -166,7 +166,7 @@ func (appVersionJobDetailService *AppVersionJobDetailService) DoJob(ctx iris.Con
 
 	jobShell := "nohup sh " + fileName + " >" + path + appVersionJobDetailDto.JobId + ".log &"
 	cmd := exec.Command("bash", "-c", jobShell)
-	fmt.Println(jobShell)
+	//fmt.Println(jobShell)
 	//cmd := exec.Command("nohup echo 1")
 	_, err = cmd.Output()
 
