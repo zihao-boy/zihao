@@ -1,7 +1,7 @@
 /**
     入驻小区
 **/
-(function (vc) {
+(function(vc) {
     var DEFAULT_PAGE = 1;
     var DEFAULT_ROWS = 10;
     vc.extends({
@@ -13,23 +13,22 @@
                 asId: '',
             }
         },
-        _initMethod: function () {
-        },
-        _initEvent: function () {
+        _initMethod: function() {},
+        _initEvent: function() {
 
-            vc.on('appServiceControlDir', 'switch', function (_param) {
+            vc.on('appServiceControlDir', 'switch', function(_param) {
                 if (_param.asId == '') {
                     return;
                 }
                 vc.copyObject(_param, $that.appServiceControlDirInfo)
                 vc.component._listappServiceControlDirs(DEFAULT_PAGE, DEFAULT_ROWS);
             });
-            vc.on('appServiceControlDir', 'paginationPlus', 'page_event', function (_currentPage) {
+            vc.on('appServiceControlDir', 'paginationPlus', 'page_event', function(_currentPage) {
                 vc.component._listappServiceControlDirs(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listappServiceControlDirs: function (_page, _rows) {
+            _listappServiceControlDirs: function(_page, _rows) {
 
                 var param = {
                     params: {
@@ -42,7 +41,7 @@
                 //发送get请求
                 vc.http.apiGet('/appService/getAppServiceDir',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _appServiceControlDirsInfo = JSON.parse(json);
                         vc.component.appServiceControlDirInfo.total = _appServiceControlDirsInfo.total;
                         vc.component.appServiceControlDirInfo.records = _appServiceControlDirsInfo.records;
@@ -51,16 +50,20 @@
                             total: vc.component.appServiceControlDirInfo.records,
                             currentPage: _page
                         });
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _openAddDirModal:function(){
-                vc.emit('addAppServiceDir', 'openAddAppServiceDirModal',$that.appServiceControlDirInfo);
+            _openAddDirModal: function() {
+                vc.emit('addAppServiceDir', 'openAddAppServiceDirModal', $that.appServiceControlDirInfo);
             },
-            _openDeleteDirModal:function(_dir){
-                vc.emit('deleteAppServiceDir','openDeleteAppServiceDirModal',_dir); 
+            _openUpdateDirModal: function(event) {
+                vc.emit('editAppServiceDir', 'openEditAppServiceDirModal', event);
+            },
+            _openDeleteDirModal: function(_dir) {
+                vc.emit('deleteAppServiceDir', 'openDeleteAppServiceDirModal', _dir);
             }
 
         }

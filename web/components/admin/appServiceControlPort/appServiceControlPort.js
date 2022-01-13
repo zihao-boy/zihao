@@ -1,7 +1,7 @@
 /**
     入驻小区
 **/
-(function (vc) {
+(function(vc) {
     var DEFAULT_PAGE = 1;
     var DEFAULT_ROWS = 10;
     vc.extends({
@@ -13,23 +13,22 @@
                 asId: '',
             }
         },
-        _initMethod: function () {
-        },
-        _initEvent: function () {
+        _initMethod: function() {},
+        _initEvent: function() {
 
-            vc.on('appServiceControlPort', 'switch', function (_param) {
+            vc.on('appServiceControlPort', 'switch', function(_param) {
                 if (_param.asId == '') {
                     return;
                 }
                 vc.copyObject(_param, $that.appServiceControlPortInfo)
                 vc.component._listappServiceControlPorts(DEFAULT_PAGE, DEFAULT_ROWS);
             });
-            vc.on('appServiceControlPort', 'paginationPlus', 'page_event', function (_currentPage) {
+            vc.on('appServiceControlPort', 'paginationPlus', 'page_event', function(_currentPage) {
                 vc.component._listappServiceControlPorts(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listappServiceControlPorts: function (_page, _rows) {
+            _listappServiceControlPorts: function(_page, _rows) {
 
                 var param = {
                     params: {
@@ -42,7 +41,7 @@
                 //发送get请求
                 vc.http.apiGet('/appService/getAppServicePort',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _appServiceControlPortsInfo = JSON.parse(json);
                         vc.component.appServiceControlPortInfo.total = _appServiceControlPortsInfo.total;
                         vc.component.appServiceControlPortInfo.records = _appServiceControlPortsInfo.records;
@@ -51,16 +50,21 @@
                             total: vc.component.appServiceControlPortInfo.records,
                             currentPage: _page
                         });
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _openAddPortModal:function(){
-                vc.emit('addAppServicePort', 'openAddAppServicePortModal',$that.appServiceControlPortInfo);
+            _openAddPortModal: function() {
+                vc.emit('addAppServicePort', 'openAddAppServicePortModal', $that.appServiceControlPortInfo);
             },
-            _openDeletePortModal:function(_port){
-                vc.emit('deleteAppServicePort','openDeleteAppServicePortModal',_port); 
+            _openUpdatePortModal: function(_port) {
+                vc.emit('editAppServicePort', 'openEditAppServicePortModal', _port);
+
+            },
+            _openDeletePortModal: function(_port) {
+                vc.emit('deleteAppServicePort', 'openDeleteAppServicePortModal', _port);
             }
         }
     });

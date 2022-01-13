@@ -1,7 +1,7 @@
 /**
     入驻小区
 **/
-(function (vc) {
+(function(vc) {
     var DEFAULT_PAGE = 1;
     var DEFAULT_ROWS = 10;
     vc.extends({
@@ -13,23 +13,22 @@
                 asId: '',
             }
         },
-        _initMethod: function () {
-        },
-        _initEvent: function () {
+        _initMethod: function() {},
+        _initEvent: function() {
 
-            vc.on('appServiceControlVar', 'switch', function (_param) {
+            vc.on('appServiceControlVar', 'switch', function(_param) {
                 if (_param.asId == '') {
                     return;
                 }
                 vc.copyObject(_param, $that.appServiceControlVarInfo)
                 vc.component._listappServiceControlVars(DEFAULT_PAGE, DEFAULT_ROWS);
             });
-            vc.on('appServiceControlVar', 'paginationPlus', 'page_event', function (_currentPage) {
+            vc.on('appServiceControlVar', 'paginationPlus', 'page_event', function(_currentPage) {
                 vc.component._listappServiceControlVars(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listappServiceControlVars: function (_page, _rows) {
+            _listappServiceControlVars: function(_page, _rows) {
 
                 var param = {
                     params: {
@@ -42,7 +41,7 @@
                 //发送get请求
                 vc.http.apiGet('/appService/getAppServiceVar',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _appServiceControlVarsInfo = JSON.parse(json);
                         vc.component.appServiceControlVarInfo.total = _appServiceControlVarsInfo.total;
                         vc.component.appServiceControlVarInfo.records = _appServiceControlVarsInfo.records;
@@ -51,16 +50,20 @@
                             total: vc.component.appServiceControlVarInfo.records,
                             currentPage: _page
                         });
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _openAddVarModal:function(){
-                vc.emit('addAppServiceVar', 'openAddAppServiceVarModal',$that.appServiceControlVarInfo);
+            _openAddVarModal: function() {
+                vc.emit('addAppServiceVar', 'openAddAppServiceVarModal', $that.appServiceControlVarInfo);
             },
-            _openDeleteVarModal:function(_dir){
-                vc.emit('deleteAppServiceVar','openDeleteAppServiceVarModal',_dir); 
+            _openUpdateVarModal: function(_dir) {
+                vc.emit('editAppServiceVar', 'openEditAppServiceVarModal', _dir);
+            },
+            _openDeleteVarModal: function(_dir) {
+                vc.emit('deleteAppServiceVar', 'openDeleteAppServiceVarModal', _dir);
             }
 
         }

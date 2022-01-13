@@ -1,7 +1,7 @@
 /**
     入驻小区
 **/
-(function (vc) {
+(function(vc) {
     var DEFAULT_PAGE = 1;
     var DEFAULT_ROWS = 10;
     vc.extends({
@@ -13,23 +13,22 @@
                 asId: '',
             }
         },
-        _initMethod: function () {
-        },
-        _initEvent: function () {
+        _initMethod: function() {},
+        _initEvent: function() {
 
-            vc.on('appServiceControlHosts', 'switch', function (_param) {
+            vc.on('appServiceControlHosts', 'switch', function(_param) {
                 if (_param.asId == '') {
                     return;
                 }
                 vc.copyObject(_param, $that.appServiceControlHostsInfo)
                 vc.component._listappServiceControlHostss(DEFAULT_PAGE, DEFAULT_ROWS);
             });
-            vc.on('appServiceControlHosts', 'paginationPlus', 'page_event', function (_currentPage) {
+            vc.on('appServiceControlHosts', 'paginationPlus', 'page_event', function(_currentPage) {
                 vc.component._listappServiceControlHostss(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listappServiceControlHostss: function (_page, _rows) {
+            _listappServiceControlHostss: function(_page, _rows) {
 
                 var param = {
                     params: {
@@ -42,7 +41,7 @@
                 //发送get请求
                 vc.http.apiGet('/appService/getAppServiceHosts',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _appServiceControlHostssInfo = JSON.parse(json);
                         vc.component.appServiceControlHostsInfo.total = _appServiceControlHostssInfo.total;
                         vc.component.appServiceControlHostsInfo.records = _appServiceControlHostssInfo.records;
@@ -51,16 +50,20 @@
                             total: vc.component.appServiceControlHostsInfo.records,
                             currentPage: _page
                         });
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _openAddHostsModal:function(){
-                vc.emit('addAppServiceHosts', 'openAddAppServiceHostsModal',$that.appServiceControlHostsInfo);
+            _openAddHostsModal: function() {
+                vc.emit('addAppServiceHosts', 'openAddAppServiceHostsModal', $that.appServiceControlHostsInfo);
             },
-            _openDeleteHostsModal:function(_hosts){
-                vc.emit('deleteAppServiceHosts','openDeleteAppServiceHostsModal',_hosts); 
+            _openDeleteHostsModal: function(_hosts) {
+                vc.emit('deleteAppServiceHosts', 'openDeleteAppServiceHostsModal', _hosts);
+            },
+            _openUpdateHostsModal: function(_hosts) {
+                vc.emit('editAppServiceHosts', 'openEditAppServiceHostsModal', _hosts);
             }
 
         }
