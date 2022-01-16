@@ -3526,3 +3526,36 @@ create table business_package(
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   `tenant_id` varchar(64) NOT NULL
 );
+
+create table log_trace
+(
+    id        varchar(64)  not null primary key,
+    name      varchar(64)  not null,
+    parent_id        varchar(64)  not null,
+    trace_id      varchar(64)  not null,
+    timestamp  varchar(20)  not null,
+    create_time timestamp    default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2)   default '0' not null
+);
+
+create table log_trace_annotations
+(
+    id        varchar(64)  not null primary key,
+    span_id      varchar(64)  not null,
+    service_name        varchar(64)  not null,
+    ip      varchar(64)  not null,
+    port  varchar(20)  not null,
+    value varchar(12) not null ,
+    create_time timestamp    default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2)   default '0' not null
+);
+
+create table log_trace_param
+(
+    id        varchar(64)  not null primary key,
+    span_id      varchar(64)  not null,
+    req_param        logtext  ,
+    res_param      logtext ,
+    create_time timestamp    default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2)   default '0' not null
+);
