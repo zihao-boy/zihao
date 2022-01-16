@@ -13,3 +13,9 @@ type LogTraceDto struct {
 	CreateTime    string `json:"createTime" sql:"-"`
 	StatusCd      string `json:"statusCd" sql:"-"`
 }
+
+type LogTraceDataDto struct {
+	LogTraceDto
+	annotations *[]LogTraceAnnotationsDto
+	param *LogTraceParamDto
+}

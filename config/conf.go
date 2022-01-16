@@ -24,6 +24,7 @@ const (
 	Slave  int = 7001
 	Remote_Images_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.listZihaoApp"
 	Hc_cloud_app_id string = "102021120963240004"
+	Kafka_switch_on string ="ON"
 )
 
 // 全局配置文件对应的结构体
@@ -48,7 +49,11 @@ type (
 		DataPath      string   `yaml:"data_path"`
 		SqlitePath      string   `yaml:"sqlite_path"`
 		ContainerScheduling      string   `yaml:"container_scheduling"`
-
+		KafkaIp      string   `yaml:"kafka_ip"`
+		KafkaPort      string   `yaml:"kafka_port"`
+		KafkaGroup      string   `yaml:"kafka_group"`
+		KafkaTopic      string   `yaml:"kafka_topic"`
+		KafkaSwitch      string   `yaml:"kafka_switch"`
 	}
 
 	// db

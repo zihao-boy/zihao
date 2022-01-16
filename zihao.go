@@ -7,6 +7,7 @@ import (
 	"github.com/zihao-boy/zihao/common/crontab"
 	"github.com/zihao-boy/zihao/common/db/dbFactory"
 	"github.com/zihao-boy/zihao/common/jwt"
+	"github.com/zihao-boy/zihao/common/kafka"
 	"github.com/zihao-boy/zihao/config"
 	"strconv"
 )
@@ -33,6 +34,9 @@ func main() {
 	//初始化映射
 	factory.InitMapping()
 
+	// init kafka
+	kafka.Init()
+
 	//启动定时任务
 	var (
 		monitorJob = crontab.MonitorJob{}
@@ -51,10 +55,10 @@ func main() {
 
 	port := config.G_AppConfig.Port
 
-	if(port == 0){
+	if port == 0 {
 		port = 7000
 	}
 
-	app.Run(iris.Addr(":"+strconv.Itoa(port)))
+	app.Run(iris.Addr(":" + strconv.Itoa(port)))
 
 }
