@@ -1,7 +1,10 @@
 package log
 
+import "github.com/zihao-boy/zihao/entity/dto"
+
 // trace dto
 type LogTraceDto struct {
+	dto.PageDto
 	Id string `json:"id"`
 	Name  string `json:"name"`
 	ParentId string `json:"parentId" sql:"-"`
