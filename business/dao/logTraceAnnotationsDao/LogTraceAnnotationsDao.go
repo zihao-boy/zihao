@@ -33,7 +33,6 @@ const (
 	query_logTraceAnnotations string = `
 				select t.*
 				from log_trace_annotations t
-				from log_trace_annotations t
 				where t.status_cd = '0'
 				$if TraceId != '' then
 				and t.trace_id = #TraceId#
