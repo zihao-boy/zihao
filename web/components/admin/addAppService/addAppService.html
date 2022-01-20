@@ -119,11 +119,11 @@
                         <div class="form-group row" v-for="(item,index) in addAppServiceInfo.appServicePorts">
                             <label class="col-sm-1 col-form-label ">宿主机端口</label>
                             <div class="col-sm-4">
-                                <input v-model="item.srcPort" type="number" placeholder="必填，请填写宿主机端口" class="form-control">
+                                <input v-model="item.srcPort" type="text" placeholder="必填，请填写宿主机端口" class="form-control">
                             </div>
                             <label class="col-sm-1 col-form-label">容器端口</label>
                             <div class="col-sm-4">
-                                <input v-model="item.targetPort" type="number" placeholder="必填，请填写容器端口" class="form-control">
+                                <input v-model="item.targetPort" type="text" placeholder="必填，请填写容器端口" class="form-control">
                             </div>
                             <a href="javascript:void(0)" class="col-form-label" v-on:click="_deletePort(index)">
                                 <i class="glyphicon glyphicon-plus"></i> 删除
