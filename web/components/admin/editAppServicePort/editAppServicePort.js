@@ -27,23 +27,13 @@
                             limit: "required",
                             param: "",
                             errInfo: "宿主机端口不能为空"
-                        },
-                        {
-                            limit: "num",
-                            param: "",
-                            errInfo: "宿主机端口为正数"
-                        },
+                        }
                     ],
                     'editAppServicePortInfo.targetPort': [{
                             limit: "required",
                             param: "",
                             errInfo: "容器端口不能为空"
-                        },
-                        {
-                            limit: "num",
-                            param: "",
-                            errInfo: "容器端口为正数"
-                        },
+                        }
                     ]
                 });
             },

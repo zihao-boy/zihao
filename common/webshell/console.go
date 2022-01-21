@@ -119,6 +119,8 @@ type Request struct {
 	Command    string `json:"command"`
 	WinWidth   uint32 `json:"winWidth"`
 	WinHeight  uint32 `json:"winHeight"`
+	Cols uint32 `json:"cols"`
+	Rows uint32 `json:"rows"`
 }
 
 func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
@@ -232,6 +234,10 @@ func checkUserToken(token string) bool {
 		return false
 	}
 
+	if len(cacheToken) <1{
+		return false
+	}
+
 	if token != cacheToken {
 		return false
 	}
@@ -260,8 +266,8 @@ func getServerInfo(req Request) SshLoginModel {
 		UserName: hostDtos[0].Username,
 		Pwd:      hostDtos[0].Passwd,
 		Addr:     hostDtos[0].Ip,
-		PtyCols:  100,
-		PtyRows:  100,
+		PtyCols:  req.Cols,
+		PtyRows:  req.Rows,
 		Width:    req.WinWidth,
 		Height:   req.WinHeight,
 	}

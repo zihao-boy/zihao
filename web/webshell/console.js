@@ -112,6 +112,8 @@ function initShell() {
     let winWidth = document.documentElement.clientWidth;
     //document.body.clientHeight ||
     let winHeight = document.documentElement.clientHeight;
+    let _cols = Math.floor(winWidth / 9) - 5;
+    let _rows = Math.floor(winHeight / 16) - 4;
 
     openTerminal({
         operate: 'connect',
@@ -120,12 +122,13 @@ function initShell() {
         hostId: _hostId,
         winWidth: winWidth,
         winHeight: winHeight,
+        cols: _cols,
+        rows: _rows,
     });
 
     function openTerminal(options) {
         var client = new WSSHClient();
-        let _cols = Math.floor(winWidth / 9) - 5;
-        let _rows = Math.floor(winHeight / 16) - 4;
+
         var term = new Terminal({
             cols: _cols,
             rows: _rows,
