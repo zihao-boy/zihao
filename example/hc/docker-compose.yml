@@ -1,0 +1,290 @@
+version: "2"
+services:
+    - mysql:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/mysql:5.6
+        volumes:
+            - /home/data/mysql:/var/lib/mysql
+        ports:
+            - 3306:3306
+        extra_hosts: []
+        environment:
+            - MYSQL_ROOT_PASSWORD:123456
+            - --param:--lower_case_table_names=1
+            - --param:--max_allowed_packet=900M
+    - service-oa:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-oa:V20220105180358
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-api:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-api:V20220116131221
+        volumes: []
+        ports:
+            - 8008:8008
+        extra_hosts:
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-acct:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-acct:V20220115181100
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - ACTIVE:zihao
+            - mysqlpwd:hc12345678
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - redispwd:hc12345678
+    - service-eureka:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-eureka:V20220115181039
+        volumes: []
+        ports:
+            - 8761:8761
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+    - service-common:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-common:V20220115180943
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-community:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-community:V20220115180854
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-dev:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-dev:V20220115180806
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-job:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-job:V20220115180422
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-order:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-order:V20220116131311
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-fee:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-fee:V20220115180635
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-user:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-user:V20220115181241
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-report:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-report:V20220115181420
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-store:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-store:V20220105171654
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-mall-front:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-mall-front:V20220117152948
+        volumes: []
+        ports:
+            - 8015:8015
+        extra_hosts:
+            - dev.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.db.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-mall-shop:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-mall-shop:V20220117142551
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - redispwd:hc12345678
+            - ACTIVE:zihao
+            - mysqlpwd:hc12345678
+            - MIN_MEM:-Xms256m
+            - MAX_MEM:-Xmx256m
+    - service-mall-market:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-mall-market:V20220117142640
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - MAX_MEM:-Xmx256m
+            - MIN_MEM:-Xms256m
+            - mysqlpwd:hc12345678
+            - ACTIVE:zihao
+            - redispwd:hc12345678
+    - service-mall-cart:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-mall-cart:V20220117142728
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - redispwd:hc12345678
+            - ACTIVE:zihao
+            - mysqlpwd:hc12345678
+            - MIN_MEM:-Xms256m
+            - MAX_MEM:-Xmx256m
+    - service-mall-goods:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/service-mall-goods:V20220117142456
+        volumes: []
+        ports: []
+        extra_hosts:
+            - dev.db.java110.com:192.168.31.88
+            - dev.redis.java110.com:192.168.31.88
+            - dev.java110.com:192.168.31.88
+        environment:
+            - redispwd:hc12345678
+            - ACTIVE:zihao
+            - mysqlpwd:hc12345678
+            - MIN_MEM:-Xms256m
+            - MAX_MEM:-Xmx256m
+    - nginx:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/nginx:1.21
+        volumes:
+            - /home/data/web:/home/data/web
+            - /home/data/nginx/vhosts:/etc/nginx/conf.d
+            - /home/data/nginx/nginx.conf:/etc/nginx/nginx.conf
+        ports:
+            - 80:80
+            - 81:81
+        extra_hosts:
+            - dev.api.java110.com:192.168.31.88
+        environment: []
+    - redis:
+        image: registry.cn-qingdao.aliyuncs.com/homecommunity/redis:6.2
+        volumes: []
+        ports:
+            - 6379:6379
+        extra_hosts: []
+        environment:
+            - --param:--requirepass "hc12345678"
+
+#zihao_cmd: "wget https://homecommunity.oss-cn-beijing.aliyuncs.com/hc/install_hc.sh && sh install_hc.sh"

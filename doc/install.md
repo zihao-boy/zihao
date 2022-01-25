@@ -49,7 +49,7 @@ git config --global --unset https.proxy
 
 ## 3.0 编译并启动
 ```shell
-git build .
+go build .
 ./zihao > zihao.log &
 ```
 
@@ -57,4 +57,4 @@ git build .
 
 http://ip:7000 
 
-账号密码：梓豪/123456
+账号密码：zihao/123456
