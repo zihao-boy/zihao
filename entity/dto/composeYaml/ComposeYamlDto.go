@@ -2,9 +2,13 @@ package composeYaml
 
 // docker compose 
 type ComposeYamlDto struct {
-
 	Version string `yaml:"version"` // docker compose version
 	Services []interface{} `yaml:"services"`
+}
+
+type ComposeYamlZiHaoDto struct {
+	ComposeYamlDto
+	ZihaoCmd string `yaml:"zihao_cmd" json:"zihao_cmd"`
 }
 
 type ServicesDto struct {

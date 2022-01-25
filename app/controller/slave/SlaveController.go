@@ -43,6 +43,9 @@ func SlaveControllerRouter(party iris.Party) {
 
 	adinUser.Post("/downloadFile", hero.Handler(aus.downloadFile))
 
+	adinUser.Post("/execShell", hero.Handler(aus.execShell))
+
+
 
 
 }
@@ -113,6 +116,12 @@ func (aus *SlaveController) uploadFile(ctx iris.Context) {
 //开启容器
 func (aus *SlaveController) downloadFile(ctx iris.Context) {
 	 aus.systenInfoService.DownloadFile(ctx)
+}
+
+//开启容器
+func (aus *SlaveController) execShell(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.ExecShell(ctx)
+	ctx.JSON(relustDto)
 }
 
 

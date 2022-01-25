@@ -45,12 +45,34 @@ func ExecShell(host host.HostDto, cmd string) error {
 	session, err := client.NewSession()
 	defer session.Close()
 	defer client.Close()
-
 	// 使用内存
 	fmt.Print("主机执行指令", cmd)
 	session.Output(cmd)
-
 	return nil
+}
+
+func ExecCommonShell(host host.HostDto, cmd string) (result.ResultDto, error) {
+	data := make(map[string]interface{})
+	ip := host.Ip
+	var resultDto result.ResultDto
+
+	data["hostId"] = host.HostId
+	data["shell"] = cmd
+
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+	resp, err := httpReq.Post("http://"+ip+"/app/slave/execShell", data, nil)
+	if err != nil {
+		return resultDto, err
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	return resultDto, nil
 
 }
 

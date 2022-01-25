@@ -7,6 +7,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/host"
@@ -106,8 +107,7 @@ func (s *SystemInfoService) StartContainer(ctx iris.Context) (interface{}, error
 
 	//dockerRun += " --name=\"" + appServiceDto.AsName + "_" + seq.Generator() + "\" " + imagesUrl
 
-	dockerRun += (" " + imagesUrl + param )
-
+	dockerRun += (" " + imagesUrl + param)
 
 	//运行镜像
 	if sysType == "windows" {
@@ -400,4 +400,19 @@ func (s *SystemInfoService) DownloadFile(ctx iris.Context) {
 	//responseWriter.Write(content)
 	io.Copy(responseWriter, file)
 	responseWriter.Flush()
+}
+
+func (s *SystemInfoService) ExecShell(ctx iris.Context) (interface{}, error) {
+	var (
+		err     error
+		hostDto host.HostDto
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		return result.Error("解析入参失败"), err
+	}
+
+	go shell.ExecLocalShell(hostDto.Shell)
+
+	return result.Success(), nil
 }

@@ -39,7 +39,8 @@ type HostDto struct {
 	CurPath       string `json:"curPath" `
 	FileName      string `json:"fileName"`
 	FileGroupName string `json:"fileGroupName"`
-	NewFileName      string `json:"newFileName"`
-	FileContext  string `json:"fileContext"`
-	Containers []docker.Container
+	NewFileName   string `json:"newFileName"`
+	FileContext   string `json:"fileContext"`
+	Shell         string `json:"shell"`
+	Containers    []docker.Container
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
@@ -1275,7 +1276,7 @@ func (appServiceService *AppServiceService) getServiceDto(appServiceDto *appServ
 
 func (appServiceService *AppServiceService) ImportAppService(ctx iris.Context) result.ResultDto {
 	var (
-		composeYamlDto = composeYaml.ComposeYamlDto{
+		composeYamlDto = composeYaml.ComposeYamlZiHaoDto{
 		}
 		serviceName   string
 		appServiceDto appService.AppServiceDto
@@ -1322,10 +1323,34 @@ func (appServiceService *AppServiceService) ImportAppService(ctx iris.Context) r
 			//ImagesId: imagesId,
 			//VerId:verId,
 		}
-
 		appServiceService.doImportAppService(appServiceDto, serviceMap[serviceName], user)
-
 	}
+
+	// zihao cmd
+	if utils.IsEmpty(composeYamlDto.ZihaoCmd) {
+		return result.Success()
+	}
+
+	var(
+		hosts []*host.HostDto
+	)
+
+	if asDeployType == appService.AS_DEPLOY_TYPE_HOST {
+		hostDto := host.HostDto{
+			HostId: asDeployId,
+		}
+		hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+	} else {
+		hostDto := host.HostDto{
+			GroupId: asDeployId,
+		}
+		hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+	}
+	for _,host := range hosts{
+		shell.ExecCommonShell(*host,composeYamlDto.ZihaoCmd)
+	}
+
+
 	return result.Success()
 }
 
