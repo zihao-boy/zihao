@@ -7,7 +7,8 @@ type ComposeYamlDto struct {
 }
 
 type ComposeYamlZiHaoDto struct {
-	ComposeYamlDto
+	Version string `yaml:"version"` // docker compose version
+	Services []interface{} `yaml:"services"`
 	ZihaoCmd string `yaml:"zihao_cmd" json:"zihao_cmd"`
 }
 
