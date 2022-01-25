@@ -1,0 +1,77 @@
+<div id="importAppServiceModel" class="modal fade" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 class="m-t-none m-b ">导入</h3>
+                <div class="ibox-content">
+                    <div>
+                        <div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">服务类型</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="importAppServiceInfo.asType">
+                                        <option selected disabled value="">必填，请选择服务类型</option>
+                                        <option value="001">数据库</option>
+                                        <option value="002">缓存</option>
+                                        <option value="003">计算应用</option>
+                                        <option value="004">代理</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">应用组</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="importAppServiceInfo.asGroupId">
+                                        <option selected disabled value="">必填，请选择应用组</option>
+                                        <option :value="item.avgId" v-for="(item,index) in importAppServiceInfo.asGroups">{{item.avgName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">部署方式</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="importAppServiceInfo.asDeployType">
+                                        <option selected disabled value="">必填，请选择部署方式</option>
+                                        <option value="1001">多主机</option>
+                                        <option value="2002">单主机</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">主机组</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="importAppServiceInfo.groupId" @change="_changeImportHostGroup()">
+                                        <option selected disabled value="">必填，请选择主机组</option>
+                                        <option :value="item.groupId" v-for="(item,index) in importAppServiceInfo.hostGroups">{{item.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row" v-if="importAppServiceInfo.asDeployType == '2002'">
+                                <label class="col-sm-2 col-form-label">主机</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="importAppServiceInfo.hostId">
+                                        <option selected disabled value="">必填，请选择主机</option>
+                                        <option :value="item.hostId" v-for="(item,index) in importAppServiceInfo.hosts">{{item.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">yaml文件</label>
+                                <div class="col-sm-10 custom-file">
+                                    <input id="excelTemplate" ref="excelTemplate" type="file" accept=".yml" class="custom-file-input form-control" name="excelTemplate" v-on:change="getExcelTemplate($event)">
+                                    <label for="excelTemplate" class="custom-file-label">{{importAppServiceInfo.excelTemplate==''?'必填，请选择数据文件':importAppServiceInfo.excelTemplate.name}}</label>
+                                </div>
+                            </div>
+
+                            <div class="ibox-content">
+                                <button class="btn btn-primary float-right" type="button" v-on:click="importAppService()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

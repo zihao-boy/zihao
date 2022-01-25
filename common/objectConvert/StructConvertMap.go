@@ -1,6 +1,8 @@
 package objectConvert
 
 import (
+	"errors"
+	"fmt"
 	"reflect"
 )
 
@@ -16,7 +18,7 @@ func Struct2Map(obj interface{}) map[string]interface{} {
 }
 
 //struct to struct
-func Struct2Struct(value interface{},binding interface{}) interface{}{
+func Struct2Struct(value interface{}, binding interface{}) interface{} {
 	bVal := reflect.ValueOf(binding).Elem() //获取reflect.Type类型
 	vVal := reflect.ValueOf(value).Elem()   //获取reflect.Type类型
 	vTypeOfT := vVal.Type()
@@ -29,4 +31,35 @@ func Struct2Struct(value interface{},binding interface{}) interface{}{
 	}
 
 	return binding
+}
+
+func SetField(obj interface{}, name string, value interface{}) error {
+	structValue := reflect.ValueOf(obj).Elem()
+	structFieldValue := structValue.FieldByName(name)
+
+	if !structFieldValue.IsValid() {
+		return fmt.Errorf("No such field: %s in obj", name)
+	}
+
+	if !structFieldValue.CanSet() {
+		return fmt.Errorf("Cannot set %s field value", name)
+	}
+
+	structFieldType := structFieldValue.Type()
+	val := reflect.ValueOf(value)
+	if structFieldType != val.Type() {
+		return errors.New("Provided value type didn't match obj field type")
+	}
+	structFieldValue.Set(val)
+	return nil
+}
+
+func Map2Struct(m map[string]interface{}, value interface{}) error {
+	for k, v := range m {
+		err := SetField(value, k, v)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

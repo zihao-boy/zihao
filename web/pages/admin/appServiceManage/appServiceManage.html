@@ -49,12 +49,16 @@
                     <h5>应用服务</h5>
                     <div class="ibox-tools" style="top:10px;">
                         <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddAppServiceModal()">
-                            <i class="glyphicon glyphicon-plus"></i>
                             添加服务
                         </button>
                         <button type="button" class="btn btn-white btn-sm" v-on:click="_openFasterDeploy()">
-                            <i class="glyphicon glyphicon-plus"></i>
                             快速部署
+                        </button>
+                        <button type="button" class="btn btn-white btn-sm" v-on:click="_importYaml()">
+                            导入
+                        </button>
+                        <button type="button" class="btn btn-white btn-sm" v-on:click="_exportYaml()">
+                            导出
                         </button>
                     </div>
                 </div>
@@ -67,7 +71,7 @@
                                 <th class="text-center">应用名称</th>
                                 <th class="text-center">服务类型</th>
                                 <th class="text-center">副本数</th>
-                                <th class="text-center">服务描述</th>
+                                <th class="text-center">镜像</th>
                                 <th class="text-center">创建时间</th>
                                 <th class="text-center">状态</th>
                                 <th class="text-center">操作</th>
@@ -79,7 +83,7 @@
                                 <td class="text-center">{{appService.asName}}</td>
                                 <td class="text-center">{{appService.asTypeName}}</td>
                                 <td class="text-center">{{appService.asCount}}</td>
-                                <td class="text-center">{{appService.asDesc}}</td>
+                                <td class="text-center">{{appService.imagesName}}:{{appService.imagesVersion}}</td>
                                 <td class="text-center">{{vc.formatUTCTime(appService.createTime)}}</td>
                                 <td class="text-center" style="color: #FFF;">
                                     <span class="badge bg-success" v-if="appService.state == '10015'"> {{appService.stateName}}</span>
@@ -127,5 +131,7 @@
     </div>
     <vc:create path="admin/copyAppService"></vc:create>
     <vc:create path="admin/deleteAppService"></vc:create>
+    <vc:create path="admin/selectAppService"></vc:create>
+    <vc:create path="admin/importAppService"></vc:create>
 
 </div>

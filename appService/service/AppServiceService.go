@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/appService/dao"
@@ -14,21 +15,29 @@ import (
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
+	"github.com/zihao-boy/zihao/entity/dto/businessImages"
 	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
+	"github.com/zihao-boy/zihao/entity/dto/composeYaml"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
 	dao2 "github.com/zihao-boy/zihao/softService/dao"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
+const maxSize = 1000 * iris.MB // 第二种方法
 type AppServiceService struct {
 	appServiceDao         dao.AppServiceDao
 	hostDao               assetsDao.HostDao
 	businessPackageDao    dao2.BusinessPackageDao
 	businessDockerfileDao dao2.BusinessDockerfileDao
+	businessImagesDao     dao2.BusinessImagesDao
+	businessImagesVerDao  dao2.BusinessImagesVerDao
 }
 
 /**
@@ -1144,4 +1153,316 @@ func (appServiceService *AppServiceService) DeleteFasterDeploys(ctx iris.Context
 
 	return result.SuccessData(fasterDeployDto)
 
+}
+
+// export app config
+
+func (appServiceService *AppServiceService) ExportAppService(ctx iris.Context) {
+	var (
+		err            error
+		appServiceDto  appService.AppServiceDto
+		composeYamlDto = composeYaml.ComposeYamlDto{
+			Version: "2",
+		}
+		serviceDto composeYaml.ServiceDto
+		services   []interface{}
+	)
+
+	//if err = ctx.ReadJSON(&appServiceDto); err != nil {
+	//	return
+	//}
+	asIds := ctx.URLParam("asIds")
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceDto.TenantId = user.TenantId
+
+	appServices, err := appServiceService.appServiceDao.GetAppServices(appServiceDto)
+	if err != nil {
+		return
+	}
+
+	for _, appS := range appServices {
+		//get service
+		if !hasAppService(appS, asIds) {
+			continue
+		}
+		serviceDto = appServiceService.getServiceDto(appS)
+		servicesDto := composeYaml.ServicesDto{
+			Name:    appS.AsName,
+			Service: serviceDto,
+		}
+		services = append(services, servicesDto.ToMap())
+		composeYamlDto.Services = services
+	}
+
+	data, _ := yaml.Marshal(composeYamlDto)
+
+	responseWriter := ctx.ResponseWriter()
+	responseWriter.Header().Set("Content-Disposition", "attachment; filename=docker-compose.yml")
+	responseWriter.Header().Set("Content-Type", "application/octet-stream")
+	//responseWriter.Header().Set("Content-Length", resp.Header.Get("Content-Length"))
+	responseWriter.Write(data)
+	responseWriter.Flush()
+}
+
+// container images
+func hasAppService(appServiceDto *appService.AppServiceDto, asIds string) bool {
+	for _, images := range strings.Split(asIds, ",") {
+		if images == appServiceDto.AsId {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (appServiceService *AppServiceService) getServiceDto(appServiceDto *appService.AppServiceDto) composeYaml.ServiceDto {
+	var (
+		serviceDto composeYaml.ServiceDto
+	)
+
+	serviceDto.Image = appServiceDto.ImagesUrl
+
+	portDto := appService.AppServicePortDto{
+		AsId: appServiceDto.AsId,
+	}
+	portDtos, _ := appServiceService.appServiceDao.GetAppServicePort(portDto)
+
+	if len(portDtos) > 0 {
+		for _, port := range portDtos {
+			portStr := port.SrcPort + ":" + port.TargetPort
+			serviceDto.Ports = append(serviceDto.Ports, portStr)
+		}
+	}
+
+	hostsDto := appService.AppServiceHostsDto{
+		AsId: appServiceDto.AsId,
+	}
+	hostsDtos, _ := appServiceService.appServiceDao.GetAppServiceHosts(hostsDto)
+
+	if len(hostsDtos) > 0 {
+		for _, host := range hostsDtos {
+			hostStr := host.Hostname + ":" + host.Ip
+			serviceDto.ExtraHosts = append(serviceDto.ExtraHosts, hostStr)
+		}
+	}
+	dirDto := appService.AppServiceDirDto{
+		AsId: appServiceDto.AsId,
+	}
+	dirDtos, _ := appServiceService.appServiceDao.GetAppServiceDir(dirDto)
+
+	if len(dirDtos) > 0 {
+		for _, dir := range dirDtos {
+			dirStr := dir.SrcDir + ":" + dir.TargetDir
+			serviceDto.Volumes = append(serviceDto.Volumes, dirStr)
+		}
+	}
+
+	varDto := appService.AppServiceVarDto{
+		AsId: appServiceDto.AsId,
+	}
+	varDtos, _ := appServiceService.appServiceDao.GetAppServiceVars(varDto)
+	if len(varDtos) > 0 {
+		for _, vari := range varDtos {
+			variStr := vari.VarSpec + ":" + vari.VarValue
+			serviceDto.Environment = append(serviceDto.Environment, variStr)
+		}
+	}
+
+	return serviceDto
+}
+
+// import app service
+
+func (appServiceService *AppServiceService) ImportAppService(ctx iris.Context) result.ResultDto {
+	var (
+		composeYamlDto = composeYaml.ComposeYamlDto{
+		}
+		serviceName   string
+		appServiceDto appService.AppServiceDto
+	)
+	ctx.SetMaxRequestBodySize(maxSize)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	file, _, _ := ctx.FormFile("uploadFile")
+	defer func() {
+		file.Close()
+	}()
+	asType := ctx.FormValue("asType")
+	asGroupId := ctx.FormValue("asGroupId")
+	asDeployType := ctx.FormValue("asDeployType")
+	asDeployId := ctx.FormValue("asDeployId")
+
+	content, _ := ioutil.ReadAll(file)
+
+	yaml.Unmarshal(content, &composeYamlDto)
+
+	if len(composeYamlDto.Services) < 1 {
+		return result.Error("yml文件中不包含应用信息")
+	}
+
+	for _, service := range composeYamlDto.Services {
+		serviceMap := service.(map[string]interface{})
+
+		for key := range serviceMap {
+			serviceName = key
+		}
+		//
+		//verId := seq.Generator()
+		appServiceDto = appService.AppServiceDto{
+			AsId:         seq.Generator(),
+			AsName:       serviceName,
+			AsType:       asType,
+			TenantId:     user.TenantId,
+			AsDesc:       serviceName,
+			State:        "10012",
+			AsCount:      "1",
+			AsGroupId:    asGroupId,
+			AsDeployType: asDeployType,
+			AsDeployId:   asDeployId,
+			//ImagesId: imagesId,
+			//VerId:verId,
+		}
+
+		appServiceService.doImportAppService(appServiceDto, serviceMap[serviceName], user)
+
+	}
+	return result.Success()
+}
+
+func (appServiceService *AppServiceService) doImportAppService(appServiceDto appService.AppServiceDto, info interface{}, user *user.UserDto) result.ResultDto {
+
+	var (
+		imagesId   string
+		version    string = "V" + date.GetNowAString()
+		serviceDto composeYaml.ServiceDto
+		verId      string = seq.Generator()
+		err        error
+	)
+	//objectConvert.Map2Struct(info.(map[string]interface{}), &serviceDto)
+	data, _ := json.Marshal(info)
+	json.Unmarshal(data, &serviceDto)
+	//get images
+	businessImagesDto := businessImages.BusinessImagesDto{
+		Name:     appServiceDto.AsName,
+		TenantId: appServiceDto.TenantId,
+	}
+	images, _ := appServiceService.businessImagesDao.GetBusinessImagess(businessImagesDto)
+
+	if images == nil || len(images) < 1 {
+		imagesId = seq.Generator()
+		// save images
+		businessImagesDto = businessImages.BusinessImagesDto{
+			Id:           imagesId,
+			Name:         appServiceDto.AsName,
+			TenantId:     user.TenantId,
+			CreateUserId: user.UserId,
+			Version:      version,
+			ImagesType:   businessImages.IMAGES_TYPE_IMPORT,
+			ImagesFlag:   businessImages.IMAGES_FLAG_CUSTOM,
+			TypeUrl:      serviceDto.Image,
+		}
+		err = appServiceService.businessImagesDao.SaveBusinessImages(businessImagesDto)
+		if err != nil {
+			return result.Error(err.Error())
+		}
+	} else {
+		imagesId = images[0].Id
+		businessImagesDto = businessImages.BusinessImagesDto{
+			Id:      imagesId,
+			Version: version,
+			TypeUrl: serviceDto.Image,
+		}
+		err = appServiceService.businessImagesDao.UpdateBusinessImages(businessImagesDto)
+		if err != nil {
+			return result.Error(err.Error())
+		}
+	}
+	appServiceDto.ImagesId = imagesId
+	appServiceDto.VerId = verId
+
+	//save images version
+	businessImagesVerDto := businessImages.BusinessImagesVerDto{
+		Id:       verId,
+		ImagesId: imagesId,
+		Version:  version,
+		TypeUrl:  serviceDto.Image,
+		TenantId: user.TenantId,
+	}
+	err = appServiceService.businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	//save app service
+	err = appServiceService.appServiceDao.SaveAppService(appServiceDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(serviceDto.Ports) > 0 {
+		for _, port := range serviceDto.Ports {
+			if !strings.Contains(port, ":") {
+				continue
+			}
+			appServicePort := appService.AppServicePortDto{
+				PortId:     seq.Generator(),
+				AsId:       appServiceDto.AsId,
+				TenantId:   appServiceDto.TenantId,
+				SrcPort:    strings.Split(port, ":")[0],
+				TargetPort: strings.Split(port, ":")[1],
+			}
+			appServiceService.appServiceDao.SaveAppServicePort(appServicePort)
+		}
+	}
+
+	if len(serviceDto.ExtraHosts) > 0 {
+		for _, host := range serviceDto.ExtraHosts {
+			if !strings.Contains(host, ":") {
+				continue
+			}
+			appServiceHosts := appService.AppServiceHostsDto{
+				HostsId:  seq.Generator(),
+				AsId:     appServiceDto.AsId,
+				TenantId: appServiceDto.TenantId,
+				Hostname: strings.Split(host, ":")[0],
+				Ip:       strings.Split(host, ":")[1],
+			}
+			appServiceService.appServiceDao.SaveAppServiceHosts(appServiceHosts)
+		}
+	}
+
+	if len(serviceDto.Volumes) > 0 {
+		for _, volume := range serviceDto.Volumes {
+			if !strings.Contains(volume, ":") {
+				continue
+			}
+			appServiceDir := appService.AppServiceDirDto{
+				DirId:     seq.Generator(),
+				AsId:      appServiceDto.AsId,
+				TenantId:  appServiceDto.TenantId,
+				SrcDir:    strings.Split(volume, ":")[0],
+				TargetDir: strings.Split(volume, ":")[1],
+			}
+			appServiceService.appServiceDao.SaveAppServiceDir(appServiceDir)
+		}
+	}
+
+	if len(serviceDto.Environment) > 0 {
+		for _, env := range serviceDto.Environment {
+			if !strings.Contains(env, ":") {
+				continue
+			}
+			appServiceVar := appService.AppServiceVarDto{
+				AvId:     seq.Generator(),
+				AsId:     appServiceDto.AsId,
+				TenantId: appServiceDto.TenantId,
+				VarSpec:  strings.Split(env, ":")[0],
+				VarValue: strings.Split(env, ":")[1],
+				VarName:  strings.Split(env, ":")[0],
+			}
+			appServiceService.appServiceDao.SaveAppServiceVar(appServiceVar)
+		}
+	}
+
+	return result.Success()
 }

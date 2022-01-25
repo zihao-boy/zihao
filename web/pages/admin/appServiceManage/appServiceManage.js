@@ -147,10 +147,19 @@
             },
             _openFasterDeploy: function() {
                 vc.jumpToPage('/index.html#/pages/admin/fasterDeploy')
+            },
+            _exportYaml: function() {
+                //;
+                vc.emit('selectAppService', 'openSelectAppService', {
+                    callBack: $that._doExportYaml
+                })
+            },
+            _doExportYaml: function(_asIds) {
+                vc.jumpToPage('/app/appService/exportAppService?asIds=' + _asIds);
+            },
+            _importYaml: function() {
+                vc.emit('importAppService', 'openImportAppServiceModal', {});
             }
-
-
-
         }
     });
 })(window.vc);

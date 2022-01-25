@@ -59,7 +59,6 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteAppServiceHosts", hero.Handler(aus.deleteAppServiceHosts))
 
-
 	adinMenu.Get("/getAppServiceDir", hero.Handler(aus.getAppServiceDir))
 
 	adinMenu.Post("/saveAppServiceDir", hero.Handler(aus.saveAppServiceDir))
@@ -67,7 +66,6 @@ func AppServiceControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateAppServiceDir", hero.Handler(aus.updateAppServiceDir))
 
 	adinMenu.Post("/deleteAppServiceDir", hero.Handler(aus.deleteAppServiceDir))
-
 
 	adinMenu.Get("/getAppServicePort", hero.Handler(aus.getAppServicePort))
 
@@ -91,7 +89,6 @@ func AppServiceControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/copyAppService", hero.Handler(aus.copyAppService))
 
-
 	//get faster deploy app service
 	adinMenu.Get("/getFasterDeploy", hero.Handler(aus.getFasterDeploy))
 
@@ -100,10 +97,16 @@ func AppServiceControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateFasterDeploy", hero.Handler(aus.updateFasterDeploy))
 
 	adinMenu.Post("/deleteFasterDeploy", hero.Handler(aus.deleteFasterDeploy))
+
+	// export app config
+	adinMenu.Get("/exportAppService", hero.Handler(aus.exportAppService))
+
+	// import app config
+	adinMenu.Post("/importAppService", hero.Handler(aus.importAppService))
 }
 
 /**
-查询 主机组
+get app service
 */
 func (aus *AppServiceController) getAppService(ctx iris.Context) {
 	reslut := aus.appServiceService.GetAppServices(ctx)
@@ -137,8 +140,6 @@ func (aus *AppServiceController) copyAppService(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
-
-
 
 /**
 删除 主机组
@@ -221,8 +222,6 @@ func (aus *AppServiceController) deleteAppVar(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
-
-
 /**
 查询 主机组
 */
@@ -258,8 +257,6 @@ func (aus *AppServiceController) deleteAppServiceVar(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
-
-
 
 /**
 查询 主机组
@@ -297,8 +294,6 @@ func (aus *AppServiceController) deleteAppServiceHosts(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
-
-
 /**
 查询 主机组
 */
@@ -334,8 +329,6 @@ func (aus *AppServiceController) deleteAppServiceDir(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
-
-
 
 /**
 查询 主机组
@@ -373,9 +366,6 @@ func (aus *AppServiceController) deleteAppServicePort(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
-
-
-
 /**
 查询 主机组
 */
@@ -411,6 +401,7 @@ func (aus *AppServiceController) deleteAppServiceContainer(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
 /**
 开启容器
 */
@@ -428,7 +419,6 @@ func (aus *AppServiceController) stopAppService(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
-
 
 // get faster deploy app service log
 func (aus *AppServiceController) getFasterDeploy(ctx iris.Context) {
@@ -461,5 +451,20 @@ func (aus *AppServiceController) updateFasterDeploy(ctx iris.Context) {
 func (aus *AppServiceController) deleteFasterDeploy(ctx iris.Context) {
 	reslut := aus.appServiceService.DeleteFasterDeploys(ctx)
 
+	ctx.JSON(reslut)
+}
+
+/**
+export app service
+*/
+func (aus *AppServiceController) exportAppService(ctx iris.Context) {
+	aus.appServiceService.ExportAppService(ctx)
+}
+
+/**
+export app service
+*/
+func (aus *AppServiceController) importAppService(ctx iris.Context) {
+	reslut := aus.appServiceService.ImportAppService(ctx)
 	ctx.JSON(reslut)
 }

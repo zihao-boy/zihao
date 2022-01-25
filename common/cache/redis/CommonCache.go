@@ -30,8 +30,10 @@ func (r *Redis) GetValue(key string) (string, error) {
 
 func (r *Redis) GetValueAndRemove(key string) (string, error) {
 	mutex.Lock()
+	defer func() {
+		mutex.Unlock()
+	}()
 	token, err := r.client.Get(key).Result()
 	r.client.Del(key)
-	mutex.Unlock()
 	return token, err
 }

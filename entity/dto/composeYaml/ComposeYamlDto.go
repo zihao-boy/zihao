@@ -19,9 +19,9 @@ func (n *ServicesDto) ToMap() interface{} {
 }
 
 type ServiceDto struct {
-	Image string `yaml:"image"`
-	Volumes []string `yaml:"volumes"`
-	Ports []string `yaml:"ports"`
-	ExtraHosts []string `yaml:"extra_hosts"`
-	Environment []string `yaml:"environment"`
+	Image string `yaml:"image" json:"image"`
+	Volumes []string `yaml:"volumes" json:"volumes"`
+	Ports []string `yaml:"ports" json:"ports"`
+	ExtraHosts []string `yaml:"extra_hosts" json:"extra_hosts"`
+	Environment []string `yaml:"environment" json:"environment"`
 }

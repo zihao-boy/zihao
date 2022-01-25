@@ -94,8 +94,10 @@ func (conf DBConfig) DBConnUrl() string {
 
 func loadConfig(filename string) ([]byte, error) {
 	mutex.Lock()
+	defer func() {
+		mutex.Unlock()
+	}()
 	data, err := io.ReadFile(filename)
-	mutex.Unlock()
 	return data, err
 }
 
