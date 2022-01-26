@@ -41,9 +41,11 @@
                 <div class="ibox-title">
                     <h5>dockerfile</h5>
                     <div class="ibox-tools" style="top:10px;">
-                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddBusinessDockerfileModal()">
-                            <i class="glyphicon glyphicon-plus"></i>
-                            添加
+                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddCommonBusinessDockerfileModal()">
+                            普通添加
+                        </button>
+                        <button type="button" class="btn btn-white btn-sm" v-on:click="_openAddBusinessDockerfileModal()">
+                            高级添加
                         </button>
                     </div>
                 </div>
@@ -104,7 +106,11 @@
     <div v-if="businessDockerfileManageInfo.component == 'addBusinessDockerfile'">
         <vc:create path="admin/addBusinessDockerfile" callBackListener="" callBackFunction=""></vc:create>
     </div>
+    <div v-if="businessDockerfileManageInfo.component == 'addBusinessDockerfileCommon'">
+        <vc:create path="admin/addBusinessDockerfileCommon" callBackListener="" callBackFunction=""></vc:create>
+    </div>
     <vc:create path="admin/editBusinessDockerfile"></vc:create>
     <vc:create path="admin/deleteBusinessDockerfile"></vc:create>
 
+    <vc:create path="admin/chooseBusinessPackage" emitChooseBusinessPackage="addBusinessDockerfile"></vc:create>
 </div>

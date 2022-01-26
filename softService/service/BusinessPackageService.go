@@ -224,6 +224,7 @@ func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx
 	businessPackageDto.TenantId = user.TenantId
 	businessPackageDto.CreateUserId = user.UserId
 	businessPackageDto.Name = ctx.FormValue("name")
+	businessPackageDto.Path = filepath.Join(businessPackageDto.Id, fileName)
 
 	err = businessPackageService.businessPackageDao.UpdateBusinessPackage(businessPackageDto)
 	if err != nil {

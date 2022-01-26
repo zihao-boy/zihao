@@ -1,7 +1,11 @@
 package service
 
 import (
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
+	"os"
 	"path/filepath"
 	"strconv"
 
@@ -17,6 +21,7 @@ import (
 
 type BusinessDockerfileService struct {
 	businessDockerfileDao dao.BusinessDockerfileDao
+	businessPackageDao dao.BusinessPackageDao
 }
 
 /**
@@ -122,6 +127,88 @@ func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfi
 
 }
 
+
+func (businessDockerfileService *BusinessDockerfileService) SaveBusinessDockerfileCommon(ctx iris.Context) interface{} {
+	var (
+		err                   error
+		businessDockerfileCommonDto businessDockerfile.BusinessDockerfileCommonDto
+		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
+		businessPackageDto businessPackage.BusinessPackageDto
+	)
+	if err = ctx.ReadJSON(&businessDockerfileCommonDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	//save shell file
+	businessPackageDto.Id = seq.Generator()
+
+	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace, curDest)
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+	dest = filepath.Join(dest, "start_"+businessDockerfileCommonDto.Name+".sh")
+	if utils.IsFile(dest) {
+		os.Remove(dest)
+	}
+	f, _ := os.Create(dest)
+	defer func() {
+		f.Close()
+	}()
+	f.WriteString(businessDockerfileCommonDto.ShellContext)
+	businessPackageDto.TenantId = user.TenantId
+	businessPackageDto.CreateUserId = user.UserId
+	//businessPackageDto.Path = filepath.Join(curDest, fileHeader.Filename)
+	businessPackageDto.Path = filepath.Join(businessPackageDto.Id, "start_"+businessDockerfileCommonDto.Name+".sh")
+	businessPackageDto.Varsion = "V" + date.GetNowAString()
+	businessPackageDto.Name = "start_"+businessDockerfileCommonDto.Name+".sh"
+
+	err = businessDockerfileService.businessPackageDao.SaveBusinessPackage(businessPackageDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	var dockerfile = "# 指定源于一个基础镜像\n"
+	if businessDockerfileCommonDto.DeployType == appService.DeployTypeJava {
+		dockerfile += "FROM registry.cn-beijing.aliyuncs.com/sxd/ubuntu-java8:1.0\n"
+	} else {
+		dockerfile += "FROM centos:centos7\n"
+	}
+	dockerfile = dockerfile +
+		"# 维护者/拥有者\nMAINTAINER xxx <xxx@xx.com>\n" +
+		"# 从宿主机上传文件 ，这里上传一个脚本，\n" +
+		"# 具体脚本可以去业务包上传后复制路径\n" +
+		"ADD "+businessDockerfileCommonDto.Path+" /root/\n" +
+		"# 从宿主机上传文件 ，这里上传一个业务文件，\n" +
+		"# 具体脚本可以去业务包上传后复制路径\n" +
+		"ADD "+businessPackageDto.Path+" /root/\n" +
+		"# 容器内执行相应指令\n" +
+		"RUN chmod u+x /root/start_"+businessDockerfileCommonDto.Name+".sh\n" +
+		"# 运行命令\n" +
+		"# CMD <command>   or CMD [<command>]\n" +
+		"# 整个Dockerfile 中只能有一个,多个会被覆盖的\n" +
+		"CMD [\"/root/start_"+businessDockerfileCommonDto.Name+".sh\"]\n"
+
+	businessDockerfileDto.Name = businessDockerfileCommonDto.Name
+	businessDockerfileDto.Dockerfile = dockerfile
+	businessDockerfileDto.TenantId = user.TenantId
+	businessDockerfileDto.CreateUserId = user.UserId
+	businessDockerfileDto.Id = seq.Generator()
+	businessDockerfileDto.Version = "V" + date.GetNowAString()
+
+	//save log
+
+	logPath := filepath.Join(config.WorkSpace, "businessPackage/"+user.TenantId, businessDockerfileDto.Id+".log")
+
+	businessDockerfileDto.LogPath = logPath
+
+	err = businessDockerfileService.businessDockerfileDao.SaveBusinessDockerfile(businessDockerfileDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(businessDockerfileDto)
+}
 /**
 修改 系统信息
 */
@@ -165,3 +252,5 @@ func (businessDockerfileService *BusinessDockerfileService) DeleteBusinessDocker
 	return result.SuccessData(businessDockerfileDto)
 
 }
+
+

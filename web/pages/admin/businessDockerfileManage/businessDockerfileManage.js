@@ -61,6 +61,10 @@
                 vc.emit('addBusinessDockerfile', 'openAddBusinessDockerfileModal', {});
                 $that.businessDockerfileManageInfo.component = 'addBusinessDockerfile';
             },
+            _openAddCommonBusinessDockerfileModal: function() {
+                vc.emit('addBusinessDockerfileCommon', 'openAddBusinessDockerfileCommonModal', {});
+                $that.businessDockerfileManageInfo.component = 'addBusinessDockerfileCommon';
+            },
             _openEditBusinessDockerfileModel: function(_businessDockerfile) {
                 vc.emit('editBusinessDockerfile', 'openEditBusinessDockerfileModal', _businessDockerfile);
             },

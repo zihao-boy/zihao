@@ -54,8 +54,8 @@
                 param.append("uploadFile", vc.component.editBusinessPackageInfo.excelEditTemplate);
                 param.append('name', vc.component.editBusinessPackageInfo.name);
                 param.append('id', vc.component.editBusinessPackageInfo.id);
-                param.append('type', vc.component.addBusinessPackageInfo.type);
-                param.append('filename', vc.component.addBusinessPackageInfo.filename);
+                param.append('type', vc.component.editBusinessPackageInfo.type);
+                param.append('filename', vc.component.editBusinessPackageInfo.filename);
 
                 vc.http.apiPost(
                     '/soft/updateBusinessPackages',
@@ -71,8 +71,8 @@
                         if (_json.code == 0) {
                             //关闭model
                             $('#editBusinessPackageModel').modal('hide');
-                            vc.component.clearEditBusinessPackageInfo();
                             vc.emit('businessPackageManage', 'listBusinessPackage', {});
+                            vc.component.refreshEditBusinessPackageInfo();
                             return;
                         }
                         vc.toast(_json.msg);

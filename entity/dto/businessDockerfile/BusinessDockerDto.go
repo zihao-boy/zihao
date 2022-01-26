@@ -23,6 +23,13 @@ type BusinessDockerfileDto struct {
 	Action string 	`json:"action"`
 }
 
+type BusinessDockerfileCommonDto struct {
+	Name         string `json:"name" sql:"-"`
+	ShellContext  string `json:"shellContext" sql:"-"`
+	DeployType  string `json:"deployType" sql:"-"`
+	Path string `json:"path" sql:"-"`
+}
+
 type ImagesVersion struct {
 	ImagesId string `json:"imagesId"`
 	VerId string `json:"verId"`

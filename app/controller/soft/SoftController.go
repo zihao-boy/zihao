@@ -34,6 +34,8 @@ func SoftControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/saveBusinessDockerfile", hero.Handler(aus.SaveBusinessDockerfile))
 
+	adinMenu.Post("/saveBusinessDockerfileCommon", hero.Handler(aus.saveBusinessDockerfileCommon))
+
 	adinMenu.Post("/updateBusinessDockerfile", hero.Handler(aus.UpdateBusinessDockerfile))
 
 	adinMenu.Post("/deleteBusinessDockerfile", hero.Handler(aus.DeleteBusinessDockerfiles))
@@ -121,6 +123,16 @@ func (aus *SoftController) SaveBusinessDockerfile(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+添加 业务包
+*/
+func (aus *SoftController) saveBusinessDockerfileCommon(ctx iris.Context) {
+	reslut := aus.businessDockerService.SaveBusinessDockerfileCommon(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 /**
 修改 业务包

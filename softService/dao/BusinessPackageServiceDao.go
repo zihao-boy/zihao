@@ -66,6 +66,9 @@ VALUES(#Id#,#Name#,#Varsion#,#Path#,#CreateUserId#,#TenantId#)
 		$if Name != '' then
 		name = #Name#,
 		$endif
+		$if Path != '' then
+		path = #Path#,
+		$endif
 		status_cd = '0'
 		where status_cd = '0'
 		$if TenantId != '' then
