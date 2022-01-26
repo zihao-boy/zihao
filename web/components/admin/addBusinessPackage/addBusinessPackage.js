@@ -1,4 +1,4 @@
-(function (vc) {
+(function(vc) {
 
     vc.extends({
         propTypes: {
@@ -11,13 +11,15 @@
                 name: '',
                 varsion: '',
                 excelTemplate: '',
+                type: '1001',
+                filename: ''
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('addBusinessPackage', 'openAddBusinessPackageModal', function () {
+        _initEvent: function() {
+            vc.on('addBusinessPackage', 'openAddBusinessPackageModal', function() {
                 $('#addBusinessPackageModel').modal('show');
             });
         },
@@ -26,8 +28,7 @@
                 return vc.validate.validate({
                     addBusinessPackageInfo: vc.component.addBusinessPackageInfo
                 }, {
-                    'addBusinessPackageInfo.name': [
-                        {
+                    'addBusinessPackageInfo.name': [{
                             limit: "required",
                             param: "",
                             errInfo: "名称不能为空"
@@ -40,7 +41,7 @@
                     ]
                 });
             },
-            saveBusinessPackageInfo: function () {
+            saveBusinessPackageInfo: function() {
                 if (!vc.component.addBusinessPackageValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
@@ -48,18 +49,21 @@
                 var param = new FormData();
                 param.append("uploadFile", vc.component.addBusinessPackageInfo.excelTemplate);
                 param.append('name', vc.component.addBusinessPackageInfo.name);
+                param.append('type', vc.component.addBusinessPackageInfo.type);
+                param.append('filename', vc.component.addBusinessPackageInfo.filename);
+
+
 
                 vc.http.apiPost(
                     '/soft/saveBusinessPackages',
-                    param,
-                    {
+                    param, {
                         emulateJSON: true,
                         //添加请求头
                         headers: {
                             "Content-Type": "multipart/form-data"
                         }
                     },
-                    function (json, res) {
+                    function(json, res) {
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
@@ -72,22 +76,24 @@
                         vc.toast(_json.msg);
 
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.toast(errInfo);
 
                     });
             },
-            getExcelTemplate: function (e) {
+            getExcelTemplate: function(e) {
                 //console.log("getExcelTemplate 开始调用")
                 vc.component.addBusinessPackageInfo.excelTemplate = e.target.files[0];
             },
-            clearAddBusinessPackageInfo: function () {
+            clearAddBusinessPackageInfo: function() {
                 vc.component.addBusinessPackageInfo = {
                     name: '',
                     varsion: '',
                     excelTemplate: '',
+                    type: '1001',
+                    filename: ''
                 };
             }
         }

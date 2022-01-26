@@ -7,6 +7,8 @@
                 name: '',
                 varsion: '',
                 excelEditTemplate: '',
+                type: '1001',
+                filename: ''
             }
         },
         _initMethod: function() {
@@ -52,6 +54,8 @@
                 param.append("uploadFile", vc.component.editBusinessPackageInfo.excelEditTemplate);
                 param.append('name', vc.component.editBusinessPackageInfo.name);
                 param.append('id', vc.component.editBusinessPackageInfo.id);
+                param.append('type', vc.component.addBusinessPackageInfo.type);
+                param.append('filename', vc.component.addBusinessPackageInfo.filename);
 
                 vc.http.apiPost(
                     '/soft/updateBusinessPackages',
@@ -91,6 +95,8 @@
                     name: '',
                     varsion: '',
                     excelEditTemplate: '',
+                    type: '1001',
+                    filename: ''
                 }
             }
         }

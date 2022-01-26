@@ -76,6 +76,9 @@ func (businessPackageService *BusinessPackageService) GetBusinessPackages(ctx ir
 	businessPackageDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.TenantId = user.TenantId
+	businessPackageDto.Id = ctx.URLParam("id")
+	businessPackageDto.Name = ctx.URLParam("name")
+	businessPackageDto.Varsion = ctx.URLParam("varsion")
 
 	total, err = businessPackageService.businessPackageDao.GetBusinessPackageCount(businessPackageDto)
 
@@ -114,16 +117,10 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 	var (
 		err                error
 		businessPackageDto businessPackage.BusinessPackageDto
+		fileName           string
 	)
 
 	ctx.SetMaxRequestBodySize(maxSize)
-
-	file, fileHeader, err := ctx.FormFile("uploadFile")
-	defer file.Close()
-	if err != nil {
-		return result.Error("上传失败" + err.Error())
-	}
-
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.Id = seq.Generator()
 
@@ -134,9 +131,27 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 		utils.CreateDir(dest)
 	}
 
-	dest = filepath.Join(dest, fileHeader.Filename)
+	typeStr := ctx.FormValue("type")
 
-	_, err = ctx.SaveFormFile(fileHeader, dest)
+	if typeStr == "1001" {
+		file, fileHeader, err := ctx.FormFile("uploadFile")
+		defer func() {
+			file.Close()
+		}()
+		fileName = fileHeader.Filename
+		if err != nil {
+			return result.Error("上传失败" + err.Error())
+		}
+		dest = filepath.Join(dest, fileName)
+		_, err = ctx.SaveFormFile(fileHeader, dest)
+	} else {
+		fileName = ctx.FormValue("filename")
+		dest = filepath.Join(dest, fileName)
+		f, _ := os.Create(dest)
+		defer func() {
+			f.Close()
+		}()
+	}
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
@@ -144,7 +159,7 @@ func (businessPackageService *BusinessPackageService) SaveBusinessPackages(ctx i
 	businessPackageDto.TenantId = user.TenantId
 	businessPackageDto.CreateUserId = user.UserId
 	//businessPackageDto.Path = filepath.Join(curDest, fileHeader.Filename)
-	businessPackageDto.Path = filepath.Join(businessPackageDto.Id, fileHeader.Filename)
+	businessPackageDto.Path = filepath.Join(businessPackageDto.Id, fileName)
 	businessPackageDto.Varsion = "V" + date.GetNowAString()
 	businessPackageDto.Name = ctx.FormValue("name")
 
@@ -164,34 +179,46 @@ func (businessPackageService *BusinessPackageService) UpdateBusinessPackages(ctx
 	var (
 		err                error
 		businessPackageDto businessPackage.BusinessPackageDto
+		fileName           string
 	)
-
-	file, fileHeader, err := ctx.FormFile("uploadFile")
-	defer file.Close()
-	if err != nil {
-		return result.Error("上传失败" + err.Error())
-	}
-
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessPackageDto.Id = ctx.FormValue("id")
-
 	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
 	dest := filepath.Join(config.WorkSpace, curDest)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
+	typeStr := ctx.FormValue("type")
 
-	dest = filepath.Join(dest, fileHeader.Filename)
-
-	// remove file that exists
-	if utils.IsFile(dest) {
-		os.Remove(dest)
-	}
-
-	_, err = ctx.SaveFormFile(fileHeader, dest)
-	if err != nil {
-		return result.Error("上传失败" + err.Error())
+	if typeStr == "1001" {
+		file, fileHeader, err := ctx.FormFile("uploadFile")
+		defer func() {
+			file.Close()
+		}()
+		if err != nil {
+			return result.Error("上传失败" + err.Error())
+		}
+		fileName = fileHeader.Filename
+		dest = filepath.Join(dest, fileName)
+		// remove file that exists
+		if utils.IsFile(dest) {
+			os.Remove(dest)
+		}
+		_, err = ctx.SaveFormFile(fileHeader, dest)
+		if err != nil {
+			return result.Error("上传失败" + err.Error())
+		}
+	} else {
+		fileName = ctx.FormValue("filename")
+		dest = filepath.Join(dest, fileName)
+		if utils.IsFile(dest) {
+			os.Remove(dest)
+		}
+		f, _ := os.Create(dest)
+		defer func() {
+			f.Close()
+		}()
 	}
 
 	businessPackageDto.TenantId = user.TenantId

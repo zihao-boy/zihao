@@ -17,7 +17,7 @@ const (
 	and t.tenant_id = #TenantId#
 	$endif
 	$if Name != '' then
-	and t.name = #Name#
+	and t.name like '%' || #Name# || '%'
 	$endif
 	$if Varsion != '' then
 	and t.varsion = #Varsion#
@@ -39,7 +39,7 @@ const (
 				and t.tenant_id = #TenantId#
 				$endif
 				$if Name != '' then
-				and t.name = #Name#
+				and t.name like '%' || #Name# || '%'
 				$endif
 				$if Varsion != '' then
 				and t.varsion = #Varsion#

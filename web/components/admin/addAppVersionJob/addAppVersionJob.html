@@ -68,7 +68,7 @@
                 <div>
                     <div>
                         <div class="form-group row" v-for="(item,index) in addAppVersionJobInfo.appVersionJobImages">
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <input v-model="item.packageUrl" type="text" placeholder="必填，请填写构建新包路径" class="form-control">
                             </div>
                             <div class="col-sm-3">
@@ -76,8 +76,7 @@
                             </div>
                             <div class="col-sm-1 padding-0">
                                 <button type="button" class="btn btn-white btn-sm" v-on:click="_appChooseBusinessPackage(item)">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    选择
+                                    业务包
                                 </button>
                             </div>
                             <div class="col-sm-3">
@@ -85,8 +84,7 @@
                             </div>
                             <div class="col-sm-1 padding-0">
                                 <button type="button" class="btn btn-white btn-sm" v-on:click="_appChooseDockerfile(item)">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    选择
+                                    dockerfile
                                 </button>
                                 <a href="javascript:void(0)" class="col-form-label" v-on:click="_deleteJobPlan(index)">
                                     <i class="glyphicon glyphicon-plus"></i> 删除
