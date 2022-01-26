@@ -159,6 +159,35 @@
             },
             _importYaml: function() {
                 vc.emit('importAppService', 'openImportAppServiceModal', {});
+            },
+            _restartMoreApps: function() {
+                vc.emit('selectAppService', 'openSelectAppService', {
+                    callBack: $that._doRestartMoreApps
+                })
+            },
+            _doRestartMoreApps: function(_asIds) {
+                let _data = {
+                    asIds: _asIds
+                }
+                vc.http.apiPost(
+                    '/appService/restartAppServices',
+                    JSON.stringify(_data), {
+                        emulateJSON: true
+                    },
+                    function(json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            vc.emit('appServiceManage', 'listAppService', {});
+                            vc.toast('重启请求已经发送，请点击查询查看应用状态');
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                        vc.toast(errInfo);
+                    });
             }
         }
     });

@@ -871,6 +871,58 @@ func (appServiceService *AppServiceService) StartAppService(ctx iris.Context) in
 	return param
 }
 
+// restart more apps
+func (appServiceService *AppServiceService) RestartAppServices(ctx iris.Context) interface{} {
+
+	var (
+		err                   error
+		appServiceDto         appService.AppServiceDto
+		restartAppServicesDto appService.RestartAppServicesDto
+	)
+
+	if err = ctx.ReadJSON(&restartAppServicesDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appServiceDto.TenantId = user.TenantId
+
+	appServiceDtos, _ := appServiceService.appServiceDao.GetAppServices(appServiceDto)
+	if len(appServiceDtos) < 1 {
+		return result.Error("应用不存在")
+	}
+
+	go appServiceService.doRestartAppServices(appServiceDtos, restartAppServicesDto)
+
+	return result.Success()
+}
+
+// do restart app
+func (appServiceService *AppServiceService) doRestartAppServices(appServiceDtos []*appService.AppServiceDto, restartAppServicesDto appService.RestartAppServicesDto) {
+	for _, tmpAppServiceDto := range appServiceDtos {
+		if !hasAppService(tmpAppServiceDto, restartAppServicesDto.AsIds) {
+			continue
+		}
+		var (
+			hosts []*host.HostDto
+		)
+		if tmpAppServiceDto.State != appService.STATE_STOP {
+			containerScheduling.StopContainer(tmpAppServiceDto)
+		}
+		if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST {
+			hostDto := host.HostDto{
+				HostId: tmpAppServiceDto.AsDeployId,
+			}
+			hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+		} else {
+			hostDto := host.HostDto{
+				GroupId: tmpAppServiceDto.AsDeployId,
+			}
+			hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+		}
+		containerScheduling.ContainerScheduling(hosts, tmpAppServiceDto)
+	}
+}
+
 func (appServiceService *AppServiceService) StopAppService(ctx iris.Context) interface{} {
 	var (
 		appServiceDto appService.AppServiceDto
@@ -1331,7 +1383,7 @@ func (appServiceService *AppServiceService) ImportAppService(ctx iris.Context) r
 		return result.Success()
 	}
 
-	var(
+	var (
 		hosts []*host.HostDto
 	)
 
@@ -1346,10 +1398,9 @@ func (appServiceService *AppServiceService) ImportAppService(ctx iris.Context) r
 		}
 		hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
 	}
-	for _,host := range hosts{
-		shell.ExecCommonShell(*host,composeYamlDto.ZihaoCmd)
+	for _, host := range hosts {
+		shell.ExecCommonShell(*host, composeYamlDto.ZihaoCmd)
 	}
-
 
 	return result.Success()
 }

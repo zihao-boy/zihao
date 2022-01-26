@@ -3,6 +3,8 @@
 # install 7z
 wget https://homecommunity.oss-cn-beijing.aliyuncs.com/hc/p7zip_9.20.1.tar
 
+tar -xvf p7zip_9.20.1.tar
+
 cd p7zip_9.20.1
 
 make && make install

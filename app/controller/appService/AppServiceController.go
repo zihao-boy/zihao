@@ -86,6 +86,9 @@ func AppServiceControllerRouter(party iris.Party) {
 	adinMenu.Post("/startAppService", hero.Handler(aus.startAppService))
 
 	adinMenu.Post("/stopAppService", hero.Handler(aus.stopAppService))
+	adinMenu.Post("/restartAppServices", hero.Handler(aus.restartAppServices))
+
+
 
 	adinMenu.Post("/copyAppService", hero.Handler(aus.copyAppService))
 
@@ -410,6 +413,15 @@ func (aus *AppServiceController) startAppService(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+/**
+ restart apps
+*/
+func (aus *AppServiceController) restartAppServices(ctx iris.Context) {
+	reslut := aus.appServiceService.RestartAppServices(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 /**
 停止容器

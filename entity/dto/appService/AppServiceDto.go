@@ -48,3 +48,7 @@ type AppServiceDto struct {
 	AppServiceDirs []*AppServiceDirDto `json:"appServiceDirs"`
 	AppServiceVars []*AppServiceVarDto `json:"appServiceVars"`
 }
+
+type RestartAppServicesDto struct {
+	AsIds       string `json:"asIds"`
+}
