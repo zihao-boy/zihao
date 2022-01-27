@@ -48,8 +48,10 @@
                     <h5>构建信息</h5>
                     <div class="ibox-tools" style="top:10px;">
                         <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddAppVersionJobModal()">
-                            <i class="glyphicon glyphicon-plus"></i>
                             新建
+                        </button>
+                        <button type="button" class="btn btn-white btn-sm" v-on:click="_openImportJobYaml()">
+                            导入
                         </button>
                     </div>
                 </div>
@@ -115,5 +117,5 @@
     <vc:create path="admin/deleteAppVersionJob"></vc:create>
 
     <vc:create path="admin/doBuildJob"></vc:create>
-
+    <vc:create path="admin/importJobYaml"></vc:create>
 </div>

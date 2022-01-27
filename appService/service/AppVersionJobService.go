@@ -191,9 +191,8 @@ func (appVersionJobService *AppVersionJobService) saveAppVersionJobImage(appVers
 	return nil
 }
 
-/**
-修改 系统信息
-*/
+// update job build
+
 func (appVersionJobService *AppVersionJobService) UpdateAppVersionJobs(ctx iris.Context) result.ResultDto {
 	var (
 		err              error
@@ -757,11 +756,12 @@ func (appVersionJobService *AppVersionJobService) ExportJobBuildYaml(ctx iris.Co
 	appVersionJobDto = *appVersionJobDtos[0]
 
 	jobDto := jobYaml.JobDto{
-		JobName:   appVersionJobDto.JobName,
-		GitUrl:    appVersionJobDto.GitUrl,
-		GitPasswd: appVersionJobDto.GitPasswd,
-		WorkDir:   appVersionJobDto.WorkDir,
-		JobShell:  appVersionJobDto.JobShell,
+		JobName:     appVersionJobDto.JobName,
+		GitUrl:      appVersionJobDto.GitUrl,
+		GitPasswd:   appVersionJobDto.GitPasswd,
+		GitUsername: appVersionJobDto.GitUsername,
+		WorkDir:     appVersionJobDto.WorkDir,
+		JobShell:    appVersionJobDto.JobShell,
 	}
 
 	appVersionJobImageDto.JobId = jobId
@@ -863,8 +863,155 @@ func (appVersionJobService *AppVersionJobService) doFreshPlan(image *appVersionJ
 		}
 
 		plan.StartShell = atom.String(file)
+		plan.ShellPath = addLine
 	}
 
 	return plan, nil
+
+}
+
+func (appVersionJobService *AppVersionJobService) ImportJobBuildYaml(ctx iris.Context) interface{} {
+
+	var (
+		jobYamlDto = jobYaml.JobYamlDto{
+		}
+		err error
+	)
+	ctx.SetMaxRequestBodySize(maxSize)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	file, _, _ := ctx.FormFile("uploadFile")
+	defer func() {
+		file.Close()
+	}()
+
+	content, _ := ioutil.ReadAll(file)
+
+	yaml.Unmarshal(content, &jobYamlDto)
+
+	if utils.IsEmpty(jobYamlDto.Version) {
+		return result.Error("格式错误")
+	}
+
+	appVersionJobDto := appVersionJob.AppVersionJobDto{
+		TenantId:    user.TenantId,
+		JobId:       seq.Generator(),
+		JobName:     jobYamlDto.Job.JobName,
+		JobShell:    jobYamlDto.Job.JobShell,
+		State:       appVersionJob.STATE_wait,
+		GitUrl:      jobYamlDto.Job.GitUrl,
+		GitPasswd:   jobYamlDto.Job.GitPasswd,
+		GitUsername: jobYamlDto.Job.GitUsername,
+		WorkDir:     jobYamlDto.Job.WorkDir,
+		JobTime:     date.GetNowTimeString(),
+	}
+
+	if appVersionJobDto.WorkDir == "" || appVersionJobDto.WorkDir == "/" {
+		return result.Error("工作目录错误，不能为空或者/")
+	}
+
+	err = appVersionJobService.appVersionJobDao.SaveAppVersionJob(appVersionJobDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	plans := jobYamlDto.Job.Plans
+
+	if len(plans) < 1 {
+		return result.Success()
+	}
+
+	for _, plan := range plans {
+		doPlan(plan, user, appVersionJobService, appVersionJobDto)
+	}
+	return result.Success()
+}
+
+// do deal build job plan
+func doPlan(plan jobYaml.JobPlanDto, user *user.UserDto, appVersionJobService *AppVersionJobService, appVersionJobDto appVersionJob.AppVersionJobDto) {
+	var (
+		packageId string
+	)
+	// save  business package
+	packageId = plan.Path[:strings.Index(plan.Path, "/")]
+	businessPackageDto := businessPackage.BusinessPackageDto{
+		Id:           packageId,
+		Name:         plan.PackageName,
+		Varsion:      "V" + date.GetNowAString(),
+		Path:         plan.Path,
+		BasePath:     "",
+		CreateUserId: user.UserId,
+		TenantId:     user.TenantId,
+	}
+	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	dest := filepath.Join(config.WorkSpace, curDest)
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+	fileName := businessPackageDto.Path[strings.LastIndex(businessPackageDto.Path, "/"):]
+	dest = filepath.Join(dest, fileName)
+	if utils.IsFile(dest) {
+		os.Remove(dest)
+	}
+	f, _ := os.Create(dest)
+	defer func() {
+		f.Close()
+	}()
+	appVersionJobService.businessPackageDao.SaveBusinessPackage(businessPackageDto)
+
+	//save dockerfile
+	businessDockerfileDto := businessDockerfile.BusinessDockerfileDto{
+		Id:           seq.Generator(),
+		Name:         plan.DockerfileName,
+		Version:      "V" + date.GetNowAString(),
+		Dockerfile:   plan.Dockerfile,
+		CreateUserId: user.UserId,
+		TenantId:     user.TenantId,
+	}
+	//save log
+	logPath := filepath.Join(config.WorkSpace, "businessPackage/"+user.TenantId, businessDockerfileDto.Id+".log")
+	businessDockerfileDto.LogPath = logPath
+	appVersionJobService.businessDockerfileDao.SaveBusinessDockerfile(businessDockerfileDto)
+
+	images := appVersionJob.AppVersionJobImagesDto{
+		JobImagesId:          seq.Generator(),
+		TenantId:             user.TenantId,
+		PackageUrl:           plan.PackageUrl,
+		BusinessPackageId:    businessPackageDto.Id,
+		BusinessDockerfileId: businessDockerfileDto.Id,
+		JobId:                appVersionJobDto.JobId,
+	}
+	appVersionJobService.appVersionJobDao.SaveAppVersionJobImages(images)
+
+	if utils.IsEmpty(plan.StartShell) {
+		return
+	}
+	packageId = plan.ShellPath[:strings.Index(plan.ShellPath, "/")]
+	// save shell file
+	businessPackageDto = businessPackage.BusinessPackageDto{
+		Id:           packageId,
+		Name:         "start_" + plan.PackageName + ".sh",
+		Varsion:      "V" + date.GetNowAString(),
+		Path:         plan.ShellPath,
+		BasePath:     "",
+		CreateUserId: user.UserId,
+		TenantId:     user.TenantId,
+	}
+	curDest = filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	dest = filepath.Join(config.WorkSpace, curDest)
+	if !utils.IsDir(dest) {
+		utils.CreateDir(dest)
+	}
+	fileName = businessPackageDto.Path[strings.LastIndex(businessPackageDto.Path, "/"):]
+	dest = filepath.Join(dest, fileName)
+	if utils.IsFile(dest) {
+		os.Remove(dest)
+	}
+	f, _ = os.Create(dest)
+	defer func() {
+		f.Close()
+	}()
+	f.WriteString(plan.StartShell)
+	appVersionJobService.businessPackageDao.SaveBusinessPackage(businessPackageDto)
 
 }
