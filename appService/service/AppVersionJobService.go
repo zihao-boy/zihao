@@ -935,7 +935,7 @@ func doPlan(plan jobYaml.JobPlanDto, user *user.UserDto, appVersionJobService *A
 	// save  business package
 	packageId = plan.Path[:strings.Index(plan.Path, "/")]
 	businessPackageDto := businessPackage.BusinessPackageDto{
-		Id:           packageId,
+		Id:           seq.Generator(),
 		Name:         plan.PackageName,
 		Varsion:      "V" + date.GetNowAString(),
 		Path:         plan.Path,
@@ -943,7 +943,7 @@ func doPlan(plan jobYaml.JobPlanDto, user *user.UserDto, appVersionJobService *A
 		CreateUserId: user.UserId,
 		TenantId:     user.TenantId,
 	}
-	curDest := filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	curDest := filepath.Join("businessPackage", user.TenantId, packageId)
 	dest := filepath.Join(config.WorkSpace, curDest)
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
@@ -989,7 +989,7 @@ func doPlan(plan jobYaml.JobPlanDto, user *user.UserDto, appVersionJobService *A
 	packageId = plan.ShellPath[:strings.Index(plan.ShellPath, "/")]
 	// save shell file
 	businessPackageDto = businessPackage.BusinessPackageDto{
-		Id:           packageId,
+		Id:           seq.Generator(),
 		Name:         "start_" + plan.PackageName + ".sh",
 		Varsion:      "V" + date.GetNowAString(),
 		Path:         plan.ShellPath,
@@ -997,7 +997,7 @@ func doPlan(plan jobYaml.JobPlanDto, user *user.UserDto, appVersionJobService *A
 		CreateUserId: user.UserId,
 		TenantId:     user.TenantId,
 	}
-	curDest = filepath.Join("businessPackage", user.TenantId, businessPackageDto.Id)
+	curDest = filepath.Join("businessPackage", user.TenantId, packageId)
 	dest = filepath.Join(config.WorkSpace, curDest)
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
