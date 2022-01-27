@@ -1468,13 +1468,13 @@
     vcFramework.getDict = function(_name, _type, _callFun) {
         let param = {
             params: {
-                name: _name,
-                type: _type
+                tableName: _name,
+                tableColumns: _type
             }
         };
 
         //发送get请求
-        vcFramework.http.get('core', 'list', param,
+        vcFramework.http.apiGet('/system/getDicts', param,
             function(json, res) {
                 if (res.status == 200) {
                     let _dictInfo = JSON.parse(json);
