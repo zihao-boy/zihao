@@ -51,7 +51,7 @@ func AppVersionControllerRouter(party iris.Party) {
 
 	//web hooks
 	adinMenu.Post("/payload", hero.Handler(aus.payload))
-
+	adinMenu.Get("/exportJobBuildYaml", hero.Handler(aus.exportJobBuildYaml))
 }
 
 /**
@@ -203,4 +203,12 @@ func (aus *AppVersionController) payload(ctx iris.Context) {
 	reslut := aus.appVersionJobService.Payload(ctx)
 
 	ctx.JSON(reslut)
+}
+
+/**
+ export job build yaml file
+**/
+func (aus *AppVersionController) exportJobBuildYaml(ctx iris.Context) {
+	aus.appVersionJobService.ExportJobBuildYaml(ctx)
+
 }

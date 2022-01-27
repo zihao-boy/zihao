@@ -67,6 +67,10 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Get("/listBusinessPackageContext", hero.Handler(aus.listBusinessPackageContext))
 
 	adinMenu.Post("/editBusinessPackageContext", hero.Handler(aus.editBusinessPackageContext))
+
+
+
+
 }
 
 /**
@@ -279,6 +283,8 @@ func (aus *SoftController) editBusinessPackageContext(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+
 
 
 

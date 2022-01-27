@@ -10,8 +10,8 @@
                 gitPasswd: '',
                 workDir: '',
                 appVersionJobImages: [],
-                webhooks:'',
-                webhooksRestart:''
+                webhooks: '',
+                webhooksRestart: ''
             }
         },
         _initMethod: function() {
@@ -23,8 +23,8 @@
                 $('#editAppVersionJobModel').modal('show');
                 vc.copyObject(_param, $that.editAppVersionJobInfo);
                 $that._loadImages();
-                $that.editAppVersionJobInfo.webhooks = location.origin+"/app/appVersion/payload?jobId="+_param.jobId+"&event=push"
-                $that.editAppVersionJobInfo.webhooksRestart = location.origin+"/app/appVersion/payload?jobId="+_param.jobId+"&event=pushAndRestart"
+                $that.editAppVersionJobInfo.webhooks = location.origin + "/app/appVersion/payload?jobId=" + _param.jobId + "&event=push"
+                $that.editAppVersionJobInfo.webhooksRestart = location.origin + "/app/appVersion/payload?jobId=" + _param.jobId + "&event=pushAndRestart"
             });
         },
         methods: {
@@ -139,8 +139,8 @@
                     gitPasswd: '',
                     workDir: '',
                     appVersionJobImages: [],
-                    webhooks:'',
-                    webhooksRestart:''
+                    webhooks: '',
+                    webhooksRestart: ''
                 };
             },
             _addEditJobPlan: function() {
@@ -166,6 +166,9 @@
             },
             _goEditBack: function() {
                 vc.emit('appVersionJobManage', 'listAppVersionJob', {});
+            },
+            _exportJobBuildYaml: function() {
+                vc.jumpToPage('/app/appVersion/exportJobBuildYaml?jobId=' + $that.editAppVersionJobInfo.jobId);
             }
         }
     });

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
@@ -11,9 +12,12 @@ import (
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"github.com/zihao-boy/zihao/entity/dto/businessPackage"
+	"github.com/zihao-boy/zihao/entity/dto/jobYaml"
+	"golang.org/x/net/html/atom"
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -26,11 +30,14 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
 	softDao "github.com/zihao-boy/zihao/softService/dao"
+	"gopkg.in/yaml.v3"
 )
 
 type AppVersionJobService struct {
 	appVersionJobDao       dao.AppVersionJobDao
 	appVersionJobDetailDao dao.AppVersionJobDetailDao
+	businessPackageDao     softDao.BusinessPackageDao
+	businessDockerfileDao  softDao.BusinessDockerfileDao
 }
 
 /**
@@ -255,11 +262,11 @@ func (appVersionJobService *AppVersionJobService) DoJob(ctx iris.Context) result
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
-	return appVersionJobService.commonJob(appVersionJobParam,user)
+	return appVersionJobService.commonJob(appVersionJobParam, user)
 
 }
 
-func (appVersionJobService *AppVersionJobService) commonJob(appVersionJobParam appVersionJob.AppVersionJobParam,user *user.UserDto) result.ResultDto{
+func (appVersionJobService *AppVersionJobService) commonJob(appVersionJobParam appVersionJob.AppVersionJobParam, user *user.UserDto) result.ResultDto {
 
 	appVersionJobDto := appVersionJob.AppVersionJobDto{
 	}
@@ -269,7 +276,6 @@ func (appVersionJobService *AppVersionJobService) commonJob(appVersionJobParam a
 	if len(appVersionJobDtos) < 1 {
 		return result.Error("构建不存在")
 	}
-
 
 	appVersionJobDto.TenantId = user.TenantId
 	appVersionJobDto.State = appVersionJob.STATE_doing
@@ -442,7 +448,7 @@ func (appVersionJobService *AppVersionJobService) updateAppVersionJobState(job a
 	appVersionJobDto.JobId = job.JobId
 	appVersionJobDto.TenantId = job.TenantId
 	appVersionJobDto.State = state
-	appVersionJobDto.JobTime= date.GetNowTimeString()
+	appVersionJobDto.JobTime = date.GetNowTimeString()
 	appVersionJobService.appVersionJobDao.UpdateAppVersionJob(appVersionJobDto)
 }
 
@@ -690,34 +696,175 @@ func (appVersionJobService *AppVersionJobService) Payload(ctx iris.Context) inte
 	}
 	appVersionJobImagesDtos, _ := appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImagesDto)
 
-	if len(appVersionJobImagesDtos) > 0{
-		for _,appversionJobImagesDto := range appVersionJobImagesDtos{
-			imagesIds += (appversionJobImagesDto.JobImagesId+",")
+	if len(appVersionJobImagesDtos) > 0 {
+		for _, appversionJobImagesDto := range appVersionJobImagesDtos {
+			imagesIds += (appversionJobImagesDto.JobImagesId + ",")
 		}
 	}
 
-	if strings.HasSuffix(imagesIds,","){
-		imagesIds = imagesIds[0:len(imagesIds)-1]
+	if strings.HasSuffix(imagesIds, ",") {
+		imagesIds = imagesIds[0 : len(imagesIds)-1]
 	}
 
-
 	appVersionJobParam := appVersionJob.AppVersionJobParam{
-		JobId: jobId,
+		JobId:  jobId,
 		Images: imagesIds,
 	}
 
 	user := user.UserDto{
 		TenantId: appVersionJobDtos[0].TenantId,
-		UserId: "1",
+		UserId:   "1",
 	}
 
-	if event == appVersionJob.EVENT_PUSH{
+	if event == appVersionJob.EVENT_PUSH {
 		appVersionJobParam.Action = businessDockerfile.ActionBuild
-		return appVersionJobService.commonJob(appVersionJobParam,&user)
-	}else if event == appVersionJob.EVENT_PUSH_AND_RESTART{
+		return appVersionJobService.commonJob(appVersionJobParam, &user)
+	} else if event == appVersionJob.EVENT_PUSH_AND_RESTART {
 		appVersionJobParam.Action = businessDockerfile.ActionBuildStart
-		return appVersionJobService.commonJob(appVersionJobParam,&user)
+		return appVersionJobService.commonJob(appVersionJobParam, &user)
 	}
 
 	return result.Error("no support")
+}
+
+// export job build yaml
+//  get file
+func (appVersionJobService *AppVersionJobService) ExportJobBuildYaml(ctx iris.Context) {
+
+	var (
+		jobId             string
+		appVersionJobDto  appVersionJob.AppVersionJobDto
+		appVersionJobDtos []*appVersionJob.AppVersionJobDto
+		err               error
+
+		appVersionJobImageDto  appVersionJob.AppVersionJobImagesDto
+		appVersionJobImageDtos []*appVersionJob.AppVersionJobImagesDto
+		plan                   jobYaml.JobPlanDto
+	)
+
+	jobId = ctx.URLParam("jobId")
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	appVersionJobDto.JobId = jobId
+	appVersionJobDto.TenantId = user.TenantId
+
+	appVersionJobDtos, err = appVersionJobService.appVersionJobDao.GetAppVersionJobs(appVersionJobDto)
+
+	if err != nil || len(appVersionJobDtos) < 1 {
+		return
+	}
+
+	appVersionJobDto = *appVersionJobDtos[0]
+
+	jobDto := jobYaml.JobDto{
+		JobName:   appVersionJobDto.JobName,
+		GitUrl:    appVersionJobDto.GitUrl,
+		GitPasswd: appVersionJobDto.GitPasswd,
+		WorkDir:   appVersionJobDto.WorkDir,
+		JobShell:  appVersionJobDto.JobShell,
+	}
+
+	appVersionJobImageDto.JobId = jobId
+	appVersionJobImageDto.TenantId = user.TenantId
+	appVersionJobImageDtos, err = appVersionJobService.appVersionJobDao.GetAppVersionJobImages(appVersionJobImageDto)
+	if appVersionJobImageDtos != nil && len(appVersionJobImageDtos) > 0 {
+		for _, image := range appVersionJobImageDtos {
+			plan, err = appVersionJobService.doFreshPlan(image)
+			if err != nil {
+				continue
+			}
+			jobDto.Plans = append(jobDto.Plans, plan)
+		}
+	}
+
+	jobYaml := jobYaml.JobYamlDto{
+		Version: "1.0",
+		Job:     jobDto,
+	}
+
+	data, _ := yaml.Marshal(jobYaml)
+
+	responseWriter := ctx.ResponseWriter()
+	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+appVersionJobDto.JobName+".yml")
+	responseWriter.Header().Set("Content-Type", "application/octet-stream")
+	//responseWriter.Header().Set("Content-Length", resp.Header.Get("Content-Length"))
+	responseWriter.Write(data)
+	responseWriter.Flush()
+
+}
+
+func (appVersionJobService *AppVersionJobService) doFreshPlan(image *appVersionJob.AppVersionJobImagesDto) (plan jobYaml.JobPlanDto, err error) {
+
+	businessPackageDto := businessPackage.BusinessPackageDto{
+		Id:       image.BusinessPackageId,
+		TenantId: image.TenantId,
+	}
+	businessPackageDtos, err := appVersionJobService.businessPackageDao.GetBusinessPackages(businessPackageDto)
+
+	if err != nil || len(businessPackageDtos) < 1 {
+		return plan, errors.New("no plan")
+	}
+	businessPackageDto = *businessPackageDtos[0]
+	plan.Path = businessPackageDto.Path
+	plan.PackageName = businessPackageDto.Name
+	plan.PackageUrl = image.PackageUrl
+
+	businessDockerfileDto := businessDockerfile.BusinessDockerfileDto{
+		Id:       image.BusinessDockerfileId,
+		TenantId: image.TenantId,
+	}
+	businessDockerfileDtos, err := appVersionJobService.businessDockerfileDao.GetBusinessDockerfiles(businessDockerfileDto)
+
+	if err != nil || len(businessDockerfileDtos) < 1 {
+		return plan, errors.New("no plan")
+	}
+
+	businessDockerfileDto = *businessDockerfileDtos[0]
+
+	plan.DockerfileName = businessDockerfileDto.Name
+	plan.Dockerfile = businessDockerfileDto.Dockerfile
+	plan.StartShell = ""
+
+	if utils.IsEmpty(businessDockerfileDto.Dockerfile) {
+		return plan, nil
+	}
+
+	dockerfileLines := strings.Split(businessDockerfileDto.Dockerfile, "\n")
+	for _, dockerfileLine := range dockerfileLines {
+		dockerfileLine = strings.TrimLeft(dockerfileLine, " ")
+		dockerfileLine = strings.TrimRight(dockerfileLine, " ")
+
+		// comment
+		if strings.HasPrefix(dockerfileLine, "#") {
+			continue
+		}
+
+		if !strings.HasPrefix(dockerfileLine, "ADD") && !strings.HasPrefix(dockerfileLine, "COPY") {
+			continue
+		}
+		start := strings.Index(dockerfileLine, " ")
+		end := strings.LastIndex(dockerfileLine, " ")
+		addLine := strings.TrimLeft(dockerfileLine[start:end], " ")
+		addLine = strings.TrimRight(addLine, " ")
+		if !strings.HasSuffix(addLine, ".sh") {
+			continue
+		}
+
+		curDest := filepath.Join("businessPackage", image.TenantId, addLine)
+		dest := filepath.Join(config.WorkSpace, curDest)
+
+		if !utils.IsFile(dest) {
+			continue
+		}
+
+		file, err := ioutil.ReadFile(dest)
+		if err != nil {
+			continue
+		}
+
+		plan.StartShell = atom.String(file)
+	}
+
+	return plan, nil
+
 }

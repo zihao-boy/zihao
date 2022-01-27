@@ -35,6 +35,7 @@ require (
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
+	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 	gorm.io/driver/mysql v1.2.0
 	gorm.io/driver/sqlite v1.1.4
