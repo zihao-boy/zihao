@@ -3658,3 +3658,15 @@ create table log_trace_param
     create_time timestamp    default CURRENT_TIMESTAMP not null,
     status_cd   varchar(2)   default '0' not null
 );
+create table install_app
+(
+    app_id         varchar(64) not null
+        primary key,
+    app_name       varchar(64) not null,
+    version        varchar(64) not null,
+    ext_app_id     varchar(64) not null,
+    create_user_id varchar(64) not null,
+    tenant_id varchar(64) not null ,
+    create_time    timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2) default '0' not null
+);
