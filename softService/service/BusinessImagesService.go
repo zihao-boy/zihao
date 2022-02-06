@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/kataras/iris/v12"
+	installApp "github.com/zihao-boy/zihao/business/dao/installAppDao"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
@@ -14,6 +15,7 @@ import (
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"github.com/zihao-boy/zihao/entity/dto/businessImages"
+	installApp2 "github.com/zihao-boy/zihao/entity/dto/installApp"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
 	"github.com/zihao-boy/zihao/softService/dao"
@@ -24,8 +26,9 @@ import (
 
 type BusinessImagesService struct {
 	businessImagesDao     dao.BusinessImagesDao
-	businessImagesVerDao     dao.BusinessImagesVerDao
+	businessImagesVerDao  dao.BusinessImagesVerDao
 	businessDockerfileDao dao.BusinessDockerfileDao
+	installAppDao         installApp.InstallAppDao
 }
 
 /**
@@ -76,9 +79,9 @@ func (businessImagesService *BusinessImagesService) GetBusinessImages(ctx iris.C
 	businessImagesDto.Page = (page - 1) * row
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	businessImagesDto.TenantId = user.TenantId
-	businessImagesDto.Name=ctx.URLParam("name")
-	businessImagesDto.ImagesType=ctx.URLParam("imagesType")
-	businessImagesDto.Version=ctx.URLParam("version")
+	businessImagesDto.Name = ctx.URLParam("name")
+	businessImagesDto.ImagesType = ctx.URLParam("imagesType")
+	businessImagesDto.Version = ctx.URLParam("version")
 	businessImagesDto.ImagesFlag = ctx.URLParam("imagesFlag")
 
 	total, err = businessImagesService.businessImagesDao.GetBusinessImagesCount(businessImagesDto)
@@ -107,8 +110,6 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 	var (
 		err               error
 		businessImagesDto businessImages.BusinessImagesDto
-
-
 	)
 	ctx.SetMaxRequestBodySize(maxSize)
 
@@ -147,11 +148,11 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 
 	//save images version
 	businessImagesVerDto := businessImages.BusinessImagesVerDto{
-		Id:seq.Generator(),
-		ImagesId:businessImagesDto.Id,
-		Version:businessImagesDto.Version,
-		TypeUrl:dest,
-		TenantId:user.TenantId,
+		Id:       seq.Generator(),
+		ImagesId: businessImagesDto.Id,
+		Version:  businessImagesDto.Version,
+		TypeUrl:  dest,
+		TenantId: user.TenantId,
 	}
 	err = businessImagesService.businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
 	if err != nil {
@@ -213,8 +214,7 @@ func (businessImagesService *BusinessImagesService) GeneratorImages(ctx iris.Con
 		err                   error
 		businessDockerfileDto businessDockerfile.BusinessDockerfileDto
 	)
-	defer costTime.TimeoutWarning("BusinessImagesService","GeneratorImages",time.Now())
-
+	defer costTime.TimeoutWarning("BusinessImagesService", "GeneratorImages", time.Now())
 
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
@@ -256,6 +256,7 @@ func (businessImagesService *BusinessImagesService) GetImagesPool(ctx iris.Conte
 		err       error
 		resultDto result.ResultDto
 	)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 
 	values := ctx.URLParams()
 
@@ -274,8 +275,36 @@ func (businessImagesService *BusinessImagesService) GetImagesPool(ctx iris.Conte
 
 	json.Unmarshal([]byte(resp), &resultDto)
 
+	datas := resultDto.Data.([]interface{})
+
+	if datas == nil || len(datas) < 1 {
+		return resultDto
+	}
+
+	installAppDto := installApp2.InstallAppDto{
+		TenantId: user.TenantId,
+	}
+	installAppDtos, _ := businessImagesService.installAppDao.GetInstallApps(installAppDto)
+
+	if installAppDtos == nil || len(installAppDtos) < 1 {
+		return resultDto
+	}
+	for _, data := range datas {
+		freshAppState(&data, installAppDtos)
+	}
+
 	return resultDto
 
+}
+
+func freshAppState(data *interface{}, installAppDtos []*installApp2.InstallAppDto) {
+	dataMap := (*data).(map[string]interface{})
+	extAppId := dataMap["appId"].(string)
+	for _, installAppDto := range installAppDtos {
+		if installAppDto.ExtAppId == extAppId {
+			dataMap["state"] = "001"
+		}
+	}
 }
 
 //安装镜像
@@ -335,7 +364,7 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 			businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_PUBLIC
 			businessImagesDto.TypeUrl = zihaoAppImagesDto.Url
 			err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
-		}else{
+		} else {
 			businessImagesDto.Id = businessImagesDtos[0].Id
 			businessImagesDto.Version = imagesPoolsDtos[0].Version
 			businessImagesDto.TypeUrl = zihaoAppImagesDto.Url
@@ -345,23 +374,23 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 
 		//if exits images version
 		businessImagesVerDto := businessImages.BusinessImagesVerDto{
-			TenantId:user.TenantId,
+			TenantId: user.TenantId,
 			ImagesId: businessImagesDto.Id,
-			Version:imagesPoolsDtos[0].Version,
+			Version:  imagesPoolsDtos[0].Version,
 		}
 		businessImagesVerDtos, _ := businessImagesService.businessImagesVerDao.GetBusinessImagesVers(businessImagesVerDto)
 
-		if len(businessImagesVerDtos) >0{
-			message += (businessImagesDto.Name+":"+imagesPoolsDtos[0].Version+"已存在，")
+		if len(businessImagesVerDtos) > 0 {
+			message += (businessImagesDto.Name + ":" + imagesPoolsDtos[0].Version + "已存在，")
 			continue
 		}
 
 		businessImagesVerDto = businessImages.BusinessImagesVerDto{
-			Id:seq.Generator(),
-			ImagesId:businessImagesDto.Id,
-			Version:imagesPoolsDtos[0].Version,
-			TypeUrl:zihaoAppImagesDto.Url,
-			TenantId:user.TenantId,
+			Id:       seq.Generator(),
+			ImagesId: businessImagesDto.Id,
+			Version:  imagesPoolsDtos[0].Version,
+			TypeUrl:  zihaoAppImagesDto.Url,
+			TenantId: user.TenantId,
 		}
 		err = businessImagesService.businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
 		if err != nil {

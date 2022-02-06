@@ -77,9 +77,13 @@
                                     <!-- <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_viewImages(businessImages)">镜像</button>
                                     </div> -->
-                                    <div class="btn-group">
+                                    <div class="btn-group" v-if="businessImages.state == '001'">
+                                        <button class="btn-white btn btn-xs" disabled>已安装</button>
+                                    </div>
+                                    <div class="btn-group" v-else>
                                         <button class="btn-white btn btn-xs" v-on:click="_installModel(businessImages)">安装</button>
                                     </div>
+                                   
                                 </td>
 
                             </tr>
