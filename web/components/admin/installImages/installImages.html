@@ -1,20 +1,67 @@
-<div class="modal fade" id="installImagesModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div id="installImagesModel" class="modal fade" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">请确认您的操作!</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
             <div class="modal-body">
-                <tr align="center">
-                    <th>确定安装应用</th>
-                </tr>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" v-on:click="closeInstallImagesModel()">点错了</button>
-                <button type="button" class="btn btn-primary" v-on:click="_installImages()">确认安装</button>
+                <h3 class="m-t-none m-b ">软件安装</h3>
+                <div class="ibox-content">
+                    <div>
+                        <div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">服务类型</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="installImagesInfo.asType">
+                                        <option selected disabled value="">必填，请选择服务类型</option>
+                                        <option value="001">数据库</option>
+                                        <option value="002">缓存</option>
+                                        <option value="003">计算应用</option>
+                                        <option value="004">代理</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">应用组</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="installImagesInfo.asGroupId">
+                                        <option selected disabled value="">必填，请选择应用组</option>
+                                        <option :value="item.avgId" v-for="(item,index) in installImagesInfo.asGroups">{{item.avgName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">部署方式</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="installImagesInfo.asDeployType">
+                                        <option selected disabled value="">必填，请选择部署方式</option>
+                                        <option value="1001">多主机</option>
+                                        <option value="2002">单主机</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">主机组</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="installImagesInfo.groupId" @change="_changeImportHostGroup()">
+                                        <option selected disabled value="">必填，请选择主机组</option>
+                                        <option :value="item.groupId" v-for="(item,index) in installImagesInfo.hostGroups">{{item.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row" v-if="installImagesInfo.asDeployType == '2002'">
+                                <label class="col-sm-2 col-form-label">主机</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="installImagesInfo.hostId">
+                                        <option selected disabled value="">必填，请选择主机</option>
+                                        <option :value="item.hostId" v-for="(item,index) in installImagesInfo.hosts">{{item.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <button class="btn btn-primary float-right" type="button" v-on:click="installImages()"><i class="fa fa-check"></i>&nbsp;安装</button>
+                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

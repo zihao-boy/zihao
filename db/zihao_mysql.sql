@@ -3571,3 +3571,18 @@ create table install_app
     create_time    timestamp  default CURRENT_TIMESTAMP not null,
     status_cd      varchar(2) default '0' not null
 );
+
+create table app_publisher
+(
+    publisher_id varchar(64)  not null
+        primary key,
+    username     varchar(256) not null,
+    email        varchar(64)  not null,
+    token        varchar(128) not null,
+    phone        varchar(11)  not null,
+    state        varchar(12) default '001' not null,
+    create_time  timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2)  default '0' not null,
+    tenant_id    varchar(64)  not null,
+    ext_publisher_id varchar(64) not null
+);

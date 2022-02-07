@@ -3,6 +3,7 @@ package soft
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/hero"
+	"github.com/zihao-boy/zihao/business/service/appPublisherService"
 	"github.com/zihao-boy/zihao/softService/service"
 )
 
@@ -11,6 +12,7 @@ type SoftController struct {
 	businessDockerService service.BusinessDockerfileService
 	businessImagesService service.BusinessImagesService
 	businessImagesVerService service.BusinessImagesVerService
+	appPublisherService appPublisherService.AppPublisherService
 }
 
 func SoftControllerRouter(party iris.Party) {
@@ -54,6 +56,9 @@ func SoftControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/installImages", hero.Handler(aus.installImages))
 
+	adinMenu.Post("/uninstallImages", hero.Handler(aus.uninstallImages))
+
+
 	adinMenu.Get("/getBusinessImagesVer", hero.Handler(aus.GetBusinessImagesVer))
 
 	adinMenu.Post("/saveBusinessImagesVer", hero.Handler(aus.SaveBusinessImagesVer))
@@ -67,6 +72,15 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Get("/listBusinessPackageContext", hero.Handler(aus.listBusinessPackageContext))
 
 	adinMenu.Post("/editBusinessPackageContext", hero.Handler(aus.editBusinessPackageContext))
+
+
+	adinMenu.Get("/getAppPublisher", hero.Handler(aus.GetAppPublisher))
+
+	adinMenu.Post("/saveAppPublisher", hero.Handler(aus.SaveAppPublisher))
+
+	adinMenu.Post("/updateAppPublisher", hero.Handler(aus.UpdateAppPublisher))
+
+	adinMenu.Post("/deleteAppPublisher", hero.Handler(aus.DeleteAppPublisher))
 
 
 
@@ -221,7 +235,11 @@ func (aus *SoftController) installImages(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
-
+// uninstall app
+func (aus *SoftController) uninstallImages(ctx iris.Context) {
+	reslut := aus.businessImagesService.UninstallImages(ctx)
+	ctx.JSON(reslut)
+}
 
 /**
 查询 dockerfile
@@ -284,6 +302,42 @@ func (aus *SoftController) editBusinessPackageContext(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+
+/**
+查询 dockerfile
+*/
+func (aus *SoftController) GetAppPublisher(ctx iris.Context) {
+	reslut := aus.appPublisherService.GetAppPublishers(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+添加 业务包
+*/
+func (aus *SoftController) SaveAppPublisher(ctx iris.Context) {
+	reslut := aus.appPublisherService.SaveAppPublishers(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 业务包
+*/
+func (aus *SoftController) UpdateAppPublisher(ctx iris.Context) {
+	reslut := aus.appPublisherService.UpdateAppPublishers(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 业务包
+*/
+func (aus *SoftController) DeleteAppPublisher(ctx iris.Context) {
+	reslut := aus.appPublisherService.DeleteAppPublishers(ctx)
+
+	ctx.JSON(reslut)
+}
 
 
 

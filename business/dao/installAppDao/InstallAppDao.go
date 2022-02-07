@@ -72,6 +72,9 @@ VALUES(#AppId#,#AppName#,#Version#,#ExtAppId#,#TenantId#,#CreateUserId#)
 						  $if Id != '' then
 						  and id = #Id#
 						  $endif
+                          $if ExtAppId != '' then
+						  and ext_app_id = #ExtAppId#
+						  $endif
 	`
 )
 

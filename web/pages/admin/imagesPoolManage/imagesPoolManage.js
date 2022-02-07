@@ -75,6 +75,9 @@
             _installModel: function(_businessImages) {
                 vc.emit('installImages', 'openInstallImagesModal', _businessImages);
             },
+            _uninstallModel: function(_businessImages) {
+                vc.emit('uninstallImages', 'openUninstallImagesModal', _businessImages);
+            }
 
         }
     });

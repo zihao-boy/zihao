@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>发布者信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewAppPublisherInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectAppPublisherInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择发布者</button>
+
+                    <button type="button" v-if="viewAppPublisherInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddAppPublisherInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加发布者</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >发布者：</label>
+                            <label class="">{{viewAppPublisherInfo.username}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >邮箱：</label>
+                            <label class="">{{viewAppPublisherInfo.email}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >电话：</label>
+                            <label class="">{{viewAppPublisherInfo.phone}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addAppPublisher"
+               callBackListener="viewAppPublisherInfo"
+               callBackFunction="chooseAppPublisher"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseAppPublisher"
+               emitChooseAppPublisher="viewAppPublisherInfo"
+               emitLoadData="viewAppPublisherInfo"
+    ></vc:create>
+</div>
