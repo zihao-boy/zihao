@@ -7,7 +7,7 @@
                 username: '',
                 email: '',
                 phone: '',
-
+                extPublisherId:''
             }
         },
         _initMethod: function() {
@@ -100,7 +100,7 @@
                     username: '',
                     email: '',
                     phone: '',
-
+                    extPublisherId:''
                 }
             }
         }

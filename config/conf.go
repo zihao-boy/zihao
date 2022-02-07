@@ -24,6 +24,8 @@ const (
 	//WorkSpace string = "D:\\hc"
 	Slave  int = 7001
 	Remote_Images_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.listZihaoApp"
+	Remote_Save_Publisher string = "http://bbs.homecommunity.cn/app/zihaoAppPublisher.saveZihaoAppPublisher"
+	Remote_Update_Publisher string = "http://bbs.homecommunity.cn/app/zihaoAppPublisher.updateZihaoAppPublisher"
 	Hc_cloud_app_id string = "102021120963240004"
 	Kafka_switch_on string ="ON"
 )

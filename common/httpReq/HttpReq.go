@@ -52,7 +52,7 @@ func getAuthorization() (auth string, err error) {
 }
 
 // sendRequest 发送request
-func SendRequest(url string, data map[string]interface{}, addHeaders map[string]string, method string) (resp []byte, err error) {
+func SendRequest(url string, data interface{}, addHeaders map[string]string, method string) (resp []byte, err error) {
 	jsonData, err := json.Marshal(data)
 	body := bytes.NewReader(jsonData)
 	// 1、创建req

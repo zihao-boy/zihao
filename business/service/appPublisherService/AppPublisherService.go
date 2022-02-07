@@ -1,11 +1,17 @@
 package appPublisherService
 
 import (
+	"encoding/json"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/appPublisherDao"
+	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/config"
 	appPublisher "github.com/zihao-boy/zihao/entity/dto/appPublisherDto"
 	"github.com/zihao-boy/zihao/entity/dto/result"
+	"github.com/zihao-boy/zihao/entity/dto/user"
 	"strconv"
 )
 
@@ -85,11 +91,39 @@ func (appPublisherService *AppPublisherService) SaveAppPublishers(ctx iris.Conte
 	var (
 		err             error
 		appPublisherDto appPublisher.AppPublisherDto
+		resultDto       result.ResultDto
 	)
 	if err = ctx.ReadJSON(&appPublisherDto); err != nil {
 		return result.Error("解析入参失败")
 	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	appPublisherDto.TenantId = user.TenantId
+
+	headers := map[string]string{
+		"APP-ID":         config.Hc_cloud_app_id,
+		"REQ-TIME":       date.GetNowAString(),
+		"SIGN":           "",
+		"TRANSACTION-ID": seq.Generator(),
+		"USER-ID":        "-1",
+	}
+
+	resp, err := httpReq.SendRequest(config.Remote_Save_Publisher, appPublisherDto, headers, "POST")
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	if resultDto.Code != result.CODE_SUCCESS {
+		return resultDto
+	}
+
+	remoteData := resultDto.Data.(map[string]interface{})
+
 	appPublisherDto.PublisherId = seq.Generator()
+	appPublisherDto.State = appPublisher.StateNormal
+	appPublisherDto.ExtPublisherId = remoteData["publisherId"].(string)
+	appPublisherDto.Token = remoteData["token"].(string)
 
 	err = appPublisherService.appPublisherDao.SaveAppPublisher(appPublisherDto)
 	if err != nil {
@@ -107,10 +141,37 @@ func (appPublisherService *AppPublisherService) UpdateAppPublishers(ctx iris.Con
 	var (
 		err             error
 		appPublisherDto appPublisher.AppPublisherDto
+		resultDto       result.ResultDto
+		publisherId     string
 	)
 	if err = ctx.ReadJSON(&appPublisherDto); err != nil {
 		return result.Error("解析入参失败")
 	}
+
+	headers := map[string]string{
+		"APP-ID":         config.Hc_cloud_app_id,
+		"REQ-TIME":       date.GetNowAString(),
+		"SIGN":           "",
+		"TRANSACTION-ID": seq.Generator(),
+		"USER-ID":        "-1",
+	}
+
+	publisherId = appPublisherDto.PublisherId
+	appPublisherDto.PublisherId = appPublisherDto.ExtPublisherId
+	resp, err := httpReq.SendRequest(config.Remote_Update_Publisher, appPublisherDto, headers, "POST")
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	json.Unmarshal([]byte(resp), &resultDto)
+
+	if resultDto.Code != result.CODE_SUCCESS {
+		return resultDto
+	}
+
+	remoteData := resultDto.Data.(map[string]interface{})
+	appPublisherDto.PublisherId = publisherId
+	appPublisherDto.Token = remoteData["token"].(string)
 
 	err = appPublisherService.appPublisherDao.UpdateAppPublisher(appPublisherDto)
 	if err != nil {
