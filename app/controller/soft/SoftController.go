@@ -54,6 +54,8 @@ func SoftControllerRouter(party iris.Party) {
 
 	adinMenu.Get("/getImagesPool", hero.Handler(aus.getImagesPool))
 
+	adinMenu.Get("/getMyAppPool", hero.Handler(aus.getMyAppPool))
+
 	adinMenu.Post("/installImages", hero.Handler(aus.installImages))
 
 	adinMenu.Post("/uninstallImages", hero.Handler(aus.uninstallImages))
@@ -225,6 +227,16 @@ func (aus *SoftController) getImagesPool(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+查询远程镜像
+*/
+func (aus *SoftController) getMyAppPool(ctx iris.Context) {
+	reslut := aus.businessImagesService.GetMyAppPool(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 /**
 查询远程镜像

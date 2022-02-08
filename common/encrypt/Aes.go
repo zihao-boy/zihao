@@ -1,4 +1,4 @@
-package main
+package encrypt
 
 import (
 	"bytes"
@@ -65,12 +65,13 @@ func Encrypt(key string, val string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return base64.URLEncoding.EncodeToString(crypted), nil
+	return base64.StdEncoding.EncodeToString(crypted), nil
 }
 
 func Decrypt(key string, val string) (string, error) {
-	crypted, err := base64.URLEncoding.DecodeString(val)
+	crypted, err := base64.StdEncoding.DecodeString(val)
 	if err != nil {
+		fmt.Print(err.Error())
 		return "", err
 	}
 	origData, err := decrpt(key, crypted)
@@ -78,16 +79,4 @@ func Decrypt(key string, val string) (string, error) {
 		return "", err
 	}
 	return string(origData), nil
-}
-
-func main() {
-
-	//ret, _ := Encrypt("0941d1bc02da46608673931972129520", "123")
-	//
-	//fmt.Print(ret)
-
-	ret, _ := Decrypt("0941d1bc02da46608673931972129520", "Uo4VAXR_AooyhmnBbug1Dg==")
-
-	fmt.Print(ret)
-
 }

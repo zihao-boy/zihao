@@ -17,10 +17,17 @@ type InstallAppDto struct {
 // install app page param
 
 type InstallAppPageDto struct {
-	AsType   string `json:"asType" sql:"-"`
-	AsGroupId   string `json:"asGroupId" sql:"-"`
-	GroupId   string `json:"groupId" sql:"-"`
-	AsDeployType   string `json:"asDeployType" sql:"-"`
+	AsType       string `json:"asType" sql:"-"`
+	AsGroupId    string `json:"asGroupId" sql:"-"`
+	GroupId      string `json:"groupId" sql:"-"`
+	AsDeployType string `json:"asDeployType" sql:"-"`
 	AsDeployId   string `json:"asDeployId" sql:"-"`
-	AppId   string `json:"appId" sql:"-"`
+	AppId        string `json:"appId" sql:"-"`
+}
+
+// hc cloud transfer
+
+type ApplyAppDto struct {
+	PublisherId string `json:"publisherId"`
+	Data        string `json:"data"`
 }

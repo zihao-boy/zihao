@@ -77,6 +77,9 @@
             },
             _uninstallModel: function(_businessImages) {
                 vc.emit('uninstallImages', 'openUninstallImagesModal', _businessImages);
+            },
+            _myPublishSoft: function() {
+                vc.jumpToPage('/index.html#/pages/admin/myAppPoolManage')
             }
 
         }

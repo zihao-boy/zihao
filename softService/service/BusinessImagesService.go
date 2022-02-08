@@ -6,16 +6,19 @@ import (
 	"github.com/kataras/iris/v12"
 	appDao "github.com/zihao-boy/zihao/appService/dao"
 	dao2 "github.com/zihao-boy/zihao/assets/dao"
+	"github.com/zihao-boy/zihao/business/dao/appPublisherDao"
 	installApp "github.com/zihao-boy/zihao/business/dao/installAppDao"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/costTime"
 	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/encrypt"
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/queue/dockerfileQueue"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	appPublisher "github.com/zihao-boy/zihao/entity/dto/appPublisherDto"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/businessDockerfile"
 	"github.com/zihao-boy/zihao/entity/dto/businessImages"
@@ -39,6 +42,8 @@ type BusinessImagesService struct {
 	installAppDao         installApp.InstallAppDao
 	hostDao               dao2.HostDao
 	appServiceDao         appDao.AppServiceDao
+
+	appPublisherDao appPublisherDao.AppPublisherDao
 }
 
 /**
@@ -310,11 +315,71 @@ func (businessImagesService *BusinessImagesService) GetImagesPool(ctx iris.Conte
 func freshAppState(data *interface{}, installAppDtos []*installApp2.InstallAppDto) {
 	dataMap := (*data).(map[string]interface{})
 	extAppId := dataMap["appId"].(string)
+	dataMap["state"] = "002"
 	for _, installAppDto := range installAppDtos {
 		if installAppDto.ExtAppId == extAppId {
 			dataMap["state"] = "001"
 		}
 	}
+}
+
+/**
+查询镜像 系统信息
+*/
+func (businessImagesService *BusinessImagesService) GetMyAppPool(ctx iris.Context) result.ResultDto {
+	var (
+		err       error
+		resultDto result.ResultDto
+	)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	publisherId := ctx.URLParam("publisherId")
+
+	if utils.IsEmpty(publisherId) {
+		return result.Error("请选择发布者")
+	}
+
+	appPublisherDto := appPublisher.AppPublisherDto{
+		PublisherId: publisherId,
+		TenantId:    user.TenantId,
+	}
+
+	appPublisherDtos, _ := businessImagesService.appPublisherDao.GetAppPublishers(appPublisherDto)
+
+	if appPublisherDtos == nil || len(appPublisherDtos) < 1 {
+		return result.Error("发布者不存在")
+	}
+
+	headers := map[string]string{
+		"APP-ID":         config.Hc_cloud_app_id,
+		"REQ-TIME":       date.GetNowAString(),
+		"SIGN":           "",
+		"TRANSACTION-ID": seq.Generator(),
+		"USER-ID":        "-1",
+	}
+	data := make(map[string]interface{})
+	data["publisherId"] = appPublisherDtos[0].ExtPublisherId
+	data["page"] = ctx.URLParam("page")
+	data["row"] = ctx.URLParam("row")
+	data["name"] = ctx.URLParam("name")
+	data["state"] = ctx.URLParam("state")
+	mjson, _ := json.Marshal(data)
+	dataEn, _ := encrypt.Encrypt(appPublisherDtos[0].Token, string(mjson))
+
+	applyAppDto := installApp2.ApplyAppDto{
+		PublisherId: appPublisherDtos[0].ExtPublisherId,
+		Data:        dataEn,
+	}
+	resp, err := httpReq.SendRequest(config.Remote_My_Images_Url, applyAppDto, headers, "POST")
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	resps, _ := encrypt.Decrypt(appPublisherDtos[0].Token, string(resp))
+	json.Unmarshal([]byte(resps), &resultDto)
+
+	return resultDto
+
 }
 
 //安装镜像
