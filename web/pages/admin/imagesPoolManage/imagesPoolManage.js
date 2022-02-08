@@ -80,6 +80,9 @@
             },
             _myPublishSoft: function() {
                 vc.jumpToPage('/index.html#/pages/admin/myAppPoolManage')
+            },
+            _publishSoft: function() {
+                vc.jumpToPage('/index.html#/pages/admin/applyPublishApp');
             }
 
         }

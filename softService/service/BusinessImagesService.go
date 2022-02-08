@@ -477,7 +477,7 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 		return result.Error(message)
 	}
 	// save app info
-	resultDto = businessImagesService.installApp(installAppPageDto, imagesPoolsDtos[0].Compose, user)
+	resultDto = businessImagesService.installApp(installAppPageDto, imagesPoolsDtos[0].Compose, user,imagesPoolsDtos[0].AppShell)
 
 	if resultDto.Code != result.CODE_SUCCESS {
 		return resultDto
@@ -500,7 +500,7 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 //install App
 func (businessImagesService *BusinessImagesService) installApp(installAppPageDto installApp2.InstallAppPageDto,
 	compose string,
-	user *user.UserDto) result.ResultDto {
+	user *user.UserDto,appShell string) result.ResultDto {
 	var (
 		composeYamlDto = composeYaml.ComposeYamlZiHaoDto{
 		}
@@ -546,7 +546,7 @@ func (businessImagesService *BusinessImagesService) installApp(installAppPageDto
 	}
 
 	// zihao cmd
-	if utils.IsEmpty(composeYamlDto.ZihaoCmd) {
+	if utils.IsEmpty(appShell) {
 		return result.Success()
 	}
 
@@ -566,7 +566,7 @@ func (businessImagesService *BusinessImagesService) installApp(installAppPageDto
 		hosts, _ = businessImagesService.hostDao.GetHosts(hostDto)
 	}
 	for _, host := range hosts {
-		shell.ExecCommonShell(*host, composeYamlDto.ZihaoCmd)
+		shell.ExecCommonShell(*host, appShell)
 	}
 
 	return result.Success()

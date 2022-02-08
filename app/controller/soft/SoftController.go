@@ -85,6 +85,7 @@ func SoftControllerRouter(party iris.Party) {
 	adinMenu.Post("/deleteAppPublisher", hero.Handler(aus.DeleteAppPublisher))
 
 
+	adinMenu.Post("/applyPublishApp", hero.Handler(aus.applyPublishApp))
 
 
 }
@@ -350,6 +351,16 @@ func (aus *SoftController) DeleteAppPublisher(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+删除 业务包
+*/
+func (aus *SoftController) applyPublishApp(ctx iris.Context) {
+	reslut := aus.appPublisherService.ApplyPublishApp(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 
 

@@ -1,0 +1,91 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>发布软件</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-white btn-sm" v-on:click="_goBack()">
+                        返回
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">软件名称</label>
+                            <div class="col-sm-10">
+                                <input v-model="applyPublishAppInfo.name" type="text" placeholder="必填，请填写软件名称" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">软件版本</label>
+                            <div class="col-sm-10">
+                                <input v-model="applyPublishAppInfo.version" type="text" placeholder="必填，请填写软件版本" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">发布者</label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" v-model="applyPublishAppInfo.publisherId">
+                                    <option selected value="">请选择发布者</option>
+                                    <option :value="item.publisherId" v-for="(item,index) in applyPublishAppInfo.appPublishers">{{item.username}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">辅助脚本</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="applyPublishAppInfo.appShell" rows="10" placeholder="选填，请填写脚本，主要可能用来下载一些脚本使用" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>应用</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_addJobPlan()">
+                        选择
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div>
+                    <div>
+                        <div class="form-group row" v-for="(item,index) in applyPublishAppInfo.apps">
+                            <div class="col-sm-4">
+                                <input v-model="item.asName" type="text" disabled class="form-control">
+                            </div>
+                            <div class="col-sm-2">
+                                <input v-model="item.imagesVersion" type="text" disabled class="form-control">
+                            </div>
+                            <div class="col-sm-5">
+                                <input v-model="item.imagesUrl" type="text" disabled class="form-control">
+                            </div>
+                            <div class="col-sm-1 padding-0">
+                                <a href="javascript:void(0)" class="col-form-label" v-on:click="_deleteJobPlan(index)">
+                                    <i class="glyphicon glyphicon-plus"></i> 删除
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 text-right">
+        <button class="btn btn-primary float-right" type="button" v-on:click="_doApplyPublishApp()"><i class="fa fa-check"></i>&nbsp;发布</button>
+        <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" @click="_goBack()">取消</button>
+    </div>
+
+    <vc:create path="admin/chooseAppService" emitChooseAppService="applyPublishApp" emitLoadData="applyPublishApp"></vc:create>
+
+</div>

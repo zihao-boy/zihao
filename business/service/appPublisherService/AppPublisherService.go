@@ -3,20 +3,27 @@ package appPublisherService
 import (
 	"encoding/json"
 	"github.com/kataras/iris/v12"
+	"github.com/zihao-boy/zihao/appService/dao"
 	"github.com/zihao-boy/zihao/business/dao/appPublisherDao"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/encrypt"
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/config"
 	appPublisher "github.com/zihao-boy/zihao/entity/dto/appPublisherDto"
+	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/composeYaml"
+	installApp2 "github.com/zihao-boy/zihao/entity/dto/installApp"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
+	"gopkg.in/yaml.v3"
 	"strconv"
 )
 
 type AppPublisherService struct {
 	appPublisherDao appPublisherDao.AppPublisherDao
+	appServiceDao   dao.AppServiceDao
 }
 
 // get db link
@@ -201,4 +208,129 @@ func (appPublisherService *AppPublisherService) DeleteAppPublishers(ctx iris.Con
 
 	return result.SuccessData(appPublisherDto)
 
+}
+
+//apply publish app
+func (appPublisherService *AppPublisherService) ApplyPublishApp(ctx iris.Context) result.ResultDto {
+	var (
+		err                error
+		applyPublishAppDto appPublisher.ApplyPublishAppDto
+		serviceDto         composeYaml.ServiceDto
+		services           []interface{}
+		composeYamlDto     = composeYaml.ComposeYamlDto{
+			Version: "2",
+		}
+		resultDto result.ResultDto
+	)
+	if err = ctx.ReadJSON(&applyPublishAppDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	// get publisher id
+
+	appPublisherDto := appPublisher.AppPublisherDto{
+		PublisherId: applyPublishAppDto.PublisherId,
+	}
+
+	appPublisherDtos, err := appPublisherService.appPublisherDao.GetAppPublishers(appPublisherDto)
+
+	if len(appPublisherDtos) < 1 {
+		return result.Error("发布者不存在")
+	}
+
+	applyPublishAppDto.PublisherId = appPublisherDtos[0].ExtPublisherId
+
+	for _, appS := range applyPublishAppDto.Apps {
+
+		serviceDto = appPublisherService.getServiceDto(appS)
+		servicesDto := composeYaml.ServicesDto{
+			Name:    appS.AsName,
+			Service: serviceDto,
+		}
+		services = append(services, servicesDto.ToMap())
+		composeYamlDto.Services = services
+	}
+
+	data, _ := yaml.Marshal(composeYamlDto)
+
+	applyPublishAppDto.Compose = string(data)
+
+	headers := map[string]string{
+		"APP-ID":         config.Hc_cloud_app_id,
+		"REQ-TIME":       date.GetNowAString(),
+		"SIGN":           "",
+		"TRANSACTION-ID": seq.Generator(),
+		"USER-ID":        "-1",
+	}
+	mjson, _ := json.Marshal(applyPublishAppDto)
+	dataEn, _ := encrypt.Encrypt(appPublisherDtos[0].Token, string(mjson))
+
+	applyAppDto := installApp2.ApplyAppDto{
+		PublisherId: appPublisherDtos[0].ExtPublisherId,
+		Data:        dataEn,
+	}
+	resp, err := httpReq.SendRequest(config.Remote_Apply_Publish_App_Url, applyAppDto, headers, "POST")
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	//resps, _ := encrypt.Decrypt(appPublisherDtos[0].Token, string(resp))
+	json.Unmarshal(resp, &resultDto)
+	return resultDto
+}
+
+func (appPublisherService *AppPublisherService) getServiceDto(appServiceDto *appService.AppServiceDto) composeYaml.ServiceDto {
+	var (
+		serviceDto composeYaml.ServiceDto
+	)
+
+	serviceDto.Image = appServiceDto.ImagesUrl
+
+	portDto := appService.AppServicePortDto{
+		AsId: appServiceDto.AsId,
+	}
+	portDtos, _ := appPublisherService.appServiceDao.GetAppServicePort(portDto)
+
+	if len(portDtos) > 0 {
+		for _, port := range portDtos {
+			portStr := port.SrcPort + ":" + port.TargetPort
+			serviceDto.Ports = append(serviceDto.Ports, portStr)
+		}
+	}
+
+	hostsDto := appService.AppServiceHostsDto{
+		AsId: appServiceDto.AsId,
+	}
+	hostsDtos, _ := appPublisherService.appServiceDao.GetAppServiceHosts(hostsDto)
+
+	if len(hostsDtos) > 0 {
+		for _, host := range hostsDtos {
+			hostStr := host.Hostname + ":" + host.Ip
+			serviceDto.ExtraHosts = append(serviceDto.ExtraHosts, hostStr)
+		}
+	}
+	dirDto := appService.AppServiceDirDto{
+		AsId: appServiceDto.AsId,
+	}
+	dirDtos, _ := appPublisherService.appServiceDao.GetAppServiceDir(dirDto)
+
+	if len(dirDtos) > 0 {
+		for _, dir := range dirDtos {
+			dirStr := dir.SrcDir + ":" + dir.TargetDir
+			serviceDto.Volumes = append(serviceDto.Volumes, dirStr)
+		}
+	}
+
+	varDto := appService.AppServiceVarDto{
+		AsId: appServiceDto.AsId,
+	}
+	varDtos, _ := appPublisherService.appServiceDao.GetAppServiceVars(varDto)
+	if len(varDtos) > 0 {
+		for _, vari := range varDtos {
+			variStr := vari.VarSpec + ":" + vari.VarValue
+			serviceDto.Environment = append(serviceDto.Environment, variStr)
+		}
+	}
+
+	return serviceDto
 }

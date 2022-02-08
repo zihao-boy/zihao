@@ -1,4 +1,4 @@
-<div id = "chooseAppServiceModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chooseAppServiceModelLabel" aria-hidden="true" >
+<div id="chooseAppServiceModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chooseAppServiceModelLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -28,21 +28,20 @@
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                                                        <th class="text-center">ID</th>
-                            <th class="text-center">应用名称</th>
-                            <th class="text-center">服务类型</th>
-                            <th class="text-center">服务描述</th>
-                            <th class="text-center">操作</th>
+                                            <th class="text-center">ID</th>
+                                            <th class="text-center">应用名称</th>
+                                            <th class="text-center">服务类型</th>
+                                            <th class="text-center">服务描述</th>
+                                            <th class="text-center">操作</th>
 
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="appService in chooseAppServiceInfo.appServices">
-                                                                        <td class="text-center">{{appService.asId}}</td>
-                            <td class="text-center">{{appService.asName}}</td>
-                            <td class="text-center">{{appService.asType}}</td>
-                            <td class="text-center">{{appService.asDesc}}</td>
-
+                                            <td class="text-center">{{appService.asId}}</td>
+                                            <td class="text-center">{{appService.asName}}</td>
+                                            <td class="text-center">{{appService.asType}}</td>
+                                            <td class="text-center">{{appService.asDesc}}</td>
                                             <td>
                                                 <button class="btn btn-primary btn-xs" v-on:click="chooseAppService(appService)">选择</button>
                                             </td>

@@ -1,6 +1,9 @@
 package appPublisherDto
 
-import "github.com/zihao-boy/zihao/entity/dto"
+import (
+	"github.com/zihao-boy/zihao/entity/dto"
+	"github.com/zihao-boy/zihao/entity/dto/appService"
+)
 
 const (
 	// normal state
@@ -20,5 +23,14 @@ type AppPublisherDto struct {
 	StatusCd    string `json:"statusCd" sql:"-"`
 	TenantId    string `json:"tenantId" sql:"-"`
 	ExtPublisherId string `json:"extPublisherId" sql:"-"`
+}
+
+type ApplyPublishAppDto struct {
+	Name string `json:"name"`
+	Version string `json:"version"`
+	PublisherId string `json:"publisherId"`
+	AppShell string `json:"appShell"`
+	Compose string `json:"compose"`
+	Apps []*appService.AppServiceDto `json:"apps"`
 }
 

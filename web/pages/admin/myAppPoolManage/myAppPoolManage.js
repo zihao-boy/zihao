@@ -119,6 +119,10 @@
                 );
             },
 
+            _publishSoft: function() {
+                vc.jumpToPage('/index.html#/pages/admin/applyPublishApp');
+            }
+
         }
     });
 })(window.vc);
