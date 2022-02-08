@@ -121,6 +121,9 @@
 
             _publishSoft: function() {
                 vc.jumpToPage('/index.html#/pages/admin/applyPublishApp');
+            },
+            _openOfflineApplyApp:function(businessImages){
+                vc.emit('offlineApplyApp', 'openOfflineApplyAppModal',businessImages)
             }
 
         }

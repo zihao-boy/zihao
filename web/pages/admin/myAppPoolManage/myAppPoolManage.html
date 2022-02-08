@@ -93,7 +93,7 @@
                                 <td class="text-center">{{getState(businessImages)}}</td>
                                 <td class="text-center">
                                     <div class="btn-group" v-if="businessImages.state == '001'">
-                                        <button class="btn-white btn btn-xs" v-on:click="_uninstallModel(businessImages)">下架</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openOfflineApplyApp(businessImages)">下架</button>
                                     </div>
                                 </td>
 
@@ -113,5 +113,5 @@
             </div>
         </div>
     </div>
-    <vc:create path="admin/viewPoolsImages"></vc:create>
+    <vc:create path="admin/offlineApplyApp"></vc:create>
 </div>

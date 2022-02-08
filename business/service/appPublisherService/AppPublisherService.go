@@ -334,3 +334,51 @@ func (appPublisherService *AppPublisherService) getServiceDto(appServiceDto *app
 
 	return serviceDto
 }
+
+// offline app
+func (appPublisherService *AppPublisherService) OfflineApplyApp(ctx iris.Context) interface{} {
+	var (
+		err                error
+		applyPublishAppDto appPublisher.ApplyPublishAppDto
+		resultDto result.ResultDto
+	)
+
+	if err = ctx.ReadJSON(&applyPublishAppDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+
+	appPublisherDto := appPublisher.AppPublisherDto{
+		ExtPublisherId: applyPublishAppDto.PublisherId,
+	}
+
+	appPublisherDtos, err := appPublisherService.appPublisherDao.GetAppPublishers(appPublisherDto)
+
+	if len(appPublisherDtos) < 1 {
+		return result.Error("发布者不存在")
+	}
+
+	headers := map[string]string{
+		"APP-ID":         config.Hc_cloud_app_id,
+		"REQ-TIME":       date.GetNowAString(),
+		"SIGN":           "",
+		"TRANSACTION-ID": seq.Generator(),
+		"USER-ID":        "-1",
+	}
+	mjson, _ := json.Marshal(applyPublishAppDto)
+	dataEn, _ := encrypt.Encrypt(appPublisherDtos[0].Token, string(mjson))
+
+	applyAppDto := installApp2.ApplyAppDto{
+		PublisherId: appPublisherDtos[0].ExtPublisherId,
+		Data:        dataEn,
+	}
+	resp, err := httpReq.SendRequest(config.Remote_Offline_App_Url, applyAppDto, headers, "POST")
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	//resps, _ := encrypt.Decrypt(appPublisherDtos[0].Token, string(resp))
+	json.Unmarshal(resp, &resultDto)
+
+	return resultDto
+}

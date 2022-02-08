@@ -87,6 +87,7 @@ func SoftControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/applyPublishApp", hero.Handler(aus.applyPublishApp))
 
+	adinMenu.Post("/offlineApplyApp", hero.Handler(aus.offlineApplyApp))
 
 }
 
@@ -360,6 +361,16 @@ func (aus *SoftController) applyPublishApp(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+offline app
+*/
+func (aus *SoftController) offlineApplyApp(ctx iris.Context) {
+	reslut := aus.appPublisherService.OfflineApplyApp(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 
 

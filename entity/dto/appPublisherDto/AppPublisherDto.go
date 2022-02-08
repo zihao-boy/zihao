@@ -26,6 +26,7 @@ type AppPublisherDto struct {
 }
 
 type ApplyPublishAppDto struct {
+	AppId string `json:"appId"`
 	Name string `json:"name"`
 	Version string `json:"version"`
 	PublisherId string `json:"publisherId"`
