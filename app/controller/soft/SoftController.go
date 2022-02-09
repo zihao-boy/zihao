@@ -64,7 +64,15 @@ func SoftControllerRouter(party iris.Party) {
 
 	adinMenu.Get("/getBusinessImagesVer", hero.Handler(aus.GetBusinessImagesVer))
 
+
+	adinMenu.Get("/getRemoteBusinessImagesVer", hero.Handler(aus.getRemoteBusinessImagesVer))
+
+
 	adinMenu.Post("/saveBusinessImagesVer", hero.Handler(aus.SaveBusinessImagesVer))
+
+	adinMenu.Post("/saveRemoteBusinessImagesVer", hero.Handler(aus.saveRemoteBusinessImagesVer))
+
+
 
 	adinMenu.Post("/updateBusinessImagesVer", hero.Handler(aus.UpdateBusinessImagesVer))
 
@@ -266,6 +274,18 @@ func (aus *SoftController) GetBusinessImagesVer(ctx iris.Context) {
 }
 
 /**
+ get remote images version
+
+*/
+func (aus *SoftController) getRemoteBusinessImagesVer(ctx iris.Context) {
+	reslut := aus.businessImagesVerService.GetRemoteBusinessImagesVer(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+/**
 添加 业务包
 */
 func (aus *SoftController) SaveBusinessImagesVer(ctx iris.Context) {
@@ -273,6 +293,16 @@ func (aus *SoftController) SaveBusinessImagesVer(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+添加 业务包
+*/
+func (aus *SoftController) saveRemoteBusinessImagesVer(ctx iris.Context) {
+	reslut := aus.businessImagesVerService.SaveRemoteBusinessImagesVer(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 /**
 修改 业务包

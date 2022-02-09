@@ -26,6 +26,11 @@ const (
 	Remote_Images_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.listZihaoApp"
 	Remote_My_Images_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.myListZihaoAppCmd"
 	Remote_Apply_Publish_App_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.applyPublishZihaoAppCmd"
+	Remote_Apply_Publish_App_Version_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.applyPublishZihaoAppVersion"
+
+	Remote_get_images_version_Url string = "http://bbs.homecommunity.cn/app/zihaoAppImagesVersion.listZihaoAppImagesVersion"
+
+
 	Remote_Offline_App_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.offlineZihaoApp"
 
 	Remote_Save_Publisher string = "http://bbs.homecommunity.cn/app/zihaoAppPublisher.saveZihaoAppPublisher"
