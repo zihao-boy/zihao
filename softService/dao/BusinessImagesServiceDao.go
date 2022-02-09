@@ -37,9 +37,11 @@ const (
     	
 	`
 	query_businessImages string = `
-				select t.*,uu.username
+				select t.*,uu.username,bie.ext_images_id,bie.ext_publisher_id,bie.app_id,bie.app_name,ap.publisher_id
 				from business_images t
 				left join u_user uu on t.create_user_id = uu.user_id and uu.status_cd = '0'
+				left join business_images_ext bie on t.id = bie.images_id and bie.status_cd = '0'
+				left join app_publisher ap on bie.ext_publisher_id = ap.ext_publisher_id and ap.status_cd = '0'
 				where t.status_cd = '0'
 				$if TenantId != '' then
 				and t.tenant_id = #TenantId#

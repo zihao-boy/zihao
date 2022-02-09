@@ -91,6 +91,9 @@
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_versionImagesVers(businessImages)">版本</button>
                                     </div>
+                                    <div class="btn-group" v-if="businessImages.extImagesId">
+                                        <button class="btn-white btn btn-xs" v-on:click="_versionRemoteImagesVers(businessImages)">远程版本</button>
+                                    </div>
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_openEditBusinessImagesModel(businessImages)">修改</button>
                                     </div>
@@ -123,6 +126,8 @@
     <vc:create path="admin/deleteBusinessImages"></vc:create>
     <vc:create path="admin/viewBusinessImagesVers"></vc:create>
 
-    
+    <vc:create path="admin/viewRemoteBusinessImagesVers"></vc:create>
+
+
 
 </div>

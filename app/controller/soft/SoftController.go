@@ -42,6 +42,7 @@ func SoftControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteBusinessDockerfile", hero.Handler(aus.DeleteBusinessDockerfiles))
 
+	// get local images
 	adinMenu.Get("/getBusinessImages", hero.Handler(aus.GetBusinessImages))
 
 	adinMenu.Post("/saveBusinessImages", hero.Handler(aus.SaveBusinessImages))

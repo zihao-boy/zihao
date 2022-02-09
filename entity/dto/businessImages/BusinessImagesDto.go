@@ -23,6 +23,7 @@ type BusinessImagesDto struct {
 	StatusCd     string `json:"statusCd" sql:"-"`
 	TenantId     string `json:"tenantId" sql:"-"`
 	Username     string `json:"username" sql:"-"`
+	PublisherId    string `json:"publisherId" sql:"-"`
 	BusinessImagesExtDto
 }
 

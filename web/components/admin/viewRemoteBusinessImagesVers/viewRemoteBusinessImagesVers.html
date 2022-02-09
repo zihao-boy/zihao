@@ -1,8 +1,8 @@
-<div id="viewBusinessImagesVersModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewBusinessImagesVersModelLabel" aria-hidden="true">
+<div id="viewRemoteBusinessImagesVersModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewRemoteBusinessImagesVersModelLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="viewBusinessImagesVersModelLabel">镜像版本</h3>
+                <h3 class="modal-title" id="viewRemoteBusinessImagesVersModelLabel">远程镜像版本</h3>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -19,24 +19,24 @@
                                             <th class="text-center">版本</th>
                                             <th class="text-center">版本地址</th>
                                             <th class="text-center">构建时间</th>
-                                            <th class="text-center" v-if="viewBusinessImagesVersInfo.publisherId">操作</th>
+                                            <th class="text-center">操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="ver in viewBusinessImagesVersInfo.vers">
+                                        <tr v-for="ver in viewRemoteBusinessImagesVersInfo.vers">
                                             <td class="text-center">{{ver.name}}</td>
                                             <td class="text-center">{{ver.version}}</td>
                                             <td class="text-center">{{ver.typeUrl}}</td>
                                             <td class="text-center">{{ver.createTime}}</td>
-                                            <td class="text-center" v-if="viewBusinessImagesVersInfo.publisherId">
+                                            <td class="text-center">
                                                 <div class="btn-group">
-                                                    <button class="btn-white btn btn-xs" v-on:click="_publishAppVersion(ver)">发布</button>
+                                                    <button class="btn-white btn btn-xs" v-on:click="_publishAppVersion(ver)">同步</button>
                                                 </div>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <vc:create path="frame/paginationPlus" namespace="viewBusinessImagesVers"></vc:create>
+                                <vc:create path="frame/paginationPlus" namespace="viewRemoteBusinessImagesVers"></vc:create>
                             </div>
                         </div>
                     </div>

@@ -2,31 +2,29 @@
     vc.extends({
 
         data: {
-            viewBusinessImagesVersInfo: {
+            viewRemoteBusinessImagesVersInfo: {
                 vers: [],
-                imagesId: '',
-                publisherId: '',
+                extImagesId: '',
             }
         },
         _initMethod: function() {},
         _initEvent: function() {
-            vc.on('viewBusinessImagesVers', 'open', function(_param) {
-                $('#viewBusinessImagesVersModel').modal('show');
-                $that.viewBusinessImagesVersInfo.imagesId = _param.id;
-                $that.viewBusinessImagesVersInfo.publisherId = _param.publisherId;
-                vc.component._loadAllBusinessImagesInfo(1, 10);
+            vc.on('viewRemoteBusinessImagesVers', 'open', function(_param) {
+                $('#viewRemoteBusinessImagesVersModel').modal('show');
+                $that.viewRemoteBusinessImagesVersInfo.extImagesId = _param.extImagesId;
+                vc.component._loadAllRemoteBusinessImagesInfo(1, 10);
             });
-            vc.on('viewBusinessImagesVers', 'paginationPlus', 'page_event', function(_currentPage) {
+            vc.on('viewRemoteBusinessImagesVers', 'paginationPlus', 'page_event', function(_currentPage) {
                 vc.component._loadAllBusinessImagesInfo(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _loadAllBusinessImagesInfo: function(_page, _row) {
+            _loadAllRemoteBusinessImagesInfo: function(_page, _row) {
                 var param = {
                     params: {
                         page: _page,
                         row: _row,
-                        imagesId: $that.viewBusinessImagesVersInfo.imagesId
+                        imagesId: $that.viewRemoteBusinessImagesVersInfo.imagesId
                     }
                 };
 
@@ -35,7 +33,7 @@
                     param,
                     function(json) {
                         var _verInfo = JSON.parse(json);
-                        vc.component.viewBusinessImagesVersInfo.vers = _verInfo.data;
+                        vc.component.viewRemoteBusinessImagesVersInfo.vers = _verInfo.data;
                         vc.emit('newOaWorkflowUndo', 'paginationPlus', 'init', {
                             total: _verInfo.records,
                             dataCount: _verInfo.total,
