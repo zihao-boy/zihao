@@ -304,9 +304,7 @@ func (businessImagesService *BusinessImagesService) GetImagesPool(ctx iris.Conte
 	}
 	installAppDtos, _ := businessImagesService.installAppDao.GetInstallApps(installAppDto)
 
-	if installAppDtos == nil || len(installAppDtos) < 1 {
-		return resultDto
-	}
+
 	for _, data := range datas {
 		freshAppState(&data, installAppDtos)
 	}
@@ -319,6 +317,9 @@ func freshAppState(data *interface{}, installAppDtos []*installApp2.InstallAppDt
 	dataMap := (*data).(map[string]interface{})
 	extAppId := dataMap["appId"].(string)
 	dataMap["state"] = "002"
+	if installAppDtos == nil || len(installAppDtos) < 1 {
+		return
+	}
 	for _, installAppDto := range installAppDtos {
 		if installAppDto.ExtAppId == extAppId {
 			dataMap["state"] = "001"
@@ -446,12 +447,12 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 			//save images ext
 			businessImagesExtDto := businessImages.BusinessImagesExtDto{
 				Id:             seq.Generator(),
-				ImagesId:       businessImagesDtos[0].ImagesId,
+				ImagesId:       businessImagesDto.Id,
 				AppId:          imagesPoolsDtos[0].AppId,
 				AppName:        imagesPoolsDtos[0].Name,
 				ExtImagesId:    zihaoAppImagesDto.ImagesId,
 				ExtPublisherId: imagesPoolsDtos[0].PublisherId,
-				TenantId:       businessImagesDtos[0].TenantId,
+				TenantId:       businessImagesDto.TenantId,
 			}
 			businessImagesService.businessImagesExtDao.SaveBusinessImagesExt(businessImagesExtDto)
 
@@ -838,7 +839,7 @@ func (businessImagesService *BusinessImagesService) uninstallApp(installAppPageD
 	}
 
 	if len(deleteAppServiceDtos) < 1 {
-		return result.Error("没有可卸载的应用")
+		return result.Success()
 	}
 
 	for _, service := range deleteAppServiceDtos {

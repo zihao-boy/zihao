@@ -287,7 +287,7 @@ func (appPublisherService *AppPublisherService) ApplyPublishApp(ctx iris.Context
 		return resultDto
 	}
 
-	resultImages := resultDto.Data.([]map[string]interface{})
+	resultImages := resultDto.Data.([]interface{})
 
 	if len(resultImages) < 1 {
 		return resultDto
@@ -295,9 +295,11 @@ func (appPublisherService *AppPublisherService) ApplyPublishApp(ctx iris.Context
 
 	for _, tmpImages := range resultImages {
 
+		tImages := tmpImages.(map[string]interface{})
+
 		businessImagesDto := businessImages.BusinessImagesDto{
-			Name:    tmpImages["imagesName"].(string),
-			Version: tmpImages["imagesVersion"].(string),
+			Name:    tImages["imagesName"].(string),
+			Version: tImages["imagesVersion"].(string),
 		}
 		businessImagesDtos, _ := appPublisherService.businessImagesDao.GetBusinessImagess(businessImagesDto)
 
@@ -307,11 +309,11 @@ func (appPublisherService *AppPublisherService) ApplyPublishApp(ctx iris.Context
 
 		businessImagesExtDto := businessImages.BusinessImagesExtDto{
 			Id:             seq.Generator(),
-			ImagesId:       businessImagesDtos[0].ImagesId,
-			AppId:          tmpImages["appId"].(string),
-			AppName:        tmpImages["appName"].(string),
-			ExtImagesId:    tmpImages["extImagesId"].(string),
-			ExtPublisherId: tmpImages["extPublisherId"].(string),
+			ImagesId:       businessImagesDtos[0].Id,
+			AppId:          tImages["appId"].(string),
+			AppName:        tImages["appName"].(string),
+			ExtImagesId:    tImages["extImagesId"].(string),
+			ExtPublisherId: tImages["extPublisherId"].(string),
 			TenantId:       businessImagesDtos[0].TenantId,
 		}
 
