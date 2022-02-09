@@ -3586,3 +3586,17 @@ create table app_publisher
     tenant_id    varchar(64)  not null,
     ext_publisher_id varchar(64) not null
 );
+
+create table business_images_ext
+(
+    id             varchar(64)  not null
+        primary key,
+    images_id           varchar(64)  not null,
+    app_id        varchar(64)  not null,
+    app_name    varchar(128)  not null,
+    ext_images_id       varchar(64) not null,
+    ext_publisher_id    varchar(64)  not null,
+    create_time    timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2) default '0' not null,
+    tenant_id      varchar(64)  not null
+);
