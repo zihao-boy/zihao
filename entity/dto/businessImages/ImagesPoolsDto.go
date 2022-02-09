@@ -9,6 +9,7 @@ type ImagesPoolsDto struct {
 	Version string `json:"version"`
 	Compose string `json:"compose"`
 	AppShell string `json:"appShell"`
+	PublisherId string `json:"publisherId"`
 	ZihaoAppImagesDtos []ZihaoAppImagesDtos `json:"zihaoAppImagesDtos"`
 }
 

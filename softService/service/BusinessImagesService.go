@@ -7,6 +7,7 @@ import (
 	appDao "github.com/zihao-boy/zihao/appService/dao"
 	dao2 "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/business/dao/appPublisherDao"
+	"github.com/zihao-boy/zihao/business/dao/businessImagesExtDao"
 	installApp "github.com/zihao-boy/zihao/business/dao/installAppDao"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/costTime"
@@ -44,6 +45,8 @@ type BusinessImagesService struct {
 	appServiceDao         appDao.AppServiceDao
 
 	appPublisherDao appPublisherDao.AppPublisherDao
+
+	businessImagesExtDao businessImagesExtDao.BusinessImagesExtDao
 }
 
 /**
@@ -439,6 +442,19 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 			businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_PUBLIC
 			businessImagesDto.TypeUrl = zihaoAppImagesDto.Url
 			err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
+
+			//save images ext
+			businessImagesExtDto := businessImages.BusinessImagesExtDto{
+				Id:             seq.Generator(),
+				ImagesId:       businessImagesDtos[0].ImagesId,
+				AppId:          imagesPoolsDtos[0].AppId,
+				AppName:        imagesPoolsDtos[0].Name,
+				ExtImagesId:    zihaoAppImagesDto.ImagesId,
+				ExtPublisherId: imagesPoolsDtos[0].PublisherId,
+				TenantId:       businessImagesDtos[0].TenantId,
+			}
+			businessImagesService.businessImagesExtDao.SaveBusinessImagesExt(businessImagesExtDto)
+
 		} else {
 			businessImagesDto.Id = businessImagesDtos[0].Id
 			businessImagesDto.Version = imagesPoolsDtos[0].Version
@@ -477,7 +493,7 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 		return result.Error(message)
 	}
 	// save app info
-	resultDto = businessImagesService.installApp(installAppPageDto, imagesPoolsDtos[0].Compose, user,imagesPoolsDtos[0].AppShell)
+	resultDto = businessImagesService.installApp(installAppPageDto, imagesPoolsDtos[0].Compose, user, imagesPoolsDtos[0].AppShell)
 
 	if resultDto.Code != result.CODE_SUCCESS {
 		return resultDto
@@ -500,7 +516,7 @@ func (businessImagesService *BusinessImagesService) InstallImages(ctx iris.Conte
 //install App
 func (businessImagesService *BusinessImagesService) installApp(installAppPageDto installApp2.InstallAppPageDto,
 	compose string,
-	user *user.UserDto,appShell string) result.ResultDto {
+	user *user.UserDto, appShell string) result.ResultDto {
 	var (
 		composeYamlDto = composeYaml.ComposeYamlZiHaoDto{
 		}
