@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/appService/dao"
 	"github.com/zihao-boy/zihao/business/dao/appPublisherDao"
+	"github.com/zihao-boy/zihao/business/dao/businessImagesExtDao"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/encrypt"
@@ -13,10 +14,12 @@ import (
 	"github.com/zihao-boy/zihao/config"
 	appPublisher "github.com/zihao-boy/zihao/entity/dto/appPublisherDto"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/businessImages"
 	"github.com/zihao-boy/zihao/entity/dto/composeYaml"
 	installApp2 "github.com/zihao-boy/zihao/entity/dto/installApp"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
+	dao2 "github.com/zihao-boy/zihao/softService/dao"
 	"gopkg.in/yaml.v3"
 	"strconv"
 )
@@ -24,6 +27,9 @@ import (
 type AppPublisherService struct {
 	appPublisherDao appPublisherDao.AppPublisherDao
 	appServiceDao   dao.AppServiceDao
+
+	businessImagesExtDao businessImagesExtDao.BusinessImagesExtDao
+	businessImagesDao    dao2.BusinessImagesDao
 }
 
 // get db link
@@ -276,6 +282,42 @@ func (appPublisherService *AppPublisherService) ApplyPublishApp(ctx iris.Context
 
 	//resps, _ := encrypt.Decrypt(appPublisherDtos[0].Token, string(resp))
 	json.Unmarshal(resp, &resultDto)
+
+	if resultDto.Code != result.CODE_SUCCESS {
+		return resultDto
+	}
+
+	resultImages := resultDto.Data.([]map[string]interface{})
+
+	if len(resultImages) < 1 {
+		return resultDto
+	}
+
+	for _, tmpImages := range resultImages {
+
+		businessImagesDto := businessImages.BusinessImagesDto{
+			Name:    tmpImages["imagesName"].(string),
+			Version: tmpImages["imagesVersion"].(string),
+		}
+		businessImagesDtos, _ := appPublisherService.businessImagesDao.GetBusinessImagess(businessImagesDto)
+
+		if len(businessImagesDtos) < 1 {
+			continue
+		}
+
+		businessImagesExtDto := businessImages.BusinessImagesExtDto{
+			Id:             seq.Generator(),
+			ImagesId:       businessImagesDtos[0].ImagesId,
+			AppId:          tmpImages["appId"].(string),
+			AppName:        tmpImages["appName"].(string),
+			ExtImagesId:    tmpImages["extImagesId"].(string),
+			ExtPublisherId: tmpImages["extPublisherId"].(string),
+			TenantId:       businessImagesDtos[0].TenantId,
+		}
+
+		appPublisherService.businessImagesExtDao.SaveBusinessImagesExt(businessImagesExtDto)
+	}
+
 	return resultDto
 }
 
@@ -340,13 +382,12 @@ func (appPublisherService *AppPublisherService) OfflineApplyApp(ctx iris.Context
 	var (
 		err                error
 		applyPublishAppDto appPublisher.ApplyPublishAppDto
-		resultDto result.ResultDto
+		resultDto          result.ResultDto
 	)
 
 	if err = ctx.ReadJSON(&applyPublishAppDto); err != nil {
 		return result.Error("解析入参失败")
 	}
-
 
 	appPublisherDto := appPublisher.AppPublisherDto{
 		ExtPublisherId: applyPublishAppDto.PublisherId,
