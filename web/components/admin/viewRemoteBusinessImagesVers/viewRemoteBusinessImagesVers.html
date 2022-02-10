@@ -24,13 +24,13 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="ver in viewRemoteBusinessImagesVersInfo.vers">
-                                            <td class="text-center">{{ver.name}}</td>
+                                            <td class="text-center">{{viewRemoteBusinessImagesVersInfo.imagesName}}</td>
                                             <td class="text-center">{{ver.version}}</td>
-                                            <td class="text-center">{{ver.typeUrl}}</td>
+                                            <td class="text-center">{{ver.url}}</td>
                                             <td class="text-center">{{ver.createTime}}</td>
                                             <td class="text-center">
                                                 <div class="btn-group">
-                                                    <button class="btn-white btn btn-xs" v-on:click="_publishAppVersion(ver)">同步</button>
+                                                    <button class="btn-white btn btn-xs" v-on:click="_downloadImagesVersion(ver)">同步</button>
                                                 </div>
                                             </td>
                                         </tr>

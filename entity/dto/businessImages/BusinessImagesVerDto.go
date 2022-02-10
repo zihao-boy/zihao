@@ -13,3 +13,11 @@ type BusinessImagesVerDto struct {
 	TenantId     string `json:"tenantId" sql:"-"`
 	Name string `json:"name"`
 }
+
+type RemoteBusinessImagesVerDto struct {
+	dto.PageDto
+	ImagesId         string `json:"imagesId" sql:"-"`
+	Version      string `json:"version" sql:"-"`
+	Url   string `json:"url" sql:"-"`
+	PublisherId string `json:"publisherId"`
+}

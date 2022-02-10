@@ -6,6 +6,7 @@
                 vers: [],
                 imagesId: '',
                 publisherId: '',
+                extImagesId:''
             }
         },
         _initMethod: function() {},
@@ -14,6 +15,8 @@
                 $('#viewBusinessImagesVersModel').modal('show');
                 $that.viewBusinessImagesVersInfo.imagesId = _param.id;
                 $that.viewBusinessImagesVersInfo.publisherId = _param.publisherId;
+                $that.viewBusinessImagesVersInfo.extImagesId = _param.extImagesId;
+
                 vc.component._loadAllBusinessImagesInfo(1, 10);
             });
             vc.on('viewBusinessImagesVers', 'paginationPlus', 'page_event', function(_currentPage) {
@@ -46,7 +49,38 @@
                         console.log('请求失败处理');
                     }
                 );
+            },
+            _publishAppVersion:function(_version){
+
+                let _data = {
+                    imagesId:$that.viewBusinessImagesVersInfo.extImagesId,
+                    version:_version.version,
+                    url:_version.typeUrl,
+                    publisherId:$that.viewBusinessImagesVersInfo.publisherId,
+                }
+
+                vc.http.apiPost(
+                    '/soft/saveRemoteBusinessImagesVer',
+                    JSON.stringify(_data), {
+                        emulateJSON: true
+                    },
+                    function(json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            $('#viewBusinessImagesVersModel').modal('hide');
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                        vc.toast(errInfo);
+                    });
+
             }
+        
         }
 
     });
