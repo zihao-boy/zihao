@@ -304,7 +304,6 @@ func (businessImagesService *BusinessImagesService) GetImagesPool(ctx iris.Conte
 	}
 	installAppDtos, _ := businessImagesService.installAppDao.GetInstallApps(installAppDto)
 
-
 	for _, data := range datas {
 		freshAppState(&data, installAppDtos)
 	}
@@ -606,12 +605,12 @@ func (businessImagesService *BusinessImagesService) doImportAppService(appServic
 	images, _ := businessImagesService.businessImagesDao.GetBusinessImagess(businessImagesDto)
 
 	if images == nil || len(images) < 1 {
-		return result.Error("镜像不存在")
+		return result.Error("镜像不存在" + appServiceDto.AsName)
 	}
 
 	businessImagesVerDto := businessImages.BusinessImagesVerDto{
 		TenantId: user.TenantId,
-		ImagesId: businessImagesDto.Id,
+		ImagesId: images[0].Id,
 		Version:  images[0].Version,
 	}
 	businessImagesVerDtos, _ := businessImagesService.businessImagesVerDao.GetBusinessImagesVers(businessImagesVerDto)
