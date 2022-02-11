@@ -54,14 +54,14 @@ VALUES (#SettingId#,#TenantId#,#SpecCd#,#Value#)
 `
 
 	update_tenantSetting string = `
-	update tenant_setting t set t.value = #Value#
-where t.setting_id = #SettingId#
+	update tenant_setting set value = #Value#
+where setting_id = #SettingId#
 	`
 	delete_tenantSetting string = `
-	update tenant_setting t set 
-			t.status_cd = '1'
-			where t.status_cd = '0'
-			and t.setting_id = #SettingId#
+	update tenant_setting  set 
+			status_cd = '1'
+			where status_cd = '0'
+			and setting_id = #SettingId#
 	`
 )
 

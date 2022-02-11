@@ -1,4 +1,4 @@
-(function (vc, vm) {
+(function(vc, vm) {
 
     vc.extends({
         data: {
@@ -9,29 +9,27 @@
                 specCds: []
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
-            vc.getDict('tenant_setting', 'spec_cd', function (data) {
+            vc.getDict('tenant_setting', 'spec_cd', function(data) {
 
                 $that.editTenantSettingInfo.specCds = data.data;
             })
 
         },
-        _initEvent: function () {
-            vc.on('editTenantSetting', 'openEditTenantSettingModal', function (_params) {
+        _initEvent: function() {
+            vc.on('editTenantSetting', 'openEditTenantSettingModal', function(_params) {
                 vc.component.refreshEditTenantSettingInfo();
                 $('#editTenantSettingModel').modal('show');
                 vc.copyObject(_params, vc.component.editTenantSettingInfo);
-                vc.component.editTenantSettingInfo.communityId = vc.getCurrentCommunity().communityId;
             });
         },
         methods: {
-            editTenantSettingValidate: function () {
+            editTenantSettingValidate: function() {
                 return vc.validate.validate({
                     editTenantSettingInfo: vc.component.editTenantSettingInfo
                 }, {
-                    'editTenantSettingInfo.specCd': [
-                        {
+                    'editTenantSettingInfo.specCd': [{
                             limit: "required",
                             param: "",
                             errInfo: "规格不能为空"
@@ -42,8 +40,7 @@
                             errInfo: "规格错误"
                         },
                     ],
-                    'editTenantSettingInfo.value': [
-                        {
+                    'editTenantSettingInfo.value': [{
                             limit: "required",
                             param: "",
                             errInfo: "值不能为空"
@@ -54,16 +51,15 @@
                             errInfo: "值太长"
                         },
                     ],
-                    'editTenantSettingInfo.settingId': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "ID不能为空"
-                        }]
+                    'editTenantSettingInfo.settingId': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "ID不能为空"
+                    }]
 
                 });
             },
-            editTenantSetting: function () {
+            editTenantSetting: function() {
                 if (!vc.component.editTenantSettingValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
@@ -71,11 +67,10 @@
 
                 vc.http.apiPost(
                     '/tenant/updateTenantSetting',
-                    JSON.stringify(vc.component.editTenantSettingInfo),
-                    {
+                    JSON.stringify(vc.component.editTenantSettingInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
@@ -84,15 +79,15 @@
                             vc.emit('tenantSettingManage', 'listTenantSetting', {});
                             return;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
-                        vc.message(errInfo);
+                        vc.toast(errInfo);
                     });
             },
-            refreshEditTenantSettingInfo: function () {
+            refreshEditTenantSettingInfo: function() {
                 let _specCds = $that.addTenantSettingInfo.specCds
                 vc.component.editTenantSettingInfo = {
                     settingId: '',
