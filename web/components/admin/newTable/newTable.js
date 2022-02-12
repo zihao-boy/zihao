@@ -57,7 +57,7 @@
                 if (_newUser.endsWith(',\n')) {
                     _newUser = _newUser.substring(0, _newUser.length - 2) + "\n";
                 }
-                _newUser += ");"
+                _newUser += ") DEFAULT CHARSET=utf8;"
                 $that.newTableInfo.sql = _newUser;
             },
             clearNewTableInfo: function() {
