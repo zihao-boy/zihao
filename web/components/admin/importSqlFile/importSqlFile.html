@@ -1,0 +1,28 @@
+<div id="importSqlFileModel" class="modal fade" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 class="m-t-none m-b ">导入sql
+                    <span v-if="importSqlFileInfo.index > 0">{{importSqlFileInfo.index}}/{{importSqlFileInfo.sqls.length}}</span>
+                </h3>
+                <div class="ibox-content">
+                    <div>
+                        <div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">选择sql</label>
+                                <div class="col-sm-10" >
+                                    <input type="file" id="files" accept=".sql"/>
+                                </div>
+                            </div>
+                            <div style="color: red;">{{importSqlFileInfo.error}}</div>
+                            <div class="ibox-content">
+                                <button class="btn btn-primary float-right" type="button" v-on:click="importSqlFile()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

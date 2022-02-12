@@ -30,20 +30,23 @@
 
             vc.on('mysqlClient', 'load', function() {
                 $that._loadDbLink();
-            })
+            });
 
             vc.on('mysqlClient','execSql',function(_data){
                 $that._doExecSql(_data);
-            })
+            });
             vc.on('mysqlClient','execQuerySql',function(_data){
                 $that._chooseDb({
                     id:_data.dbId,
                     name:_data.curDbName,
                     sqlText:_data.sql
                 });
-                $that._doExecSql(_data);
-                
-            })
+                $that._doExecSql(_data); 
+            });
+
+            vc.on('mysqlClient','showError',function(_data){
+                $that.mysqlClientInfo.error = _data;
+            });
 
         },
         watch: {
@@ -223,6 +226,17 @@
                 })
 
             },
+            _importSqlFile:function(){
+                if (!$that.mysqlClientInfo.curDbId) {
+                    vc.toast('请先选择数据库');
+                    return;
+                }
+
+                vc.emit('importSqlFile', 'openImportSqlModal',{
+                    curDbId:$that.mysqlClientInfo.curDbId,
+                    curDbName:$that.mysqlClientInfo.curDbId,
+                })
+            }
             
 
         }

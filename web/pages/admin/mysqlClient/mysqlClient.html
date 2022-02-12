@@ -17,6 +17,10 @@
                 运行
             </button>
             <span class="margin-left">当前数据库：{{mysqlClientInfo.curDbName}}</span>
+            <button type="button" class="btn btn-white text-right btn-sm margin-left-sm" 
+            style="float:right" v-on:click="_importSqlFile()">
+                导入
+            </button>
         </div>
     </div>
     <div class="row padding">
@@ -90,5 +94,6 @@
     <vc:create path="admin/newDataBase"></vc:create>
     <vc:create path="admin/viewDbTables"></vc:create>
     <vc:create path="admin/newTable"></vc:create>
+    <vc:create path="admin/importSqlFile"></vc:create>
 
 </div>

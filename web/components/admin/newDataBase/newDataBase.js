@@ -67,7 +67,7 @@
 
 
                 let _newUser = "create user '" + $that.newDataBaseInfo.username + "'@'" + $that.newDataBaseInfo.ip + "' identified by '" + $that.newDataBaseInfo.password + "';"
-                let _newDb = "CREATE DATABASE " + $that.newDataBaseInfo.name + " ;"
+                let _newDb = "CREATE DATABASE " + $that.newDataBaseInfo.name + " DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
                 let _userPri = "grant all privileges on " + $that.newDataBaseInfo.name + ".* to '" + $that.newDataBaseInfo.username + "'@'" + $that.newDataBaseInfo.ip + "' ;";
                 let _flushPri = "flush privileges;"
                 vc.emit('mysqlClient', 'execSql', {
