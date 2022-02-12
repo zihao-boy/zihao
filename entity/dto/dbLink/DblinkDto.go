@@ -23,4 +23,5 @@ type DbLinkDto struct {
 type DbSqlDto struct {
 	DbId string `json:"dbId"`
 	Sql string `json:"sql"`
+	FileName string `json:"fileName"`
 }

@@ -236,6 +236,17 @@
                     curDbId:$that.mysqlClientInfo.curDbId,
                     curDbName:$that.mysqlClientInfo.curDbId,
                 })
+            },
+            _openExportSqlFile:function(){
+                if (!$that.mysqlClientInfo.curDbId) {
+                    vc.toast('请先选择数据库');
+                    return;
+                }
+
+                vc.emit('exportSqlFile', 'openExportSqlModal',{
+                    curDbId:$that.mysqlClientInfo.curDbId,
+                    curDbName:$that.mysqlClientInfo.curDbId,
+                })
             }
             
 

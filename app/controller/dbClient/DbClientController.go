@@ -27,6 +27,9 @@ func DbClientControllerRouter(party iris.Party) {
 
 	//execute sql
 	adinMenu.Post("/execSql", hero.Handler(aus.execSql))
+
+	//execute sql file
+	adinMenu.Post("/exportSqlFile",hero.Handler(aus.exportSqlFile))
 }
 
 /**
@@ -69,6 +72,15 @@ func (aus *DbClientController) deleteDbLink(ctx iris.Context) {
 */
 func (aus *DbClientController) execSql(ctx iris.Context) {
 	reslut := aus.dbLinkService.ExecSql(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+ export sql file
+*/
+func (aus *DbClientController) exportSqlFile(ctx iris.Context) {
+	reslut := aus.dbLinkService.ExportSqlFile(ctx)
 
 	ctx.JSON(reslut)
 }

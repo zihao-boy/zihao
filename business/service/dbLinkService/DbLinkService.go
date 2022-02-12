@@ -197,3 +197,40 @@ func (dbLinkService *DbLinkService) ExecSql(ctx iris.Context) interface{} {
 
 	return data
 }
+
+func (dbLinkService *DbLinkService) ExportSqlFile(ctx iris.Context) interface{} {
+	var (
+		err       error
+		dbSqlDto  dbLink.DbSqlDto
+		dbLinkDto dbLink.DbLinkDto
+	)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	if err = ctx.ReadJSON(&dbSqlDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	if dbSqlDto.DbId == "" {
+		return result.Error("无效数据库")
+	}
+
+	if dbSqlDto.FileName == "" {
+		return result.Error("无效文件名")
+	}
+
+	dbLinkDto.Row = 1
+	dbLinkDto.Page = 0
+	dbLinkDto.TenantId = user.TenantId
+	dbLinkDto.CreateUserId = user.UserId
+	dbLinkDto.Id = dbSqlDto.DbId
+
+	dblinkDtos, err := dbLinkService.dbLinkDao.GetDbLinks(dbLinkDto)
+
+	if err != nil || len(dblinkDtos) < 1 {
+		return result.Error("无效数据库")
+	}
+
+	// execute sql
+	data := dbFactory.ExportSqlFile(*dblinkDtos[0], dbSqlDto)
+
+	return data
+}
