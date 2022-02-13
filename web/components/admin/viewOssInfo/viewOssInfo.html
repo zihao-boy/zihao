@@ -1,0 +1,78 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>oss信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewOssInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectOssInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择oss</button>
+
+                    <button type="button" v-if="viewOssInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddOssInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加oss</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >名称：</label>
+                            <label class="">{{viewOssInfo.name}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >类型：</label>
+                            <label class="">{{viewOssInfo.ossType}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >bucket：</label>
+                            <label class="">{{viewOssInfo.bucket}}</label>
+                        </div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >access_key_secret：</label>
+                            <label class="">{{viewOssInfo.accessKeySecret}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >access_key_id：</label>
+                            <label class="">{{viewOssInfo.accessKeyId}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >endpoint：</label>
+                            <label class="">{{viewOssInfo.endpoint}}</label>
+                        </div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >路劲：</label>
+                            <label class="">{{viewOssInfo.path}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addOss"
+               callBackListener="viewOssInfo"
+               callBackFunction="chooseOss"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseOss"
+               emitChooseOss="viewOssInfo"
+               emitLoadData="viewOssInfo"
+    ></vc:create>
+</div>
