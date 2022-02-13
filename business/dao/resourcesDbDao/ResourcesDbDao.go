@@ -45,7 +45,7 @@ const (
 
 	insert_resourcesDb string = `
 	insert into resources_db(db_id, name, ip, port,username,password,db_name,tenant_id)
-VALUES(#FtpId#,#Name#,#Ip#,#Port#,#Username#,#Password#,#DbName#,#TenantId#)
+VALUES(#DbId#,#Name#,#Ip#,#Port#,#Username#,#Password#,#DbName#,#TenantId#)
 `
 
 	update_resourcesDb string = `

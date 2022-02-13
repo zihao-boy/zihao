@@ -44,7 +44,7 @@ func ResourcesControllerRouter(party iris.Party) {
 
 	adinMenu.Get("/getDb", hero.Handler(aus.getDb))
 
-	adinMenu.Post("/saveDb", hero.Handler(aus.saveOss))
+	adinMenu.Post("/saveDb", hero.Handler(aus.saveDb))
 
 	adinMenu.Post("/updateDb", hero.Handler(aus.updateDb))
 

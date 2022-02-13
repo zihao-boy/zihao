@@ -1,50 +1,50 @@
-<div id="addFtpModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div id="editDbModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body">
-                <h3 class="m-t-none m-b ">添加ftp</h3>
+                <h3 class="m-t-none m-b ">修改</h3>
                 <div class="ibox-content">
                     <div>
                         <div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">名称</label>
                                 <div class="col-sm-10">
-                                    <input v-model="addFtpInfo.name" type="text" placeholder="必填，请填写名称" class="form-control">
+                                    <input v-model="editDbInfo.name" type="text" placeholder="必填，请填写名称" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">IP</label>
+                                <label class="col-sm-2 col-form-label">ip</label>
                                 <div class="col-sm-10">
-                                    <input v-model="addFtpInfo.ip" type="text" placeholder="必填，请填写IP" class="form-control">
+                                    <input v-model="editDbInfo.ip" type="text" placeholder="必填，请填写ip" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">端口</label>
                                 <div class="col-sm-10">
-                                    <input v-model="addFtpInfo.port" type="text" placeholder="必填，请填写端口" class="form-control">
+                                    <input v-model="editDbInfo.port" type="text" placeholder="必填，请填写端口" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">用户名</label>
                                 <div class="col-sm-10">
-                                    <input v-model="addFtpInfo.username" type="text" placeholder="必填，请填写用户名" class="form-control">
+                                    <input v-model="editDbInfo.username" type="text" placeholder="必填，请填写用户名" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">密码</label>
                                 <div class="col-sm-10">
-                                    <input v-model="addFtpInfo.passwd" type="password" placeholder="必填，请填写密码" class="form-control">
+                                    <input v-model="editDbInfo.password" type="password" placeholder="必填，请填写密码" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">路径</label>
+                                <label class="col-sm-2 col-form-label">数据库</label>
                                 <div class="col-sm-10">
-                                    <input v-model="addFtpInfo.path" type="text" placeholder="必填，请填写路径" class="form-control">
+                                    <input v-model="editDbInfo.dbName" type="text" placeholder="必填，请填写数据库" class="form-control">
                                 </div>
                             </div>
 
                             <div class="ibox-content">
-                                <button class="btn btn-primary float-right" type="button" v-on:click="saveFtpInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                                <button class="btn btn-primary float-right" type="button" v-on:click="editDb()"><i class="fa fa-check"></i>&nbsp;保存</button>
                                 <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" data-dismiss="modal">取消</button>
                             </div>
                         </div>

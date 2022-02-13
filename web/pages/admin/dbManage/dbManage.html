@@ -12,21 +12,21 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入编号" v-model="ftpManageInfo.conditions.ftpId" class=" form-control">
+                                <input type="text" placeholder="请输入编号" v-model="dbManageInfo.conditions.dbId" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入名称" v-model="ftpManageInfo.conditions.name" class=" form-control">
+                                <input type="text" placeholder="请输入名称" v-model="dbManageInfo.conditions.name" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入IP" v-model="ftpManageInfo.conditions.ip" class=" form-control">
+                                <input type="text" placeholder="请输入ip" v-model="dbManageInfo.conditions.ip" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-1">
-                            <button type="button" class="btn btn-primary btn-sm" v-on:click="_queryFtpMethod()">
+                            <button type="button" class="btn btn-primary btn-sm" v-on:click="_queryDbMethod()">
                                     <i class="glyphicon glyphicon-search"></i> 查询
                             </button>
                         </div>
@@ -41,11 +41,11 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-title">
-                    <h5>ftp信息</h5>
+                    <h5>数据库信息</h5>
                     <div class="ibox-tools" style="top:10px;">
-                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddFtpModal()">
+                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddDbModal()">
                             <i class="glyphicon glyphicon-plus"></i>
-                            添加ftp
+                            添加
                         </button>
                     </div>
                 </div>
@@ -56,31 +56,32 @@
                             <tr>
                                 <!-- <th class="text-center">编号</th> -->
                                 <th class="text-center">名称</th>
-                                <th class="text-center">IP</th>
+                                <th class="text-center">ip</th>
                                 <th class="text-center">端口</th>
                                 <th class="text-center">用户名</th>
                                 <th class="text-center">密码</th>
-                                <th class="text-center">路径</th>
+                                <th class="text-center">数据库</th>
                                 <th class="text-center">创建时间</th>
                                 <th class="text-center">操作</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="ftp in ftpManageInfo.ftps">
-                                <!-- <td class="text-center">{{ftp.ftpId}}</td> -->
-                                <td class="text-center">{{ftp.name}}</td>
-                                <td class="text-center">{{ftp.ip}}</td>
-                                <td class="text-center">{{ftp.port}}</td>
-                                <td class="text-center">{{ftp.username}}</td>
+                            <tr v-for="db in dbManageInfo.dbs">
+                                <!-- <td class="text-center">{{db.dbId}}</td> -->
+                                <td class="text-center">{{db.name}}</td>
+                                <td class="text-center">{{db.ip}}</td>
+                                <td class="text-center">{{db.port}}</td>
+                                <td class="text-center">{{db.username}}</td>
                                 <td class="text-center">******</td>
-                                <td class="text-center">{{ftp.path}}</td>
+                                <td class="text-center">{{db.dbName}}</td>
                                 <td class="text-center">{{db.createTime}}</td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" v-on:click="_openEditFtpModel(ftp)">修改</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openEditDbModel(db)">修改</button>
                                     </div>
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteFtpModel(ftp)">删除</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteDbModel(db)">删除</button>
                                     </div>
                                 </td>
 
@@ -103,8 +104,8 @@
 
 
 
-    <vc:create path="admin/addFtp" callBackListener="" callBackFunction=""></vc:create>
-    <vc:create path="admin/editFtp"></vc:create>
-    <vc:create path="admin/deleteFtp"></vc:create>
+    <vc:create path="admin/addDb" callBackListener="" callBackFunction=""></vc:create>
+    <vc:create path="admin/editDb"></vc:create>
+    <vc:create path="admin/deleteDb"></vc:create>
 
 </div>
