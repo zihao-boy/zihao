@@ -3646,14 +3646,18 @@ create table resources_db
 
 create table resources_backup
 (
-    id             varchar(64)  not null primary key,
-    name           varchar(64)    not null,
-    exec_time      varchar(64)   not null,
-    type_cd        varchar(12) not null, -- 类型 1001 数据库 2002 文件夹
-    src_id           varchar(64)  not null, -- 源ID
-    src_object       longtext  not null, -- 对象
-    target_id       varchar(64) not null,
-    tenant_id      varchar(64)    not null,
-    create_time    timestamp   default CURRENT_TIMESTAMP not null,
-    status_cd      varchar(2)  default '0' not null
+    id          varchar(64) not null
+        primary key,
+    name        varchar(64) not null,
+    exec_time   varchar(64) not null,
+    type_cd     varchar(12) not null,
+    src_id      varchar(64) not null,
+    src_object  longtext    not null,
+    target_type_cd   varchar(12) not null,
+    target_id   varchar(64) not null,
+    tenant_id   varchar(64) not null,
+    state       varchar(12) not null,
+    back_time timestamp  not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
 );

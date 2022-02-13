@@ -5,6 +5,7 @@ import (
 	hostDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/business/dao/resourcesBackUpDao"
 	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/resources"
 	"github.com/zihao-boy/zihao/entity/dto/result"
@@ -14,14 +15,14 @@ import (
 
 type ResourcesBackUpService struct {
 	resourcesBackUpDao resourcesBackUpDao.ResourcesBackUpDao
-	hostDao         hostDao.HostDao
+	hostDao            hostDao.HostDao
 }
 
 // get db link
 // all db by this user
 func (resourcesBackUpService *ResourcesBackUpService) GetResourcesBackUpAll(ResourcesBackUpDto resources.ResourcesBackUpDto) ([]*resources.ResourcesBackUpDto, error) {
 	var (
-		err              error
+		err                 error
 		ResourcesBackUpDtos []*resources.ResourcesBackUpDto
 	)
 
@@ -39,10 +40,10 @@ func (resourcesBackUpService *ResourcesBackUpService) GetResourcesBackUpAll(Reso
 */
 func (resourcesBackUpService *ResourcesBackUpService) GetResourcesBackUps(ctx iris.Context) result.ResultDto {
 	var (
-		err              error
-		page             int64
-		row              int64
-		total            int64
+		err                 error
+		page                int64
+		row                 int64
+		total               int64
 		resourcesBackUpDto  = resources.ResourcesBackUpDto{}
 		resourcesBackUpDtos []*resources.ResourcesBackUpDto
 	)
@@ -80,6 +81,8 @@ func (resourcesBackUpService *ResourcesBackUpService) GetResourcesBackUps(ctx ir
 		return result.Error(err.Error())
 	}
 
+	resourcesBackUpDtos = resourcesBackUpService.freshBackUpObjectName(resourcesBackUpDtos)
+
 	return result.SuccessData(resourcesBackUpDtos, total, row)
 
 }
@@ -89,7 +92,7 @@ func (resourcesBackUpService *ResourcesBackUpService) GetResourcesBackUps(ctx ir
 */
 func (resourcesBackUpService *ResourcesBackUpService) SaveResourcesBackUps(ctx iris.Context) result.ResultDto {
 	var (
-		err             error
+		err                error
 		resourcesBackUpDto resources.ResourcesBackUpDto
 	)
 	if err = ctx.ReadJSON(&resourcesBackUpDto); err != nil {
@@ -99,6 +102,8 @@ func (resourcesBackUpService *ResourcesBackUpService) SaveResourcesBackUps(ctx i
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
 	resourcesBackUpDto.TenantId = user.TenantId
 	resourcesBackUpDto.Id = seq.Generator()
+	resourcesBackUpDto.State = resources.Back_up_state_STOP
+	resourcesBackUpDto.BackTime = date.GetNowTimeString()
 	//ResourcesBackUpDto.Path = filepath.Join(curDest, fileHeader.Filename)
 
 	err = resourcesBackUpService.resourcesBackUpDao.SaveResourcesBackUp(resourcesBackUpDto)
@@ -115,7 +120,7 @@ func (resourcesBackUpService *ResourcesBackUpService) SaveResourcesBackUps(ctx i
 */
 func (resourcesBackUpService *ResourcesBackUpService) UpdateResourcesBackUps(ctx iris.Context) result.ResultDto {
 	var (
-		err             error
+		err                error
 		resourcesBackUpDto resources.ResourcesBackUpDto
 	)
 	if err = ctx.ReadJSON(&resourcesBackUpDto); err != nil {
@@ -141,7 +146,7 @@ func (resourcesBackUpService *ResourcesBackUpService) UpdateResourcesBackUps(ctx
 */
 func (resourcesBackUpService *ResourcesBackUpService) DeleteResourcesBackUps(ctx iris.Context) result.ResultDto {
 	var (
-		err             error
+		err                error
 		resourcesBackUpDto resources.ResourcesBackUpDto
 	)
 	if err = ctx.ReadJSON(&resourcesBackUpDto); err != nil {
@@ -155,4 +160,25 @@ func (resourcesBackUpService *ResourcesBackUpService) DeleteResourcesBackUps(ctx
 
 	return result.SuccessData(resourcesBackUpDto)
 
+}
+
+func (resourcesBackUpService *ResourcesBackUpService) freshBackUpObjectName(dtos []*resources.ResourcesBackUpDto) []*resources.ResourcesBackUpDto {
+
+	for _,dto := range dtos{
+		if dto.TypeCd == resources.Back_up_Type_Cd_db{
+			dto.SrcName = dto.SrcDbName
+		}else{
+			dto.SrcName = dto.SrcHostName
+		}
+
+		if dto.TargetTypeCd == resources.Back_up_Target_Type_Cd_db{
+			dto.TargetName = dto.TargetDbName
+		}else if dto.TargetTypeCd == resources.Back_up_Target_Type_Cd_oss{
+			dto.TargetName = dto.TargetOssName
+		}else{
+			dto.TargetName = dto.TargetFtpName
+		}
+	}
+
+	return dtos
 }

@@ -28,8 +28,13 @@ const (
     	
 	`
 	query_resourcesBackUp string = `
-				select t.*
-				from resources_backup t
+select t.*,h.name src_host_name,rd.name src_db_name,rf.name target_ftp_name,ro.name target_oss_name,rd1.name target_db_name
+from resources_backup t
+left join host h on t.src_id = h.host_id and h.status_cd = '0'
+left join resources_db rd on t.src_id = rd.db_id and rd.status_cd = '0'
+left join resources_ftp rf on t.target_id = rf.ftp_id and rf.status_cd = '0'
+left join resources_oss ro on t.target_id = ro.oss_id and ro.status_cd = '0'
+left join resources_db rd1 on t.target_id = rd1.db_id and rd1.status_cd = '0'
 				where t.status_cd = '0'
 				$if TenantId != '' then
 				and t.tenant_id = #TenantId#
@@ -50,8 +55,8 @@ const (
 	`
 
 	insert_resourcesBackUp string = `
-	insert into resources_backup(id, name, exec_time, type_cd,src_id,src_object,target_id,tenant_id)
-VALUES(#Id#,#Name#,#ExecTime#,#TypeCd#,#SrcId#,#SrcObject#,#TargetId#,#TenantId#)
+	insert into resources_backup(id, name, exec_time, type_cd,src_id,src_object,target_id,tenant_id,state,back_time,target_type_cd)
+VALUES(#Id#,#Name#,#ExecTime#,#TypeCd#,#SrcId#,#SrcObject#,#TargetId#,#TenantId#,#State#,#BackTime#,#TargetTypeCd#)
 `
 
 	update_resourcesBackUp string = `
@@ -59,39 +64,45 @@ VALUES(#Id#,#Name#,#ExecTime#,#TypeCd#,#SrcId#,#SrcObject#,#TargetId#,#TenantId#
 		$if Name != '' then
 		name = #Name#,
 		$endif
-		$if OssType != '' then
-		oss_type = #OssType#,
+		$if TypeCd != '' then
+		type_cd = #TypeCd#,
 		$endif
-		$if Bucket != '' then
-		bucket = #Bucket#,
+		$if ExecTime != '' then
+		exec_time = #ExecTime#,
 		$endif
-		$if AccessKeySecret != '' then
-		access_key_secret = #AccessKeySecret#,
+		$if SrcId != '' then
+		src_id = #SrcId#,
 		$endif
-		$if AccessKeyId != '' then
-		access_key_id = #AccessKeyId#,
+		$if SrcObject != '' then
+		src_object = #SrcObject#,
 		$endif
-		$if Path != '' then
-		path = #Path#,
+		$if TargetId != '' then
+		target_id = #TargetId#,
 		$endif
-		$if Endpoint != '' then
-		endpoint = #Endpoint#,
+		$if State != '' then
+		state = #State#,
+		$endif
+		$if BackTime != '' then
+		back_time = #BackTime#,
+		$endif
+		$if TargetTypeCd != '' then
+		target_type_cd = #TargetTypeCd#,
 		$endif
 		status_cd = '0'
 		where status_cd = '0'
 		$if TenantId != '' then
 		and tenant_id = #TenantId#
 		$endif
-		$if OssId != '' then
-		and oss_id = #OssId#
+		$if Id != '' then
+		and id = #Id#
 		$endif
 	`
 	delete_resourcesBackUp string = `
-	update resources_oss  set
+	update resources_backup  set
                           status_cd = '1'
                           where status_cd = '0'
-		$if OssId != '' then
-		and oss_id = #OssId#
+		$if Id != '' then
+		and id = #Id#
 		$endif
 	`
 )

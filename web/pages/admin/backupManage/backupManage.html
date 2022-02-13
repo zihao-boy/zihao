@@ -12,22 +12,23 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入编号" v-model="ossManageInfo.conditions.ossId" class=" form-control">
+                                <input type="text" placeholder="请输入编号" v-model="backupManageInfo.conditions.id" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入名称" v-model="ossManageInfo.conditions.name" class=" form-control">
+                                <input type="text" placeholder="请输入名称" v-model="backupManageInfo.conditions.name" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <select class="custom-select" v-model="ossManageInfo.conditions.ossType">
+                            <select class="custom-select" v-model="backupManageInfo.conditions.typeCd">
                                     <option selected  value="">请选择类型</option>
-                                    <option  value="10001">阿里OSS</option>
+                                    <option  value="10001">数据库备份</option>
+                                    <option  value="10002">文件夹备份</option>
                             </select>
                         </div>
                         <div class="col-sm-1">
-                            <button type="button" class="btn btn-primary btn-sm" v-on:click="_queryOssMethod()">
+                            <button type="button" class="btn btn-primary btn-sm" v-on:click="_queryBackupMethod()">
                                     <i class="glyphicon glyphicon-search"></i> 查询
                             </button>
                         </div>
@@ -42,11 +43,11 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-title">
-                    <h5>oss信息</h5>
+                    <h5>资源备份</h5>
                     <div class="ibox-tools" style="top:10px;">
-                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddOssModal()">
+                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddBackupModal()">
                             <i class="glyphicon glyphicon-plus"></i>
-                            添加oss
+                            添加
                         </button>
                     </div>
                 </div>
@@ -57,35 +58,35 @@
                             <tr>
                                 <!-- <th class="text-center">编号</th> -->
                                 <th class="text-center">名称</th>
-                                <th class="text-center">类型</th>
-                                <th class="text-center">bucket</th>
-                                <th class="text-center">access_key_secret</th>
-                                <th class="text-center">access_key_id</th>
-                                <th class="text-center">endpoint</th>
-                                <th class="text-center">路径</th>
+                                <th class="text-center">执行时间</th>
+                                <th class="text-center">源类型</th>
+                                <th class="text-center">备份编号</th>
+                                <th class="text-center">目标类型</th>
+                                <th class="text-center">目标</th>
                                 <th class="text-center">创建时间</th>
+                                <th class="text-center">备份时间</th>
+                                <th class="text-center">状态</th>
                                 <th class="text-center">操作</th>
-
-
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="oss in ossManageInfo.osss">
-                                <!-- <td class="text-center">{{oss.ossId}}</td> -->
-                                <td class="text-center">{{oss.name}}</td>
-                                <td class="text-center">{{oss.ossType == '10001'?'阿里OSS':'其他'}}</td>
-                                <td class="text-center">{{oss.bucket}}</td>
-                                <td class="text-center">{{oss.accessKeySecret}}</td>
-                                <td class="text-center">{{oss.accessKeyId}}</td>
-                                <td class="text-center">{{oss.endpoint}}</td>
-                                <td class="text-center">{{oss.path}}</td>
-                                <td class="text-center">{{oss.createTime}}</td>
+                            <tr v-for="backup in backupManageInfo.backups">
+                                <!-- <td class="text-center">{{backup.id}}</td> -->
+                                <td class="text-center">{{backup.name}}</td>
+                                <td class="text-center">{{_getExecTime(backup.execTime)}}</td>
+                                <td class="text-center">{{backup.typeCd == '10001'?'数据库':'文件夹'}}</td>
+                                <td class="text-center">{{backup.srcName}}</td>
+                                <td class="text-center">{{_getTargetTypeCdName(backup)}}</td>
+                                <td class="text-center">{{backup.targetName}}</td>
+                                <th class="text-center">{{backup.createTime}}</th>
+                                <th class="text-center">{{backup.backTime}}</th>
+                                <td class="text-center">{{backup.state == 'STOP'?'停止':'启动'}}</td>
                                 <td class="text-center">
                                     <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" v-on:click="_openEditOssModel(oss)">修改</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openEditBackupModel(backup)">修改</button>
                                     </div>
-                                    <div class="btn-group">
-                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteOssModel(oss)">删除</button>
+                                    <div class="btn-group" v-if="backup.state == 'STOP'">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteBackupModel(backup)">删除</button>
                                     </div>
                                 </td>
 
@@ -108,8 +109,8 @@
 
 
 
-    <vc:create path="admin/addOss" callBackListener="" callBackFunction=""></vc:create>
-    <vc:create path="admin/editOss"></vc:create>
-    <vc:create path="admin/deleteOss"></vc:create>
+    <vc:create path="admin/addBackup" callBackListener="" callBackFunction=""></vc:create>
+    <vc:create path="admin/editBackup"></vc:create>
+    <vc:create path="admin/deleteBackup"></vc:create>
 
 </div>
