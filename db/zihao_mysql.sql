@@ -3600,3 +3600,60 @@ create table business_images_ext
     status_cd      varchar(2) default '0' not null,
     tenant_id      varchar(64)  not null
 );
+
+create table resources_ftp
+(
+    ftp_id        varchar(64)  primary key  not null,
+    name           varchar(64)    not null,
+    ip             varchar(128)   not null,
+    port             varchar(64)        not null,
+    username       varchar(64)    not null,
+    passwd         varchar(64)    not null,
+    tenant_id      varchar(64)    not null,
+    path      varchar(128)    not null,
+    create_time    timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2)  default '0' not null
+);
+
+create table resources_oss
+(
+    oss_id        varchar(64)  primary key  not null,
+    name           varchar(64)    not null,
+    oss_type       varchar(12) not null,
+    bucket             varchar(128)   not null,
+    access_key_secret             varchar(128)        not null,
+    access_key_id       varchar(128)    not null,
+    endpoint         varchar(128)    not null,
+    tenant_id      varchar(64)    not null,
+    path      varchar(128)    not null,
+    create_time    timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2)  default '0' not null
+);
+
+create table resources_db
+(
+    db_id             varchar(64)  not null primary key,
+    name           varchar(64)    not null,
+    ip             varchar(128) not null,
+    port           varchar(12)  not null,
+    username       varchar(64)  not null,
+    password       varchar(128) not null,
+    db_name        varchar(64)  not null,
+    tenant_id      varchar(64)    not null,
+    create_time    timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2)  default '0' not null
+);
+
+create table resources_backup
+(
+    id             varchar(64)  not null primary key,
+    name           varchar(64)    not null,
+    exec_time      varchar(64)   not null,
+    type_cd        varchar(12) not null, -- 类型 1001 数据库 2002 文件夹
+    src_id           varchar(64)  not null, -- 源ID
+    src_object       longtext  not null, -- 对象
+    target_id       varchar(64) not null,
+    tenant_id      varchar(64)    not null,
+    create_time    timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2)  default '0' not null
+);
