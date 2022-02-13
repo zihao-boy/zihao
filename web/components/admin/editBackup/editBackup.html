@@ -1,8 +1,8 @@
-<div id="editBackupModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div id="editBackupModel" class="modal fade" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body">
-                <h3 class="m-t-none m-b ">修改资源备份</h3>
+                <h3 class="m-t-none m-b ">修改</h3>
                 <div class="ibox-content">
                     <div>
                         <div>
@@ -11,50 +11,91 @@
                                 <div class="col-sm-10">
                                     <input v-model="editBackupInfo.name" type="text" placeholder="必填，请填写名称" class="form-control">
                                 </div>
+
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row" v-if="editBackupInfo.execFlag == '2'">
                                 <label class="col-sm-2 col-form-label">执行时间</label>
-                                <div class="col-sm-10">
-                                    <input v-model="editBackupInfo.execTime" type="text" placeholder="必填，请填写执行时间" class="form-control">
+                                <div class="col-sm-8">
+                                    <input v-model="editBackupInfo.execTime" type="text" placeholder="必填，请填写执行时间 crontab 表达式" class="form-control">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-white btn-sm" v-on:click="_changeExecFlag()">
+                                        {{editBackupInfo.execFlag == '1'?'高级':'普通'}}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group row" v-else>
+                                <label class="col-sm-2 col-form-label">执行时间</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select" v-model="editBackupInfo.execTime">
+                                            <option selected  disabled value="">必填，请选择执行时间</option>
+                                            <option  value="0 0 0 */1 * ?">每天0点</option>
+                                            <option  value="0 0 0 * * 1">每周周一0点</option>
+                                            <option  value="0 0 0 1 */1 ?">每月1日0点</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-white btn-sm" v-on:click="_changeExecFlag()">
+                                        {{editBackupInfo.execFlag == '2'?'高级':'普通'}}
+                                    </button>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">类型</label>
+                                <label class="col-sm-2 col-form-label">源类型</label>
                                 <div class="col-sm-10">
-                                    <select class="custom-select" v-model="editBackupInfo.typeCd">
-         <option selected  disabled value="">必填，请选择类型</option>
-         <option  value="10001">数据库备份</option>
-<option  value="10002">文件夹备份</option>
-  </select> </div>
+                                    <select class="custom-select" v-model="editBackupInfo.typeCd" @change="_changeSrcType()">
+                                            <option selected  disabled value="">必填，请选择类型</option>
+                                            <option  value="10001">数据库备份</option>
+                                            <option  value="10002">文件夹备份</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">备份编号</label>
+                                <label class="col-sm-2 col-form-label">备份源</label>
                                 <div class="col-sm-10">
                                     <select class="custom-select" v-model="editBackupInfo.srcId">
-         <option selected  disabled value="">必填，请选择备份编号</option>
-         <option  value="10001">数据库备份</option>
-<option  value="10002">文件夹备份</option>
-  </select> </div>
+                                        <option selected  disabled value="">必填，请选择备份编号</option>
+                                        <option  :value="item.id" v-for="(item,index) in editBackupInfo.srcs">{{item.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row" v-if="editBackupInfo.typeCd == '10001'">
+                                <label class="col-sm-2 col-form-label">忽略表名</label>
+                                <div class="col-sm-10">
+                                    <textarea v-model="editBackupInfo.srcObject" rows="5" placeholder="必填，请填写忽略表明逗号分隔如:c_app,c_route，如果没有忽略请填写星号 如 *" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row" v-else>
+                                <label class="col-sm-2 col-form-label">源路径</label>
+                                <div class="col-sm-10">
+                                    <input v-model="editBackupInfo.srcObject" type="text" placeholder="必填，请填写路径" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">目标类型</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="editBackupInfo.targetTypeCd" @change="_changeTargetType()">
+                                            <option selected  disabled value="">必填，请选择目标类型</option>
+                                            <option  value="001">ftp</option>
+                                            <option  value="002">oss</option>
+                                            <option  value="003">数据库</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">目标</label>
                                 <div class="col-sm-10">
                                     <select class="custom-select" v-model="editBackupInfo.targetId">
-         <option selected  disabled value="">必填，请选择目标</option>
-         <option  value="10001">数据库备份</option>
-<option  value="10002">文件夹备份</option>
-  </select> </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">备份对象</label>
-                                <div class="col-sm-10">
-                                    <textarea v-model="editBackupInfo.srcObject" cols="5" placeholder="必填，请填写备份对象" class="form-control"></textarea>
+                                        <option selected  disabled value="">必填，请选择目标</option>
+                                        <option  :value="item.id" v-for="(item,index) in editBackupInfo.targets">{{item.name}}</option>
+                                    </select>
                                 </div>
                             </div>
 
+
                             <div class="ibox-content">
-                                <button class="btn btn-primary float-right" type="button" v-on:click="editBackup()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                                <button class="btn btn-primary float-right" type="button" v-on:click="updateBackupInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
                                 <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" data-dismiss="modal">取消</button>
                             </div>
                         </div>

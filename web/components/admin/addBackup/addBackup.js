@@ -106,7 +106,7 @@
 
                 });
             },
-            _changeSrcType: function() {
+            _changeAddSrcType: function() {
                 let _srcType = $that.addBackupInfo.typeCd;
                 $that.addBackupInfo.srcId = '';
                 if (!_srcType) {
@@ -122,7 +122,7 @@
                 }
 
             },
-            _changeTargetType: function() {
+            _changeAddTargetType: function() {
                 let _targetType = $that.addBackupInfo.targetTypeCd;
                 $that.addBackupInfo.targetId = '';
                 if (!_targetType) {
@@ -137,7 +137,7 @@
                     $that._listAddDbs('target');
                 }
             },
-            _changeExecFlag: function() {
+            _changeAddExecFlag: function() {
                 let _execFlag = $that.addBackupInfo.execFlag;
                 if (_execFlag != '2') {
                     $that.addBackupInfo.execFlag = '2';

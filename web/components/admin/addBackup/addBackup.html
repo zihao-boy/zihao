@@ -19,7 +19,7 @@
                                     <input v-model="addBackupInfo.execTime" type="text" placeholder="必填，请填写执行时间 crontab 表达式" class="form-control">
                                 </div>
                                 <div class="col-sm-2">
-                                    <button type="button" class="btn btn-white btn-sm" v-on:click="_changeExecFlag()">
+                                    <button type="button" class="btn btn-white btn-sm" v-on:click="_changeAddExecFlag()">
                                         {{addBackupInfo.execFlag == '1'?'高级':'普通'}}
                                     </button>
                                 </div>
@@ -35,7 +35,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button type="button" class="btn btn-white btn-sm" v-on:click="_changeExecFlag()">
+                                    <button type="button" class="btn btn-white btn-sm" v-on:click="_changeAddExecFlag()">
                                         {{addBackupInfo.execFlag == '2'?'高级':'普通'}}
                                     </button>
                                 </div>
@@ -43,7 +43,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">源类型</label>
                                 <div class="col-sm-10">
-                                    <select class="custom-select" v-model="addBackupInfo.typeCd" @change="_changeSrcType()">
+                                    <select class="custom-select" v-model="addBackupInfo.typeCd" @change="_changeAddSrcType()">
                                             <option selected  disabled value="">必填，请选择类型</option>
                                             <option  value="10001">数据库备份</option>
                                             <option  value="10002">文件夹备份</option>
@@ -74,7 +74,7 @@
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">目标类型</label>
                                 <div class="col-sm-10">
-                                    <select class="custom-select" v-model="addBackupInfo.targetTypeCd" @change="_changeTargetType()">
+                                    <select class="custom-select" v-model="addBackupInfo.targetTypeCd" @change="_changeAddTargetType()">
                                             <option selected  disabled value="">必填，请选择目标类型</option>
                                             <option  value="001">ftp</option>
                                             <option  value="002">oss</option>
