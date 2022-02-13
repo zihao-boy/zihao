@@ -77,7 +77,7 @@ VALUES(#OssId#,#Name#,#OssType#,#Bucket#,#AccessKeySecret#,#AccessKeyId#,#Path#,
 		and tenant_id = #TenantId#
 		$endif
 		$if OssId != '' then
-		and t.oss_id = #OssId#
+		and oss_id = #OssId#
 		$endif
 	`
 	delete_resourcesOss string = `
@@ -85,7 +85,7 @@ VALUES(#OssId#,#Name#,#OssType#,#Bucket#,#AccessKeySecret#,#AccessKeyId#,#Path#,
                           status_cd = '1'
                           where status_cd = '0'
 		$if OssId != '' then
-		and t.oss_id = #OssId#
+		and oss_id = #OssId#
 		$endif
 	`
 )

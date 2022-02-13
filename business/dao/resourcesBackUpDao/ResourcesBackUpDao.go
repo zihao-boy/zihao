@@ -83,7 +83,7 @@ VALUES(#Id#,#Name#,#ExecTime#,#TypeCd#,#SrcId#,#SrcObject#,#TargetId#,#TenantId#
 		and tenant_id = #TenantId#
 		$endif
 		$if OssId != '' then
-		and t.oss_id = #OssId#
+		and oss_id = #OssId#
 		$endif
 	`
 	delete_resourcesBackUp string = `
@@ -91,7 +91,7 @@ VALUES(#Id#,#Name#,#ExecTime#,#TypeCd#,#SrcId#,#SrcObject#,#TargetId#,#TenantId#
                           status_cd = '1'
                           where status_cd = '0'
 		$if OssId != '' then
-		and t.oss_id = #OssId#
+		and oss_id = #OssId#
 		$endif
 	`
 )

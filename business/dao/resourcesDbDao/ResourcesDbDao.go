@@ -74,7 +74,7 @@ VALUES(#FtpId#,#Name#,#Ip#,#Port#,#Username#,#Password#,#DbName#,#TenantId#)
 		and tenant_id = #TenantId#
 		$endif
 		$if DbId != '' then
-		and t.db_id = #DbId#
+		and db_id = #DbId#
 		$endif
 	`
 	delete_resourcesDb string = `
@@ -82,7 +82,7 @@ VALUES(#FtpId#,#Name#,#Ip#,#Port#,#Username#,#Password#,#DbName#,#TenantId#)
                           status_cd = '1'
                           where status_cd = '0'
 	$if DbId != '' then
-	and t.db_id = #DbId#
+	and db_id = #DbId#
 	$endif
 	`
 )

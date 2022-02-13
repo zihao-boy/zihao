@@ -74,7 +74,7 @@ VALUES(#FtpId#,#Name#,#Ip#,#Port#,#Username#,#Passwd#,#Path#,#TenantId#)
 		and tenant_id = #TenantId#
 		$endif
 		$if FtpId != '' then
-		and t.ftp_id = #FtpId#
+		and ftp_id = #FtpId#
 		$endif
 	`
 	delete_resourcesFtp string = `
@@ -82,7 +82,7 @@ VALUES(#FtpId#,#Name#,#Ip#,#Port#,#Username#,#Passwd#,#Path#,#TenantId#)
                           status_cd = '1'
                           where status_cd = '0'
 		$if FtpId != '' then
-		and t.ftp_id = #FtpId#
+		and ftp_id = #FtpId#
 		$endif
 	`
 )
