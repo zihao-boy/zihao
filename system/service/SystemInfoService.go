@@ -9,6 +9,7 @@ import (
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
+	"github.com/zihao-boy/zihao/common/zips"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
@@ -420,4 +421,48 @@ func (s *SystemInfoService) ExecShell(ctx iris.Context) (interface{}, error) {
 	go shell.ExecLocalShell(hostDto.Shell)
 
 	return result.Success(), nil
+}
+
+func (s *SystemInfoService) DownloadDir(ctx iris.Context) {
+	var (
+		err     error
+		hostDto host.HostDto
+	)
+
+	if err = ctx.ReadJSON(&hostDto); err != nil {
+		fmt.Print(err)
+		return
+	}
+	if !utils.IsDir(hostDto.FileName) {
+		return
+	}
+
+	distFileName := hostDto.FileName + date.GetNowDateString() + ".zip"
+
+	zips.Zip(hostDto.FileName, distFileName)
+
+	file, err := os.Open(distFileName)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+
+	//content, err := ioutil.ReadAll(file)
+	//if err != nil {
+	//	fmt.Print(err)
+	//	return
+	//}
+	stat, _ := file.Stat()
+	responseWriter := ctx.ResponseWriter()
+	responseWriter.Header().Set("Content-Type", "application/octet-stream")
+	responseWriter.Header().Set("Content-Length", strconv.FormatInt(stat.Size(), 10))
+	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+hostDto.FileName)
+	//responseWriter.Write(content)
+	io.Copy(responseWriter, file)
+	responseWriter.Flush()
+
+	os.Remove(distFileName)
 }

@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12/context"
 	"github.com/zihao-boy/zihao/common/httpReq"
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -270,5 +272,45 @@ func ExecDownloadFile(host host.HostDto, resWriter context.ResponseWriter) {
 	io.Copy(resWriter, resp.Body)
 
 	resWriter.Flush()
+	//return data, resp.Header
+}
+
+
+func ExecDownloadFileAndSave(host host.HostDto, path string) error{
+	ip := host.Ip
+	appServiceDtoData, _ := json.Marshal(&host)
+	body := bytes.NewReader(appServiceDtoData)
+	if strings.Contains(ip, ":") {
+		ip = ip[0:strings.Index(ip, ":")]
+	}
+	ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+	resp, _ := http.Post("http://"+ip+"/app/slave/downloadDir", "application/json", body)
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if utils.IsFile(path){
+		os.Remove(path)
+	}
+
+	file ,err := os.Create(path)
+	defer func() {
+		file.Close()
+	}()
+
+	if err != nil {
+		return err
+	}
+	buf := make([]byte, 1024)
+	for {
+		n, _ := resp.Body.Read(buf)
+		if 0 == n {
+			break
+		}
+		file.WriteString(string(buf[:n]))
+	}
+
+	return nil
 	//return data, resp.Header
 }

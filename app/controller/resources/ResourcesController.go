@@ -58,6 +58,10 @@ func ResourcesControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteBackUp", hero.Handler(aus.deleteBackUp))
 
+	adinMenu.Post("/startBackUp", hero.Handler(aus.startBackUp))
+
+	adinMenu.Post("/stopBackUp", hero.Handler(aus.stopBackUp))
+
 }
 
 /**
@@ -196,6 +200,24 @@ func (aus *ResourcesController) updateBackUp(ctx iris.Context) {
 */
 func (aus *ResourcesController) deleteBackUp(ctx iris.Context) {
 	reslut := aus.resourcesBackUpService.DeleteResourcesBackUps(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *ResourcesController) startBackUp(ctx iris.Context) {
+	reslut := aus.resourcesBackUpService.StartResourcesBackUps(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *ResourcesController) stopBackUp(ctx iris.Context) {
+	reslut := aus.resourcesBackUpService.StopResourcesBackUps(ctx)
 
 	ctx.JSON(reslut)
 }

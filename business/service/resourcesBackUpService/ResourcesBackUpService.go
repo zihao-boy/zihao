@@ -5,6 +5,7 @@ import (
 	hostDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/business/dao/resourcesBackUpDao"
 	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/crontab"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/resources"
@@ -181,4 +182,58 @@ func (resourcesBackUpService *ResourcesBackUpService) freshBackUpObjectName(dtos
 	}
 
 	return dtos
+}
+
+// 启动资源备份
+
+func (resourcesBackUpService *ResourcesBackUpService) StartResourcesBackUps(ctx iris.Context) result.ResultDto {
+	var (
+		err                error
+		resourcesBackUpDto resources.ResourcesBackUpDto
+		backUpJob  crontab.BackUpJob
+	)
+	if err = ctx.ReadJSON(&resourcesBackUpDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	//resourcesBackUpDto.Id = ctx.FormValue("id")
+
+	resourcesBackUpDto.TenantId = user.TenantId
+	resourcesBackUpDto.State = resources.Back_up_state_START
+
+	err = resourcesBackUpService.resourcesBackUpDao.UpdateResourcesBackUp(resourcesBackUpDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	backUpJob.Start()
+
+	return result.Success()
+}
+
+// 停止资源备份
+
+func (resourcesBackUpService *ResourcesBackUpService) StopResourcesBackUps(ctx iris.Context) result.ResultDto {
+	var (
+		err                error
+		resourcesBackUpDto resources.ResourcesBackUpDto
+		backUpJob  crontab.BackUpJob
+	)
+	if err = ctx.ReadJSON(&resourcesBackUpDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	//resourcesBackUpDto.Id = ctx.FormValue("id")
+
+	resourcesBackUpDto.TenantId = user.TenantId
+	resourcesBackUpDto.State = resources.Back_up_state_STOP
+
+	err = resourcesBackUpService.resourcesBackUpDao.UpdateResourcesBackUp(resourcesBackUpDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	backUpJob.Stop()
+
+	return result.Success()
 }

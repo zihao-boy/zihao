@@ -43,6 +43,8 @@ func SlaveControllerRouter(party iris.Party) {
 
 	adinUser.Post("/downloadFile", hero.Handler(aus.downloadFile))
 
+	adinUser.Post("/downloadDir", hero.Handler(aus.downloadDir))
+
 	adinUser.Post("/execShell", hero.Handler(aus.execShell))
 
 
@@ -116,6 +118,11 @@ func (aus *SlaveController) uploadFile(ctx iris.Context) {
 //开启容器
 func (aus *SlaveController) downloadFile(ctx iris.Context) {
 	 aus.systenInfoService.DownloadFile(ctx)
+}
+
+//开启容器
+func (aus *SlaveController) downloadDir(ctx iris.Context) {
+	aus.systenInfoService.DownloadDir(ctx)
 }
 
 //开启容器

@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func ExportSqlFile(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
+func ExportSqlFile(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) result.ResultDto {
 	db, err := initDbLink(dblinkDto)
 	if err != nil {
 		return result.Error(err.Error())

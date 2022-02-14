@@ -82,6 +82,12 @@
                                 <th class="text-center">{{backup.backTime}}</th>
                                 <td class="text-center">{{backup.state == 'STOP'?'停止':'启动'}}</td>
                                 <td class="text-center">
+                                    <div class="btn-group" v-if="backup.state == 'STOP'">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openStartModel(backup)">启动</button>
+                                    </div>
+                                    <div class="btn-group" v-else>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openStopModel(backup)">停止</button>
+                                    </div>
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_openEditBackupModel(backup)">修改</button>
                                     </div>
