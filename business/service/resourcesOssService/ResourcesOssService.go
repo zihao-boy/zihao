@@ -5,13 +5,18 @@ import (
 	hostDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/business/dao/resourcesOssDao"
 	"github.com/zihao-boy/zihao/common/constants"
+	"github.com/zihao-boy/zihao/common/oss"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/resources"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/user"
+	"path"
+	"path/filepath"
 	"strconv"
+	"strings"
 )
 
+const maxSize = 1000 * iris.MB // 第二种方法
 type ResourcesOssService struct {
 	resourcesOssDao resourcesOssDao.ResourcesOssDao
 	hostDao         hostDao.HostDao
@@ -155,4 +160,127 @@ func (resourcesOssService *ResourcesOssService) DeleteResourcesOsss(ctx iris.Con
 
 	return result.SuccessData(resourcesOssDto)
 
+}
+
+func (resourcesOssService *ResourcesOssService) ListOssFiles(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		resourcesOssDto = resources.ResourcesOssDto{
+			OssId:    ctx.URLParam("ossId"),
+			TenantId: user.TenantId,
+		}
+	)
+	resourcesOssDtos, err := resourcesOssService.resourcesOssDao.GetResourcesOsss(resourcesOssDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(resourcesOssDtos) < 1 {
+		return result.Error("oss不存在")
+	}
+
+	resourcesOssDto = *resourcesOssDtos[0]
+	resourcesOssDto.CurPath = ctx.URLParam("curPath")
+	resultDto := oss.ListALiOss(resourcesOssDto)
+	return resultDto
+}
+
+func (resourcesOssService *ResourcesOssService) RemoveOssFile(ctx iris.Context) interface{} {
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		resourcesOssDto  resources.ResourcesOssDto
+	)
+
+
+	if err := ctx.ReadJSON(&resourcesOssDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+	curPath := resourcesOssDto.CurPath
+	fileGroupName := resourcesOssDto.FileGroupName
+
+	resourcesOssDto.TenantId = user.TenantId
+
+	resourcesOssDtos, err := resourcesOssService.resourcesOssDao.GetResourcesOsss(resourcesOssDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(resourcesOssDtos) < 1 {
+		return result.Error("oss不存在")
+	}
+	resourcesOssDto = *resourcesOssDtos[0]
+	resourcesOssDto.CurPath = curPath
+	resourcesOssDto.FileGroupName = fileGroupName
+	err = oss.DeleteALiOss(resourcesOssDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	return result.Success()
+}
+
+func (resourcesOssService *ResourcesOssService) UploadOssFile(ctx iris.Context) interface{} {
+	ctx.SetMaxRequestBodySize(maxSize)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	file, fileHeader, err := ctx.FormFile("uploadFile")
+	defer file.Close()
+	var (
+		resourcesOssDto = resources.ResourcesOssDto{
+			OssId:    ctx.FormValue("ossId"),
+			TenantId: user.TenantId,
+		}
+	)
+	resourcesOssDtos, err := resourcesOssService.resourcesOssDao.GetResourcesOsss(resourcesOssDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(resourcesOssDtos) < 1 {
+		return result.Error("oss不存在")
+	}
+	resourcesOssDto = *resourcesOssDtos[0]
+	fileName := fileHeader.Filename
+	if strings.Contains(fileName, "/") {
+		fileName = filepath.Base(fileName)
+	}
+	resourcesOssDto.CurPath = path.Join(ctx.FormValue("curPath"), fileName)
+	err = oss.SaveALiOssByReader(file, resourcesOssDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.Success()
+}
+
+func (resourcesOssService *ResourcesOssService) DownloadOssFile(ctx iris.Context) {
+
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	resourcesOssDto := resources.ResourcesOssDto{
+		OssId:    ctx.URLParam("ossId"),
+		TenantId: user.TenantId,
+	}
+
+	resourcesOssDtos, err := resourcesOssService.resourcesOssDao.GetResourcesOsss(resourcesOssDto)
+
+	if err != nil {
+		ctx.WriteString(err.Error())
+	}
+
+	if len(resourcesOssDtos) < 1 {
+		ctx.WriteString("主机不存在")
+	}
+	resourcesOssDto = *resourcesOssDtos[0]
+
+	responseWriter := ctx.ResponseWriter()
+	resourcesOssDto.CurPath = path.Join(ctx.URLParam("curPath"), ctx.URLParam("fileName"))
+	//hostDto.CurPath = ctx.URLParam("curPath")
+	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+ctx.URLParam("fileName"))
+	oss.DownloadALiOssByReader( responseWriter,resourcesOssDto)
 }

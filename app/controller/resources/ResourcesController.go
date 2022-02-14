@@ -62,6 +62,14 @@ func ResourcesControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/stopBackUp", hero.Handler(aus.stopBackUp))
 
+	adinMenu.Get("/listOssFiles", hero.Handler(aus.listOssFiles))
+
+	adinMenu.Post("/removeOssFile", hero.Handler(aus.removeOssFile))
+
+	adinMenu.Post("/uploadOssFile", hero.Handler(aus.uploadOssFile))
+
+	adinMenu.Get("/downloadOssFile", hero.Handler(aus.downloadOssFile))
+
 }
 
 /**
@@ -132,6 +140,40 @@ func (aus *ResourcesController) deleteOss(ctx iris.Context) {
 	reslut := aus.resourcesOssService.DeleteResourcesOsss(ctx)
 
 	ctx.JSON(reslut)
+}
+
+/**
+查询 主机组
+*/
+func (aus *ResourcesController) listOssFiles(ctx iris.Context) {
+	reslut := aus.resourcesOssService.ListOssFiles(ctx)
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *ResourcesController) removeOssFile(ctx iris.Context) {
+	reslut := aus.resourcesOssService.RemoveOssFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *ResourcesController) uploadOssFile(ctx iris.Context) {
+	reslut := aus.resourcesOssService.UploadOssFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *ResourcesController) downloadOssFile(ctx iris.Context) {
+	aus.resourcesOssService.DownloadOssFile(ctx)
+
 }
 
 /**
@@ -221,5 +263,3 @@ func (aus *ResourcesController) stopBackUp(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
-
-

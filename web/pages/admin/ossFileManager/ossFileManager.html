@@ -1,0 +1,62 @@
+<div>
+    <div class="row white-bg padding-xs padding-top padding-bottom margin-xs">
+        <div class="col-md-4 padding-0 margin-0">
+            <input v-model="ossFileManagerInfo.curPath" type="text" @keyup.enter="_listFiles()" class="form-control">
+        </div>
+        <div class="col-md-2 padding-left-xs ">
+            <button class="btn btn-white" type="button" v-on:click="_parentDir()">上级</button>
+            <button class="btn btn-white" type="button" v-on:click="_goBack()">返回</button>
+            <span style="font-size:18px" class="margin-left">当前oss : {{ossFileManagerInfo.ossName}}</span>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-white float-right margin-right-xs" type="button" v-on:click="openNewFile('d')">新建文件夹</button>
+            <button class="btn btn-white float-right  margin-right-xs" type="button" v-on:click="_openFiles('f')">上传文件</button>
+            <button class="btn btn-white float-right  margin-right-xs" type="button" v-on:click="_openFiles('d')">上传文件夹</button>
+        </div>
+    </div>
+
+    <div class="white-bg padding">
+        <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+            <thead>
+                <tr>
+                    <th class="text-left" width="40%">名称</th>
+                    <th class="text-left">大小</th>
+                    <th class="text-left">修改时间</th>
+                    <th class="text-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="file in ossFileManagerInfo.files" style="cursor:pointer;">
+                    <td class="text-left" @dblclick="_changeDir(file)" v-if="file.groupName !='d'"><img src="/img/file.png"> {{file.name}}</td>
+                    <td class="text-left" @dblclick="_changeDir(file)" v-else><img src="/img/folder.png"> {{file.name}}</td>
+                    <td class="text-left" @dblclick="_changeDir(file)">{{file.size}}</td>
+                    <td class="text-left" @dblclick="_changeDir(file)">{{file.lastModified}}</td>
+                    <td class="text-center">
+                        <div class="btn-group" v-if="file.groupName !='d'">
+                            <button class="btn-white btn btn-xs" v-on:click="_downLoadFile(file)">下载</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn-white btn btn-xs" v-on:click="_deleteFileOrDir(file)">删除</button>
+                        </div>
+                        <!-- <div class="btn-group">
+                            <button class="btn-white btn btn-xs" v-on:click="_openRenameFileModel(file)">重命名</button>
+                        </div> -->
+                    </td>
+
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <ul class="pagination float-right"></ul>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <vc:create path="admin/deleteOssFileOrDir"></vc:create>
+    <vc:create path="admin/newFile"></vc:create>
+    <!-- <vc:create path="admin/renameFile"></vc:create> -->
+    <!-- <vc:create path="admin/editFile"></vc:create> -->
+    <vc:create path="admin/uploadOssFiles"></vc:create>
+</div>

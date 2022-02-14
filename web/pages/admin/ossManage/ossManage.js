@@ -78,6 +78,9 @@
                 } else {
                     vc.component.ossManageInfo.moreCondition = true;
                 }
+            },
+            _openOssFile: function(_oss) {
+                vc.jumpToPage('/index.html#/pages/admin/ossFileManager?ossId=' + _oss.ossId + "&ossName=" + _oss.name)
             }
 
 

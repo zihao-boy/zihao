@@ -5,4 +5,5 @@ type LsDto struct {
 	Name      string `json:"name"`
 	Privilege string `json:"privilege"`
 	Size      int64  `json:"size"`
+	LastModified string `json:"lastModified"` // Object last modified time
 }
