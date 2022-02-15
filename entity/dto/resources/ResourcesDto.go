@@ -28,6 +28,8 @@ type ResourcesFtpDto struct {
 	CreateTime string `json:"createTime" sql:"-"`
 	StatusCd   string `json:"statusCd" sql:"-"`
 	TenantId   string `json:"tenantId" sql:"-"`
+	CurPath string `json:"curPath"`
+	FileGroupName string `json:"fileGroupName"`
 }
 
 // oss struct

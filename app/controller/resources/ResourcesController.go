@@ -70,6 +70,13 @@ func ResourcesControllerRouter(party iris.Party) {
 
 	adinMenu.Get("/downloadOssFile", hero.Handler(aus.downloadOssFile))
 
+	adinMenu.Get("/listFtpFiles", hero.Handler(aus.listFtpFiles))
+
+	adinMenu.Post("/removeFtpFile", hero.Handler(aus.removeFtpFile))
+
+	adinMenu.Post("/uploadFtpFile", hero.Handler(aus.uploadFtpFile))
+
+	adinMenu.Get("/downloadFtpFile", hero.Handler(aus.downloadFtpFile))
 }
 
 /**
@@ -106,6 +113,42 @@ func (aus *ResourcesController) deleteFtp(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+
+/**
+查询 主机组
+*/
+func (aus *ResourcesController) listFtpFiles(ctx iris.Context) {
+	reslut := aus.resourcesFtpService.ListFtpFiles(ctx)
+	ctx.JSON(reslut)
+}
+
+/**
+添加 主机组
+*/
+func (aus *ResourcesController) removeFtpFile(ctx iris.Context) {
+	reslut := aus.resourcesFtpService.RemoveFtpFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *ResourcesController) uploadFtpFile(ctx iris.Context) {
+	reslut := aus.resourcesFtpService.UploadFtpFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+删除 主机组
+*/
+func (aus *ResourcesController) downloadFtpFile(ctx iris.Context) {
+	aus.resourcesFtpService.DownloadFtpFile(ctx)
+
+}
+
 
 /**
 查询 主机组

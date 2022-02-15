@@ -284,3 +284,4 @@ func (resourcesOssService *ResourcesOssService) DownloadOssFile(ctx iris.Context
 	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+ctx.URLParam("fileName"))
 	oss.DownloadALiOssByReader( responseWriter,resourcesOssDto)
 }
+

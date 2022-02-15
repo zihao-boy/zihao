@@ -78,6 +78,9 @@
                 } else {
                     vc.component.ftpManageInfo.moreCondition = true;
                 }
+            },
+            _openFtpFile: function(_ftp) {
+                vc.jumpToPage('/index.html#/pages/admin/ftpFileManager?ftpId=' + _ftp.ftpId + "&ftpName=" + _ftp.name)
             }
 
 
