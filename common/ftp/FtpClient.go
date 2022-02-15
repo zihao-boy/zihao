@@ -158,8 +158,8 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 		lsrs := strings.Split(fil, ";")
 		if len(lsrs) == 4 {
 			name := strings.Trim(lsrs[3], " ")
-			name = strings.ReplaceAll(name,"\r","")
-			name = strings.ReplaceAll(name,"\n","")
+			name = strings.ReplaceAll(name, "\r", "")
+			name = strings.ReplaceAll(name, "\n", "")
 			lsDto := ls.LsDto{
 				GroupName:    "d",
 				Name:         name,
@@ -176,8 +176,8 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 		if len(lsrs) == 5 {
 			size, _ := strconv.ParseInt(strings.Split(lsrs[1], "=")[1], 10, 64)
 			name := strings.Trim(lsrs[4], " ")
-			name = strings.ReplaceAll(name,"\r","")
-			name = strings.ReplaceAll(name,"\n","")
+			name = strings.ReplaceAll(name, "\r", "")
+			name = strings.ReplaceAll(name, "\n", "")
 			lsDto := ls.LsDto{
 				GroupName:    "-",
 				Name:         name,
@@ -216,13 +216,13 @@ func UploadFileByReader(f multipart.File, resourcesFtpDto resources.ResourcesFtp
 		path = "/" + resourcesFtpDto.CurPath
 	}
 
-	if strings.Contains(path,"/"){
+	if strings.Contains(path, "/") {
 		pos := strings.LastIndex(path, "/")
 		dirStr := path[0:pos]
-		dirs:= strings.Split(dirStr,"/")
+		dirs := strings.Split(dirStr, "/")
 		for i := 0; i < len(dirs); i++ {
 			dir := dirs[i]
-			if utils.IsEmpty(dir) || "/" == dir{
+			if utils.IsEmpty(dir) || "/" == dir {
 				continue
 			}
 
@@ -236,8 +236,6 @@ func UploadFileByReader(f multipart.File, resourcesFtpDto resources.ResourcesFtp
 		}
 	}
 
-
-
 	if err := ftp.Stor(path, f); err != nil {
 		return err
 	}
@@ -245,5 +243,37 @@ func UploadFileByReader(f multipart.File, resourcesFtpDto resources.ResourcesFtp
 }
 
 func DeleteFile(resourcesFtpDto resources.ResourcesFtpDto) error {
+	var (
+		ftp *goftp.FTP
+		err error
+	)
+	// connect ftp server
+	if ftp, err = goftp.Connect(resourcesFtpDto.Ip + ":" + resourcesFtpDto.Port); err != nil {
+		return err
+	}
+
+	defer ftp.Close()
+
+	if err = ftp.Login(resourcesFtpDto.Username, resourcesFtpDto.Passwd); err != nil {
+		return err
+	}
+
+	var path string
+
+	if strings.HasPrefix(resourcesFtpDto.CurPath, "/") {
+		path = resourcesFtpDto.CurPath
+	} else {
+		path = "/" + resourcesFtpDto.CurPath
+	}
+	if resourcesFtpDto.FileGroupName == "-"{
+		err = ftp.Dele(path)
+	}else {
+		err = ftp.Rmd(path)
+	}
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

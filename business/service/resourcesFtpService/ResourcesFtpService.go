@@ -210,7 +210,7 @@ func (resourcesFtpService *ResourcesFtpService) RemoveFtpFile(ctx iris.Context) 
 	}
 
 	if len(resourcesFtpDtos) < 1 {
-		return result.Error("oss不存在")
+		return result.Error("ftp不存在")
 	}
 	resourcesFtpDto = *resourcesFtpDtos[0]
 	resourcesFtpDto.CurPath = curPath

@@ -20,7 +20,7 @@
         methods: {
             deleteFileOrDir: function() {
                 vc.http.apiPost(
-                    '/resources/removeOssFile',
+                    '/resources/removeFtpFile',
                     JSON.stringify(vc.component.deleteFileOrDirInfo), {
                         emulateJSON: true
                     },
@@ -32,7 +32,7 @@
                             //关闭model
                             $('#deleteFileOrDirModel').modal('hide');
                             vc.component.closeDeleteFileOrDirModel();
-                            vc.emit('ossFileManager', 'listFiles', {});
+                            vc.emit('ftpFileManager', 'listFiles', {});
                             return;
                         }
                         vc.toast(_json.msg);
