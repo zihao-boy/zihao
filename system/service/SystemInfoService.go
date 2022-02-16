@@ -184,6 +184,15 @@ func (s *SystemInfoService) ListFiles(ctx iris.Context) (interface{}, error) {
 		return result.Error("解析入参失败"), err
 	}
 
+	if !utils.IsDir(hostDto.CurPath) && utils.IsFile(hostDto.CurPath) {
+		pos := strings.LastIndex(hostDto.CurPath, "/")
+		if pos < 1 {
+			hostDto.CurPath = "/"
+		} else {
+			hostDto.CurPath = hostDto.CurPath[0:pos]
+		}
+	}
+
 	dir, err := ioutil.ReadDir(hostDto.CurPath)
 
 	var lss = make([]ls.LsDto, 0)
@@ -300,6 +309,10 @@ func (s *SystemInfoService) ListFileContext(ctx iris.Context) (interface{}, inte
 
 	if err = ctx.ReadJSON(&hostDto); err != nil {
 		return result.Error("解析入参失败"), err
+	}
+
+	if !utils.IsFile(hostDto.FileName) {
+		return result.Error("不是有效的文件"), err
 	}
 
 	file, err := os.Open(hostDto.FileName)

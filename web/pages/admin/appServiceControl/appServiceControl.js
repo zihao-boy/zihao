@@ -24,7 +24,9 @@
                 imagesId: '',
                 verId: '',
                 state: '',
-                asDesc: ''
+                asDesc: '',
+                asDeployType: '',
+                asDeployId: ''
             }
         },
         _initMethod: function() {
@@ -41,7 +43,9 @@
             changeTab: function(_tab) {
                 $that.appServiceControlInfo._currentTab = _tab;
                 vc.emit(_tab, 'switch', {
-                    asId: $that.appServiceControlInfo.asId
+                    asId: $that.appServiceControlInfo.asId,
+                    asDeployId: $that.appServiceControlInfo.asDeployId,
+                    asDeployType: $that.appServiceControlInfo.asDeployType,
                 })
             },
             _clearData: function() {
@@ -60,7 +64,9 @@
                     imagesId: '',
                     verId: '',
                     state: '',
-                    asDesc: ''
+                    asDesc: '',
+                    asDeployType: '',
+                    asDeployId: ''
                 }
             },
             _listAppServices: function() {

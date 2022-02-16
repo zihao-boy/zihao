@@ -8,6 +8,11 @@
             chooseHostInfo: {
                 hosts: [],
                 _currentHostName: '',
+                condition: {
+                    name: '',
+                    hostId: '',
+                    groupId: ''
+                }
             }
         },
         _initMethod: function() {},
@@ -15,17 +20,17 @@
             vc.on('chooseHost', 'openChooseHostModel', function(_param) {
                 $('#chooseHostModel').modal('show');
                 vc.component._refreshChooseHostInfo();
+                vc.copyObject(_param, $that.chooseHostInfo.condition);
                 vc.component._loadAllHostInfo(1, 10, '');
             });
         },
         methods: {
             _loadAllHostInfo: function(_page, _row, _name) {
-                var param = {
-                    params: {
-                        page: _page,
-                        row: _row,
-                        name: _name
-                    }
+                let _condition = $that.chooseHostInfo.condition;
+                _condition.page = _page;
+                _condition.row = _row;
+                let param = {
+                    params: _condition
                 };
 
                 //发送get请求

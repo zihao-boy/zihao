@@ -194,7 +194,7 @@ func ExecListFileContext(host host.HostDto) (result.ResultDto, error) {
 
 	resp, err := httpReq.Post("http://"+ip+"/app/slave/listFileContext", data, nil)
 	if err != nil {
-		return resultDto, err
+		return result.Error(err.Error()), err
 	}
 
 	json.Unmarshal([]byte(resp), &resultDto)
