@@ -104,7 +104,7 @@
             },
             openNewFile: function(isFile) {
                 let _curPath = $that.ftpFileManagerInfo.curPath;
-                vc.emit('newFile', 'openNewFileModal', {
+                vc.emit('newFtpFile', 'openNewFileModal', {
                     ftpId: $that.ftpFileManagerInfo.ftpId,
                     fileGroupName: isFile,
                     curPath: _curPath
@@ -113,7 +113,7 @@
 
             _openRenameFileModel: function(_file) {
                 let _curPath = $that.ftpFileManagerInfo.curPath;
-                vc.emit('renameFile', 'openRenameFileModal', {
+                vc.emit('renameFtpFile', 'openRenameFileModal', {
                     ftpId: $that.ftpFileManagerInfo.ftpId,
                     fileGroupName: _file.groupName,
                     fileName: _file.name,

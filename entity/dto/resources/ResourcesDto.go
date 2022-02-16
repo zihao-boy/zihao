@@ -30,6 +30,7 @@ type ResourcesFtpDto struct {
 	TenantId   string `json:"tenantId" sql:"-"`
 	CurPath string `json:"curPath"`
 	FileGroupName string `json:"fileGroupName"`
+	NewName string `json:"newName"`
 }
 
 // oss struct

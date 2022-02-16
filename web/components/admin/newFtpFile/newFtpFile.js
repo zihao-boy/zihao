@@ -3,7 +3,7 @@
     vc.extends({
         data: {
             newFileInfo: {
-                hostId: '',
+                ftpId: '',
                 fileName: '',
                 fileGroupName: '',
                 curPath: ''
@@ -13,7 +13,7 @@
 
         },
         _initEvent: function() {
-            vc.on('newFile', 'openNewFileModal', function(_params) {
+            vc.on('newFtpFile', 'openNewFileModal', function(_params) {
                 vc.component.refreshNewFileInfo();
                 $('#newFileModel').modal('show');
                 vc.copyObject(_params, vc.component.newFileInfo);
@@ -24,14 +24,16 @@
                 let _curPath = $that.newFileInfo.curPath;
                 if (!_curPath.endsWith('/')) {
                     _curPath += ('/' + $that.newFileInfo.fileName);
+                } else {
+                    _curPath += ($that.newFileInfo.fileName);
                 }
                 let _data = {
-                    hostId: $that.newFileInfo.hostId,
-                    fileName: _curPath,
+                    ftpId: $that.newFileInfo.ftpId,
+                    curPath: _curPath,
                     fileGroupName: $that.newFileInfo.fileGroupName,
                 }
                 vc.http.apiPost(
-                    '/host/newFile',
+                    '/resources/newFtpFile',
                     JSON.stringify(_data), {
                         emulateJSON: true
                     },
@@ -41,7 +43,7 @@
                         if (_json.code == 0) {
                             //关闭model
                             $('#newFileModel').modal('hide');
-                            vc.emit('fileManager', 'listFiles', {});
+                            vc.emit('ftpFileManager', 'listFiles', {});
                             return;
                         }
                         vc.toast(_json.msg);
@@ -54,7 +56,7 @@
             },
             refreshNewFileInfo: function() {
                 vc.component.newFileInfo = {
-                    hostId: '',
+                    ftpId: '',
                     fileName: '',
                     fileGroupName: '',
                     curPath: '',

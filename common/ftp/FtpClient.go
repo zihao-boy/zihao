@@ -1,6 +1,7 @@
 package ftp
 
 import (
+	"fmt"
 	"github.com/kataras/iris/v12/context"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
@@ -79,20 +80,31 @@ func DownloadFile(resWriter context.ResponseWriter, resourcesFtpDto resources.Re
 
 	var path string
 
-	if strings.HasPrefix(resourcesFtpDto.Path, "/") {
-		path = resourcesFtpDto.Path
+	if strings.HasPrefix(resourcesFtpDto.CurPath, "/") {
+		path = resourcesFtpDto.CurPath
 	} else {
-		path = "/" + resourcesFtpDto.Path
+		path = "/" + resourcesFtpDto.CurPath
 	}
 	resWriter.Header().Set("Content-Type", "application/octet-stream")
 
-	err = ftp.Walk(path, func(path string, info os.FileMode, err error) error {
-		_, err = ftp.Retr(path, func(r io.Reader) error {
-			io.Copy(resWriter, r)
-			return err
-		})
-		return nil
+	//err = ftp.Walk(path, func(path string, info os.FileMode, err error) error {
+	//	_, err = ftp.Retr(path, func(r io.Reader) error {
+	//		io.Copy(resWriter, r)
+	//		return err
+	//	})
+	//	return nil
+	//})
+
+	s,err := ftp.Retr(path, func(r io.Reader) error {
+		io.Copy(resWriter, r)
+		return err
 	})
+	if err != nil{
+		fmt.Println(err.Error())
+		return err
+	}
+
+	fmt.Println(s)
 	resWriter.Flush()
 	return nil
 }
@@ -178,6 +190,84 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 	}
 	return result.SuccessData(lss)
 }
+
+
+
+
+func NewFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
+	var (
+		ftp *goftp.FTP
+		err error
+	)
+	// connect ftp server
+	if ftp, err = goftp.Connect(resourcesFtpDto.Ip + ":" + resourcesFtpDto.Port); err != nil {
+		return err
+	}
+
+	defer ftp.Close()
+
+	if err = ftp.Login(resourcesFtpDto.Username, resourcesFtpDto.Passwd); err != nil {
+		return err
+	}
+
+	var path string
+
+	if strings.HasPrefix(resourcesFtpDto.CurPath, "/") {
+		path = resourcesFtpDto.CurPath
+	} else {
+		path = "/" + resourcesFtpDto.CurPath
+	}
+	if resourcesFtpDto.FileGroupName == "-" {
+		//err = ftp.(path)
+	} else {
+		err = ftp.Mkd(path)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+// rename file or dir
+
+func RenameFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
+	var (
+		ftp *goftp.FTP
+		err error
+	)
+	// connect ftp server
+	if ftp, err = goftp.Connect(resourcesFtpDto.Ip + ":" + resourcesFtpDto.Port); err != nil {
+		return err
+	}
+
+	defer ftp.Close()
+
+	if err = ftp.Login(resourcesFtpDto.Username, resourcesFtpDto.Passwd); err != nil {
+		return err
+	}
+
+	//var path string
+	//
+	//if strings.HasPrefix(resourcesFtpDto.CurPath, "/") {
+	//	path = resourcesFtpDto.CurPath
+	//} else {
+	//	path = "/" + resourcesFtpDto.CurPath
+	//}
+	if resourcesFtpDto.FileGroupName == "-" {
+		//err = ftp.(path)
+		err = ftp.Rename(resourcesFtpDto.Name,resourcesFtpDto.NewName)
+	} else {
+		err = ftp.Rename(resourcesFtpDto.Name,resourcesFtpDto.NewName)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 
 func UploadFileByReader(f multipart.File, resourcesFtpDto resources.ResourcesFtpDto) error {
 	var (

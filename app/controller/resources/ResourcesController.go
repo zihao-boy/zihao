@@ -77,6 +77,9 @@ func ResourcesControllerRouter(party iris.Party) {
 	adinMenu.Post("/uploadFtpFile", hero.Handler(aus.uploadFtpFile))
 
 	adinMenu.Get("/downloadFtpFile", hero.Handler(aus.downloadFtpFile))
+
+	adinMenu.Post("/newFtpFile", hero.Handler(aus.newFtpFile))
+	adinMenu.Post("/renameFtpFile", hero.Handler(aus.renameFtpFile))
 }
 
 /**
@@ -147,6 +150,25 @@ func (aus *ResourcesController) uploadFtpFile(ctx iris.Context) {
 func (aus *ResourcesController) downloadFtpFile(ctx iris.Context) {
 	aus.resourcesFtpService.DownloadFtpFile(ctx)
 
+}
+
+/**
+修改 主机组
+*/
+func (aus *ResourcesController) newFtpFile(ctx iris.Context) {
+	reslut := aus.resourcesFtpService.NewFtpFile(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+修改 主机组
+*/
+func (aus *ResourcesController) renameFtpFile(ctx iris.Context) {
+	reslut := aus.resourcesFtpService.RenameFtpFile(ctx)
+
+	ctx.JSON(reslut)
 }
 
 

@@ -282,3 +282,76 @@ func (resourcesFtpService *ResourcesFtpService) DownloadFtpFile(ctx iris.Context
 	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+ctx.URLParam("fileName"))
 	ftp.DownloadFile( responseWriter,resourcesFtpDto)
 }
+
+func (resourcesFtpService *ResourcesFtpService) NewFtpFile(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		resourcesFtpDto resources.ResourcesFtpDto
+	)
+
+	if err := ctx.ReadJSON(&resourcesFtpDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+	curPath := resourcesFtpDto.CurPath
+	fileGroupName := resourcesFtpDto.FileGroupName
+
+	resourcesFtpDto.TenantId = user.TenantId
+
+	resourcesFtpDtos, err := resourcesFtpService.resourcesFtpDao.GetResourcesFtps(resourcesFtpDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(resourcesFtpDtos) < 1 {
+		return result.Error("ftp不存在")
+	}
+	resourcesFtpDto = *resourcesFtpDtos[0]
+	resourcesFtpDto.CurPath = curPath
+	resourcesFtpDto.FileGroupName = fileGroupName
+	err = ftp.NewFileOrDir(resourcesFtpDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	return result.Success()
+}
+
+func (resourcesFtpService *ResourcesFtpService) RenameFtpFile(ctx iris.Context) interface{} {
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+
+	var (
+		resourcesFtpDto resources.ResourcesFtpDto
+	)
+
+	if err := ctx.ReadJSON(&resourcesFtpDto); err != nil {
+		return result.Error("解析入参失败" + err.Error())
+	}
+	name := resourcesFtpDto.Name
+	newName := resourcesFtpDto.NewName
+	fileGroupName := resourcesFtpDto.FileGroupName
+
+	resourcesFtpDto.TenantId = user.TenantId
+	resourcesFtpDto.Name = ""
+
+	resourcesFtpDtos, err := resourcesFtpService.resourcesFtpDao.GetResourcesFtps(resourcesFtpDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if len(resourcesFtpDtos) < 1 {
+		return result.Error("ftp不存在")
+	}
+	resourcesFtpDto = *resourcesFtpDtos[0]
+	resourcesFtpDto.Name = name
+	resourcesFtpDto.NewName = newName
+	resourcesFtpDto.FileGroupName = fileGroupName
+	err = ftp.RenameFileOrDir(resourcesFtpDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	return result.Success()
+}
+
+
