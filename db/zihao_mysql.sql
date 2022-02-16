@@ -3540,14 +3540,16 @@ create table log_trace
 
 create table log_trace_annotations
 (
-    id        varchar(64)  not null primary key,
-    span_id      varchar(64)  not null,
-    service_name        varchar(64)  not null,
-    ip      varchar(64)  not null,
-    port  varchar(20)  not null,
-    value varchar(12) not null ,
-    create_time timestamp    default CURRENT_TIMESTAMP not null,
-    status_cd   varchar(2)   default '0' not null
+    id           varchar(64) not null
+        primary key,
+    span_id      varchar(64) not null,
+    service_name varchar(64) not null,
+    ip           varchar(64) not null,
+    port         varchar(20) not null,
+    value        varchar(12) not null,
+    timestamp   varchar(20) not null,
+    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2) default '0' not null
 );
 
 create table log_trace_param

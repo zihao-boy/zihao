@@ -133,5 +133,27 @@ create table resources_backup
     status_cd   varchar(2) default '0' not null
 );
 
+-- 2022-02-16 加入服务追踪
 
+INSERT INTO `menu_group` VALUES ('800201904013', '服务追踪', 'fa fa-globe', '', '10', '服务追踪', '2019-04-01 07:55:51', '0', 'P_WEB');
+
+INSERT INTO `menu` VALUES ('700201904032', '调用链', '800201904013', '/index.html#/pages/admin/appPublisherManage', '1', '调用链', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904027', '调用链', '调用链', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904032');
+INSERT INTO `privilege_rel` VALUES ('50', '500201904027', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('51', '500201904027', '600201904002', '2019-04-01 08:18:29', '0');
+
+INSERT INTO `menu` VALUES ('700201904033', '服务耗时', '800201904013', '/index.html#/pages/admin/appPublisherManage', '2', '服务耗时', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904028', '服务耗时', '服务耗时', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904033');
+INSERT INTO `privilege_rel` VALUES ('52', '500201904028', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('53', '500201904028', '600201904002', '2019-04-01 08:18:29', '0');
+
+INSERT INTO `menu` VALUES ('700201904034', '服务异常', '800201904013', '/index.html#/pages/admin/appPublisherManage', '3', '服务异常', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904029', '服务异常', '服务异常', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904034');
+INSERT INTO `privilege_rel` VALUES ('54', '500201904029', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('55', '500201904029', '600201904002', '2019-04-01 08:18:29', '0');
+
+INSERT INTO `menu` VALUES ('700201904035', '慢sql', '800201904013', '/index.html#/pages/admin/appPublisherManage', '4', '慢sql', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904030', '服务异常', '服务异常', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904035');
+INSERT INTO `privilege_rel` VALUES ('56', '500201904030', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('57', '500201904030', '600201904002', '2019-04-01 08:18:29', '0');
 
