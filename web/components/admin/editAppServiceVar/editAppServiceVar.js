@@ -7,7 +7,11 @@
                 varSpec: '',
                 varValue: '',
                 varName: '',
-                avId: ''
+                avId: '',
+                isMore: '2',
+                asIds: [],
+                appServices: [],
+                asGroupId: ''
             }
         },
         _initMethod: function() {
@@ -15,8 +19,12 @@
         },
         _initEvent: function() {
             vc.on('editAppServiceVar', 'openEditAppServiceVarModal', function(_param) {
+                $that.editAppServiceVarInfo.asId = _param.asId;
+                $that.editAppServiceVarInfo.asGroupId = _param.asGroupId;
+                $that.editAppServiceVarInfo.asIds.push(_param.asId)
                 vc.copyObject(_param, $that.editAppServiceVarInfo);
                 $('#editAppServiceVarModel').modal('show');
+                $that._loadEditVarSelectAppService();
             });
         },
         methods: {
@@ -44,6 +52,15 @@
             updateAppServiceVarInfo: function() {
                 if (!vc.component.editAppServiceVarValidate()) {
                     vc.toast(vc.validate.errInfo);
+                    return;
+                }
+                let _isMore = $that.editAppServiceVarInfo.isMore;
+                if (_isMore == 1) {
+                    $that.editAppServiceVarInfo.asId = $that.editAppServiceVarInfo.asIds.toString();
+                }
+
+                if (!$that.editAppServiceVarInfo.asId) {
+                    vc.toast('请选择应用');
                     return;
                 }
                 vc.http.apiPost(
@@ -78,9 +95,33 @@
                     varSpec: '',
                     varValue: '',
                     varName: '',
-                    avId: ''
+                    avId: '',
+                    isMore: '2',
+                    asIds: [],
+                    appServices: [],
+                    asGroupId: ''
                 };
-            }
+            },
+            _loadEditVarSelectAppService: function() {
+                let param = {
+                    params: {
+                        page: 1,
+                        row: 100,
+                        asGroupId: $that.editAppServiceVarInfo.asGroupId
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/appService/getAppService',
+                    param,
+                    function(json, res) {
+                        let _appVersionJobManageInfo = JSON.parse(json);
+                        vc.component.editAppServiceVarInfo.appServices = _appVersionJobManageInfo.data;
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

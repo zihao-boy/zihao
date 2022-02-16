@@ -360,18 +360,22 @@ func (appServiceService *AppServiceService) SaveAppServiceVars(ctx iris.Context)
 	var (
 		err              error
 		appServiceVarDto appService.AppServiceVarDto
+		asIds            []string
 	)
 
 	if err = ctx.ReadJSON(&appServiceVarDto); err != nil {
 		return result.Error("解析入参失败")
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	appServiceVarDto.TenantId = user.TenantId
-	appServiceVarDto.AvId = seq.Generator()
-
-	err = appServiceService.appServiceDao.SaveAppServiceVar(appServiceVarDto)
-	if err != nil {
-		return result.Error(err.Error())
+	asIds = strings.Split(appServiceVarDto.AsId, ",")
+	for _, asId := range asIds {
+		appServiceVarDto.AsId = asId
+		appServiceVarDto.TenantId = user.TenantId
+		appServiceVarDto.AvId = seq.Generator()
+		err = appServiceService.appServiceDao.SaveAppServiceVar(appServiceVarDto)
+		if err != nil {
+			return result.Error(err.Error())
+		}
 	}
 
 	return result.SuccessData(appServiceVarDto)
@@ -379,19 +383,33 @@ func (appServiceService *AppServiceService) SaveAppServiceVars(ctx iris.Context)
 
 func (appServiceService *AppServiceService) UpdateAppServiceVars(ctx iris.Context) result.ResultDto {
 	var (
-		err              error
-		appServiceVarDto appService.AppServiceVarDto
+		err                   error
+		appServiceVarDto      appService.AppServiceVarDto
+		queryAppServiceVarDto appService.AppServiceVarDto
+
+		asIds []string
 	)
 
 	if err = ctx.ReadJSON(&appServiceVarDto); err != nil {
 		return result.Error("解析入参失败")
 	}
 
-	err = appServiceService.appServiceDao.UpdateAppServiceVar(appServiceVarDto)
-	if err != nil {
-		return result.Error(err.Error())
+	asIds = strings.Split(appServiceVarDto.AsId, ",")
+	for _, asId := range asIds {
+		queryAppServiceVarDto.AsId = asId
+		queryAppServiceVarDto.VarSpec = appServiceVarDto.VarSpec
+		appServiceVarDtos, _ := appServiceService.appServiceDao.GetAppServiceVars(queryAppServiceVarDto)
+		if appServiceVarDtos == nil || len(appServiceVarDtos) < 1 {
+			continue
+		}
+		for _, appVarDto := range appServiceVarDtos {
+			appServiceVarDto.AvId = appVarDto.AvId
+			err = appServiceService.appServiceDao.UpdateAppServiceVar(appServiceVarDto)
+			if err != nil {
+				return result.Error(err.Error())
+			}
+		}
 	}
-
 	return result.SuccessData(appServiceVarDto)
 }
 
@@ -1550,9 +1568,9 @@ func (appServiceService *AppServiceService) doImportAppService(appServiceDto app
 				AvId:     seq.Generator(),
 				AsId:     appServiceDto.AsId,
 				TenantId: appServiceDto.TenantId,
-				VarSpec:  strings.Split(env, ":")[0],
-				VarValue: strings.Split(env, ":")[1],
-				VarName:  strings.Split(env, ":")[0],
+				VarSpec:  strings.SplitN(env, ":",2)[0],
+				VarValue: strings.SplitN(env, ":",2)[1],
+				VarName:  strings.SplitN(env, ":",2)[0],
 			}
 			appServiceService.appServiceDao.SaveAppServiceVar(appServiceVar)
 		}

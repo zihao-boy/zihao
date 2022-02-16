@@ -6,7 +6,11 @@
                 asId: '',
                 varSpec: '',
                 varValue: '',
-                varName: ''
+                varName: '',
+                isMore: '2',
+                asIds: [],
+                appServices: [],
+                asGroupId: ''
             }
         },
         _initMethod: function() {
@@ -15,7 +19,10 @@
         _initEvent: function() {
             vc.on('addAppServiceVar', 'openAddAppServiceVarModal', function(_param) {
                 $that.addAppServiceVarInfo.asId = _param.asId;
+                $that.addAppServiceVarInfo.asGroupId = _param.asGroupId;
+                $that.addAppServiceVarInfo.asIds.push(_param.asId)
                 $('#addAppServiceVarModel').modal('show');
+                $that._loadAddVarSelectAppService();
             });
         },
         methods: {
@@ -45,6 +52,17 @@
                     vc.toast(vc.validate.errInfo);
                     return;
                 }
+
+                let _isMore = $that.addAppServiceVarInfo.isMore;
+                if (_isMore == 1) {
+                    $that.addAppServiceVarInfo.asId = $that.addAppServiceVarInfo.asIds.toString();
+                }
+
+                if (!$that.addAppServiceVarInfo.asId) {
+                    vc.toast('请选择应用');
+                    return;
+                }
+
                 vc.http.apiPost(
                     '/appService/saveAppServiceVar',
                     JSON.stringify(vc.component.addAppServiceVarInfo), {
@@ -76,9 +94,33 @@
                     asId: '',
                     varSpec: '',
                     varValue: '',
-                    varName: ''
+                    varName: '',
+                    isMore: '2',
+                    asIds: [],
+                    appServices: [],
+                    asGroupId: ''
                 };
-            }
+            },
+            _loadAddVarSelectAppService: function() {
+                let param = {
+                    params: {
+                        page: 1,
+                        row: 100,
+                        asGroupId: $that.addAppServiceVarInfo.asGroupId
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/appService/getAppService',
+                    param,
+                    function(json, res) {
+                        let _appVersionJobManageInfo = JSON.parse(json);
+                        vc.component.addAppServiceVarInfo.appServices = _appVersionJobManageInfo.data;
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

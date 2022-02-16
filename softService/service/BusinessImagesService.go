@@ -684,9 +684,9 @@ func (businessImagesService *BusinessImagesService) doImportAppService(appServic
 				AvId:     seq.Generator(),
 				AsId:     appServiceDto.AsId,
 				TenantId: appServiceDto.TenantId,
-				VarSpec:  strings.Split(env, ":")[0],
-				VarValue: strings.Split(env, ":")[1],
-				VarName:  strings.Split(env, ":")[0],
+				VarSpec:  strings.SplitN(env, ":",2)[0],
+				VarValue: strings.SplitN(env, ":",2)[1],
+				VarName:  strings.SplitN(env, ":",2)[0],
 			}
 			businessImagesService.appServiceDao.SaveAppServiceVar(appServiceVar)
 		}

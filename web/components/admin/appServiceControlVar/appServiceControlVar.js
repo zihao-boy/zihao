@@ -11,6 +11,7 @@
                 total: 0,
                 records: 1,
                 asId: '',
+                asGroupId: ''
             }
         },
         _initMethod: function() {},
@@ -60,6 +61,7 @@
                 vc.emit('addAppServiceVar', 'openAddAppServiceVarModal', $that.appServiceControlVarInfo);
             },
             _openUpdateVarModal: function(_dir) {
+                _dir.asGroupId = $that.appServiceControlVarInfo.asGroupId;
                 vc.emit('editAppServiceVar', 'openEditAppServiceVarModal', _dir);
             },
             _openDeleteVarModal: function(_dir) {
