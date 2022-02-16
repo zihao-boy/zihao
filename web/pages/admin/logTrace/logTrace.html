@@ -12,23 +12,17 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <input type="text" placeholder="请输入名称"
-                                    v-model="logTraceInfo.conditions.name" class=" form-control">
+                                <input type="text" placeholder="请输入交易流水"
+                                    v-model="logTraceInfo.conditions.traceId" class=" form-control">
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <select class="custom-select" v-model="logTraceInfo.conditions.state">
-                                <option selected value="">请选择状态</option>
-                                <option value="3301">运行中</option>
-                                <option value="3302">停止</option>
-                            </select>
+                            <input type="text" placeholder="请输项目名称"
+                                    v-model="logTraceInfo.conditions.name" class=" form-control">
                         </div>
                         <div class="col-sm-3">
-                            <select class="custom-select" v-model="logTraceInfo.conditions.noticeType">
-                                <option selected value="">请选择告警类型</option>
-                                <option value="1001">短信</option>
-                                <option value="2002">钉钉</option>
-                            </select>
+                            <input type="text" placeholder="请输入编号"
+                            v-model="logTraceInfo.conditions.id" class=" form-control">
                         </div>
                         <div class="col-sm-1">
                             <button type="button" class="btn btn-primary btn-sm"
@@ -37,8 +31,6 @@
                             </button>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -56,24 +48,35 @@
 
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                         <thead>
-                            <tr>
-                                
-                                <th class="text-center">事件对象</th>
-                                <th class="text-center" width="60%">事件内容</th>
-                                <th class="text-center">告警方式</th>
-                                <th class="text-center">事件时间</th>
-                                <!-- <th class="text-center">状态</th> -->
+                            <tr> 
+                                <th class="text-center">编号</th>
+                                <th class="text-center">交易流水</th>
+                                <th class="text-center">服务名</th>
+                                <th class="text-center">接口名</th>
+                                <th class="text-center">调用时间</th>
+                                <th class="text-center">耗时</th>
+                                <th class="text-center">ip</th>
+                                <th class="text-center">端口</th>
+                                <th class="text-right">操作</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="event in logTraceInfo.monitorEvents">
-                                
-                                <td class="text-center">{{event.eventObjName}}</td>
-                                <td class="text-center">{{event.remark}}</td>
-                                <td class="text-center">{{event.noticeTypeName}}</td>
-                                <td class="text-center">{{event.createTime}}</td>
-                                <!-- <td class="text-center">{{event.stateName}}</td> -->
-
+                            <tr v-for="trace in logTraceInfo.traces">
+                                <td class="text-center">{{trace.id}}</td>
+                                <td class="text-center">{{trace.traceId}}</td>
+                                <td class="text-center">{{trace.serviceName}}</td>
+                                <td class="text-center">{{trace.name}}</td>
+                                <td class="text-center">{{trace.createTime}}</td>
+                                <td class="text-center">{{trace.duration}}</td>
+                                <td class="text-center">{{trace.ip}}</td>
+                                <td class="text-center">{{trace.port}}</td>
+                                <td class="text-right">
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openDeleteJobModel(job)">
+                                            链路
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                         <tfoot>

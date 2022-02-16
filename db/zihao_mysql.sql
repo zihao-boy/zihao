@@ -3529,13 +3529,18 @@ create table business_package(
 
 create table log_trace
 (
-    id        varchar(64)  not null primary key,
-    name      varchar(64)  not null,
-    parent_id        varchar(64)  not null,
-    trace_id      varchar(64)  not null,
-    timestamp  varchar(20)  not null,
-    create_time timestamp    default CURRENT_TIMESTAMP not null,
-    status_cd   varchar(2)   default '0' not null
+    id          varchar(64) not null
+        primary key,
+    name        varchar(64) not null,
+    parent_id   varchar(64) not null,
+    trace_id    varchar(64) not null,
+    timestamp   varchar(20) not null,
+    duration varchar(20) not null,
+    service_name varchar(64) not null,
+    ip           varchar(64) not null,
+    port         varchar(20) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
 );
 
 create table log_trace_annotations

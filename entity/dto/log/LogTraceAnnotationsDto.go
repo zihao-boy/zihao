@@ -7,7 +7,7 @@ type LogTraceAnnotationsDto struct {
 	dto.PageDto
 	Id          string `json:"id"`
 	SpanId      string `json:"spanId" sql:"-"`
-	ServiceName string `json:"spanId" sql:"-"`
+	ServiceName string `json:"serviceName" sql:"-"`
 	Ip          string `json:"ip"`
 	Port        string `json:"port"`
 	Value       string `json:"value"`

@@ -7,15 +7,15 @@
     vc.extends({
         data: {
             logTraceInfo: {
-                monitorEvents: [],
+                traces: [],
                 total: 0,
                 records: 1,
                 moreCondition: false,
                 mhgId: '',
                 conditions: {
                     name: '',
-                    state: '',
-                    noticeType: '',
+                    traceId: '',
+                    id: '',
 
                 }
             }
@@ -48,7 +48,7 @@
                         var _logTraceInfo = JSON.parse(json);
                         vc.component.logTraceInfo.total = _logTraceInfo.total;
                         vc.component.logTraceInfo.records = _logTraceInfo.records;
-                        vc.component.logTraceInfo.monitorEvents = _logTraceInfo.data;
+                        vc.component.logTraceInfo.traces = _logTraceInfo.data;
                         vc.emit('pagination', 'init', {
                             total: vc.component.logTraceInfo.records,
                             currentPage: _page

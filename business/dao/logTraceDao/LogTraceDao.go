@@ -50,8 +50,8 @@ const (
 	`
 
 	insert_logTrace string = `
-	insert into log_trace(id, name, parent_id, trace_id,timestamp)
-VALUES(#Id#,#Name#,#ParentId#,#TraceId#,#Timestamp#)
+	insert into log_trace(id, name, parent_id, trace_id,timestamp,duration,service_name,ip,port)
+VALUES(#Id#,#Name#,#ParentId#,#TraceId#,#Timestamp#,#Duration#,#ServiceName#,#Ip#,#Port#)
 `
 
 	update_logTrace string = `
