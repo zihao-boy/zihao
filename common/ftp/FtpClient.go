@@ -1,7 +1,6 @@
 package ftp
 
 import (
-	"crypto/tls"
 	"github.com/kataras/iris/v12/context"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
@@ -10,6 +9,7 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -73,16 +73,6 @@ func DownloadFile(resWriter context.ResponseWriter, resourcesFtpDto resources.Re
 
 	defer ftp.Close()
 
-	// TLS client authentication
-	config := tls.Config{
-		InsecureSkipVerify: true,
-		ClientAuth:         tls.RequestClientCert,
-	}
-
-	if err = ftp.AuthTLS(&config); err != nil {
-		return err
-	}
-
 	if err = ftp.Login(resourcesFtpDto.Username, resourcesFtpDto.Passwd); err != nil {
 		return err
 	}
@@ -94,10 +84,7 @@ func DownloadFile(resWriter context.ResponseWriter, resourcesFtpDto resources.Re
 	} else {
 		path = "/" + resourcesFtpDto.Path
 	}
-
-	if err = ftp.Cwd(path); err != nil {
-		return err
-	}
+	resWriter.Header().Set("Content-Type", "application/octet-stream")
 
 	err = ftp.Walk(path, func(path string, info os.FileMode, err error) error {
 		_, err = ftp.Retr(path, func(r io.Reader) error {
@@ -265,15 +252,55 @@ func DeleteFile(resourcesFtpDto resources.ResourcesFtpDto) error {
 	} else {
 		path = "/" + resourcesFtpDto.CurPath
 	}
-	if resourcesFtpDto.FileGroupName == "-"{
+	if resourcesFtpDto.FileGroupName == "-" {
 		err = ftp.Dele(path)
-	}else {
-		err = ftp.Rmd(path)
+	} else {
+		err = deleteDirAndFile(path, ftp)
 	}
 
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// delete dir and file
+
+func deleteDirAndFile(dirPath string, ftp *goftp.FTP) error {
+
+	dirs, err := ftp.List(dirPath)
+
+	if err != nil {
+		return err
+	}
+	for _, fil := range dirs {
+		lsrs := strings.Split(fil, ";")
+		if len(lsrs) == 4 {
+			name := strings.Trim(lsrs[3], " ")
+			name = strings.ReplaceAll(name, "\r", "")
+			name = strings.ReplaceAll(name, "\n", "")
+			err = deleteDirAndFile(path.Join(dirPath, name), ftp)
+			if err != nil {
+				return err
+			}
+		}
+
+		if len(lsrs) == 5 {
+			name := strings.Trim(lsrs[4], " ")
+			name = strings.ReplaceAll(name, "\r", "")
+			name = strings.ReplaceAll(name, "\n", "")
+			err = ftp.Dele(path.Join(dirPath, name))
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	err = ftp.Rmd(dirPath)
+
+	if err != nil {
+		return err
+	}
 	return nil
 }
