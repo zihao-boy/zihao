@@ -463,38 +463,56 @@ func (appServiceService *AppServiceService) SaveAppServiceHosts(ctx iris.Context
 	var (
 		err                error
 		appServiceHostsDto appService.AppServiceHostsDto
+
+		asIds []string
 	)
 
 	if err = ctx.ReadJSON(&appServiceHostsDto); err != nil {
 		return result.Error("解析入参失败")
 	}
 	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	appServiceHostsDto.TenantId = user.TenantId
-	appServiceHostsDto.HostsId = seq.Generator()
+	asIds = strings.Split(appServiceHostsDto.AsId, ",")
+	for _, asId := range asIds {
+		appServiceHostsDto.AsId = asId
+		appServiceHostsDto.TenantId = user.TenantId
+		appServiceHostsDto.HostsId = seq.Generator()
+		err = appServiceService.appServiceDao.SaveAppServiceHosts(appServiceHostsDto)
+		if err != nil {
+			return result.Error(err.Error())
+		}
 
-	err = appServiceService.appServiceDao.SaveAppServiceHosts(appServiceHostsDto)
-	if err != nil {
-		return result.Error(err.Error())
 	}
-
 	return result.SuccessData(appServiceHostsDto)
 }
 
 func (appServiceService *AppServiceService) UpdateAppServiceHosts(ctx iris.Context) interface{} {
 	var (
-		err                error
-		appServiceHostsDto appService.AppServiceHostsDto
+		err                    error
+		appServiceHostsDto     appService.AppServiceHostsDto
+		querAppServiceHostsDto appService.AppServiceHostsDto
+		asIds                  []string
 	)
 
 	if err = ctx.ReadJSON(&appServiceHostsDto); err != nil {
 		return result.Error("解析入参失败")
 	}
+	asIds = strings.Split(appServiceHostsDto.AsId, ",")
+	for _, asId := range asIds {
+		querAppServiceHostsDto.AsId = asId
+		querAppServiceHostsDto.Hostname = appServiceHostsDto.Hostname
+		appServiceHostsDtos, _ := appServiceService.appServiceDao.GetAppServiceHosts(querAppServiceHostsDto)
+		if appServiceHostsDtos == nil || len(appServiceHostsDtos) < 1 {
+			continue
+		}
+		for _, appHostDto := range appServiceHostsDtos {
+			appServiceHostsDto.HostsId = appHostDto.HostsId
+			err = appServiceService.appServiceDao.UpdateAppServiceHost(appServiceHostsDto)
+			if err != nil {
+				return result.Error(err.Error())
+			}
+		}
 
-	err = appServiceService.appServiceDao.UpdateAppServiceHost(appServiceHostsDto)
-	if err != nil {
-		return result.Error(err.Error())
 	}
-
 	return result.SuccessData(appServiceHostsDto)
 }
 

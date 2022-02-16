@@ -11,6 +11,7 @@
                 total: 0,
                 records: 1,
                 asId: '',
+                asGroupId: ''
             }
         },
         _initMethod: function() {},
@@ -63,6 +64,7 @@
                 vc.emit('deleteAppServiceHosts', 'openDeleteAppServiceHostsModal', _hosts);
             },
             _openUpdateHostsModal: function(_hosts) {
+                _hosts.asGroupId = $that.appServiceControlHostsInfo.asGroupId;
                 vc.emit('editAppServiceHosts', 'openEditAppServiceHostsModal', _hosts);
             }
 

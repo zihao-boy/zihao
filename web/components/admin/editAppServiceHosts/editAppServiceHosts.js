@@ -6,7 +6,11 @@
                 asId: '',
                 hostname: '',
                 ip: '',
-                hostsId: ''
+                hostsId: '',
+                isMore: '2',
+                asIds: [],
+                appServices: [],
+                asGroupId: ''
             }
         },
         _initMethod: function() {
@@ -15,7 +19,10 @@
         _initEvent: function() {
             vc.on('editAppServiceHosts', 'openEditAppServiceHostsModal', function(_param) {
                 vc.copyObject(_param, $that.editAppServiceHostsInfo);
+                $that.editAppServiceHostsInfo.asGroupId = _param.asGroupId;
+                $that.editAppServiceHostsInfo.asIds.push(_param.asId)
                 $('#editAppServiceHostsModel').modal('show');
+                $that._loadEditSelectAppService();
             });
         },
         methods: {
@@ -71,9 +78,42 @@
                     asId: '',
                     hostname: '',
                     ip: '',
-                    hostsId: ''
+                    hostsId: '',
+                    isMore: '2',
+                    asIds: [],
+                    appServices: [],
+                    asGroupId: ''
                 };
-            }
+            },
+            _loadEditSelectAppService: function() {
+                let param = {
+                    params: {
+                        page: 1,
+                        row: 100,
+                        asGroupId: $that.editAppServiceHostsInfo.asGroupId
+                    }
+                };
+                let _isMore = $that.editAppServiceHostsInfo.isMore;
+                if (_isMore == 1) {
+                    $that.editAppServiceHostsInfo.asId = $that.editAppServiceHostsInfo.asIds.toString();
+                }
+
+                if (!$that.editAppServiceHostsInfo.asId) {
+                    vc.toast('请选择应用');
+                    return;
+                }
+                //发送get请求
+                vc.http.apiGet('/appService/getAppService',
+                    param,
+                    function(json, res) {
+                        let _appVersionJobManageInfo = JSON.parse(json);
+                        vc.component.editAppServiceHostsInfo.appServices = _appVersionJobManageInfo.data;
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

@@ -46,6 +46,7 @@
                     asId: $that.appServiceControlInfo.asId,
                     asDeployId: $that.appServiceControlInfo.asDeployId,
                     asDeployType: $that.appServiceControlInfo.asDeployType,
+                    asGroupId: $that.appServiceControlInfo.asGroupId,
                 })
             },
             _clearData: function() {

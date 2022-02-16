@@ -5,7 +5,11 @@
             addAppServiceHostsInfo: {
                 asId: '',
                 hostname: '',
-                ip: ''
+                ip: '',
+                isMore: '2',
+                asIds: [],
+                appServices: [],
+                asGroupId: ''
             }
         },
         _initMethod: function() {
@@ -14,7 +18,10 @@
         _initEvent: function() {
             vc.on('addAppServiceHosts', 'openAddAppServiceHostsModal', function(_param) {
                 $that.addAppServiceHostsInfo.asId = _param.asId;
+                $that.addAppServiceHostsInfo.asGroupId = _param.asGroupId;
+                $that.addAppServiceHostsInfo.asIds.push(_param.asId)
                 $('#addAppServiceHostsModel').modal('show');
+                $that._loadSelectAppService();
             });
         },
         methods: {
@@ -37,6 +44,15 @@
             saveAppServiceHostsInfo: function() {
                 if (!vc.component.addAppServiceHostsValidate()) {
                     vc.toast(vc.validate.errInfo);
+                    return;
+                }
+                let _isMore = $that.addAppServiceHostsInfo.isMore;
+                if (_isMore == 1) {
+                    $that.addAppServiceHostsInfo.asId = $that.addAppServiceHostsInfo.asIds.toString();
+                }
+
+                if (!$that.addAppServiceHostsInfo.asId) {
+                    vc.toast('请选择应用');
                     return;
                 }
                 vc.http.apiPost(
@@ -69,9 +85,33 @@
                 vc.component.addAppServiceHostsInfo = {
                     asId: '',
                     hostname: '',
-                    ip: ''
+                    ip: '',
+                    isMore: '2',
+                    asIds: [],
+                    appServices: [],
+                    asGroupId: ''
                 };
-            }
+            },
+            _loadSelectAppService: function() {
+                let param = {
+                    params: {
+                        page: 1,
+                        row: 100,
+                        asGroupId: $that.addAppServiceHostsInfo.asGroupId
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/appService/getAppService',
+                    param,
+                    function(json, res) {
+                        let _appVersionJobManageInfo = JSON.parse(json);
+                        vc.component.addAppServiceHostsInfo.appServices = _appVersionJobManageInfo.data;
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 
