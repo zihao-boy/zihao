@@ -3,6 +3,7 @@ package logTraceService
 import (
 	"encoding/json"
 	"github.com/kataras/iris/v12"
+	"github.com/zihao-boy/zihao/business/dao/logTraceAnnotationsDao"
 	"github.com/zihao-boy/zihao/business/dao/logTraceDao"
 	"github.com/zihao-boy/zihao/common/objectConvert"
 	"github.com/zihao-boy/zihao/common/seq"
@@ -12,14 +13,15 @@ import (
 )
 
 type LogTraceService struct {
-	logTraceDao logTraceDao.LogTraceDao
+	logTraceDao            logTraceDao.LogTraceDao
+	logTraceAnnotationsDao logTraceAnnotationsDao.LogTraceAnnotationsDao
 }
 
 // get db link
 // all db by this user
 func (logTraceService *LogTraceService) GetLogTraceAll(LogTraceDto log.LogTraceDto) ([]*log.LogTraceDto, error) {
 	var (
-		err        error
+		err          error
 		LogTraceDtos []*log.LogTraceDto
 	)
 
@@ -37,10 +39,10 @@ func (logTraceService *LogTraceService) GetLogTraceAll(LogTraceDto log.LogTraceD
 */
 func (logTraceService *LogTraceService) GetLogTraces(ctx iris.Context) result.ResultDto {
 	var (
-		err        error
-		page       int64
-		row        int64
-		total      int64
+		err          error
+		page         int64
+		row          int64
+		total        int64
 		logTraceDto  = log.LogTraceDto{}
 		logTraceDtos []*log.LogTraceDto
 	)
@@ -85,25 +87,48 @@ func (logTraceService *LogTraceService) GetLogTraces(ctx iris.Context) result.Re
 */
 func (logTraceService *LogTraceService) SaveLogTraces(param string) result.ResultDto {
 	var (
-		err       error
-		logTraceDto log.LogTraceDto
-		logTraceDataDto log.LogTraceDataDto
+		err                    error
+		logTraceDto            log.LogTraceDto
+		logTraceDataDto        log.LogTraceDataDto
+		logTraceAnnotationsDto log.LogTraceAnnotationsDto
 	)
 	json.Unmarshal([]byte(param), &logTraceDataDto)
 
 	//object convert
-	objectConvert.Struct2Struct(logTraceDataDto,logTraceDto)
+	objectConvert.Struct2Struct(logTraceDataDto, logTraceDto)
 
 	logTraceDto.Id = seq.Generator()
 	//LogTraceDto.Path = filepath.Join(curDest, fileHeader.Filename)
 
+	if logTraceDataDto.Annotations == nil || len(logTraceDataDto.Annotations) < 1 {
+		return result.Error("未包含Annotations")
+	}
+
+	logTraceDto.ServiceName = logTraceDataDto.Annotations[0].Endpoint.ServiceName
+	logTraceDto.Ip = logTraceDataDto.Annotations[0].Endpoint.Ip
+	logTraceDto.Port = logTraceDataDto.Annotations[0].Endpoint.Port
 	err = logTraceService.logTraceDao.SaveLogTrace(logTraceDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
 
-	return result.SuccessData(logTraceDto)
+	for _, annotation := range logTraceDataDto.Annotations {
+		logTraceAnnotationsDto = log.LogTraceAnnotationsDto{
+			Id:          seq.Generator(),
+			SpanId:      logTraceDto.Id,
+			ServiceName: annotation.Endpoint.ServiceName,
+			Ip:          annotation.Endpoint.Ip,
+			Port:        annotation.Endpoint.Port,
+			Value:       annotation.Value,
+			Timestamp:   annotation.Timestamp,
+		}
+		err = logTraceService.logTraceAnnotationsDao.SaveLogTraceAnnotations(logTraceAnnotationsDto)
+		if err != nil {
+			return result.Error(err.Error())
+		}
+	}
 
+	return result.SuccessData(logTraceDto)
 }
 
 /**
@@ -111,7 +136,7 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 */
 func (logTraceService *LogTraceService) UpdateLogTraces(ctx iris.Context) result.ResultDto {
 	var (
-		err       error
+		err         error
 		logTraceDto log.LogTraceDto
 	)
 	if err = ctx.ReadJSON(&logTraceDto); err != nil {
@@ -132,7 +157,7 @@ func (logTraceService *LogTraceService) UpdateLogTraces(ctx iris.Context) result
 */
 func (logTraceService *LogTraceService) DeleteLogTraces(ctx iris.Context) result.ResultDto {
 	var (
-		err       error
+		err         error
 		logTraceDto log.LogTraceDto
 	)
 	if err = ctx.ReadJSON(&logTraceDto); err != nil {

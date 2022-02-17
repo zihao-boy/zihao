@@ -20,6 +20,6 @@ type LogTraceDto struct {
 
 type LogTraceDataDto struct {
 	LogTraceDto
-	annotations *[]LogTraceAnnotationsDto
-	param *LogTraceParamDto
+	Annotations []*LogTraceAnnotationsDataDto
+	Param *LogTraceParamDto
 }
