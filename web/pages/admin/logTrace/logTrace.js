@@ -1,7 +1,7 @@
 /**
     入驻小区
 **/
-(function (vc) {
+(function(vc) {
     var DEFAULT_PAGE = 1;
     var DEFAULT_ROWS = 10;
     vc.extends({
@@ -16,24 +16,25 @@
                     name: '',
                     traceId: '',
                     id: '',
+                    parentId: '0'
 
                 }
             }
         },
-        _initMethod: function () {
-            vc.component._listmonitorEvents(DEFAULT_PAGE, DEFAULT_ROWS);
+        _initMethod: function() {
+            vc.component._listLogTraces(DEFAULT_PAGE, DEFAULT_ROWS);
         },
-        _initEvent: function () {
+        _initEvent: function() {
 
-            vc.on('monitorHostGroupManage', 'listMonitorHostGroup', function (_param) {
-                vc.component._listmonitorEvents(DEFAULT_PAGE, DEFAULT_ROWS);
+            vc.on('monitorHostGroupManage', 'listMonitorHostGroup', function(_param) {
+                vc.component._listLogTraces(DEFAULT_PAGE, DEFAULT_ROWS);
             });
-            vc.on('pagination', 'page_event', function (_currentPage) {
-                vc.component._listmonitorEvents(_currentPage, DEFAULT_ROWS);
+            vc.on('pagination', 'page_event', function(_currentPage) {
+                vc.component._listLogTraces(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listmonitorEvents: function (_page, _rows) {
+            _listLogTraces: function(_page, _rows) {
 
                 vc.component.logTraceInfo.conditions.page = _page;
                 vc.component.logTraceInfo.conditions.row = _rows;
@@ -42,9 +43,9 @@
                 };
 
                 //发送get请求
-                vc.http.apiGet('/monitor/getMonitorEvents',
+                vc.http.apiGet('/monitor/getLogTrace',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _logTraceInfo = JSON.parse(json);
                         vc.component.logTraceInfo.total = _logTraceInfo.total;
                         vc.component.logTraceInfo.records = _logTraceInfo.records;
@@ -53,22 +54,23 @@
                             total: vc.component.logTraceInfo.records,
                             currentPage: _page
                         });
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );
             },
-            _queryMonitorHostGroupMethod: function () {
-                vc.component._listmonitorEvents(DEFAULT_PAGE, DEFAULT_ROWS);
+            _queryMonitorHostGroupMethod: function() {
+                vc.component._listLogTraces(DEFAULT_PAGE, DEFAULT_ROWS);
             },
-            _moreCondition: function () {
+            _moreCondition: function() {
                 if (vc.component.logTraceInfo.moreCondition) {
                     vc.component.logTraceInfo.moreCondition = false;
                 } else {
                     vc.component.logTraceInfo.moreCondition = true;
                 }
             },
-            
+
         }
     });
 })(window.vc);

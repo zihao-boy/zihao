@@ -3,6 +3,7 @@ package monitor
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/hero"
+	logTraceService "github.com/zihao-boy/zihao/business/service/logTrace"
 	"github.com/zihao-boy/zihao/common/crontab"
 	"github.com/zihao-boy/zihao/monitor/service"
 )
@@ -14,6 +15,7 @@ type MonitorController struct {
 	monitorEventService     service.MonitorEventService
 	monitorTaskService      service.MonitorTaskService
 	monitorTaskAttrService  service.MonitorTaskAttrService
+	logTraceService logTraceService.LogTraceService
 }
 
 func MonitorControllerRouter(party iris.Party) {
@@ -83,6 +85,9 @@ func MonitorControllerRouter(party iris.Party) {
 	adinUser.Get("/listTaskTemplate", hero.Handler(aus.listTaskTemplate))
 	//查询sql
 	adinUser.Get("/listTaskAttrs", hero.Handler(aus.listTaskAttrs))
+
+	//查询sql
+	adinUser.Get("/getLogTrace", hero.Handler(aus.getLogTrace))
 }
 
 func (aus *MonitorController) getMonitorHosts(ctx iris.Context) {
@@ -183,6 +188,8 @@ func (aus *MonitorController) getMonitorTasks(ctx iris.Context) {
 	ctx.JSON(relustDto)
 }
 
+
+
 /**
 保存sql信息
 */
@@ -238,5 +245,10 @@ func (aus *MonitorController) listTaskTemplate(ctx iris.Context) {
 }
 func (aus *MonitorController) listTaskAttrs(ctx iris.Context) {
 	relustDto := aus.monitorTaskAttrService.GetMonitorTaskAttrs(ctx)
+	ctx.JSON(relustDto)
+}
+
+func (aus *MonitorController) getLogTrace(ctx iris.Context) {
+	relustDto := aus.logTraceService.GetLogTraces(ctx)
 	ctx.JSON(relustDto)
 }
