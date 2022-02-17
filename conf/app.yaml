@@ -16,11 +16,11 @@ own:
   secret: xxx-Secret
   websocket_pool: 100
   domain: a
-  kafka_ip: kafka.zihao.org.cn
+  kafka_ip: 39.108.144.30
   kafka_port: 9092
   kafka_group: zihaoGroupId
   kafka_topic: zihaoTopic,logTrace
-  kafka_switch: OFF
+  kafka_switch: ON
   db: sqlite # mysql
   cache: local # redis
   data_path: /Users/wuxuewen

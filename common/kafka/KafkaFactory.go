@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"fmt"
 	"github.com/Shopify/sarama"
 	logTraceService "github.com/zihao-boy/zihao/business/service/logTrace"
 	config2 "github.com/zihao-boy/zihao/config"
@@ -32,7 +33,7 @@ func Init() {
 
 // kafka listen
 func kafkaListen(message *sarama.ConsumerMessage) {
-
+	fmt.Println("收到卡夫卡消息",string(message.Value))
 	if message.Topic == TopicLogTrace {
 		saveLogTrace(message)
 	}
@@ -44,6 +45,8 @@ func saveLogTrace(message *sarama.ConsumerMessage)  {
 	var (
 		logTraceService logTraceService.LogTraceService
 	)
+
+	fmt.Println("收到卡夫卡消息",string(message.Value))
 
 	logTraceService.SaveLogTraces(string(message.Value))
 
