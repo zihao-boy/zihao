@@ -57,6 +57,7 @@
                                 <th class="text-center">耗时</th>
                                 <th class="text-center">ip</th>
                                 <th class="text-center">端口</th>
+                                <th class="text-center">首节点</th>
                                 <th class="text-right">操作</th>
                             </tr>
                         </thead>
@@ -68,8 +69,10 @@
                                 <td class="text-center">{{trace.name}}</td>
                                 <td class="text-center">{{trace.createTime}}</td>
                                 <td class="text-center">{{trace.duration}}</td>
-                                <td class="text-center">{{trace.ip}}</td>
+                                <td class="text-center">{{trace.ipv4}}</td>
                                 <td class="text-center">{{trace.port}}</td>
+                                <td class="text-center" >{{trace.parentSpanId == '0'?'是':'否'}}</td>
+
                                 <td class="text-right">
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_openDeleteJobModel(job)">

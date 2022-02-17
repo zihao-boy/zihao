@@ -16,7 +16,7 @@
                     name: '',
                     traceId: '',
                     id: '',
-                    parentId: '0'
+                    parentSpanId: ''
 
                 }
             }

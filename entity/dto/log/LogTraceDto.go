@@ -7,12 +7,12 @@ type LogTraceDto struct {
 	dto.PageDto
 	Id string `json:"id"`
 	Name  string `json:"name"`
-	ParentId string `json:"parentId" sql:"-"`
+	ParentId string `json:"parentSpanId" sql:"-"`
 	TraceId string `json:"traceId" sql:"-"`
-	Timestamp  string `json:"timestamp"`
-	Duration  string `json:"duration"`
+	Timestamp  int64 `json:"timestamp"`
+	Duration  int64 `json:"duration"`
 	ServiceName string `json:"serviceName" sql:"-"`
-	Ip          string `json:"ip"`
+	Ip          string `json:"ipv4"`
 	Port        string `json:"port"`
 	CreateTime    string `json:"createTime" sql:"-"`
 	StatusCd      string `json:"statusCd" sql:"-"`

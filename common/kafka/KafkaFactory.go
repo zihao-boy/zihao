@@ -46,7 +46,6 @@ func saveLogTrace(message *sarama.ConsumerMessage)  {
 		logTraceService logTraceService.LogTraceService
 	)
 
-	fmt.Println("收到卡夫卡消息",string(message.Value))
 
 	logTraceService.SaveLogTraces(string(message.Value))
 

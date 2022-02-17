@@ -1,7 +1,6 @@
 package kafka
 
 import (
-	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/bsm/sarama-cluster"
 	"github.com/golang/glog"
@@ -15,7 +14,7 @@ type KafkaConsumer struct {
 }
 
 func (self *KafkaConsumer) Init() error {
-	brokersServers := []string{fmt.Sprintf("%s:%d", config2.G_AppConfig.KafkaIp, config2.G_AppConfig.KafkaPort)}
+	brokersServers := []string{config2.G_AppConfig.Own.KafkaIp+":"+config2.G_AppConfig.Own.KafkaPort}
 	config := cluster.NewConfig()
 	//配置是否接受错误信息
 	config.Consumer.Return.Errors = true
@@ -24,9 +23,10 @@ func (self *KafkaConsumer) Init() error {
 	//配置是否接受最新消息
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 	//这个消费者是谁，同一个消费者如果对一条信息确认了，则不会重复发送
-	config.ClientID = config2.G_AppConfig.KafkaGroup
+	config.ClientID = config2.G_AppConfig.Own.KafkaGroup
 	//topic是指要收到的消息对象
-	cg, err := cluster.NewConsumer(brokersServers, config2.G_AppConfig.KafkaGroup, strings.Split(config2.G_AppConfig.KafkaTopic, ","), config)
+	cg, err := cluster.NewConsumer(brokersServers, config2.G_AppConfig.Own.KafkaGroup, strings.Split(config2.G_AppConfig.Own.KafkaTopic, ","), config)
+
 	if err != nil {
 		return err
 	}

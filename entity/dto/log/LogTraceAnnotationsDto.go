@@ -8,17 +8,17 @@ type LogTraceAnnotationsDto struct {
 	Id          string `json:"id"`
 	SpanId      string `json:"spanId" sql:"-"`
 	ServiceName string `json:"serviceName" sql:"-"`
-	Ip          string `json:"ip"`
+	Ip          string `json:"ipv4"`
 	Port        string `json:"port"`
 	Value       string `json:"value"`
-	Timestamp   string `json:"timestamp"`
+	Timestamp  int64 `json:"timestamp"`
 	CreateTime  string `json:"createTime" sql:"-"`
 	StatusCd    string `json:"statusCd" sql:"-"`
 }
 
 type EndpointDto struct {
 	ServiceName string `json:"serviceName" sql:"-"`
-	Ip          string `json:"ip"`
+	Ip          string `json:"ipv4"`
 	Port        string `json:"port"`
 }
 
@@ -27,7 +27,7 @@ type LogTraceAnnotationsDataDto struct {
 	Id         string      `json:"id"`
 	SpanId     string      `json:"spanId" sql:"-"`
 	Value      string      `json:"value"`
-	Timestamp  string      `json:"timestamp"`
+	Timestamp  int64 `json:"timestamp"`
 	CreateTime string      `json:"createTime" sql:"-"`
 	StatusCd   string      `json:"statusCd" sql:"-"`
 	Endpoint   EndpointDto `json:"endpoint"`

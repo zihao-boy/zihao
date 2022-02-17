@@ -5,7 +5,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/logTraceAnnotationsDao"
 	"github.com/zihao-boy/zihao/business/dao/logTraceDao"
-	"github.com/zihao-boy/zihao/common/objectConvert"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/log"
 	"github.com/zihao-boy/zihao/entity/dto/result"
@@ -91,11 +90,15 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 		logTraceDto            log.LogTraceDto
 		logTraceDataDto        log.LogTraceDataDto
 		logTraceAnnotationsDto log.LogTraceAnnotationsDto
+		crTimestame int64
+		csTimestame int64
+
 	)
 	json.Unmarshal([]byte(param), &logTraceDataDto)
 
 	//object convert
-	objectConvert.Struct2Struct(logTraceDataDto, logTraceDto)
+	json.Unmarshal([]byte(param), &logTraceDto)
+
 
 	logTraceDto.Id = seq.Generator()
 	//LogTraceDto.Path = filepath.Join(curDest, fileHeader.Filename)
@@ -107,6 +110,24 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 	logTraceDto.ServiceName = logTraceDataDto.Annotations[0].Endpoint.ServiceName
 	logTraceDto.Ip = logTraceDataDto.Annotations[0].Endpoint.Ip
 	logTraceDto.Port = logTraceDataDto.Annotations[0].Endpoint.Port
+	logTraceDto.Duration = 0
+	//compute Duration cr - cs
+	if len(logTraceDataDto.Annotations) == 4{
+
+		for _, annotation := range logTraceDataDto.Annotations {
+			if annotation.Value == "cr"{
+				crTimestame = annotation.Timestamp
+			}
+
+			if annotation.Value == "cs"{
+				csTimestame = annotation.Timestamp
+			}
+		}
+
+		logTraceDto.Duration = crTimestame - csTimestame
+
+	}
+
 	err = logTraceService.logTraceDao.SaveLogTrace(logTraceDto)
 	if err != nil {
 		return result.Error(err.Error())

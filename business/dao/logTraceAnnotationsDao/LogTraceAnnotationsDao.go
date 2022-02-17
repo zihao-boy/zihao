@@ -56,8 +56,8 @@ const (
 	`
 
 	insert_logTraceAnnotations string = `
-	insert into log_trace_annotations(id, span_id, service_name, ip,port,value)
-VALUES(#Id#,#SpanId#,#ServiceName#,#Ip#,#Port#,#Value#)
+	insert into log_trace_annotations(id, span_id, service_name, ip,port,value,timestamp)
+VALUES(#Id#,#SpanId#,#ServiceName#,#Ip#,#Port#,#Value#,#Timestamp#)
 `
 
 	update_logTraceAnnotations string = `
