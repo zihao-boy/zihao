@@ -30,6 +30,8 @@ cp -r zihao ../zihao_release/
 
 cp -r restart_zihao.sh ../zihao_release/
 
+cp -r upgradeZihao.sh ../zihao_release/
+
 if [ ! -d "../zihao_release/conf" ]; then
     cp -r conf ../zihao_release/
 fi

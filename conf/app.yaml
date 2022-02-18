@@ -16,7 +16,7 @@ own:
   secret: xxx-Secret
   websocket_pool: 100
   domain: a
-  kafka_ip: 192.168.1.101
+  kafka_ip: 39.108.144.30
   kafka_port: 9092
   kafka_group: zihaoGroupId
   kafka_topic: zihaoTopic,logTrace
