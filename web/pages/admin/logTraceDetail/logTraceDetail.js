@@ -16,7 +16,8 @@
                 reqParam: '',
                 resParam: '',
                 resHeader: '',
-                errInfo: ''
+                errInfo: '',
+                annos:[]
             }
         },
         _initMethod: function() {
@@ -174,10 +175,9 @@
                     if (item.id == id) {
                         _curTrace = item;
                     }
-
-                    vc.copyObject(_curTrace, $that.logTraceDetailInfo)
                 });
-
+                vc.copyObject(_curTrace, $that.logTraceDetailInfo)
+                $that.logTraceDetailInfo.annos = _curTrace.annotations;
                 $that._listLogTraceParam();
             },
             _listLogTraceParam: function() {
@@ -204,6 +204,22 @@
                     }
                 );
             },
+
+            _getAnnoName:function(_value){
+                if(_value == "cs"){
+                    return '接受时间'
+                }else if(_value == "ss"){
+                    return '调用下游';
+                }else if(_value == "sr"){
+                    return '接受下游';
+                }else{
+                    return '返回时间';
+                }
+
+            },
+            _getAnnoTime:function(_time){
+                return vc.dateTimeFormat(_time)
+            }
 
         }
     });
