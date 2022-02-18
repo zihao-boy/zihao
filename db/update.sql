@@ -50,23 +50,23 @@ create table business_images_ext
 
 -- 2022-02-13
 
-INSERT INTO `menu` VALUES ('700201904028', 'ftp', '800201904003', '/index.html#/pages/admin/appPublisherManage', '3', 'ftp', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904023', 'ftp', 'ftp', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904028');
+INSERT INTO `menu` VALUES ('700201904028', 'ftp', '800201904003', '/index.html#/pages/admin/ftpManage', '3', 'ftp', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904023', 'ftp', 'ftp', '2019-04-01 02:24:53', '0', '/pages/admin/ftpManage', '700201904028');
 INSERT INTO `privilege_rel` VALUES ('42', '500201904023', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('43', '500201904023', '600201904002', '2019-04-01 08:18:29', '0');
 
-INSERT INTO `menu` VALUES ('700201904029', 'oss', '800201904003', '/index.html#/pages/admin/appPublisherManage', '3', 'oss', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904024', 'oss', 'oss', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904029');
+INSERT INTO `menu` VALUES ('700201904029', 'oss', '800201904003', '/index.html#/pages/admin/ossManage', '3', 'oss', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904024', 'oss', 'oss', '2019-04-01 02:24:53', '0', '/pages/admin/ossManage', '700201904029');
 INSERT INTO `privilege_rel` VALUES ('44', '500201904024', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('45', '500201904024', '600201904002', '2019-04-01 08:18:29', '0');
 
-INSERT INTO `menu` VALUES ('700201904030', '数据库', '800201904003', '/index.html#/pages/admin/appPublisherManage', '3', '数据库', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904025', '数据库', '数据库', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904030');
+INSERT INTO `menu` VALUES ('700201904030', '数据库', '800201904003', '/index.html#/pages/admin/dbManage', '3', '数据库', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904025', '数据库', '数据库', '2019-04-01 02:24:53', '0', '/pages/admin/dbManage', '700201904030');
 INSERT INTO `privilege_rel` VALUES ('46', '500201904025', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('47', '500201904025', '600201904002', '2019-04-01 08:18:29', '0');
 
-INSERT INTO `menu` VALUES ('700201904031', '资源备份', '800201904003', '/index.html#/pages/admin/appPublisherManage', '3', '资源备份', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904026', '资源备份', '资源备份', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904031');
+INSERT INTO `menu` VALUES ('700201904031', '资源备份', '800201904003', '/index.html#/pages/admin/backupManage', '3', '资源备份', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904026', '资源备份', '资源备份', '2019-04-01 02:24:53', '0', '/pages/admin/backupManage', '700201904031');
 INSERT INTO `privilege_rel` VALUES ('48', '500201904026', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('49', '500201904026', '600201904002', '2019-04-01 08:18:29', '0');
 
@@ -137,8 +137,8 @@ create table resources_backup
 
 INSERT INTO `menu_group` VALUES ('800201904013', '服务追踪', 'fa fa-globe', '', '10', '服务追踪', '2019-04-01 07:55:51', '0', 'P_WEB');
 
-INSERT INTO `menu` VALUES ('700201904032', '调用链', '800201904013', '/index.html#/pages/admin/appPublisherManage', '1', '调用链', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904027', '调用链', '调用链', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904032');
+INSERT INTO `menu` VALUES ('700201904032', '调用链', '800201904013', '/index.html#/pages/admin/logTrace', '1', '调用链', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904027', '调用链', '调用链', '2019-04-01 02:24:53', '0', '/pages/admin/logTrace', '700201904032');
 INSERT INTO `privilege_rel` VALUES ('50', '500201904027', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('51', '500201904027', '600201904002', '2019-04-01 08:18:29', '0');
 

@@ -1,39 +1,110 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
+    <script src="/js/d3/dagre-core.js"></script>
+    <script src="/js/d3/dagre-3.min.js"></script>
 </head>
 
 <body>
-    <div>
-        <input type="file" id="files" style="display: none" onchange="fileImport();">
-        <input type="button" id="fileImport" value="导入">
-    </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <!-- <script src="../js/jQuery/jquery-1.11.1.js"></script> -->
+
+    <svg id="svg-canvas" width=960 height=900></svg>
+
     <script>
-        //点击导入按钮,使files触发点击事件,然后完成读取文件的操作
-        $("#fileImport").click(function() {
-            $("#files").click();
+        let dataset = {
+            nodes: [{
+                id: 0,
+                label: "流动人员",
+                shape: "rect"
+            }, {
+                id: 1,
+                label: "安全筛查",
+                shape: "rect"
+            }, {
+                id: 2,
+                label: "热像仪人体\n测温筛查",
+                shape: "diamond"
+            }, {
+                id: 3,
+                label: "人工复测",
+                shape: "diamond"
+            }, {
+                id: 4,
+                label: "快速通过",
+                shape: "rect"
+            }, {
+                id: 5,
+                label: "紧急处理",
+                shape: "rect"
+            }],
+            edges: [{
+                source: 0,
+                target: 1,
+                label: ""
+            }, {
+                source: 1,
+                target: 2,
+                label: ""
+            }, {
+                source: 2,
+                target: 4,
+                label: "正常"
+            }, {
+                source: 2,
+                target: 3,
+                label: "不正常"
+            }, {
+                source: 3,
+                target: 5,
+                label: "不正常"
+            }, {
+                source: 3,
+                target: 4,
+                label: "正常"
+            }]
+        };
+        // 创建 graph 对象
+        let g = new dagreD3.graphlib.Graph();
+        //设置图
+        g.setGraph({
+            rankdir: 'TB'
+        });
+        dataset.nodes.forEach(item => {
+            g.setNode(item.id, {
+                //节点标签
+                label: item.label,
+                //节点形状
+                shape: item.shape,
+                //节点样式
+                style: "fill:#fff;stroke:#000"
+            })
         })
+        dataset.edges.forEach(item => {
+                g.setEdge(item.source, item.target, {
+                    //边标签
+                    label: item.label,
+                    //边样式
+                    style: "fill:#fff;stroke:#333;stroke-width:1.5px"
+                })
+            })
+            // debugger
+            // 创建渲染器
+        let render = new dagreD3.render();
+        // 选择 svg 并添加一个g元素作为绘图容器.
+        let svgGroup = d3.select('svg').append('g');
+        // 在绘图容器上运行渲染器生成流程图.
+        render(svgGroup, g);
 
-        function fileImport() {
-            //获取读取我文件的File对象
-            var selectedFile = document.getElementById('files').files[0];
-            var name = selectedFile.name; //读取选中文件的文件名
-            var size = selectedFile.size; //读取选中文件的大小
-            console.log("文件名:" + name + "大小:" + size);
-            var reader = new FileReader(); //这是核心,读取操作就是由它完成.
-            reader.readAsText(selectedFile); //读取文件的内容,也可以读取文件的URL
-            reader.onload = function() {
-                //当读取完成后回调这个函数,然后此时文件的内容存储到了result中,直接操作即可
-                console.log(this.result);
-            }
-        }
-
-
+        d3.selectAll("g.node").on("click", function(id) {
+            var _node = g.node(id);
+            console.log("Clicked " + id, _node);
+        });
     </script>
 </body>
+
+</html>

@@ -28,8 +28,9 @@ const (
     	
 	`
 	query_logTrace string = `
-				select t.*
+				select t.*,lt.service_name parent_service_name
 				from log_trace t
+				left join log_trace lt on t.parent_id = lt.id and lt.status_cd = '0'
 				where t.status_cd = '0'
 				$if TraceId != '' then
 				and t.trace_id = #TraceId#

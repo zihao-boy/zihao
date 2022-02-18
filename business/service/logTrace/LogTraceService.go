@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/logTraceAnnotationsDao"
 	"github.com/zihao-boy/zihao/business/dao/logTraceDao"
+	"github.com/zihao-boy/zihao/business/dao/logTraceParamDao"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/log"
 	"github.com/zihao-boy/zihao/entity/dto/result"
@@ -13,6 +14,7 @@ import (
 
 type LogTraceService struct {
 	logTraceDao            logTraceDao.LogTraceDao
+	logTraceParamDao            logTraceParamDao.LogTraceParamDao
 	logTraceAnnotationsDao logTraceAnnotationsDao.LogTraceAnnotationsDao
 }
 
@@ -62,6 +64,10 @@ func (logTraceService *LogTraceService) GetLogTraces(ctx iris.Context) result.Re
 
 	logTraceDto.Page = (page - 1) * row
 
+	logTraceDto.Name = ctx.URLParam("name")
+
+	logTraceDto.TraceId = ctx.URLParam("traceId")
+
 	total, err = logTraceService.logTraceDao.GetLogTraceCount(logTraceDto)
 
 	if err != nil {
@@ -81,6 +87,60 @@ func (logTraceService *LogTraceService) GetLogTraces(ctx iris.Context) result.Re
 
 }
 
+
+/**
+查询 系统信息
+*/
+func (logTraceService *LogTraceService) GetLogTraceDetail(ctx iris.Context) result.ResultDto {
+	var (
+		err          error
+		page         int64
+		row          int64
+		total        int64
+		logTraceDto  = log.LogTraceDto{}
+		logTraceDtos []*log.LogTraceDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	logTraceDto.Row = row * page
+
+	logTraceDto.Page = (page - 1) * row
+
+	logTraceDto.Name = ctx.URLParam("name")
+
+	logTraceDto.TraceId = ctx.URLParam("traceId")
+
+	total, err = logTraceService.logTraceDao.GetLogTraceCount(logTraceDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	logTraceDtos, err = logTraceService.logTraceDao.GetLogTraces(logTraceDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	logTraceDtos = logTraceService.addAnn(logTraceDtos)
+
+	return result.SuccessData(logTraceDtos, total, row)
+
+}
 /**
 保存 系统信息
 */
@@ -192,4 +252,70 @@ func (logTraceService *LogTraceService) DeleteLogTraces(ctx iris.Context) result
 
 	return result.SuccessData(logTraceDto)
 
+}
+
+func (logTraceService *LogTraceService) addAnn(dtos []*log.LogTraceDto) []*log.LogTraceDto {
+
+	for _, trace := range dtos{
+
+		anno := log.LogTraceAnnotationsDto{
+			SpanId: trace.Id,
+		}
+
+		annos,err := logTraceService.logTraceAnnotationsDao.GetLogTraceAnnotationss(anno)
+		if err != nil{
+			continue
+		}
+		trace.Annotations = annos
+	}
+
+	return dtos
+
+}
+
+func (logTraceService *LogTraceService) GetLogTraceParam(ctx iris.Context) interface{} {
+	var (
+		err          error
+		page         int64
+		row          int64
+		total        int64
+		logTraceParamDto  = log.LogTraceParamDto{}
+		logTraceParamDtos []*log.LogTraceParamDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	logTraceParamDto.Row = row * page
+
+	logTraceParamDto.Page = (page - 1) * row
+
+	logTraceParamDto.SpanId = ctx.URLParam("spanId")
+
+
+	total, err = logTraceService.logTraceParamDao.GetLogTraceParamCount(logTraceParamDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	logTraceParamDtos, err = logTraceService.logTraceParamDao.GetLogTraceParams(logTraceParamDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(logTraceParamDtos, total, row)
 }

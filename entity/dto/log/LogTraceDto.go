@@ -12,10 +12,12 @@ type LogTraceDto struct {
 	Timestamp  int64 `json:"timestamp"`
 	Duration  int64 `json:"duration"`
 	ServiceName string `json:"serviceName" sql:"-"`
+	ParentServiceName string `json:"parentServiceName" sql:"-"`
 	Ip          string `json:"ipv4"`
 	Port        string `json:"port"`
 	CreateTime    string `json:"createTime" sql:"-"`
 	StatusCd      string `json:"statusCd" sql:"-"`
+	Annotations  []*LogTraceAnnotationsDto `json:"annotations"`
 }
 
 type LogTraceDataDto struct {

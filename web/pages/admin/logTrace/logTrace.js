@@ -70,6 +70,9 @@
                     vc.component.logTraceInfo.moreCondition = true;
                 }
             },
+            _toTraceDetail: function(_trace) {
+                vc.jumpToPage('/index.html#/pages/admin/logTraceDetail?traceId=' + _trace.traceId)
+            }
 
         }
     });

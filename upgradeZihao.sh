@@ -4,7 +4,7 @@ cd ..
 
 rm -rf zihao_release*
 
-wget http://cdn.homecommunity.cn/zihao_release.tar
+wget https://homecommunity.oss-cn-beijing.aliyuncs.com/zihao_release.tar
 
 tar -xvf zihao_release.tar
 
@@ -16,11 +16,13 @@ rm -rf ./slave/slave*
 
 cp -r ./zihao_release/web ./master/
 
+cp -r ./zihao_release/zihao ./master/
+
 cp -r ./zihao_release/web/download/slave.tar ./slave/
 
 chmod u+x ./master/zihao
 
-tar -xvf ./slave/slave.tar
+tar -xvf ./slave/slave.tar -C ./slave/
 
 chmod u+x ./slave/slave
 

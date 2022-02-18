@@ -1,0 +1,72 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>调用链路（交易流水：{{logTraceDetailInfo.traceId}})</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_goBack()">
+                       返回
+                    </button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row ">
+                    <div class="col-lg-8 text-center" style="min-height: 500px;
+                    border-right: 2px solid;
+                    border-image: -webkit-linear-gradient( #1ab394 , #fff) 30 30;
+                    border-image: -moz-linear-gradient( #1ab394 , #fff) 30 30;
+                    border-image: linear-gradient( #1ab394, #fff) 30 30;">
+                        <svg id="svg-canvas" width=960 height=900 style="text-align: center;"></svg>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="text-left">
+                            <h3>请求报文信息</h3>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">服务名</label>
+                            <div class="col-sm-10">
+                                <input v-model="logTraceDetailInfo.serviceName" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">接口名</label>
+                            <div class="col-sm-10">
+                                <input v-model="logTraceDetailInfo.name" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">请求头</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="logTraceDetailInfo.reqHeader" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">请求报文</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="logTraceDetailInfo.reqParam" rows="5" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">返回头</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="logTraceDetailInfo.resHeader" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">返回报文</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="logTraceDetailInfo.resParam" rows="5" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">异常</label>
+                            <div class="col-sm-10">
+                                <textarea v-model="logTraceDetailInfo.errInfo" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
