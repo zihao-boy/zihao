@@ -173,7 +173,7 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 	logTraceDto.Port = logTraceDataDto.Annotations[0].Endpoint.Port
 	logTraceDto.Duration = 0
 	//compute Duration cr - cs
-	if len(logTraceDataDto.Annotations) == 4{
+	if len(logTraceDataDto.Annotations) > 0{
 
 		for _, annotation := range logTraceDataDto.Annotations {
 			if annotation.Value == "cr"{
@@ -185,8 +185,9 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 			}
 		}
 
-		logTraceDto.Duration = crTimestame - csTimestame
-
+		if crTimestame != 0 && csTimestame != 0{
+			logTraceDto.Duration = crTimestame - csTimestame
+		}
 	}
 
 	err = logTraceService.logTraceDao.SaveLogTrace(logTraceDto)
