@@ -44,7 +44,7 @@
                         let _logTraceInfo = JSON.parse(json);
                         vc.component.logTraceDetailInfo.total = _logTraceInfo.total;
                         vc.component.logTraceDetailInfo.records = _logTraceInfo.records;
-                        vc.component.logTraceDetailInfo.traces = _logTraceInfo.data;
+                        vc.component.logTraceDetailInfo.traces = _logTraceInfo.data.sort($that.compare);
                         if (_logTraceInfo.data.length < 1) {
                             return;
                         }
@@ -73,7 +73,8 @@
                     _serviceName = "服务名：" + trace.serviceName +
                         "\n接口名：" + trace.name +
                         "\n主机信息：" + trace.ipv4 + ":" + trace.port +
-                        "\n网络耗时：" + trace.duration
+                        "\n业务耗时：" + trace.duration +
+                        "\n调用时间：" + trace.timestamp ;
                     _nodes.push({
                         "id": trace.id,
                         "label": _serviceName,
@@ -111,10 +112,10 @@
                         return;
                     }
 
-                    _annotations = item.annotations;
-
+                    //_annotations = item.annotations;
+                    _annotations = item.annotations.sort($that.compare);
                     _annotations.forEach((anno) => {
-                        if (anno.value == 'ss') {
+                        if (anno.value == 'ss' &&  _ssTime == 0) {
                             _ssTime = anno.timestamp;
                         }
                     })
@@ -232,7 +233,18 @@
             },
             _getAnnoTime: function(_time) {
                 return vc.dateTimeFormat(_time)
-            }
+            },
+            compare:function (obj1, obj2) {
+                let val1 = obj1.timestamp;
+                let val2 = obj2.timestamp;
+                if (val1 < val2) {
+                    return -1;
+                } else if (val1 > val2) {
+                    return 1;
+                } else {
+                    return 0;
+                }            
+            } 
 
         }
     });
