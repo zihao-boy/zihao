@@ -17,7 +17,7 @@
                 resParam: '',
                 resHeader: '',
                 errInfo: '',
-                annos:[]
+                annos: []
             }
         },
         _initMethod: function() {
@@ -157,13 +157,26 @@
                     // 创建渲染器
                 let render = new dagreD3.render();
                 // 选择 svg 并添加一个g元素作为绘图容器.
-                let svgGroup = d3.select('svg').append('g');
+                let svg = d3.select("#svg-canvas"); //声明节点
+                svg.select("g").remove(); //删除以前的节点，清空画面
+                let svgGroup = svg.append("g");
+                let inner = svg.select("g");
                 // 在绘图容器上运行渲染器生成流程图.
+                let zoom = d3.zoom().on("zoom", function() { //添加鼠标滚轮放大缩小事件
+                    inner.attr("transform", d3.event.transform);
+                });
+                svg.call(zoom);
                 render(svgGroup, g);
 
                 d3.selectAll("g.node").on("click", function(id) {
                     $that._loadReqInfo(id);
                 });
+
+                let max = svg._groups[0][0].clientWidth > svg._groups[0][0].clientHeight ? svg._groups[0][0].clientWidth : svg._groups[0][0].clientHeight;
+                let initialScale = max / 779; //initialScale元素放大倍数，随着父元素宽高发生变化时改变初始渲染大小
+                let tWidth = (svg._groups[0][0].clientWidth - g.graph().width * initialScale) / 2; //水平居中
+                let tHeight = (svg._groups[0][0].clientHeight - g.graph().height * initialScale) / 2; //垂直居中
+                svgGroup.call(zoom.transform, d3.zoomIdentity.translate(tWidth, tHeight).scale(initialScale)); //元素水平垂直居中复制代码
             },
             _goBack: function() {
                 vc.goBack();
@@ -205,19 +218,19 @@
                 );
             },
 
-            _getAnnoName:function(_value){
-                if(_value == "cs"){
+            _getAnnoName: function(_value) {
+                if (_value == "cs") {
                     return '接受时间'
-                }else if(_value == "ss"){
+                } else if (_value == "ss") {
                     return '调用下游';
-                }else if(_value == "sr"){
+                } else if (_value == "sr") {
                     return '接受下游';
-                }else{
+                } else {
                     return '返回时间';
                 }
 
             },
-            _getAnnoTime:function(_time){
+            _getAnnoTime: function(_time) {
                 return vc.dateTimeFormat(_time)
             }
 
