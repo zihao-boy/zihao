@@ -22,6 +22,6 @@ type LogTraceDto struct {
 
 type LogTraceDataDto struct {
 	LogTraceDto
-	Annotations []*LogTraceAnnotationsDataDto
-	Param *LogTraceParamDto
+	Annotations []*LogTraceAnnotationsDataDto  `json:"annotations"`
+	Param *LogTraceParamDto  `json:"param"`
 }

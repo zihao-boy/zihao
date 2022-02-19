@@ -33,19 +33,18 @@ func Init() {
 
 // kafka listen
 func kafkaListen(message *sarama.ConsumerMessage) {
-	fmt.Println("收到卡夫卡消息",string(message.Value))
+	fmt.Println(message.Topic, "收到卡夫卡消息", string(message.Value))
 	if message.Topic == TopicLogTrace {
 		saveLogTrace(message)
 	}
 }
 
 // save log
-func saveLogTrace(message *sarama.ConsumerMessage)  {
+func saveLogTrace(message *sarama.ConsumerMessage) {
 
 	var (
 		logTraceService logTraceService.LogTraceService
 	)
-
 
 	logTraceService.SaveLogTraces(string(message.Value))
 
