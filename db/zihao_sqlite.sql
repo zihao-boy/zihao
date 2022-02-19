@@ -924,12 +924,15 @@ create table log_trace_annotations
 
 create table log_trace_param
 (
-    id        varchar(64)  not null primary key,
-    span_id      varchar(64)  not null,
-    req_param        logtext  ,
-    res_param      logtext ,
-    create_time timestamp    default CURRENT_TIMESTAMP not null,
-    status_cd   varchar(2)   default '0' not null
+    id          varchar(64) not null
+        primary key,
+    span_id     varchar(64) not null,
+    req_header  logtext,
+    req_param   logtext,
+    res_header   logtext,
+    res_param   logtext,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
 );
 create table install_app
 (

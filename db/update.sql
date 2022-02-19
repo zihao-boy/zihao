@@ -157,3 +157,19 @@ INSERT INTO `privilege` VALUES ('500201904030', '服务异常', '服务异常', 
 INSERT INTO `privilege_rel` VALUES ('56', '500201904030', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('57', '500201904030', '600201904002', '2019-04-01 08:18:29', '0');
 
+
+-- 2022-02-19 修改 log_trace_param 表
+drop table log_trace_param;
+create table log_trace_param
+(
+    id          varchar(64) not null
+        primary key,
+    span_id     varchar(64) not null,
+    req_header  logtext,
+    req_param   logtext,
+    res_header   logtext,
+    res_param   logtext,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
