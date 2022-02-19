@@ -161,7 +161,7 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 	json.Unmarshal([]byte(param), &logTraceDto)
 
 
-	logTraceDto.Id = seq.Generator()
+	//logTraceDto.Id = seq.Generator()
 	//LogTraceDto.Path = filepath.Join(curDest, fileHeader.Filename)
 
 	if logTraceDataDto.Annotations == nil || len(logTraceDataDto.Annotations) < 1 {

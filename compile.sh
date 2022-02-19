@@ -2,7 +2,7 @@
 
 cur_pwd=$(pwd)
 
-rm ../zihao_release*
+rm -rf ../zihao_release*
 
 # build master
 go build .
