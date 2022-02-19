@@ -214,7 +214,7 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 
 	logTraceParamDto := logTraceDataDto.Param
 
-	if utils.IsEmpty(logTraceParamDto.ReqParam){
+	if logTraceParamDto == nil || utils.IsEmpty(logTraceParamDto.ReqParam){
 		return result.SuccessData(logTraceDto)
 	}
 
