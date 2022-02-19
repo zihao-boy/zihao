@@ -2,6 +2,8 @@
 
 cur_pwd=$(pwd)
 
+rm ../zihao_release*
+
 # build master
 go build .
 
