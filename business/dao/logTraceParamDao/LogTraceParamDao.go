@@ -38,8 +38,8 @@ const (
 	`
 
 	insert_logTraceParam string = `
-	insert into log_trace_param(id, span_id, req_param, res_param)
-VALUES(#Id#,#SpanId#,#ReqParam#,#ResParam#)
+	insert into log_trace_param(id, span_id, req_param, res_param,req_header, res_header)
+VALUES(#Id#,#SpanId#,#ReqParam#,#ResParam#,#ReqHeader#,#ResHeader#)
 `
 
 	update_logTraceParam string = `

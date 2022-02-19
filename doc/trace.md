@@ -29,7 +29,13 @@
 "port": 9411
 }
 }
-]
+],
+param:{
+    reqHeader:'',
+    resHeader:'',
+    reqParam:'',
+    resParam:''
+}
 }
 ```
 

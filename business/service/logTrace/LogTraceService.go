@@ -7,6 +7,7 @@ import (
 	"github.com/zihao-boy/zihao/business/dao/logTraceDao"
 	"github.com/zihao-boy/zihao/business/dao/logTraceParamDao"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/log"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
@@ -208,6 +209,19 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 			return result.Error(err.Error())
 		}
 	}
+
+	//save log
+
+	logTraceParamDto := logTraceDataDto.Param
+
+	if utils.IsEmpty(logTraceParamDto.ReqParam){
+		return result.SuccessData(logTraceDto)
+	}
+
+	logTraceParamDto.Id = seq.Generator()
+	logTraceParamDto.SpanId = logTraceDto.Id
+
+	logTraceService.logTraceParamDao.SaveLogTraceParam(*logTraceParamDto)
 
 	return result.SuccessData(logTraceDto)
 }
