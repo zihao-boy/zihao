@@ -20,7 +20,7 @@ own:
   kafka_port: 9092
   kafka_group: zihaoGroupId
   kafka_topic: zihaoTopic,logTrace
-  kafka_switch: ON
+  kafka_switch: OFF
   db: sqlite # mysql
   cache: local # redis
   data_path: /Users/wuxuewen
