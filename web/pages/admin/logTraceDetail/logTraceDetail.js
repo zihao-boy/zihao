@@ -74,7 +74,7 @@
                         "\n接口名：" + trace.name +
                         "\n主机信息：" + trace.ipv4 + ":" + trace.port +
                         "\n业务耗时：" + trace.duration +
-                        "\n调用时间：" + trace.timestamp ;
+                        "\n调用时间：" + trace.timestamp;
                     _nodes.push({
                         "id": trace.id,
                         "label": _serviceName,
@@ -115,7 +115,7 @@
                     //_annotations = item.annotations;
                     _annotations = item.annotations.sort($that.compare);
                     _annotations.forEach((anno) => {
-                        if (anno.value == 'ss' &&  _ssTime == 0) {
+                        if (anno.value == 'ss' && _ssTime == 0) {
                             _ssTime = anno.timestamp;
                         }
                     })
@@ -192,9 +192,16 @@
                 });
                 vc.copyObject(_curTrace, $that.logTraceDetailInfo)
                 $that.logTraceDetailInfo.annos = _curTrace.annotations;
+                $that.logTraceDetailInfo.spanId = id;
                 $that._listLogTraceParam();
             },
             _listLogTraceParam: function() {
+
+                $that.logTraceDetailInfo.reqHeader = '';
+                $that.logTraceDetailInfo.reqParam = '';
+                $that.logTraceDetailInfo.resParam = '';
+                $that.logTraceDetailInfo.resHeader = '';
+                $that.logTraceDetailInfo.errInfo = '';
                 let param = {
                     params: {
                         spanId: $that.logTraceDetailInfo.spanId,
@@ -211,7 +218,7 @@
                         if (_logTraceInfo.data.length < 1) {
                             return;
                         }
-                        vc.copyObject(logTraceInfo.data[0], $that.logTraceDetailInfo)
+                        vc.copyObject(_logTraceInfo.data[0], $that.logTraceDetailInfo)
                     },
                     function(errInfo, error) {
                         console.log('请求失败处理');
@@ -234,7 +241,7 @@
             _getAnnoTime: function(_time) {
                 return vc.dateTimeFormat(_time)
             },
-            compare:function (obj1, obj2) {
+            compare: function(obj1, obj2) {
                 let val1 = obj1.timestamp;
                 let val2 = obj2.timestamp;
                 if (val1 < val2) {
@@ -243,8 +250,8 @@
                     return 1;
                 } else {
                     return 0;
-                }            
-            } 
+                }
+            }
 
         }
     });
