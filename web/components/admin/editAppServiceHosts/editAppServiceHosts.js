@@ -47,6 +47,15 @@
                     vc.toast(vc.validate.errInfo);
                     return;
                 }
+                let _isMore = $that.editAppServiceHostsInfo.isMore;
+                if (_isMore == 1) {
+                    $that.editAppServiceHostsInfo.asId = $that.editAppServiceHostsInfo.asIds.toString();
+                }
+
+                if (!$that.editAppServiceHostsInfo.asId) {
+                    vc.toast('请选择应用');
+                    return;
+                }
                 vc.http.apiPost(
                     '/appService/updateAppServiceHosts',
                     JSON.stringify(vc.component.editAppServiceHostsInfo), {
@@ -93,15 +102,7 @@
                         asGroupId: $that.editAppServiceHostsInfo.asGroupId
                     }
                 };
-                let _isMore = $that.editAppServiceHostsInfo.isMore;
-                if (_isMore == 1) {
-                    $that.editAppServiceHostsInfo.asId = $that.editAppServiceHostsInfo.asIds.toString();
-                }
 
-                if (!$that.editAppServiceHostsInfo.asId) {
-                    vc.toast('请选择应用');
-                    return;
-                }
                 //发送get请求
                 vc.http.apiGet('/appService/getAppService',
                     param,
