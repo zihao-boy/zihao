@@ -3,11 +3,13 @@
 ## qq:709574906
 
 ### 1.0 安装(install)
-```shell
+
 yum install -y wget && wget https://homecommunity.oss-cn-beijing.aliyuncs.com/install.sh && sh install.sh
-or 
+
+或者
+
 yum install -y wget && wget https://homecommunity.oss-cn-beijing.aliyuncs.com/install.sh -O zihaoinstall.sh && sh zihaoinstall.sh
-```
+
 
 ### 2.0 如何访问（view）
 
@@ -49,7 +51,9 @@ https://www.bilibili.com/video/BV1BM4y1w7Ti?spm_id_from=333.999.0.0
 端口对外不开放来提高数据库的安全性
 
  9、 数据备份功能 分为文件 和数据库备份 可以备份到 ftp oss 和mysql 数据库
+
  10、实现ftp 客户端功能 文件操作包括上传下载 删除 重命名等
+
  11、实现oss 客户端功能 文件操作包括上传下载 删除 等
 
 未来我们还会加入很多有趣的功能。
