@@ -1568,13 +1568,68 @@ func (appServiceService *AppServiceService) doImportAppService(appServiceDto app
 				AvId:     seq.Generator(),
 				AsId:     appServiceDto.AsId,
 				TenantId: appServiceDto.TenantId,
-				VarSpec:  strings.SplitN(env, ":",2)[0],
-				VarValue: strings.SplitN(env, ":",2)[1],
-				VarName:  strings.SplitN(env, ":",2)[0],
+				VarSpec:  strings.SplitN(env, ":", 2)[0],
+				VarValue: strings.SplitN(env, ":", 2)[1],
+				VarName:  strings.SplitN(env, ":", 2)[0],
 			}
 			appServiceService.appServiceDao.SaveAppServiceVar(appServiceVar)
 		}
 	}
 
+	return result.Success()
+}
+
+func (appServiceService *AppServiceService) UpgradeAppService(ctx iris.Context) interface{} {
+
+	var (
+		err              error
+		tmpAppServiceDto appService.AppServiceDto
+	)
+
+	if err = ctx.ReadJSON(&tmpAppServiceDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	appServiceDto := appService.AppServiceDto{
+		AsId:  tmpAppServiceDto.AsId,
+	}
+	appServiceDtos, err := appServiceService.appServiceDao.GetAppServices(appServiceDto)
+
+	if err != nil || len(appServiceDtos) < 1 {
+		return result.Error("服务不存在或者未运行状态")
+	}
+	var hosts []*host.HostDto
+	for _, appServiceDto := range appServiceDtos {
+		tmpAppServiceDto := appService.AppServiceDto{
+			AsId:    appServiceDto.AsId,
+			VerId:   tmpAppServiceDto.VerId,
+			AsCount: tmpAppServiceDto.AsCount,
+		}
+		appServiceService.appServiceDao.UpdateAppService(tmpAppServiceDto)
+
+		//stop app service
+		containerScheduling.StopContainer(appServiceDto)
+
+		//start app service
+
+		if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST {
+			hostDto := host.HostDto{
+				HostId: appServiceDto.AsDeployId,
+			}
+			hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+		} else {
+			hostDto := host.HostDto{
+				GroupId: appServiceDto.AsDeployId,
+			}
+			hosts, _ = appServiceService.hostDao.GetHosts(hostDto)
+		}
+
+		if len(hosts) < 1 {
+			return result.Error("主机不存在")
+		}
+		appServiceDto.VerId = tmpAppServiceDto.VerId
+		appServiceDto.AsCount = tmpAppServiceDto.AsCount
+		containerScheduling.ContainerScheduling(hosts, appServiceDto)
+	}
 	return result.Success()
 }

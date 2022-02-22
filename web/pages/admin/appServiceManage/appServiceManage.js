@@ -92,6 +92,9 @@
             _copyAppService: function(_appService) {
                 vc.emit('copyAppService', 'openCopyAppServiceModal', _appService);
             },
+            _upgradeAppService: function(_appService) {
+                vc.emit('upgradeAppService', 'openUpgradeAppServiceModal', _appService);
+            },
             _openDeleteAppServiceModel: function(_appService) {
                 vc.emit('deleteAppService', 'openDeleteAppServiceModal', _appService);
             },

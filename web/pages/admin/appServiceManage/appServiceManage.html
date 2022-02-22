@@ -97,6 +97,9 @@
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_openControl(appService)">控制台</button>
                                     </div>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" v-on:click="_upgradeAppService(appService)">升降</button>
+                                    </div>
                                     <div class="btn-group" v-if="appService.state == '10012'">
                                         <button class="btn-white btn btn-xs" v-on:click="_startAppService(appService)">启动</button>
                                     </div>
@@ -136,5 +139,6 @@
     <vc:create path="admin/deleteAppService"></vc:create>
     <vc:create path="admin/selectAppService"></vc:create>
     <vc:create path="admin/importAppService"></vc:create>
+    <vc:create path="admin/upgradeAppService"></vc:create>
 
 </div>

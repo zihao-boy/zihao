@@ -22,6 +22,9 @@ func AppServiceControllerRouter(party iris.Party) {
 	adinMenu.Post("/saveAppService", hero.Handler(aus.saveAppService))
 
 	adinMenu.Post("/updateAppService", hero.Handler(aus.updateAppService))
+	adinMenu.Post("/upgradeAppService", hero.Handler(aus.upgradeAppService))
+
+
 
 	adinMenu.Post("/deleteAppService", hero.Handler(aus.deleteAppService))
 
@@ -131,6 +134,15 @@ func (aus *AppServiceController) saveAppService(ctx iris.Context) {
 */
 func (aus *AppServiceController) updateAppService(ctx iris.Context) {
 	reslut := aus.appServiceService.UpdateAppServices(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+修改 主机组
+*/
+func (aus *AppServiceController) upgradeAppService(ctx iris.Context) {
+	reslut := aus.appServiceService.UpgradeAppService(ctx)
 
 	ctx.JSON(reslut)
 }
