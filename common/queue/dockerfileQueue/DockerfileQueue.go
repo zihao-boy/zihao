@@ -300,6 +300,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		if len(hosts) < 1 {
 			return
 		}
+		appServiceDto.VerId = businessImagesVerDto.Id
 
 		containerScheduling.ContainerScheduling(hosts, appServiceDto)
 
