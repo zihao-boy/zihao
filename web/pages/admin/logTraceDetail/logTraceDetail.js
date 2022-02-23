@@ -28,6 +28,16 @@
 
         },
         methods: {
+            _viewSql:function(){
+
+                if(!$tha.logTraceDetailInfo.spanId){
+                    vc.toast('选择节点');
+                    return ;
+                }
+
+                vc.jumpToPage('/index.html#/pages/admin/logTraceDb?spanId='+$tha.logTraceDetailInfo.spanId)
+
+            },
             _listLogTraceDetails: function(_page, _rows) {
                 let param = {
                     params: {

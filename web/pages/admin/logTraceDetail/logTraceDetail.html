@@ -4,6 +4,10 @@
             <div class="ibox-title">
                 <h5>调用链路（交易流水：{{logTraceDetailInfo.traceId}})</h5>
                 <div class="ibox-tools" style="top:10px;">
+
+                    <button type="button" class="btn btn-primary btn-sm" v-on:click="_viewSql()">
+                        查看sql
+                     </button>
                     <button type="button" class="btn btn-primary btn-sm" v-on:click="_goBack()">
                        返回
                     </button>
