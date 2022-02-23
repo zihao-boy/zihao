@@ -93,6 +93,9 @@ func MonitorControllerRouter(party iris.Party) {
 
 	//查询sql
 	adinUser.Get("/getLogTraceParam", hero.Handler(aus.getLogTraceParam))
+
+	//查询sql
+	adinUser.Get("/getLogTraceDb", hero.Handler(aus.getLogTraceDb))
 }
 
 func (aus *MonitorController) getMonitorHosts(ctx iris.Context) {
@@ -264,6 +267,11 @@ func (aus *MonitorController) getLogTraceDetail(ctx iris.Context) {
 
 func (aus *MonitorController) getLogTraceParam(ctx iris.Context) {
 	relustDto := aus.logTraceService.GetLogTraceParam(ctx)
+	ctx.JSON(relustDto)
+}
+
+func (aus *MonitorController) getLogTraceDb(ctx iris.Context) {
+	relustDto := aus.logTraceService.GetLogTraceDb(ctx)
 	ctx.JSON(relustDto)
 }
 

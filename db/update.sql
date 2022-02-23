@@ -142,20 +142,12 @@ INSERT INTO `privilege` VALUES ('500201904027', '调用链', '调用链', '2019-
 INSERT INTO `privilege_rel` VALUES ('50', '500201904027', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('51', '500201904027', '600201904002', '2019-04-01 08:18:29', '0');
 
-INSERT INTO `menu` VALUES ('700201904033', '服务耗时', '800201904013', '/index.html#/pages/admin/appPublisherManage', '2', '服务耗时', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904028', '服务耗时', '服务耗时', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904033');
+INSERT INTO `menu` VALUES ('700201904033', '调用sql', '800201904013', '/index.html#/pages/admin/logTraceDb', '2', '调用sql', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904028', '调用sql', '调用sql', '2019-04-01 02:24:53', '0', '/pages/admin/logTraceDb', '700201904033');
 INSERT INTO `privilege_rel` VALUES ('52', '500201904028', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('53', '500201904028', '600201904002', '2019-04-01 08:18:29', '0');
 
-INSERT INTO `menu` VALUES ('700201904034', '服务异常', '800201904013', '/index.html#/pages/admin/appPublisherManage', '3', '服务异常', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904029', '服务异常', '服务异常', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904034');
-INSERT INTO `privilege_rel` VALUES ('54', '500201904029', '600201904000', '2019-04-01 08:18:29', '0');
-INSERT INTO `privilege_rel` VALUES ('55', '500201904029', '600201904002', '2019-04-01 08:18:29', '0');
 
-INSERT INTO `menu` VALUES ('700201904035', '慢sql', '800201904013', '/index.html#/pages/admin/appPublisherManage', '4', '慢sql', '2019-04-09 14:50:56', '0', 'Y');
-INSERT INTO `privilege` VALUES ('500201904030', '服务异常', '服务异常', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904035');
-INSERT INTO `privilege_rel` VALUES ('56', '500201904030', '600201904000', '2019-04-01 08:18:29', '0');
-INSERT INTO `privilege_rel` VALUES ('57', '500201904030', '600201904002', '2019-04-01 08:18:29', '0');
 
 
 -- 2022-02-19 修改 log_trace_param 表
@@ -169,6 +161,18 @@ create table log_trace_param
     req_param   logtext,
     res_header   logtext,
     res_param   logtext,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+create table log_trace_db
+(
+    id          varchar(64) not null
+        primary key,
+    span_id     varchar(64) not null,
+    db_sql  logtext,
+    param   logtext,
+    duration   varchar(64),
     create_time timestamp  default CURRENT_TIMESTAMP not null,
     status_cd   varchar(2) default '0' not null
 );

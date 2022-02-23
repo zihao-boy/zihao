@@ -1036,3 +1036,27 @@ create table resources_backup
     create_time timestamp  default CURRENT_TIMESTAMP not null,
     status_cd   varchar(2) default '0' not null
 );
+
+create table business_images_ver
+(
+    id          varchar(64)  not null
+        primary key,
+    images_id   varchar(64)  not null,
+    version     varchar(32)  not null,
+    type_url    varchar(512) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null,
+    tenant_id   varchar(64)  not null
+);
+
+create table log_trace_db
+(
+    id          varchar(64) not null
+        primary key,
+    span_id     varchar(64) not null,
+    db_sql  logtext,
+    param   logtext,
+    duration   varchar(64),
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);

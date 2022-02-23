@@ -35,7 +35,12 @@ param:{
     resHeader:'',
     reqParam:'',
     resParam:''
-}
+},
+dbs:[{
+    sql:"",
+    params:"",
+    duration:""
+}]
 }
 ```
 

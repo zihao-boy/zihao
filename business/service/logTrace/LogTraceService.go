@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/logTraceAnnotationsDao"
 	"github.com/zihao-boy/zihao/business/dao/logTraceDao"
+	"github.com/zihao-boy/zihao/business/dao/logTraceDbDao"
 	"github.com/zihao-boy/zihao/business/dao/logTraceParamDao"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/utils"
@@ -15,7 +16,8 @@ import (
 
 type LogTraceService struct {
 	logTraceDao            logTraceDao.LogTraceDao
-	logTraceParamDao            logTraceParamDao.LogTraceParamDao
+	logTraceParamDao       logTraceParamDao.LogTraceParamDao
+	logTraceDbDao          logTraceDbDao.LogTraceDbDao
 	logTraceAnnotationsDao logTraceAnnotationsDao.LogTraceAnnotationsDao
 }
 
@@ -88,7 +90,6 @@ func (logTraceService *LogTraceService) GetLogTraces(ctx iris.Context) result.Re
 
 }
 
-
 /**
 查询 系统信息
 */
@@ -142,6 +143,7 @@ func (logTraceService *LogTraceService) GetLogTraceDetail(ctx iris.Context) resu
 	return result.SuccessData(logTraceDtos, total, row)
 
 }
+
 /**
 保存 系统信息
 */
@@ -151,15 +153,13 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 		logTraceDto            log.LogTraceDto
 		logTraceDataDto        log.LogTraceDataDto
 		logTraceAnnotationsDto log.LogTraceAnnotationsDto
-		crTimestame int64
-		csTimestame int64
-
+		crTimestame            int64
+		csTimestame            int64
 	)
 	json.Unmarshal([]byte(param), &logTraceDataDto)
 
 	//object convert
 	json.Unmarshal([]byte(param), &logTraceDto)
-
 
 	//logTraceDto.Id = seq.Generator()
 	//LogTraceDto.Path = filepath.Join(curDest, fileHeader.Filename)
@@ -173,19 +173,19 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 	logTraceDto.Port = logTraceDataDto.Annotations[0].Endpoint.Port
 	logTraceDto.Duration = 0
 	//compute Duration cr - cs
-	if len(logTraceDataDto.Annotations) > 0{
+	if len(logTraceDataDto.Annotations) > 0 {
 
 		for _, annotation := range logTraceDataDto.Annotations {
-			if annotation.Value == "cr"{
+			if annotation.Value == "cr" {
 				crTimestame = annotation.Timestamp
 			}
 
-			if annotation.Value == "cs"{
+			if annotation.Value == "cs" {
 				csTimestame = annotation.Timestamp
 			}
 		}
 
-		if crTimestame != 0 && csTimestame != 0{
+		if crTimestame != 0 && csTimestame != 0 {
 			logTraceDto.Duration = crTimestame - csTimestame
 		}
 	}
@@ -215,14 +215,21 @@ func (logTraceService *LogTraceService) SaveLogTraces(param string) result.Resul
 
 	logTraceParamDto := logTraceDataDto.Param
 
-	if logTraceParamDto == nil || utils.IsEmpty(logTraceParamDto.ReqParam){
-		return result.SuccessData(logTraceDto)
+	if logTraceParamDto != nil && !utils.IsEmpty(logTraceParamDto.ReqParam) {
+		logTraceParamDto.Id = seq.Generator()
+		logTraceParamDto.SpanId = logTraceDto.Id
+		logTraceService.logTraceParamDao.SaveLogTraceParam(*logTraceParamDto)
 	}
 
-	logTraceParamDto.Id = seq.Generator()
-	logTraceParamDto.SpanId = logTraceDto.Id
+	logTraceDbDtos := logTraceDataDto.Dbs
 
-	logTraceService.logTraceParamDao.SaveLogTraceParam(*logTraceParamDto)
+	if logTraceDbDtos != nil && len(logTraceDbDtos) > 0 {
+		for _, logTraceDbDto := range logTraceDbDtos {
+			logTraceDbDto.Id = seq.Generator()
+			logTraceDbDto.SpanId = logTraceDto.Id
+			logTraceService.logTraceDbDao.SaveLogTraceDb(*logTraceDbDto)
+		}
+	}
 
 	return result.SuccessData(logTraceDto)
 }
@@ -271,14 +278,14 @@ func (logTraceService *LogTraceService) DeleteLogTraces(ctx iris.Context) result
 
 func (logTraceService *LogTraceService) addAnn(dtos []*log.LogTraceDto) []*log.LogTraceDto {
 
-	for _, trace := range dtos{
+	for _, trace := range dtos {
 
 		anno := log.LogTraceAnnotationsDto{
 			SpanId: trace.Id,
 		}
 
-		annos,err := logTraceService.logTraceAnnotationsDao.GetLogTraceAnnotationss(anno)
-		if err != nil{
+		annos, err := logTraceService.logTraceAnnotationsDao.GetLogTraceAnnotationss(anno)
+		if err != nil {
 			continue
 		}
 		trace.Annotations = annos
@@ -290,10 +297,10 @@ func (logTraceService *LogTraceService) addAnn(dtos []*log.LogTraceDto) []*log.L
 
 func (logTraceService *LogTraceService) GetLogTraceParam(ctx iris.Context) interface{} {
 	var (
-		err          error
-		page         int64
-		row          int64
-		total        int64
+		err               error
+		page              int64
+		row               int64
+		total             int64
 		logTraceParamDto  = log.LogTraceParamDto{}
 		logTraceParamDtos []*log.LogTraceParamDto
 	)
@@ -316,7 +323,6 @@ func (logTraceService *LogTraceService) GetLogTraceParam(ctx iris.Context) inter
 
 	logTraceParamDto.SpanId = ctx.URLParam("spanId")
 
-
 	total, err = logTraceService.logTraceParamDao.GetLogTraceParamCount(logTraceParamDto)
 
 	if err != nil {
@@ -333,4 +339,52 @@ func (logTraceService *LogTraceService) GetLogTraceParam(ctx iris.Context) inter
 	}
 
 	return result.SuccessData(logTraceParamDtos, total, row)
+}
+
+func (logTraceService *LogTraceService) GetLogTraceDb(ctx iris.Context) interface{} {
+	var (
+		err               error
+		page              int64
+		row               int64
+		total             int64
+		logTraceDbDto  = log.LogTraceDbDto{}
+		logTraceDbDtos []*log.LogTraceDbDto
+	)
+
+	page, err = strconv.ParseInt(ctx.URLParam("page"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	row, err = strconv.ParseInt(ctx.URLParam("row"), 10, 64)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	logTraceDbDto.Row = row * page
+
+	logTraceDbDto.Page = (page - 1) * row
+
+	logTraceDbDto.SpanId = ctx.URLParam("spanId")
+	logTraceDbDto.ServiceName = ctx.URLParam("serviceName")
+	logTraceDbDto.TraceId = ctx.URLParam("traceId")
+
+	total, err = logTraceService.logTraceDbDao.GetLogTraceDbCount(logTraceDbDto)
+
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	if total < 1 {
+		return result.Success()
+	}
+
+	logTraceDbDtos, err = logTraceService.logTraceDbDao.GetLogTraceDbs(logTraceDbDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	return result.SuccessData(logTraceDbDtos, total, row)
 }
