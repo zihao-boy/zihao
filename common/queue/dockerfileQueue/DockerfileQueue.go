@@ -285,7 +285,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 		//start app service
 
-		if tmpAppServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST {
+		if appServiceDto.AsDeployType == appService.AS_DEPLOY_TYPE_HOST {
 			hostDto := host.HostDto{
 				HostId: appServiceDto.AsDeployId,
 			}
