@@ -37,8 +37,8 @@ param:{
     resParam:''
 },
 dbs:[{
-    sql:"",
-    params:"",
+    dbSql:"",
+    param:"",
     duration:""
 }]
 }
