@@ -264,7 +264,7 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	appServiceDto := appService.AppServiceDto{
 		ImagesId: businessImagesDto.Id,
-		State:    appService.STATE_ONLINE,
+		//State:    appService.STATE_ONLINE,
 	}
 	appServiceDtos, err := appServiceDao.GetAppServices(appServiceDto)
 
