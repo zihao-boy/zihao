@@ -298,11 +298,21 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		}
 
 		if len(hosts) < 1 {
-			return
+			continue
 		}
-		appServiceDto.VerId = businessImagesVerDto.Id
+		//appServiceDto.VerId = businessImagesVerDto.Id
 
-		containerScheduling.ContainerScheduling(hosts, appServiceDto)
+		tmpAppServiceDto = appService.AppServiceDto{
+			AsId: appServiceDto.AsId,
+			//State:    appService.STATE_ONLINE,
+		}
+		tmpAppServiceDtos, _ := appServiceDao.GetAppServices(tmpAppServiceDto)
+
+		if err != nil || len(tmpAppServiceDtos) < 1 {
+			continue
+		}
+
+		containerScheduling.ContainerScheduling(hosts, tmpAppServiceDtos[0])
 
 	}
 

@@ -28,14 +28,14 @@
 
         },
         methods: {
-            _viewSql:function(){
+            _viewSql: function() {
 
-                if(!$tha.logTraceDetailInfo.spanId){
+                if (!$that.logTraceDetailInfo.spanId) {
                     vc.toast('选择节点');
-                    return ;
+                    return;
                 }
 
-                vc.jumpToPage('/index.html#/pages/admin/logTraceDb?spanId='+$tha.logTraceDetailInfo.spanId)
+                vc.jumpToPage('/index.html#/pages/admin/logTraceDb?spanId=' + $that.logTraceDetailInfo.spanId)
 
             },
             _listLogTraceDetails: function(_page, _rows) {
