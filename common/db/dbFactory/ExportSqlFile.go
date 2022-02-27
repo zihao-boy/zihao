@@ -3,13 +3,14 @@ package dbFactory
 import (
 	"fmt"
 	"github.com/zihao-boy/zihao/common/date"
-	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/dbLink"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"gorm.io/gorm"
+	"math"
 	"os"
-	"path"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -20,19 +21,21 @@ func ExportSqlFile(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) result.
 		return result.Error(err.Error())
 	}
 
-	workDir := path.Join(config.WorkSpace, dblinkDto.TenantId, dbSqlDto.FileName)
 	ch := make(chan string)
 
-	go ExportOne(db, workDir, ch, dblinkDto)
+	ExportOne(db, dbSqlDto.FileName, ch, dblinkDto)
 
-	return result.SuccessData("已提交导出，文件保存在" + workDir + ",请导完后下载")
+	return result.SuccessData("已提交导出，文件保存在" + dbSqlDto.FileName + ",请导完后下载")
 }
 
 func ExportOne(db *gorm.DB, workDir string, ch chan<- string, dblinkDto dbLink.DbLinkDto) {
-	var fileName string
+	//var fileName string
 
 	//if flag.Tables {
-	err := exportTables(fileName, db, dblinkDto)
+	if utils.IsFile(workDir) {
+		os.Remove(workDir)
+	}
+	err := exportTables(workDir, db, dblinkDto)
 	if err != nil {
 		ch <- fmt.Sprintln("Error: ", workDir, "\t export tables throw, \t", err)
 		return
@@ -62,7 +65,7 @@ func ExecuteWithDbConn(db *gorm.DB, sqlStr string, values []interface{}) ([]map[
 	var (
 		rows []map[string]interface{}
 	)
-	rs, err := db.Raw(sqlStr, values).Rows()
+	rs, err := db.Raw(sqlStr, values...).Rows()
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +157,11 @@ func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto) erro
 		//tableRowFormat := tbAl["ROW_FORMAT"]
 		var tableAutoIncrement string
 		if tbAl["AUTO_INCREMENT"] != nil {
-			tableAutoIncrement = tbAl["AUTO_INCREMENT"].(string)
+			if reflect.TypeOf(tbAl["AUTO_INCREMENT"]).String() == "int64" {
+				tableAutoIncrement = strconv.FormatInt(tbAl["AUTO_INCREMENT"].(int64), 10)
+			} else {
+				tableAutoIncrement = tbAl["AUTO_INCREMENT"].(string)
+			}
 		}
 		var tableCollation string
 		if tbAl["TABLE_COLLATION"] != nil {
@@ -168,6 +175,8 @@ func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto) erro
 		var tableComment string
 		if tbAl["TABLE_COMMENT"] != nil {
 			tableComment = tbAl["TABLE_COMMENT"].(string)
+		} else {
+			tableComment = "null"
 		}
 
 		strExport := "DROP TABLE IF EXISTS `" + tbAl["TABLE_NAME"].(string) + "`;\n"
@@ -286,27 +295,44 @@ func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto) erro
 }
 
 func exportTableData(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto, tableName string, allFields []string) error {
-	sqlStr := "select " + strings.Join(allFields, ",") + " from " + tableName
+
+	//分页导出 防止 内存盛满
+
+	sqlStr := "select count(1) COUNT from " + tableName
+
 	recordsRs, err := ExecuteWithDbConn(db, sqlStr, make([]interface{}, 0))
 	if err != nil {
 		return err
 	}
-	for _, ele := range recordsRs {
-		strExport := "INSERT INTO `" + tableName + "` (" //+strings.Join(allFields, ",")+") VALUES ("
-		var ks []string
-		var vs []string
-		for k, v := range ele {
-			ks = append(ks, "`"+k+"`")
-			elStr := "''"
-			if v == nil {
-				elStr = "null"
-			} else if len(v.(string)) > 0 {
-				elStr = "'" + escape(v.(string)) + "'"
-			}
-			vs = append(vs, elStr)
+
+	count ,err := strconv.Atoi(recordsRs[0]["COUNT"].(string))
+	var countIndex int64
+	countRow := math.Ceil(float64(count) / 1000)
+	for countIndex = 0; countIndex < int64(countRow); countIndex++ {
+		page := countIndex * 1000
+		row := (countIndex + 1) * 1000
+		sqlStr = "select " + strings.Join(allFields, ",") + " from " + tableName + " limit " + strconv.FormatInt(page, 10) + "," + strconv.FormatInt(row, 10)
+		recordsRs, err = ExecuteWithDbConn(db, sqlStr, make([]interface{}, 0))
+		if err != nil {
+			return err
 		}
-		strExport += strings.Join(ks, ",") + ") VALUES (" + strings.Join(vs, ",") + ");\n"
-		writeToFile(fileName, strExport, true)
+		for _, ele := range recordsRs {
+			strExport := "INSERT INTO `" + tableName + "` (" //+strings.Join(allFields, ",")+") VALUES ("
+			var ks []string
+			var vs []string
+			for k, v := range ele {
+				ks = append(ks, "`"+k+"`")
+				elStr := "''"
+				if v == nil {
+					elStr = "null"
+				} else if len(v.(string)) > 0 {
+					elStr = "'" + escape(v.(string)) + "'"
+				}
+				vs = append(vs, elStr)
+			}
+			strExport += strings.Join(ks, ",") + ") VALUES (" + strings.Join(vs, ",") + ");\n"
+			writeToFile(fileName, strExport, true)
+		}
 	}
 	writeToFile(fileName, "\n", true)
 	return nil
@@ -416,14 +442,16 @@ func findInArray(arry *[]string, value string) int {
 func writeToFile(name string, content string, append bool) {
 	var fileObj *os.File
 	var err error
+
 	if append {
 		fileObj, err = os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	} else {
 		fileObj, err = os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	}
+
 	if err != nil {
 		fmt.Println("Failed to open the file", err.Error())
-		os.Exit(2)
+		//os.Exit(2)
 	}
 	defer fileObj.Close()
 	if _, err := fileObj.WriteString(content); err != nil {

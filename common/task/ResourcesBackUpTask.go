@@ -72,8 +72,15 @@ func (h ResourcesBackUpTask) backUpDb(dto *resources.ResourcesBackUpDto) {
 		TenantId: resourcesDbs[0].TenantId,
 	}
 
+	workDir := path.Join(config.WorkSpace, dblinkDto.TenantId,"backUp")
+
+	if !utils.IsDir(workDir){
+		os.MkdirAll(workDir,os.ModePerm)
+	}
+
+
 	dbSqlDto := dbLink.DbSqlDto{
-		FileName: path.Join("backUp",resourcesDbs[0].DbName + date.GetNowAString() + ".sql"),
+		FileName: path.Join(workDir,resourcesDbs[0].DbName + date.GetNowAString() + ".sql"),
 	}
 
 	// execute sql
