@@ -230,7 +230,7 @@ func (dbLinkService *DbLinkService) ExportSqlFile(ctx iris.Context) interface{} 
 	}
 
 	// execute sql
-	data := dbFactory.ExportSqlFile(*dblinkDtos[0], dbSqlDto)
+	data := dbFactory.ExportSqlFile(*dblinkDtos[0], dbSqlDto,"*")
 
 	return data
 }

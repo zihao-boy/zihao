@@ -15,30 +15,27 @@ import (
 	"time"
 )
 
-func ExportSqlFile(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) result.ResultDto {
+func ExportSqlFile(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto, srcObject string) result.ResultDto {
 	db, err := initDbLink(dblinkDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}
-
-	ch := make(chan string)
-
-	ExportOne(db, dbSqlDto.FileName, ch, dblinkDto)
+	
+	ExportOne(db, dbSqlDto.FileName, dblinkDto, srcObject)
 
 	return result.SuccessData("已提交导出，文件保存在" + dbSqlDto.FileName + ",请导完后下载")
 }
 
-func ExportOne(db *gorm.DB, workDir string, ch chan<- string, dblinkDto dbLink.DbLinkDto) {
+func ExportOne(db *gorm.DB, workDir string,  dblinkDto dbLink.DbLinkDto, srcObject string) error{
 	//var fileName string
 
 	//if flag.Tables {
 	if utils.IsFile(workDir) {
 		os.Remove(workDir)
 	}
-	err := exportTables(workDir, db, dblinkDto)
+	err := exportTables(workDir, db, dblinkDto, srcObject)
 	if err != nil {
-		ch <- fmt.Sprintln("Error: ", workDir, "\t export tables throw, \t", err)
-		return
+		return err
 	}
 	//}
 
@@ -57,8 +54,7 @@ func ExportOne(db *gorm.DB, workDir string, ch chan<- string, dblinkDto dbLink.D
 	//		return
 	//	}
 	//}
-
-	ch <- fmt.Sprintln("Export ", workDir, "\t success at \t", time.Now().Format("2006-01-02 15:04:05"))
+	return nil
 }
 
 func ExecuteWithDbConn(db *gorm.DB, sqlStr string, values []interface{}) ([]map[string]interface{}, error) {
@@ -99,7 +95,7 @@ func ExecuteWithDbConn(db *gorm.DB, sqlStr string, values []interface{}) ([]map[
 	return rows, nil
 }
 
-func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto) error {
+func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto, srcObject string) error {
 	sqlStr := "select CONSTRAINT_NAME,TABLE_NAME,COLUMN_NAME,REFERENCED_TABLE_SCHEMA," +
 		"REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME from information_schema.`KEY_COLUMN_USAGE` " +
 		"where REFERENCED_TABLE_SCHEMA = ? "
@@ -285,7 +281,7 @@ func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto) erro
 
 		writeToFile(fileName, strExport, true) //表结构导出
 
-		err = exportTableData(fileName, db, dblinkDto, tableName, allFields)
+		err = exportTableData(fileName, db, dblinkDto, tableName, allFields, srcObject)
 		if err != nil {
 			return err
 		}
@@ -294,9 +290,18 @@ func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto) erro
 	return nil
 }
 
-func exportTableData(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto, tableName string, allFields []string) error {
+func exportTableData(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto, tableName string, allFields []string, srcObject string) error {
 
 	//分页导出 防止 内存盛满
+
+	//for _,enTable := range dblinkDto.
+	if !utils.IsEmpty(srcObject) && "*" != srcObject {
+		for _, srcTable := range strings.Split(srcObject, ",") {
+			if strings.ToUpper(tableName) == strings.ToUpper(srcTable) {
+				return nil
+			}
+		}
+	}
 
 	sqlStr := "select count(1) COUNT from " + tableName
 
@@ -305,7 +310,7 @@ func exportTableData(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto, t
 		return err
 	}
 
-	count ,err := strconv.Atoi(recordsRs[0]["COUNT"].(string))
+	count, err := strconv.Atoi(recordsRs[0]["COUNT"].(string))
 	var countIndex int64
 	countRow := math.Ceil(float64(count) / 1000)
 	for countIndex = 0; countIndex < int64(countRow); countIndex++ {

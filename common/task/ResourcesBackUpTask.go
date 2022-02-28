@@ -84,13 +84,13 @@ func (h ResourcesBackUpTask) backUpDb(dto *resources.ResourcesBackUpDto) {
 	}
 
 	// execute sql
-	data := dbFactory.ExportSqlFile(dblinkDto, dbSqlDto)
+	data := dbFactory.ExportSqlFile(dblinkDto, dbSqlDto,dto.SrcObject)
 
 	if data.Code != result.CODE_SUCCESS {
 		return
 	}
 
-	tmpFilePath := path.Join(config.WorkSpace, dblinkDto.TenantId,"backUp", dbSqlDto.FileName)
+	tmpFilePath :=  dbSqlDto.FileName
 
 	if !utils.IsFile(tmpFilePath) {
 		return

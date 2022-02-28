@@ -45,6 +45,9 @@ left join resources_db rd1 on t.target_id = rd1.db_id and rd1.status_cd = '0'
 				$if TypeCd != '' then
 				and t.type_cd = #TypeCd#
 				$endif
+				$if State != '' then
+				and t.state = #State#
+				$endif
 				$if Id != '' then
 				and t.id = #Id#
 				$endif

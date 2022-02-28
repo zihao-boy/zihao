@@ -1,9 +1,10 @@
 package crontab
 
 import (
+	"reflect"
 	"sync"
 
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	task2 "github.com/zihao-boy/zihao/common/task"
 	"github.com/zihao-boy/zihao/entity/dto/monitor"
 	"github.com/zihao-boy/zihao/monitor/dao"
@@ -46,6 +47,9 @@ func (task MonitorJob) Start() error {
 	hostGroups, _ = task.monitorHostGroupDao.GetMonitorHostGroups(monitorHostGroup)
 
 	for _, item := range hostGroups {
+		if flag, id := task.hasInHostGroup(*item); flag {
+			c.Remove(id)
+		}
 		//AddJob方法
 		c.AddJob(item.MonCron, task2.HostGroupTask{
 			MonitorHostGroupDto: item,
@@ -57,6 +61,9 @@ func (task MonitorJob) Start() error {
 	taskDtos, _ = task.monitorTaskDao.GetMonitorTasks(taskDto)
 
 	for _, item := range taskDtos {
+		if flag, id := task.hasInMonitorTask(*item); flag {
+			c.Remove(id)
+		}
 		//AddJob方法
 		c.AddJob(item.TaskCron, task2.MonitorCommonTask{
 			MonitorTaskDto: item,
@@ -66,6 +73,38 @@ func (task MonitorJob) Start() error {
 	c.Start()
 
 	return nil
+}
+func (job MonitorJob) hasInMonitorTask(dto monitor.MonitorTaskDto) (bool, cron.EntryID) {
+	entryies := backUpCron.Entries()
+
+	for i := 0; i < len(entryies); i++ {
+
+		if reflect.TypeOf(entryies[i].Job).Name() != "MonitorCommonTask" {
+			continue
+		}
+		id := entryies[i].Job.(task2.MonitorCommonTask).MonitorTaskDto.TaskId
+		if id == dto.TaskId {
+			return true, entryies[i].ID
+		}
+	}
+
+	return false, -1
+}
+
+func (job MonitorJob) hasInHostGroup(dto monitor.MonitorHostGroupDto) (bool, cron.EntryID) {
+	entryies := backUpCron.Entries()
+
+	for i := 0; i < len(entryies); i++ {
+		if reflect.TypeOf(entryies[i].Job).Name() != "HostGroupTask" {
+			continue
+		}
+		id := entryies[i].Job.(task2.HostGroupTask).MonitorHostGroupDto.MhgId
+		if id == dto.MhgId {
+			return true, entryies[i].ID
+		}
+	}
+
+	return false, -1
 }
 
 //启动多个任务

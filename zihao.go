@@ -38,10 +38,7 @@ func main() {
 	kafka.Init()
 
 	//启动定时任务
-	var (
-		monitorJob = crontab.MonitorJob{}
-	)
-	monitorJob.Restart()
+	crontab.StartCrontab()
 
 	app := iris.New()
 
