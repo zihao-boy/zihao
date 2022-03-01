@@ -20,6 +20,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"strings"
 )
 
 type ResourcesBackUpTask struct {
@@ -206,20 +207,46 @@ func (h ResourcesBackUpTask) saveToDb(filePath string, dto *resources.ResourcesB
 
 	buf := bufio.NewReader(f)
 
+	//for {
+	//	line, err := buf.ReadString(';')
+	//	if err != nil || io.EOF == err {
+	//		break
+	//	}
+	//
+	//	if utils.IsEmpty(line) {
+	//		continue
+	//	}
+	//
+	//	dbSqlDto := dbLink.DbSqlDto{
+	//		Sql: line,
+	//	}
+	//	// execute sql
+	//	dbFactory.ExecSql(dblinkDto, dbSqlDto)
+	//}
+	var (
+		lineStr string
+	)
 	for {
-		line, err := buf.ReadString(';')
-		if err != nil || io.EOF == err {
-			break
-		}
+			line, err := buf.ReadString('\n')
+			if err != nil || io.EOF == err {
+				lineStr = ""
+				break
+			}
 
-		if utils.IsEmpty(line) {
-			continue
-		}
+			if utils.IsEmpty(line) {
+				continue
+			}
 
-		dbSqlDto := dbLink.DbSqlDto{
-			Sql: line,
+			lineStr += line
+
+			if strings.HasSuffix(line,";\n"){
+				dbSqlDto := dbLink.DbSqlDto{
+					Sql: lineStr,
+				}
+				// execute sql
+				dbFactory.ExecSql(dblinkDto, dbSqlDto)
+
+				lineStr = ""
+			}
 		}
-		// execute sql
-		dbFactory.ExecSql(dblinkDto, dbSqlDto)
-	}
 }
