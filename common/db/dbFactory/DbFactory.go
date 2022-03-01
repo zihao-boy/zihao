@@ -52,7 +52,7 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 		return result.Error(err.Error())
 	}
 
-	sqls := strings.Split(dbSqlDto.Sql,";")
+	sqls := strings.Split(dbSqlDto.Sql,";\n")
 
 	for _,sql := range sqls{
 		dbSqlDto.Sql = sql

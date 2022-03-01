@@ -229,7 +229,7 @@ func (h ResourcesBackUpTask) saveToDb(filePath string, dto *resources.ResourcesB
 	for {
 			line, err := buf.ReadString('\n')
 			if err != nil || io.EOF == err {
-				lineStr = ""
+				//lineStr = ""
 				break
 			}
 
