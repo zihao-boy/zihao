@@ -1166,9 +1166,7 @@
                 if (nameSpace == DEFAULT_NAMESPACE) {
                     vmOptions.data[dataAttr] = _vmOptions.data[dataAttr];
                 } else {
-
                     vmOptions.data[nameSpace + "_" + dataAttr] = _vmOptions.data[dataAttr];
-
                 }
             }
         }

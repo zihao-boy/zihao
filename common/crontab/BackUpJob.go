@@ -27,7 +27,7 @@ func (job BackUpJob) init() {
 		return
 	}
 
-	backUpCron = cron.New()
+	backUpCron = cron.New(cron.WithSeconds())
 
 }
 

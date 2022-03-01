@@ -27,7 +27,7 @@ func (task MonitorJob) init() {
 		return
 	}
 
-	c = cron.New()
+	c = cron.New(cron.WithSeconds())
 
 }
 

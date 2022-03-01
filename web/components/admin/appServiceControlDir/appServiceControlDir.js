@@ -12,7 +12,7 @@
                 records: 1,
                 asId: '',
                 hostId: '',
-                asGroupId: '',
+                groupId: '',
                 curSrcDir: '',
                 flag: ''
             }
@@ -26,7 +26,7 @@
                 }
                 vc.copyObject(_param, $that.appServiceControlDirInfo);
                 if (_param.hasOwnProperty('asDeployType') && '1001' == _param.asDeployType) {
-                    $that.appServiceControlDirInfo.asGroupId = _param.asDeployId;
+                    $that.appServiceControlDirInfo.groupId = _param.asDeployId;
                 } else {
                     $that.appServiceControlDirInfo.hostId = _param.asDeployId;
                 }
@@ -91,7 +91,7 @@
                 $that.appServiceControlDirInfo.flag = "toQuicklyDir";
                 vc.emit('chooseHost', 'openChooseHostModel', {
                     hostId: $that.appServiceControlDirInfo.hostId,
-                    groupId: $that.appServiceControlDirInfo.asGroupId,
+                    groupId: $that.appServiceControlDirInfo.groupId,
                 })
             },
             _toEditFile: function(_dir) {
@@ -100,7 +100,7 @@
 
                 vc.emit('chooseHost', 'openChooseHostModel', {
                     hostId: $that.appServiceControlDirInfo.hostId,
-                    groupId: $that.appServiceControlDirInfo.asGroupId,
+                    groupId: $that.appServiceControlDirInfo.groupId,
                 })
             },
             _jumpToHostDir: function(_host) {
