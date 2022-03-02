@@ -155,7 +155,6 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 	var lss = make([]ls.LsDto, 0)
 	fmt.Println(dirs)
 	for _, fil := range dirs {
-
 		if strings.Contains(fil, ";") {
 			lsrs := strings.Split(fil, ";")
 			if len(lsrs) == 4 {
@@ -172,29 +171,75 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 				lss = append(lss, lsDto)
 			}
 		}else{
+			lsrs := getLsLines(fil)
+			if len(lsrs) == 9 {
+				name := strings.Trim(lsrs[len(lsrs)-1], " ")
+				name = strings.ReplaceAll(name, "\r", "")
+				name = strings.ReplaceAll(name, "\n", "")
+				if strings.HasPrefix(lsrs[0], "d") {
+					lsDto := ls.LsDto{
+						GroupName:    "d",
+						Name:         name,
+						Privilege:    lsrs[0],
+						Size:         0,
+						LastModified: lsrs[5]+" "+lsrs[6]+" "+lsrs[7],
+					}
+					lss = append(lss, lsDto)
+				}
+			}
 
 		}
 	}
 
 	for _, fil := range dirs {
-		lsrs := strings.Split(fil, ";")
-		if len(lsrs) == 5 {
-			size, _ := strconv.ParseInt(strings.Split(lsrs[1], "=")[1], 10, 64)
-			name := strings.Trim(lsrs[4], " ")
-			name = strings.ReplaceAll(name, "\r", "")
-			name = strings.ReplaceAll(name, "\n", "")
-			lsDto := ls.LsDto{
-				GroupName:    "-",
-				Name:         name,
-				Privilege:    strings.Split(lsrs[3], "=")[1],
-				Size:         size,
-				LastModified: strings.Split(lsrs[2], "=")[1],
+		if strings.Contains(fil, ";") {
+			lsrs := strings.Split(fil, ";")
+			if len(lsrs) == 5 {
+				size, _ := strconv.ParseInt(strings.Split(lsrs[1], "=")[1], 10, 64)
+				name := strings.Trim(lsrs[4], " ")
+				name = strings.ReplaceAll(name, "\r", "")
+				name = strings.ReplaceAll(name, "\n", "")
+				lsDto := ls.LsDto{
+					GroupName:    "-",
+					Name:         name,
+					Privilege:    strings.Split(lsrs[3], "=")[1],
+					Size:         size,
+					LastModified: strings.Split(lsrs[2], "=")[1],
+				}
+				lss = append(lss, lsDto)
 			}
-			lss = append(lss, lsDto)
+		}else{
+			lsrs := getLsLines(fil)
+			if len(lsrs) == 9 {
+				size, _ := strconv.ParseInt(lsrs[4], 10, 64)
+				name := strings.Trim(lsrs[len(lsrs)-1], " ")
+				name = strings.ReplaceAll(name, "\r", "")
+				name = strings.ReplaceAll(name, "\n", "")
+				lsDto := ls.LsDto{
+					GroupName:    "-",
+					Name:         name,
+					Privilege:    lsrs[0],
+					Size:         size,
+					LastModified: lsrs[5]+" "+lsrs[6]+" "+lsrs[7],
+				}
+				lss = append(lss, lsDto)
+			}
 		}
 
 	}
 	return result.SuccessData(lss)
+}
+
+func getLsLines(line string) []string {
+	lines := strings.Split(line," ")
+	var newLines []string
+	for _,l := range lines{
+		if utils.IsEmpty(l){
+			continue
+		}
+		newLines = append(newLines,l)
+	}
+	return newLines
 }
 
 func NewFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
