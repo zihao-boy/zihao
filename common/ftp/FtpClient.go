@@ -95,11 +95,11 @@ func DownloadFile(resWriter context.ResponseWriter, resourcesFtpDto resources.Re
 	//	return nil
 	//})
 
-	s,err := ftp.Retr(path, func(r io.Reader) error {
+	s, err := ftp.Retr(path, func(r io.Reader) error {
 		io.Copy(resWriter, r)
 		return err
 	})
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
@@ -155,19 +155,24 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 	var lss = make([]ls.LsDto, 0)
 	fmt.Println(dirs)
 	for _, fil := range dirs {
-		lsrs := strings.Split(fil, ";")
-		if len(lsrs) == 4 {
-			name := strings.Trim(lsrs[3], " ")
-			name = strings.ReplaceAll(name, "\r", "")
-			name = strings.ReplaceAll(name, "\n", "")
-			lsDto := ls.LsDto{
-				GroupName:    "d",
-				Name:         name,
-				Privilege:    strings.Split(lsrs[2], "=")[1],
-				Size:         0,
-				LastModified: strings.Split(lsrs[1], "=")[1],
+
+		if strings.Contains(fil, ";") {
+			lsrs := strings.Split(fil, ";")
+			if len(lsrs) == 4 {
+				name := strings.Trim(lsrs[3], " ")
+				name = strings.ReplaceAll(name, "\r", "")
+				name = strings.ReplaceAll(name, "\n", "")
+				lsDto := ls.LsDto{
+					GroupName:    "d",
+					Name:         name,
+					Privilege:    strings.Split(lsrs[2], "=")[1],
+					Size:         0,
+					LastModified: strings.Split(lsrs[1], "=")[1],
+				}
+				lss = append(lss, lsDto)
 			}
-			lss = append(lss, lsDto)
+		}else{
+
 		}
 	}
 
@@ -191,9 +196,6 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 	}
 	return result.SuccessData(lss)
 }
-
-
-
 
 func NewFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
 	var (
@@ -230,6 +232,7 @@ func NewFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
 
 	return nil
 }
+
 // rename file or dir
 
 func RenameFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
@@ -257,9 +260,9 @@ func RenameFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
 	//}
 	if resourcesFtpDto.FileGroupName == "-" {
 		//err = ftp.(path)
-		err = ftp.Rename(resourcesFtpDto.Name,resourcesFtpDto.NewName)
+		err = ftp.Rename(resourcesFtpDto.Name, resourcesFtpDto.NewName)
 	} else {
-		err = ftp.Rename(resourcesFtpDto.Name,resourcesFtpDto.NewName)
+		err = ftp.Rename(resourcesFtpDto.Name, resourcesFtpDto.NewName)
 	}
 
 	if err != nil {
@@ -268,7 +271,6 @@ func RenameFileOrDir(resourcesFtpDto resources.ResourcesFtpDto) error {
 
 	return nil
 }
-
 
 func UploadFileByReader(f multipart.File, resourcesFtpDto resources.ResourcesFtpDto) error {
 	var (
