@@ -44,7 +44,7 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 
 	var (
 		resultDto result.ResultDto
-		err error
+		err       error
 	)
 	db, err := initDbLink(dblinkDto)
 
@@ -52,50 +52,53 @@ func ExecSql(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto) interface{} {
 		return result.Error(err.Error())
 	}
 
-	sqls := strings.Split(dbSqlDto.Sql,";\n")
+	if strings.HasSuffix(dbSqlDto.Sql, ";") {
+		dbSqlDto.Sql += "\n"
+	}
 
-	for _,sql := range sqls{
+	sqls := strings.Split(dbSqlDto.Sql, ";\n")
+
+	for _, sql := range sqls {
 		dbSqlDto.Sql = sql
 		sql = strings.ReplaceAll(sql, " ", "")
 		sql = strings.ReplaceAll(sql, "\r", "")
 		sql = strings.ReplaceAll(sql, "\n", "")
-		if sql == ""{
+		if sql == "" {
 			continue
 		}
-		resultDto, err = execOneSql(dbSqlDto,db)
-		if err != nil{
+		resultDto, err = execOneSql(dbSqlDto, db)
+		if err != nil {
 			return result.Error(err.Error())
 		}
 	}
 
 	return resultDto
 
-
 }
 
-func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
+func execOneSql(dbSqlDto dbLink.DbSqlDto, db *gorm.DB) (result.ResultDto, error) {
 
 	var (
-		datas []map[string]interface{}
+		datas    []map[string]interface{}
 		hasLimit bool = false
 	)
 	sql := strings.ToLower(dbSqlDto.Sql)
 
 	sql = strings.ReplaceAll(sql, "\r", " ")
 	sql = strings.ReplaceAll(sql, "\n", " ")
-	if strings.Contains(sql," limit "){
+	if strings.Contains(sql, " limit ") {
 		hasLimit = true
 	}
 	sql = strings.ReplaceAll(sql, " ", "")
 
-	if strings.HasPrefix(sql, "select") || strings.HasPrefix(sql,"show"){
+	if strings.HasPrefix(sql, "select") || strings.HasPrefix(sql, "show") {
 		// if no exists limit default limit 1000
-		if strings.HasPrefix(sql, "select") && !hasLimit{
+		if strings.HasPrefix(sql, "select") && !hasLimit {
 			dbSqlDto.Sql = dbSqlDto.Sql + " limit 1000"
 		}
 		rows, err := db.Raw(dbSqlDto.Sql).Rows()
-		if err != nil{
-			return result.Error(err.Error()),err
+		if err != nil {
+			return result.Error(err.Error()), err
 		}
 		cols, _ := rows.Columns()
 		for rows.Next() {
@@ -106,7 +109,7 @@ func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
 			}
 			// Scan the result into the column pointers...
 			if err := rows.Scan(columnPointers...); err != nil {
-				return result.Error(err.Error()),err
+				return result.Error(err.Error()), err
 			}
 			// Create our map, and retrieve the value for each column from the pointers slice,
 			// storing it in the map with the name of the column as the key.
@@ -115,11 +118,11 @@ func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
 				val := columnPointers[i].(*interface{})
 				//m[colName] = string((*val).([]byte))
 				//fmt.Println(reflect.TypeOf(*val).String())
-				if *val != nil && reflect.TypeOf(*val).String() == "[]uint8"{
+				if *val != nil && reflect.TypeOf(*val).String() == "[]uint8" {
 					m[colName] = string((*val).([]byte))
-				}else if *val != nil && reflect.TypeOf(*val).String() == "time.Time"{
-					m[colName] = date.GetTimeString((*val).(time.Time));
-				}else{
+				} else if *val != nil && reflect.TypeOf(*val).String() == "time.Time" {
+					m[colName] = date.GetTimeString((*val).(time.Time))
+				} else {
 					m[colName] = *val
 				}
 			}
@@ -127,20 +130,20 @@ func execOneSql (dbSqlDto dbLink.DbSqlDto,db *gorm.DB) (result.ResultDto,error){
 			//fmt.Print(m)
 			datas = append(datas, m)
 		}
-		if len(datas) < 1{
+		if len(datas) < 1 {
 			m := make(map[string]interface{})
-			for  _,colName := range cols {
-					m[colName] = ""
+			for _, colName := range cols {
+				m[colName] = ""
 			}
 			datas = append(datas, m)
 		}
-		return result.SuccessData(datas),nil
+		return result.SuccessData(datas), nil
 	} else {
 		err := db.Exec(dbSqlDto.Sql).Error
 		if err != nil {
-			return result.Error(err.Error()),err
+			return result.Error(err.Error()), err
 		}
-		return result.Success(),nil
+		return result.Success(), nil
 	}
 
 }

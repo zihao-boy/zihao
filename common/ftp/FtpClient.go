@@ -153,6 +153,7 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 		return result.Error(err.Error())
 	}
 	var lss = make([]ls.LsDto, 0)
+	fmt.Println(dirs)
 	for _, fil := range dirs {
 		lsrs := strings.Split(fil, ";")
 		if len(lsrs) == 4 {
