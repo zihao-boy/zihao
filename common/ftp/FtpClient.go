@@ -215,14 +215,16 @@ func ListFile(resourcesFtpDto resources.ResourcesFtpDto) result.ResultDto {
 				name := strings.Trim(lsrs[len(lsrs)-1], " ")
 				name = strings.ReplaceAll(name, "\r", "")
 				name = strings.ReplaceAll(name, "\n", "")
-				lsDto := ls.LsDto{
-					GroupName:    "-",
-					Name:         name,
-					Privilege:    lsrs[0],
-					Size:         size,
-					LastModified: lsrs[5]+" "+lsrs[6]+" "+lsrs[7],
+				if !strings.HasPrefix(lsrs[0], "d") {
+					lsDto := ls.LsDto{
+						GroupName:    "-",
+						Name:         name,
+						Privilege:    lsrs[0],
+						Size:         size,
+						LastModified: lsrs[5] + " " + lsrs[6] + " " + lsrs[7],
+					}
+					lss = append(lss, lsDto)
 				}
-				lss = append(lss, lsDto)
 			}
 		}
 
