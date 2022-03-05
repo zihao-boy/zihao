@@ -36,13 +36,13 @@
                     }
                 );
             },
-            chooseHostContainer: function(_host) {
+            chooseHostContainer: function(_container) {
                 $('#chooseHostContainerModel').modal('hide');
 
                  //获取主机访问token
                  let param = {
                     params: {
-                        hostId: _host.hostId
+                        hostId: _container.hostId
                     }
                 };
                 //发送get请求
