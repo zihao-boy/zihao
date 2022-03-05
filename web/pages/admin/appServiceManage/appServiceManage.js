@@ -191,6 +191,9 @@
                         console.log('请求失败处理');
                         vc.toast(errInfo);
                     });
+            },
+            _openDockerLog:function(_appService){
+                vc.emit('chooseHostContainer', 'openChooseHostContainerModel',_appService);
             }
         }
     });
