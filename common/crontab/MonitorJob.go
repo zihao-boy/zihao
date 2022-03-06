@@ -40,6 +40,9 @@ func (task MonitorJob) Start() error {
 
 	task.init()
 
+	//停止 所有定时器
+	c.Stop()
+
 	//查询host_group
 	var monitorHostGroup = monitor.MonitorHostGroupDto{
 		State: "3301",
@@ -71,7 +74,7 @@ func (task MonitorJob) Start() error {
 	return nil
 }
 func (job MonitorJob) hasInMonitorTask(dto monitor.MonitorTaskDto) (bool, cron.EntryID) {
-	entryies := backUpCron.Entries()
+	entryies := c.Entries()
 
 	for i := 0; i < len(entryies); i++ {
 
@@ -88,7 +91,7 @@ func (job MonitorJob) hasInMonitorTask(dto monitor.MonitorTaskDto) (bool, cron.E
 }
 
 func (job MonitorJob) hasInHostGroup(dto monitor.MonitorHostGroupDto) (bool, cron.EntryID) {
-	entryies := backUpCron.Entries()
+	entryies := c.Entries()
 
 	for i := 0; i < len(entryies); i++ {
 		if reflect.TypeOf(entryies[i].Job).Name() != "HostGroupTask" {
@@ -106,9 +109,6 @@ func (job MonitorJob) hasInHostGroup(dto monitor.MonitorHostGroupDto) (bool, cro
 //启动多个任务
 func (task MonitorJob) Restart() {
 	//停止 所有定时器
-	if c != nil {
-		c.Stop()
-	}
 
 	//启动还没有停止的任务
 	task.Start()
