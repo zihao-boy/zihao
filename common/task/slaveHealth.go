@@ -63,7 +63,7 @@ func doSlaveHealth() {
 		"mem":    fmt.Sprintf("%.2f", totalMemValue),
 		"disk":   fmt.Sprintf("%.2f", totalDiskValue),
 		//"useCpu":     fmt.Sprintf("%.2f", useCpu),
-		"useCpu":     fmt.Sprintf("%.2f",cpuPercent),
+		"useCpu":     fmt.Sprintf("%.2f",cpuPercent[0]),
 		"useMem":     fmt.Sprintf("%.2f", totalMemUseValue),
 		"useDisk":    fmt.Sprintf("%.2f", totalDiskUseValue),
 		"containers": relContainers,
