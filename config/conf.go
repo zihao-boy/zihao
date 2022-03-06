@@ -20,8 +20,8 @@ var (
 )
 
 const (
-	WorkSpace string = "/zihao/master/"
-	//WorkSpace string = "/Users/wuxuewen"
+	//WorkSpace string = "/zihao/master/"
+	WorkSpace string = "/Users/wuxuewen"
 	Slave  int = 7001
 	Remote_Images_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.listZihaoApp"
 	Remote_My_Images_Url string = "http://bbs.homecommunity.cn/app/zihaoApp.myListZihaoAppCmd"
