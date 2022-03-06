@@ -28,4 +28,6 @@ chmod u+x ./slave/slave
 
 sh ./slave/startSlave.sh &
 
+sleep 3s
+
 sh ./master/restart_zihao.sh &
