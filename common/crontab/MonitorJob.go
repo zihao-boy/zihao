@@ -47,9 +47,7 @@ func (task MonitorJob) Start() error {
 	hostGroups, _ = task.monitorHostGroupDao.GetMonitorHostGroups(monitorHostGroup)
 
 	for _, item := range hostGroups {
-		if flag, id := task.hasInHostGroup(*item); flag {
-			c.Remove(id)
-		}
+
 		//AddJob方法
 		c.AddJob(item.MonCron, task2.HostGroupTask{
 			MonitorHostGroupDto: item,
@@ -61,9 +59,7 @@ func (task MonitorJob) Start() error {
 	taskDtos, _ = task.monitorTaskDao.GetMonitorTasks(taskDto)
 
 	for _, item := range taskDtos {
-		if flag, id := task.hasInMonitorTask(*item); flag {
-			c.Remove(id)
-		}
+
 		//AddJob方法
 		c.AddJob(item.TaskCron, task2.MonitorCommonTask{
 			MonitorTaskDto: item,
