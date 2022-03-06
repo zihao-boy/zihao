@@ -53,7 +53,7 @@ func doSlaveHealth() {
 
 	totalDiskUseDec := decimal.NewFromInt(int64(totalDisk.Used))
 	totalDiskUseDec = totalDiskUseDec.Div(decimal.NewFromInt(1024 * 1024))
-	totalDiskUseValue, _ := totalMemUseDec.Float64()
+	totalDiskUseValue, _ := totalDiskUseDec.Float64()
 
 	relContainers, _ := docker.ReadContainer()
 
