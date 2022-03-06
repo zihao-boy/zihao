@@ -697,6 +697,8 @@ func saveMonitorHostLog(host host.HostDto) {
 	if err != nil{
 		return
 	}
+	useCpu = useCpu/100
+
 	useMem , err := strconv.ParseFloat(host.UseMem,10)
 	if err != nil{
 		return
@@ -714,7 +716,7 @@ func saveMonitorHostLog(host host.HostDto) {
 	if err != nil{
 		return
 	}
-	useMem = useDisk / disk
+	useDisk = useDisk / disk
 
 	if useCpu < 0.9 && useMem < 0.9 && useDisk < 0.9{
 		return ;
