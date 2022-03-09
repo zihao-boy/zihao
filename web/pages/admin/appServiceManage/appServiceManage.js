@@ -18,12 +18,13 @@
                     asName: '',
                     asType: '',
                     asCount: '',
-                    asGroupId: ''
+                    asGroupId: '',
+                    state:''
                 }
             }
         },
         _initMethod: function() {
-            vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
+           
             $that._listListAppVarGroups();
         },
         _initEvent: function() {
@@ -76,6 +77,11 @@
                     function(json, res) {
                         var _appVarGroupManageInfo = JSON.parse(json);
                         vc.component.appServiceManageInfo.asGroups = _appVarGroupManageInfo.data;
+                        if(_appVarGroupManageInfo.data.length < 1){
+                            return ;
+                        }
+                        $that.appServiceManageInfo.conditions.asGroupId = _appVarGroupManageInfo.data[0].avgId;
+                        vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
                     },
                     function(errInfo, error) {
                         console.log('请求失败处理');
@@ -194,6 +200,11 @@
             },
             _openDockerLog:function(_appService){
                 vc.emit('chooseHostContainer', 'openChooseHostContainerModel',_appService);
+            },
+        
+            swatch:function(item){
+                $that.appServiceManageInfo.conditions.asGroupId = item.avgId;
+                $that._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
             }
         }
     });

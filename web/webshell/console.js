@@ -113,7 +113,7 @@ function initShell() {
     //document.body.clientHeight ||
     let winHeight = document.documentElement.clientHeight;
     let _cols = Math.floor(winWidth / 9) - 5;
-    let _rows = Math.floor(winHeight / 16) - 4;
+    let _rows = Math.floor(winHeight / 16) - 5;
 
     openTerminal({
         operate: 'connect',
