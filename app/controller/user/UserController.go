@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/common/constants"
 	"github.com/zihao-boy/zihao/common/jwt"
+	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/user/service"
 )
@@ -40,9 +41,10 @@ func (aus *UserController) login(ctx iris.Context) {
 	resultDto, userDto := aus.userService.Login(ctx)
 
 	if userDto != nil {
+		userDto.TokenId = seq.Generator()
 		token, _ := jwt.G_JWT.GenerateToken(userDto)
 		//token 保存至redis
-		factory.SetToken(constants.REDIS_ADMIN_FORMAT, userDto.UserId, token)
+		factory.SetToken(constants.REDIS_ADMIN_FORMAT, userDto.TokenId, token)
 		ctx.SetCookieKV(jwt.DEFAULT_TOKEN, token)
 	}
 

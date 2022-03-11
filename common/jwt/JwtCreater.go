@@ -1,7 +1,9 @@
 package jwt
 
 import (
+	"errors"
 	"fmt"
+	"github.com/zihao-boy/zihao/common/utils"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,6 +27,7 @@ type (
 		Phone    string `json:"phone"`
 		Enable   bool   `json:"enable"`
 		TenantId string `json:"tenantId"`
+		TokenId  string `json:"tokenId"`
 		jwt.StandardClaims
 	}
 )
@@ -39,6 +42,7 @@ func (j *JWT) ServeHTTP(ctx *context.Context) (err error) {
 	var (
 		token *jwt.Token
 		user  *user.UserDto
+		tokenStr string
 	)
 	if token, err = j.Check(*ctx); err != nil {
 		return err
@@ -52,8 +56,12 @@ func (j *JWT) ServeHTTP(ctx *context.Context) (err error) {
 		return err
 	}
 	// 检查redis缓存
-	if _, err = factory.GetToken(constants.REDIS_ADMIN_FORMAT, user.UserId); err != nil {
+	if tokenStr, err = factory.GetToken(constants.REDIS_ADMIN_FORMAT, user.TokenId); err != nil {
 		return err
+	}
+
+	if utils.IsEmpty(tokenStr){
+		return errors.New("session error")
 	}
 	// token校验通过，设置当前用户id到上下文
 	ctx.Values().Set(constants.UID, user.UserId)
@@ -91,6 +99,7 @@ func (j *JWT) GenerateToken(user *user.UserDto) (string, error) {
 		user.Phone,
 		true,
 		user.TenantId,
+		user.TokenId,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "zihao-jwt",
@@ -108,6 +117,7 @@ func (j *JWT) Token2Model(token *jwt.Token) (*user.UserDto, error) {
 		phone         string
 		realName      string
 		tenantId      string
+		tokenId string
 	)
 	if !ok {
 		return nil, fmt.Errorf("%s", constants.CODE_TOKEN_INVALID.String())
@@ -117,12 +127,15 @@ func (j *JWT) Token2Model(token *jwt.Token) (*user.UserDto, error) {
 	phone = mapClaims["phone"].(string)
 	realName = mapClaims["realName"].(string)
 	tenantId = mapClaims["tenantId"].(string)
+	tokenId = mapClaims["tokenId"].(string)
+
 
 	return &user.UserDto{
 		UserId:   id,
 		Phone:    phone,
 		RealName: realName,
 		TenantId: tenantId,
+		TokenId: tokenId,
 	}, nil
 }
 

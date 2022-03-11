@@ -17,4 +17,5 @@ type UserDto struct {
 	State      string    `json:"state" form:"state"`
 	TenantId   string    `json:"tenantId" sql:"-"`
 	UserRole   string    `json:"userRole" sql:"-"`
+	TokenId string `json:"tokenId"`
 }

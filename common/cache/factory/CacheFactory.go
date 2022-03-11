@@ -52,6 +52,11 @@ func GetToken(format, id string) (token string, err error) {
 	if Cache_local == cacheSwatch {
 		token, err = local.G_Local.GetToken(format, id)
 	}
+
+	//删除token
+	DelToken(format, id)
+	//设置
+	SetToken(format, id, token)
 	return
 }
 
@@ -170,8 +175,8 @@ func GetMappingValue(zKey string) (value string, err error) {
 	if Cache_local == cacheSwatch {
 		m, err = local.G_Local.GetMapping(zKey)
 	}
-	if(m == (mapping.MappingDto{})){
-		return "",err
+	if m == (mapping.MappingDto{}) {
+		return "", err
 	}
 	return m.Value, err
 }
