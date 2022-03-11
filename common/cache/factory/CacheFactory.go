@@ -3,6 +3,7 @@ package factory
 import (
 	"github.com/zihao-boy/zihao/common/cache/local"
 	"github.com/zihao-boy/zihao/common/cache/redis"
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/mapping"
 	"github.com/zihao-boy/zihao/entity/dto/serviceSql"
@@ -51,6 +52,10 @@ func GetToken(format, id string) (token string, err error) {
 
 	if Cache_local == cacheSwatch {
 		token, err = local.G_Local.GetToken(format, id)
+	}
+
+	if err != nil || utils.IsEmpty(token) {
+		return
 	}
 
 	//删除token
