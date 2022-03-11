@@ -35,15 +35,15 @@ func UploadFile(filePath string, resourcesFtpDto resources.ResourcesFtpDto) erro
 		return err
 	}
 
-	var path string
+	var pathTmp string
 
 	if strings.HasPrefix(resourcesFtpDto.Path, "/") {
-		path = resourcesFtpDto.Path
+		pathTmp = resourcesFtpDto.Path
 	} else {
-		path = "/" + resourcesFtpDto.Path
+		pathTmp = "/" + resourcesFtpDto.Path
 	}
 
-	if err = ftp.Cwd(path); err != nil {
+	if err = ftp.Cwd(pathTmp); err != nil {
 		return err
 	}
 
@@ -52,9 +52,11 @@ func UploadFile(filePath string, resourcesFtpDto resources.ResourcesFtpDto) erro
 		return err
 	}
 
+	fileName :=  path.Base(filePath)
+
 	defer file.Close()
 
-	if err := ftp.Stor(path, file); err != nil {
+	if err := ftp.Stor(path.Join(pathTmp,fileName), file); err != nil {
 		return err
 	}
 	return nil

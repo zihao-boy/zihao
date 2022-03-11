@@ -89,6 +89,9 @@
                                     <div class="btn-group">
                                         <button class="btn-white btn btn-xs" v-on:click="_openFileManager(host)">文件</button>
                                     </div>
+                                    <div class="btn-group">
+                                        <button class="btn-white btn btn-xs" v-on:click="_openHostShell(host)">连接</button>
+                                    </div>
                                     <div class="btn-group" v-if="host.state=='1001'">
                                         <button class="btn-white btn btn-xs" v-on:click="_controlHost(host)">管理主机</button>
                                     </div>

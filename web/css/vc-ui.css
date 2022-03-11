@@ -2135,3 +2135,8 @@ a:hover {
 .span-line:hover {
     text-decoration: underline;
 }
+
+.vc-node-selected {
+    color: #FFFFFF;
+    background-color: #1ab394;
+}

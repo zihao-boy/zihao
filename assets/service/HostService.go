@@ -2,7 +2,10 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/zihao-boy/zihao/common/queue/monitorHostQueue"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
+	dao2 "github.com/zihao-boy/zihao/monitor/dao"
 	"path"
 	"strconv"
 	"strings"
@@ -28,6 +31,7 @@ const maxSize = 1000 * iris.MB // 第二种方法
 type HostService struct {
 	hostDao dao.HostDao
 	appServiceDao appServiceDao.AppServiceDao
+
 }
 
 const (
@@ -651,12 +655,20 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 	hostDto.State = host.State_N
 
 	hostDto.HeartbeatTime = time.Now().Format("2006-01-02 15:04:05")
+	hostDto.HostId = hostDtos[0].HostId
 	hostService.hostDao.UpdateHost(hostDto)
+
+	hostDto.Name = hostDtos[0].Name
+	hostDto.TenantId = hostDtos[0].TenantId
 
 	// container := appService.AppServiceContainerDto{
 	// 	HostId: hostDtos[0].HostId,
 	// }
 	//containers , _ :=hostService.appServiceDao.GetAppServiceContainer(container)
+
+	//保存告警信息
+	saveMonitorHostLog(hostDto)
+
 
 	if len(hostDto.Containers) < 1 {
 		return result.Success();
@@ -675,6 +687,66 @@ func (hostService *HostService) SlaveHealth(ctx iris.Context) result.ResultDto {
 
 	return result.Success()
 
+}
+
+
+func saveMonitorHostLog(host host.HostDto) {
+
+	useCpu , err := strconv.ParseFloat(host.UseCpu,10)
+
+	if err != nil{
+		return
+	}
+	useCpu = useCpu/100
+
+	useMem , err := strconv.ParseFloat(host.UseMem,10)
+	if err != nil{
+		return
+	}
+	mem , err := strconv.ParseFloat(host.Mem,10)
+	if err != nil{
+		return
+	}
+	useMem = useMem / mem
+	useDisk , err := strconv.ParseFloat(host.UseDisk,10)
+	if err != nil{
+		return
+	}
+	disk , err := strconv.ParseFloat(host.Disk,10)
+	if err != nil{
+		return
+	}
+	useDisk = useDisk / disk
+
+	if useCpu < 0.9 && useMem < 0.9 && useDisk < 0.9{
+		return ;
+	}
+
+	var monitorHostLogDto = monitor.MonitorHostLogDto{}
+	var monitorHostDao dao2.MonitorHostLogDao
+	monitorHostLogDto.TenantId = host.TenantId
+	monitorHostLogDto.HostId = host.HostId
+	monitorHostLogDto.LogId = seq.Generator()
+	monitorHostLogDto.CpuRate = fmt.Sprintf("%.2f", useCpu)
+	monitorHostLogDto.DiskRate = fmt.Sprintf("%.2f", useDisk)
+	monitorHostLogDto.MemRate = fmt.Sprintf("%.2f", useMem)
+
+	_ = monitorHostDao.SaveMonitorHostLog(monitorHostLogDto)
+
+	//告警
+	monitorHost := monitor.MonitorHostDto{
+		CpuThreshold:"0.9",
+		MemThreshold:"0.9",
+		 DiskThreshold:"0.9",
+		 CpuRate: fmt.Sprintf("%.2f", useCpu),
+		MemRate:fmt.Sprintf("%.2f", useMem),
+		DiskRate: fmt.Sprintf("%.2f", useDisk),
+		HostId: host.HostId,
+		Name: host.Name,
+		TenantId:host.TenantId,
+		NoticeType: "2002",
+	}
+	monitorHostQueue.SendData(monitorHost)
 }
 
 func (hostService *HostService) ListFiles(ctx iris.Context) result.ResultDto {

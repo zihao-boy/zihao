@@ -34,7 +34,7 @@ func doSlaveHealth() {
 	cpuPercentDec := decimal.NewFromFloat(cpuPercent[0])
 	cpuPercentDec = cpuPercentDec.Mul(decimal.NewFromInt(int64(cpuCore)))
 
-	useCpu, _ := cpuPercentDec.Float64()
+	//useCpu, _ := cpuPercentDec.Float64()
 	// 获取内存
 	totalMem, _ := mem.VirtualMemory()
 	totalMemDec := decimal.NewFromInt(int64(totalMem.Total))
@@ -53,16 +53,17 @@ func doSlaveHealth() {
 
 	totalDiskUseDec := decimal.NewFromInt(int64(totalDisk.Used))
 	totalDiskUseDec = totalDiskUseDec.Div(decimal.NewFromInt(1024 * 1024))
-	totalDiskUseValue, _ := totalMemUseDec.Float64()
+	totalDiskUseValue, _ := totalDiskUseDec.Float64()
 
 	relContainers, _ := docker.ReadContainer()
 
 	data := map[string]interface{}{
-		"hostId":     slaveId,
-		"cpu":        strconv.FormatInt(int64(cpuCore), 10),
-		"mem":        fmt.Sprintf("%.2f", totalMemValue),
-		"disk":       fmt.Sprintf("%.2f", totalDiskValue),
-		"useCpu":     fmt.Sprintf("%.2f", useCpu),
+		"hostId": slaveId,
+		"cpu":    strconv.FormatInt(int64(cpuCore), 10),
+		"mem":    fmt.Sprintf("%.2f", totalMemValue),
+		"disk":   fmt.Sprintf("%.2f", totalDiskValue),
+		//"useCpu":     fmt.Sprintf("%.2f", useCpu),
+		"useCpu":     fmt.Sprintf("%.2f",cpuPercent[0]),
 		"useMem":     fmt.Sprintf("%.2f", totalMemUseValue),
 		"useDisk":    fmt.Sprintf("%.2f", totalDiskUseValue),
 		"containers": relContainers,

@@ -43,8 +43,6 @@ func (job BackUpJob) Start() error {
 	//停止 所有定时器
 	backUpCron.Stop()
 
-
-
 	//查询host_group
 	var resourcesBackUpDto = resources.ResourcesBackUpDto{
 		State: resources.Back_up_state_START,

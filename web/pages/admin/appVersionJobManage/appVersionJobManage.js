@@ -113,6 +113,10 @@
             },
             _openImportJobYaml: function() {
                 vc.emit('importJobYaml', 'openImportJobYamlModal', {})
+            },
+            _toFileSystem: function(_appVersionJob) {
+                vc.saveData('5f3761ed-008a-475b-ad37-8cc35c88402c_curPath', _appVersionJob.workDir);
+                vc.jumpToPage('/index.html#/pages/admin/fileManager?hostId=5f3761ed-008a-475b-ad37-8cc35c88402c');
             }
         }
     });

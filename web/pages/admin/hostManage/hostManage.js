@@ -130,6 +130,27 @@
                 }
 
                 return "离线"
+            },
+            _openHostShell:function(_hostId){
+                //获取主机访问token
+                let param = {
+                    params: {
+                        hostId: _hostId.hostId
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/host/getHostToken',
+                    param,
+                    function(json, res) {
+                        let _hostManageInfo = JSON.parse(json);
+                        let _zihaoToken = _hostManageInfo.data;
+                        window.open("/webshell/console.html?hostId=" +_hostId.hostId + "&zihaoToken=" + _zihaoToken, '_blank')
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
             }
 
 

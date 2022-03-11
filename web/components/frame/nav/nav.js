@@ -168,10 +168,7 @@
     //连接发生错误的回调方法
     websocket.onerror = function () {
         console.log("初始化失败");
-        this.$notify.error({
-            title: "错误",
-            message: "连接失败，请检查网络"
-        });
+      
     };
 
     //连接成功建立的回调方法
@@ -194,10 +191,7 @@
     //连接关闭的回调方法
     websocket.onclose = function () {
         console.log("初始化失败");
-        this.$notify.error({
-            title: "错误",
-            message: "连接关闭，请刷新浏览器"
-        });
+      
     };
 
     //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
