@@ -1223,6 +1223,10 @@
         vcFramework.saveComponentToPageRoute();
         let _targetUrl = url.substring(0, url.indexOf('#'));
 
+        if (_targetUrl == '/index.html') {
+            _targetUrl = "/"
+        }
+
         if (location.pathname != _targetUrl) {
             window.location.href = url;
             return;
