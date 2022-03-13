@@ -15,4 +15,5 @@ type AppVersionJobImagesDto struct {
 	BusinessDockerfileName             string `json:"businessDockerfileName" sql:"-"`
 	BusinessPackageName             string `json:"businessPackageName" sql:"-"`
 	Action string `json:"action"`
+	AvgIds string `json:"avgIds"`
 }

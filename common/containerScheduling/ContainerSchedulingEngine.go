@@ -29,6 +29,17 @@ func ContainerScheduling(hosts []*host.HostDto, appServiceDto *appService.AppSer
 		appServiceDao dao.AppServiceDao
 	)
 
+	//重新查一遍
+	tmpAppServiceDto := appService.AppServiceDto{
+		AsId:  appServiceDto.AsId,
+	}
+	appServiceDtos, err := appServiceDao.GetAppServices(tmpAppServiceDto)
+
+	if len(appServiceDtos) < 1{
+		return nil,errors.New("应用不存在")
+	}
+	appServiceDto = appServiceDtos[0]
+
 	//查询 目录映射
 	dirDto :=appService.AppServiceDirDto{
 		AsId: appServiceDto.AsId,

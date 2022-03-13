@@ -6,7 +6,10 @@
                 jobId: '',
                 appVersionJobImages: [],
                 images: [],
-                isAll: true
+                action:'build',
+                isAll: true,
+                asGroups:[],
+                avgIds:[]
             }
         },
         _initMethod: function () {
@@ -17,16 +20,23 @@
                 vc.copyObject(_params, $that.doBuildJobInfo);
                 //load plan
                 $that._doBuildLoadImages();
+                $that._listListAppVarGroups();
                 $('#doBuildJobModel').modal('show');
 
             });
         },
         methods: {
-            _build: function (_param) {
+            _build: function () {
+
+                if($that.doBuildJobInfo.action == 'buildAndStart' && $that.doBuildJobInfo.avgIds.length < 1){
+                    vc.toast('请选择应用组');
+                    return;
+                }
                 
                 let data = {
                     jobId: $that.doBuildJobInfo.jobId,
-                    action: _param,
+                    action: $that.doBuildJobInfo.action,
+                    avgIds: $that.doBuildJobInfo.avgIds.join(','),
                     images: $that.doBuildJobInfo.images.join(',')
                 }
                 //发送get请求
@@ -51,7 +61,10 @@
                     jobId: '',
                     appVersionJobImages: [],
                     images: [],
-                    isAll: true
+                    action:'build',
+                    isAll: true,
+                    asGroups:[],
+                    avgIds:[]
                 }
             },
             _doBuildLoadImages: function () {
@@ -92,7 +105,27 @@
                 }
                 $that.doBuildJobInfo.isAll = true;
 
-            }
+            },
+            _listListAppVarGroups: function(_page, _rows) {
+                var param = {
+                    params: {
+                        page: 1,
+                        row: 50
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/appService/getAppVarGroup',
+                    param,
+                    function(json, res) {
+                        var _appVarGroupManageInfo = JSON.parse(json);
+                        vc.component.doBuildJobInfo.asGroups = _appVarGroupManageInfo.data;
+                        
+                    },
+                    function(errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

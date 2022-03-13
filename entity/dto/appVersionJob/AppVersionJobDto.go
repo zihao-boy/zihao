@@ -30,6 +30,7 @@ type AppVersionJobDto struct {
 	GitUsername  string `json:"gitUsername" sql:"-"`
 	WorkDir  string `json:"workDir" sql:"-"`
 	JobTime  string `json:"jobTime" sql:"-"`
+
 	AppVersionJobImages[] AppVersionJobImagesDto `json:"appVersionJobImages"`
 }
 // do build param
@@ -37,6 +38,7 @@ type AppVersionJobParam struct {
 	JobId      string `json:"jobId" `
 	Action     string `json:"action"`
 	Images string `json:"images"`
+	AvgIds string `json:"avgIds"`
 }
 // gitee webhooks
 type GiteeWebHooksDto struct {

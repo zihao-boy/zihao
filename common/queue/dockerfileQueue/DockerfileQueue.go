@@ -274,6 +274,10 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	}
 	var hosts []*host.HostDto
 	for _, appServiceDto := range appServiceDtos {
+
+		if !ifInAvgIds(appServiceDto,businessDockerfileDto.AvgIds){
+			continue
+		}
 		tmpAppServiceDto := appService.AppServiceDto{
 			AsId:  appServiceDto.AsId,
 			VerId: businessImagesVerDto.Id,
@@ -316,4 +320,20 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	}
 
+}
+
+func ifInAvgIds(dto *appService.AppServiceDto, ids string) bool {
+	if utils.IsEmpty(ids){
+		return true
+	}
+
+	ids1 := strings.Split(ids,",")
+
+	for _,id := range ids1{
+		if dto.AsGroupId == id{
+			return true
+		}
+	}
+
+	return false;
 }

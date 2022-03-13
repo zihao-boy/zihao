@@ -21,6 +21,7 @@ type BusinessDockerfileDto struct {
 	Username     string `json:"username" sql:"-"`
 	LogPath      string `json:"logPath"`
 	Action string 	`json:"action"`
+	AvgIds string `json:"avgIds"`
 }
 
 type BusinessDockerfileCommonDto struct {

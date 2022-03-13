@@ -328,11 +328,12 @@ func (appVersionJobService *AppVersionJobService) commonJob(appVersionJobParam a
 	}
 
 	git_url += "\n"
-	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\",\"action\":\"ACTION\",\"images\":\"IMAGES\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
+	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\",\"action\":\"ACTION\",\"images\":\"IMAGES\",\"ivgIds\":\"AVG_IDS\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
 
 	build_hook = strings.Replace(build_hook, "JOB_ID", appVersionJobDto.JobId, 1)
 	build_hook = strings.Replace(build_hook, "ACTION", appVersionJobParam.Action, 1)
 	build_hook = strings.Replace(build_hook, "IMAGES", appVersionJobParam.Images, 1)
+	build_hook = strings.Replace(build_hook, "AVG_IDS", appVersionJobParam.AvgIds, 1)
 	build_hook = strings.Replace(build_hook, "MASTER_SERVER", "http://127.0.0.1:"+strconv.FormatInt(int64(config.G_AppConfig.Port), 10), 1)
 
 	_, err = file.WriteString(git_url + appVersionJobDto.JobShell + build_hook)
@@ -416,6 +417,7 @@ func (appVersionJobService *AppVersionJobService) DoJobHook(ctx iris.Context) in
 			continue
 		}
 		appVersionJobImagesDto.Action = appVersionJobParam.Action
+		appVersionJobImagesDto.AvgIds = appVersionJobParam.AvgIds
 		appVersionJobService.doGeneratorImages(appVersionJobImagesDto, appVersionJobDetailDto, appVersionJobDto)
 	}
 
@@ -515,6 +517,7 @@ func (appVersionJobService *AppVersionJobService) doGeneratorImages(jobImagesDto
 	businessDockerfileDtos[0].LogPath = jobDetailDto.LogPath
 	// action
 	businessDockerfileDtos[0].Action = jobImagesDto.Action
+	businessDockerfileDtos[0].AvgIds = jobImagesDto.AvgIds
 	dockerfileQueue.SendData(businessDockerfileDtos[0])
 }
 

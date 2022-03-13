@@ -1,4 +1,4 @@
-<div class="modal fade" id="doBuildJobModel"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="doBuildJobModel" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,23 +9,49 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <div class="checkbox custom-control-inline">
-                        <label>
-                            <input type="checkbox" v-model="doBuildJobInfo.isAll"  @change="changeAll()" >全部
-                        </label>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">构建</label>
+                        <div class="col-sm-10">
+                            <select class="custom-select" v-model="doBuildJobInfo.action">
+                                <option value="build">构建</option>
+                                <option value="buildAndStart">发布</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="checkbox custom-control-inline" v-for="(item,index) in doBuildJobInfo.appVersionJobImages">
-                        <label>
-                            <input type="checkbox" v-model="doBuildJobInfo.images" @change="changeItem()"
-                                   :value="item.jobImagesId"> {{item.businessDockerfileName}}
-                        </label>
+                    <div class="form-group row" v-if="doBuildJobInfo.action == 'buildAndStart'">
+                        <label class="col-sm-2 col-form-label">应用组</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox custom-control-inline" v-for="(item,index) in doBuildJobInfo.asGroups">
+                                <label>
+                                    <input type="checkbox" v-model="doBuildJobInfo.avgIds"
+                                        :value="item.avgId"> {{item.avgName}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">计划</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox custom-control-inline">
+                                <label>
+                                    <input type="checkbox" v-model="doBuildJobInfo.isAll" @change="changeAll()">全部
+                                </label>
+                            </div>
+                            <div class="checkbox custom-control-inline"
+                                v-for="(item,index) in doBuildJobInfo.appVersionJobImages">
+                                <label>
+                                    <input type="checkbox" v-model="doBuildJobInfo.images" @change="changeItem()"
+                                        :value="item.jobImagesId"> {{item.businessDockerfileName}}
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal" v-on:click="closeDoBuildJobModel()">点错了</button>
-                <button type="button" class="btn btn-white" v-on:click="_build('buildAndStart')">构建发布</button>
-                <button type="button" class="btn btn-primary" v-on:click="_build('build')">构建</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal"
+                    v-on:click="closeDoBuildJobModel()">点错了</button>
+                <button type="button" class="btn btn-primary" v-on:click="_build()">提交</button>
             </div>
         </div>
     </div>
