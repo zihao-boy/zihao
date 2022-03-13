@@ -328,7 +328,7 @@ func (appVersionJobService *AppVersionJobService) commonJob(appVersionJobParam a
 	}
 
 	git_url += "\n"
-	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\",\"action\":\"ACTION\",\"images\":\"IMAGES\",\"ivgIds\":\"AVG_IDS\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
+	var build_hook string = "\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"jobId\": \"JOB_ID\",\"action\":\"ACTION\",\"images\":\"IMAGES\",\"avgIds\":\"AVG_IDS\"}' \"MASTER_SERVER/app/appVersion/doJobHook\""
 
 	build_hook = strings.Replace(build_hook, "JOB_ID", appVersionJobDto.JobId, 1)
 	build_hook = strings.Replace(build_hook, "ACTION", appVersionJobParam.Action, 1)
