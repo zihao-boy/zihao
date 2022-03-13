@@ -6,7 +6,8 @@
                 appServices: [],
                 apps: [],
                 isAll: true,
-                callBack: {}
+                callBack: {},
+                asGroupId:''
             }
         },
         _initMethod: function() {
@@ -15,6 +16,7 @@
         _initEvent: function() {
             vc.on('selectAppService', 'openSelectAppService', function(_params) {
                 $that.selectAppServiceInfo.callBack = _params.callBack;
+                $that.selectAppServiceInfo.asGroupId = _params.asGroupId;
                 //load plan
                 $that._loadSelectAppService();
                 $('#selectAppServiceModel').modal('show');
@@ -40,7 +42,8 @@
                 let param = {
                     params: {
                         page: 1,
-                        row: 100
+                        row: 100,
+                        asGroupId:$that.selectAppServiceInfo.asGroupId
                     }
                 };
                 //发送get请求

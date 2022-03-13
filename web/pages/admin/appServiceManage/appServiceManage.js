@@ -171,6 +171,7 @@
             },
             _restartMoreApps: function() {
                 vc.emit('selectAppService', 'openSelectAppService', {
+                    asGroupId:$that.appServiceManageInfo.conditions.asGroupId,
                     callBack: $that._doRestartMoreApps
                 })
             },
