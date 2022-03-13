@@ -32,6 +32,7 @@
     let _map = []; // 共享数据存储
     let _namespace = [];
     let _vueCache = {};
+    let _routes = []; // 页面路由
 
 
     _vmOptions = {
@@ -70,7 +71,8 @@
         destroyedMethod: _destroyedMethod,
         debug: false,
         timers: _timers,
-        _map: {}
+        _map: {},
+        pageRoutes: _routes, //路由
     };
     //通知window对象
     window.vcFramework = vcFramework;
@@ -387,8 +389,9 @@
             //_vcElement.parentNode.replaceChild(textNode,_vcElement);
 
         }
-        for (let _vcElementIndex = 0; _vcElementIndex < _tmpI18N.length; _vcElementIndex++) {
-            let _vcElement = _tmpI18N[_vcElementIndex];
+        let _i18nLength = _tmpI18N.length;
+        for (let _vcElementIndex = 0; _vcElementIndex < _i18nLength; _vcElementIndex++) {
+            let _vcElement = _tmpI18N[0];
             _vcElement.parentNode.removeChild(_vcElement);
         }
         _tmpI18N = document.head.getElementsByTagName("vc:i18n");
@@ -1216,7 +1219,8 @@
             window.location.href = url;
             return;
         }
-
+        //保存路由信息
+        vcFramework.saveComponentToPageRoute();
         let _targetUrl = url.substring(0, url.indexOf('#'));
 
         if (location.pathname != _targetUrl) {
@@ -1334,10 +1338,24 @@
 
     //将org 对象的属性值赋值给dst 属性名为一直的属性
     vcFramework.copyObject = function(org, dst) {
+        if (!org || !dst) {
+            return;
+        }
         //for(key in Object.getOwnPropertyNames(dst)){
         for (let key in dst) {
             if (org.hasOwnProperty(key)) {
                 dst[key] = org[key]
+            }
+        }
+    };
+    vcFramework.resetObject = function(org) {
+        if (!org) {
+            return;
+        }
+        //for(key in Object.getOwnPropertyNames(dst)){
+        for (let key in org) {
+            if (typeof(key) == "string") {
+                org[key] = ''
             }
         }
     };
@@ -1990,6 +2008,14 @@
         if (!vcFramework.notNull(_componentUrl)) {
             return;
         }
+        //获取参数
+        let _tab = vc.getParam('tab')
+        if (_tab) {
+            vcFramework.setTabToLocal({
+                url: _componentUrl,
+                name: _tab
+            });
+        }
         refreshVcFramework();
         vcFramework.reBuilderVcTree();
     }, false);
@@ -2556,5 +2582,168 @@
             };
         };
         document.body.appendChild(oTemp);
+    }
+})(window.vcFramework);
+//解决 toFixed bug 问题
+(function(vcFramework) {
+    Number.prototype.toFixed = function(d) {
+        var s = this + "";
+        if (!d) d = 0;
+        if (s.indexOf(".") == -1) s += ".";
+        s += new Array(d + 1).join("0");
+        if (new RegExp("^(-|\\+)?(\\d+(\\.\\d{0," + (d + 1) + "})?)\\d*$").test(s)) {
+            var s = "0" + RegExp.$2,
+                pm = RegExp.$1,
+                a = RegExp.$3.length,
+                b = true;
+            if (a == d + 2) {
+                a = s.match(/\d/g);
+                if (parseInt(a[a.length - 1]) > 4) {
+                    for (var i = a.length - 2; i >= 0; i--) {
+                        a[i] = parseInt(a[i]) + 1;
+                        if (a[i] == 10) {
+                            a[i] = 0;
+                            b = i != 1;
+                        } else break;
+                    }
+                }
+                s = a.join("").replace(new RegExp("(\\d+)(\\d{" + d + "})\\d$"), "$1.$2");
+            }
+            if (b) s = s.substr(1);
+            return (pm + s).replace(/\.$/, "");
+        }
+        return this + "";
+    }
+})(window.vcFramework);
+(function(vcFramework) {
+    vcFramework.getPageRouteFromLocal = function() {
+        let routesStr = window.localStorage.getItem('vcPageRoute');
+        let routes = [];
+        if (!routesStr) {
+            window.localStorage.setItem('vcPageRoute', JSON.stringify(routes))
+        } else {
+            routes = JSON.parse(routesStr);
+        }
+        return routes;
+    }
+    vcFramework.setPageRouteToLocal = function(_obj) {
+        let routes = vcFramework.getPageRouteFromLocal();
+        //判断是否已经有 如果有则删除
+        let loction = 0;
+        for (let routeIndex = 0; routeIndex < routes.length; routeIndex++) {
+            _tmpRoute = routes[routeIndex];
+            if (!_tmpRoute.pagePath || _tmpRoute.pagePath != _obj.pagePath) {
+                continue;
+            }
+            loction = routeIndex;
+            routes.splice(loction, 1);
+        }
+        if (routes.length > 20) {
+            routes.shift();
+        }
+        routes.push(_obj);
+        window.localStorage.setItem('vcPageRoute', JSON.stringify(routes));
+    }
+    vcFramework.deletePageRouteToLocal = function() {
+        let routes = vcFramework.getPageRouteFromLocal();
+        routes.pop();
+        window.localStorage.setItem('vcPageRoute', JSON.stringify(routes));
+    }
+    vcFramework.recoverComponentByPageRoute = function() {
+            let _hash = location.hash;
+            let routes = vcFramework.getPageRouteFromLocal();
+            if (routes.length < 1) {
+                return;
+            }
+            let _tmpRoute = null;
+            let loction = 0;
+            for (let routeIndex = 0; routeIndex < routes.length; routeIndex++) {
+                _tmpRoute = routes[routeIndex];
+                if (!_tmpRoute.pagePath || _tmpRoute.pagePath != _hash) {
+                    continue;
+                }
+                for (key in _tmpRoute.pageData) {
+                    vcFramework.component[key] = _tmpRoute.pageData[key];
+                }
+                loction = routeIndex;
+                routes.splice(loction, 1);
+            }
+            window.localStorage.setItem('vcPageRoute', JSON.stringify(routes));
+        }
+        /**
+         * pageData = {
+         *      pagePath:'',
+         *      pageData:{
+         * 
+         * }
+         * }
+         */
+    vcFramework.saveComponentToPageRoute = function() {
+        let _component = vcFramework.component;
+        let _hash = location.hash;
+        if (!_hash) {
+            return;
+        }
+        let _pageData = {
+            pagePath: _hash,
+            pageData: {}
+        }
+
+        for (_key in _component) {
+            if (_key.startsWith('$') || _key.startsWith('_') || typeof _key == 'function') {
+                continue;
+            }
+            _pageData.pageData[_key] = _component[_key];
+        }
+        vcFramework.setPageRouteToLocal(_pageData);
+    }
+
+    document.addEventListener('initVcFrameworkFinish', function(e) {
+        //寻找当前页面是否在路由中 如果有恢复下数据，并做弹出
+        vcFramework.recoverComponentByPageRoute();
+    }, false);
+
+
+    vcFramework.getTabFromLocal = function() {
+        let tabStr = window.localStorage.getItem('vcTab');
+
+        let tabs = [];
+
+        if (!tabStr) {
+            window.localStorage.setItem('vcTab', JSON.stringify(tabs))
+        } else {
+            tabs = JSON.parse(tabStr);
+        }
+
+        return tabs;
+    }
+
+    vcFramework.setTabToLocal = function(_obj) {
+        let tabs = vcFramework.getTabFromLocal();
+
+        //判断是否已经有 如果有则删除
+        for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+            _tmpTab = tabs[tabIndex];
+            if (_tmpTab.url == _obj.url) {
+                return;
+            }
+        }
+        if (tabs.length > 10) {
+            tabs.shift();
+        }
+        tabs.push(_obj);
+        window.localStorage.setItem('vcTab', JSON.stringify(tabs));
+    }
+
+    vcFramework.deleteTabToLocal = function(_obj) {
+        let tabs = vcFramework.getTabFromLocal();
+        for (let tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+            _tmpTab = tabs[tabIndex];
+            console.log(_tmpTab[tabIndex], _obj)
+            if (_tmpTab.url == _obj.url) {
+                tabs.splice(tabIndex, 1);
+            }
+        }
+        window.localStorage.setItem('vcTab', JSON.stringify(tabs));
     }
 })(window.vcFramework);

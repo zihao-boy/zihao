@@ -19,12 +19,12 @@
                     asType: '',
                     asCount: '',
                     asGroupId: '',
-                    state:''
+                    state: ''
                 }
             }
         },
         _initMethod: function() {
-           
+
             $that._listListAppVarGroups();
         },
         _initEvent: function() {
@@ -77,8 +77,8 @@
                     function(json, res) {
                         var _appVarGroupManageInfo = JSON.parse(json);
                         vc.component.appServiceManageInfo.asGroups = _appVarGroupManageInfo.data;
-                        if(_appVarGroupManageInfo.data.length < 1){
-                            return ;
+                        if (_appVarGroupManageInfo.data.length < 1) {
+                            return;
                         }
                         $that.appServiceManageInfo.conditions.asGroupId = _appVarGroupManageInfo.data[0].avgId;
                         vc.component._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
@@ -171,7 +171,7 @@
             },
             _restartMoreApps: function() {
                 vc.emit('selectAppService', 'openSelectAppService', {
-                    asGroupId:$that.appServiceManageInfo.conditions.asGroupId,
+                    asGroupId: $that.appServiceManageInfo.conditions.asGroupId,
                     callBack: $that._doRestartMoreApps
                 })
             },
@@ -199,13 +199,13 @@
                         vc.toast(errInfo);
                     });
             },
-            _openDockerLog:function(_appService){
-                vc.emit('chooseHostContainer', 'openChooseHostContainerModel',_appService);
+            _openDockerLog: function(_appService) {
+                vc.emit('chooseHostContainer', 'openChooseHostContainerModel', _appService);
             },
-        
-            swatch:function(item){
+
+            swatch: function(item) {
                 $that.appServiceManageInfo.conditions.asGroupId = item.avgId;
-                $that._listAppServices(DEFAULT_PAGE, DEFAULT_ROWS);
+                $that._listAppServices(1, DEFAULT_ROWS);
             }
         }
     });
