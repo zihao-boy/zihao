@@ -13,7 +13,7 @@
         },
         _initEvent: function () {
             vc.on('viewDbTables', 'openViewDbDataModal', function (_params) {
-                vc.component.refreshViewDbDataInfo();
+                vc.component.refreshViewDbTableInfo();
                 $('#viewDbTablesModel').modal('show');
                 $that.viewDbTablesInfo.curDbId = _params.curDbId;
                 $that.viewDbTablesInfo.curDbName = _params.curDbName;
@@ -21,7 +21,7 @@
             });
         },
         methods: {
-            refreshViewDbDataInfo: function () {
+            refreshViewDbTableInfo: function () {
                 vc.component.viewDbTablesInfo = {
                     curDbId: '',
                     curDbName: '',

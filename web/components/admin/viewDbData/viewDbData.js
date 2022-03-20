@@ -84,6 +84,10 @@
 
                 $that.viewDbDataInfo.sql = _sql;
             },
+            _viewDbDataModal:function(){
+                $that.viewDbDataInfo.view = "form";
+
+            }
         }
     });
 

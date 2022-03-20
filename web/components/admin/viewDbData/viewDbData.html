@@ -8,9 +8,13 @@
                     <div>
                         <div>
                             <div v-if="viewDbDataInfo.view == 'form'">
+
                                 <div class="form-group row" v-for="(item,index) in viewDbDataInfo.dataCols">
                                     <label class="col-sm-2 col-form-label">{{item.name}}</label>
-                                    <div class="col-sm-10">
+                                    <div class="col-sm-10" v-if = "item.value && item.value.length > 100">
+                                        <textarea v-model="item.value" class="form-control"></textarea>
+                                    </div>
+                                    <div class="col-sm-10" v-else>
                                         <input v-model="item.value" type="text" class="form-control">
                                     </div>
                                 </div>
@@ -26,8 +30,10 @@
                                     @click="_copyDeleteSql()">删除语句</button>
                                 <button class="btn btn-primary float-right  margin-right-sm" type="button"
                                     @click="_copyUpdateSql()">修改语句</button>
-                                <button class="btn btn-primary float-right  margin-right-sm copy-insert"
-                                    type="button" @click="_copyInsertSql()">新增语句</button>
+                                <button class="btn btn-primary float-right  margin-right-sm copy-insert" type="button"
+                                    @click="_copyInsertSql()">新增语句</button>
+                                <button class="btn btn-primary float-right  margin-right-sm copy-insert" type="button"
+                                    @click="_viewDbDataModal()">数据</button>
                             </div>
                         </div>
                     </div>
