@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="row padding padding-top-xs">
-        <div class="col-md-2 bg-white " style="min-height: 600px; border-right:8px solid #F3F3F4">
+        <div class="col-md-2 bg-white " style="min-height: 500px; border-right:8px solid #F3F3F4">
             <h3 class="margin-top">数据库</h3>
             <div class=" span-line margin-bottom-sm" style="cursor:pointer;display: flex; flex-direction: row; justify-content: space-between;" v-for="(item,index) in mysqlClientInfo.dbLinks">
                 <div>
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <div class="col-md-10 padding-xs bg-white " style="min-height: 600px;width: 100%;">
+        <div class="col-md-10 padding-xs bg-white " style="min-height: 500px;width: 100%;">
             <div class="">
                 <ul class="nav nav-tabs">
                     <li class="nav-item" v-for="(item,index) in mysqlClientInfo.sqlTabs">
@@ -69,7 +69,7 @@
                 </ul>
             </div>
             <div>
-                <textarea type="text" id="text" class="text" v-model="mysqlClientInfo._currentSql" @keyup.ctrl.66="_customKeypress()" placeholder="请输入sql，选中sql语句，ctrl+B运行" style="width: 100%; background-color: #FFF; min-height: 600px; padding-top: 10px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px; overflow: auto; color: green; font-size: 16px;border: solid 0px;outline:none;"></textarea>
+                <textarea type="text" id="text" class="text" v-model="mysqlClientInfo._currentSql" @keyup.ctrl.66="_customKeypress()" placeholder="请输入sql，选中sql语句，ctrl+B运行" style="width: 100%; background-color: #FFF; min-height: 500px; padding-top: 10px; padding-right: 10px; padding-left: 10px; padding-bottom: 10px; overflow: auto; color: green; font-size: 16px;border: solid 0px;outline:none;"></textarea>
             </div>
             
             <div v-if="mysqlClientInfo.error" style="width: 100%; word-break:break-all;">
