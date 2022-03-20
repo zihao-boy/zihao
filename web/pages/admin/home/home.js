@@ -51,7 +51,7 @@
                     icon: '/img/fasterDeploy.png'
                 }, {
                     name: 'mysql客户端',
-                    url: '/index.html#/pages/admin/mysqlClient',
+                    url: '/mysql.html',
                     icon: '/img/mysql.png'
                 }],
                 apps: [],
@@ -72,6 +72,10 @@
                     $that.homeInfo.action = item.action;
                     vc.emit('chooseHost', 'openChooseHostModel', {})
                     return;
+                }
+                if(item.url == '/mysql.html'){
+                    window.open(item.url)
+                    return ;
                 }
                 vc.jumpToPage(item.url);
             },

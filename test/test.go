@@ -13,7 +13,7 @@ import (
 
 //https://colobu.com/2019/06/01/packet-capture-injection-and-analysis-gopacket/
 var (
-	device       string = "\\Device\\NPF_{CAD00D40-0C5E-412E-834B-5A0F22BD824D}"
+	device       string = "en0"
 	snapshot_len int32  = 1024
 	promiscuous  bool   = false
 	err          error
