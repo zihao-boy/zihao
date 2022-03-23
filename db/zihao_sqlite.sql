@@ -1060,3 +1060,59 @@ create table log_trace_db
     create_time timestamp  default CURRENT_TIMESTAMP not null,
     status_cd   varchar(2) default '0' not null
 );
+
+create table waf
+(
+    waf_id           varchar(64) not null
+        primary key,
+    waf_name varchar(64) not null,
+    port         varchar(64) not null,
+    state varchar(12) not null,
+    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2) default '0' not null
+);
+
+create table waf_hosts
+(
+    waf_host_id           varchar(64) not null
+        primary key,
+    waf_id varchar(64) not null,
+    host_id         varchar(64) not null,
+    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2) default '0' not null
+);
+
+create table waf_route
+(
+    route_id           varchar(64) not null
+        primary key,
+    waf_id varchar(64) not null,
+    hostname varchar(128) not null,
+    ip varchar(128) not null,
+    port         varchar(64) not null,
+    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2) default '0' not null
+);
+
+create table waf_access_log
+(
+    request_id           varchar(64) not null
+        primary key,
+    waf_ip varchar(64) not null,
+    host_id           varchar(64) not null,
+    x_real_ip         varchar(64) not null,
+    scheme        varchar(64) not null,
+    response_code    varchar(64) not null,
+    method    varchar(64) not null,
+    http_host    varchar(64) not null,
+    upstream_addr varchar(64) not null ,
+    url    varchar(512) not null,
+    request_length varchar(64) not null,
+    response_length varchar(64) not null,
+    state varchar(12) not null,
+    message varchar(512) not null,
+    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2) default '0' not null
+);
+
+
