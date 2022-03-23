@@ -101,7 +101,7 @@ VALUES(#RequestId#,#WafIp#,#HostId#,#XRealIp#,#Scheme#,#ResponseCode#,#Method#,#
 		status_cd = '0'
 		where status_cd = '0'
 		$if RequestId != '' then
-		and t.request_id = #RequestId#
+		and request_id = #RequestId#
 		$endif
 	`
 	delete_wafAccessLog string = `
@@ -109,7 +109,7 @@ VALUES(#RequestId#,#WafIp#,#HostId#,#XRealIp#,#Scheme#,#ResponseCode#,#Method#,#
                           status_cd = '1'
                           where status_cd = '0'
 		$if RequestId != '' then
-		and t.request_id = #RequestId#
+		and request_id = #RequestId#
 		$endif
 	`
 )

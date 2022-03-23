@@ -73,7 +73,7 @@ VALUES(#RouteId#,#WafId#,#Hostname#,#Ip#,#Port#)
 		and route_id = #RouteId#
 		$endif
 		$if WafId != '' then
-		and t.waf_id = #WafId#
+		and waf_id = #WafId#
 		$endif
 	`
 	delete_wafRoute string = `
@@ -84,7 +84,7 @@ VALUES(#RouteId#,#WafId#,#Hostname#,#Ip#,#Port#)
 		and route_id = #RouteId#
 		$endif
 		$if WafId != '' then
-		and t.waf_id = #WafId#
+		and waf_id = #WafId#
 		$endif
 	`
 )

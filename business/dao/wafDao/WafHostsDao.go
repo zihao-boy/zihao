@@ -53,7 +53,7 @@ VALUES(#WafHostId#,#WafId#,#HostId#)
 		and waf_host_id = #WafHostId#
 		$endif
 		$if WafId != '' then
-		and t.waf_id = #WafId#
+		and waf_id = #WafId#
 		$endif
 	`
 	delete_wafHosts string = `
@@ -64,7 +64,7 @@ VALUES(#WafHostId#,#WafId#,#HostId#)
 		and waf_host_id = #WafHostId#
 		$endif
 		$if WafId != '' then
-		and t.waf_id = #WafId#
+		and waf_id = #WafId#
 		$endif
 	`
 )

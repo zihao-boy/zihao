@@ -243,3 +243,8 @@ INSERT INTO `menu` VALUES ('700201904035', 'waf访问记录', '800201904006', '/
 INSERT INTO `privilege` VALUES ('500201904032', 'waf访问', 'waf访问', '2019-04-01 02:24:53', '0', '/pages/admin/wafAccessLog', '700201904035');
 INSERT INTO `privilege_rel` VALUES ('60', '500201904032', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('61', '500201904032', '600201904002', '2019-04-01 08:18:29', '0');
+
+INSERT INTO `menu` VALUES ('700201904036', 'waf路由', '800201904006', '/index.html#/pages/admin/wafRouteManage', '1', 'waf路由', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904033', 'waf访问', 'waf访问', '2019-04-01 02:24:53', '0', '/pages/admin/wafRouteManage', '700201904036');
+INSERT INTO `privilege_rel` VALUES ('62', '500201904033', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('63', '500201904033', '600201904002', '2019-04-01 08:18:29', '0');

@@ -19,9 +19,8 @@
         },
         methods:{
             deleteWafRoute:function(){
-                vc.component.deleteWafRouteInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'wafRoute.deleteWafRoute',
+                    '/firewall/deleteWafRoute',
                     JSON.stringify(vc.component.deleteWafRouteInfo),
                     {
                         emulateJSON:true
