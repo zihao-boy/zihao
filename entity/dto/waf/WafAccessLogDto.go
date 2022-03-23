@@ -10,7 +10,7 @@ type WafAccessLogDto struct {
 	RequestId     string    `json:"requestId" sql:"-" `
 	WafId     string    `json:"wafId" sql:"-" `
 	HostId     string    `json:"hostId"  sql:"-"`
-	XrealIp     string    `json:"xRealIp"  sql:"-"`
+	XRealIp     string    `json:"xRealIp"  sql:"-"`
 	Scheme     string    `json:"scheme" `
 	ResponseCode     string    `json:"responseCode"  sql:"-"`
 	Method     string    `json:"method" `

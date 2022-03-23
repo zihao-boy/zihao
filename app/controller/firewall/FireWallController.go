@@ -9,7 +9,7 @@ import (
 type FirewallController struct {
 	wafService wafService.WafService
 	wafRouteService wafService.WafRouteService
-
+	wafAccessLogService wafService.WafAccessLogService
 }
 
 func FirewallControllerRouter(party iris.Party) {
@@ -34,6 +34,12 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateWafRoute", hero.Handler(aus.updateWafRoute))
 
 	adinMenu.Post("/deleteWafRoute", hero.Handler(aus.deleteWafRoute))
+
+	//query platform data
+	adinMenu.Get("/getWafAccessLog", hero.Handler(aus.getWafAccessLog))
+
+	adinMenu.Post("/saveWafAccessLog", hero.Handler(aus.saveWafAccessLog))
+
 }
 
 /**
@@ -105,6 +111,25 @@ delete waf
 */
 func (aus *FirewallController) deleteWafRoute(ctx iris.Context) {
 	reslut := aus.wafRouteService.DeleteWafRoutes(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getWafAccessLog(ctx iris.Context) {
+	reslut := aus.wafAccessLogService.GetWafAccessLogs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveWafAccessLog(ctx iris.Context) {
+	reslut := aus.wafAccessLogService.SaveWafAccessLogs(ctx)
 
 	ctx.JSON(reslut)
 }
