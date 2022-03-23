@@ -230,3 +230,16 @@ create table waf_access_log
     create_time  timestamp  default CURRENT_TIMESTAMP not null,
     status_cd    varchar(2) default '0' not null
 );
+
+-- 2022-03-23 加入waf
+
+INSERT INTO `menu` VALUES ('700201904034', '网站防火墙（waf）', '800201904006', '/index.html#/pages/admin/wafManage', '1', '网站防火墙（waf）', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904031', '网站防火墙（waf）', '网站防火墙（waf）', '2019-04-01 02:24:53', '0', '/pages/admin/wafManage', '700201904034');
+INSERT INTO `privilege_rel` VALUES ('58', '500201904031', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('59', '500201904031', '600201904002', '2019-04-01 08:18:29', '0');
+
+
+INSERT INTO `menu` VALUES ('700201904035', 'waf访问记录', '800201904006', '/index.html#/pages/admin/wafAccessLog', '1', 'waf访问', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904032', 'waf访问', 'waf访问', '2019-04-01 02:24:53', '0', '/pages/admin/wafAccessLog', '700201904035');
+INSERT INTO `privilege_rel` VALUES ('60', '500201904032', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('61', '500201904032', '600201904002', '2019-04-01 08:18:29', '0');
