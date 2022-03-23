@@ -1,8 +1,12 @@
 package waf
 
-import "time"
+import (
+	"github.com/zihao-boy/zihao/entity/dto"
+	"time"
+)
 
 type WafAccessLogDto struct {
+	dto.PageDto
 	RequestId     string    `json:"requestId" sql:"-" `
 	WafId     string    `json:"wafId" sql:"-" `
 	HostId     string    `json:"hostId"  sql:"-"`

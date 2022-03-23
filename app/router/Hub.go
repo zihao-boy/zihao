@@ -7,15 +7,16 @@ import (
 	"github.com/zihao-boy/zihao/app/controller/appService"
 	"github.com/zihao-boy/zihao/app/controller/appVersion"
 	"github.com/zihao-boy/zihao/app/controller/dbClient"
+	"github.com/zihao-boy/zihao/app/controller/firewall"
 	"github.com/zihao-boy/zihao/app/controller/home"
 	"github.com/zihao-boy/zihao/app/controller/host"
 	"github.com/zihao-boy/zihao/app/controller/menu"
 	"github.com/zihao-boy/zihao/app/controller/monitor"
+	"github.com/zihao-boy/zihao/app/controller/resources"
 	"github.com/zihao-boy/zihao/app/controller/soft"
 	"github.com/zihao-boy/zihao/app/controller/system"
 	"github.com/zihao-boy/zihao/app/controller/tenant"
 	"github.com/zihao-boy/zihao/app/controller/user"
-	"github.com/zihao-boy/zihao/app/controller/resources"
 	"github.com/zihao-boy/zihao/common/aop"
 	"github.com/zihao-boy/zihao/common/defaultWebsocket"
 )
@@ -65,6 +66,9 @@ func Hub(app *iris.Application) {
 
 	// resources
 	resources.ResourcesControllerRouter(party)
+
+	//firewall
+	firewall.FirewallControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {
