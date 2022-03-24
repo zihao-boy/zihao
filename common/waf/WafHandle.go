@@ -23,10 +23,20 @@ func RootHandle(w http.ResponseWriter, r *http.Request)  {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	req.Header = r.Header
+	req.Header.Set("ZIHAO-WAF-ID",accessLog.WafId)
+	req.Header.Set("ZIHAO-REQUEST-ID",accessLog.RequestId)
+	resp, err := (&http.Client{}).Do(req)
+	if err != nil{
+		w.Write([]byte(err.Error()))
+		return
+	}
+	defer resp.Body.Close()
 	accessLog.RequestLength = string(r.ContentLength)
-	accessLog.ResponseCode = req.Response.Status
-	accessLog.ResponseLength = string(req.Response.ContentLength)
-	req.Write(w)
+	accessLog.ResponseCode = resp.Status
+	accessLog.ResponseLength = string(resp.ContentLength)
+	resp.Write(w)
 }
 
 
