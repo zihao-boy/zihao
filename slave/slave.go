@@ -19,4 +19,5 @@ func main() {
 		app.Logger().Info("欢迎访问梓豪平台slave")
 	})
 	app.Run(iris.Addr(":7001"))
+
 }

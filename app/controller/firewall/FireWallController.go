@@ -26,6 +26,10 @@ func FirewallControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/deleteWaf", hero.Handler(aus.deleteWaf))
 
+	adinMenu.Post("/startWaf", hero.Handler(aus.startWaf))
+
+	adinMenu.Post("/stopWaf", hero.Handler(aus.stopWaf))
+
 	//query platform data
 	adinMenu.Get("/getWafRoute", hero.Handler(aus.getWafRoute))
 
@@ -78,6 +82,23 @@ func (aus *FirewallController) deleteWaf(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+/**
+delete waf
+*/
+func (aus *FirewallController) startWaf(ctx iris.Context) {
+	reslut := aus.wafService.StartWaff(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) stopWaf(ctx iris.Context) {
+	reslut := aus.wafService.StopWaff(ctx)
+
+	ctx.JSON(reslut)
+}
 
 /**
 query waf

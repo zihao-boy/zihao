@@ -62,10 +62,50 @@
                 vc.emit('editWaf', 'openEditWafModal', _waf);
             },
             _openStartWafModel: function (_waf) {
-                vc.emit('deleteWaf', 'openDeleteWafModal', _waf);
+                vc.http.apiPost(
+                    '/firewall/startWaf',
+                    JSON.stringify(_waf),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            vc.emit('wafManage', 'listWaf', {});
+                            return;
+                        }
+                        vc.message(_json.msg);
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+
+                        vc.message(errInfo);
+                    });
             },
             _openStopWafModel: function (_waf) {
-                vc.emit('deleteWaf', 'openDeleteWafModal', _waf);
+                vc.http.apiPost(
+                    '/firewall/stopWaf',
+                    JSON.stringify(_waf),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            vc.emit('wafManage', 'listWaf', {});
+                            return;
+                        }
+                        vc.message(_json.msg);
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+
+                        vc.message(errInfo);
+                    });
             },
             _queryWafMethod: function () {
                 vc.component._listWafs(DEFAULT_PAGE, DEFAULT_ROWS);

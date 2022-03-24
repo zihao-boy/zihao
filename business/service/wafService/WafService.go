@@ -4,20 +4,23 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"strconv"
+	"strings"
 )
 
 type WafService struct {
-	wafDao wafDao.WafDao
+	wafDao      wafDao.WafDao
+	wafHostsDao wafDao.WafHostsDao
 }
 
 // get db link
 // all db by this user
 func (wafService *WafService) GetWafAll(WafDto waf.WafDto) ([]*waf.WafDto, error) {
 	var (
-		err        error
+		err     error
 		WafDtos []*waf.WafDto
 	)
 
@@ -35,10 +38,10 @@ func (wafService *WafService) GetWafAll(WafDto waf.WafDto) ([]*waf.WafDto, error
 */
 func (wafService *WafService) GetWafs(ctx iris.Context) result.ResultDto {
 	var (
-		err        error
-		page       int64
-		row        int64
-		total      int64
+		err     error
+		page    int64
+		row     int64
+		total   int64
 		wafDto  = waf.WafDto{}
 		wafDtos []*waf.WafDto
 	)
@@ -74,6 +77,15 @@ func (wafService *WafService) GetWafs(ctx iris.Context) result.ResultDto {
 		return result.Error(err.Error())
 	}
 
+	for _,wafDto := range wafDtos{
+
+		wafHostsDto := waf.WafHostsDto{
+			WafId: wafDto.WafId,
+		}
+		wafHostsDtos ,_ :=wafService.wafHostsDao.GetWafHostss(wafHostsDto)
+		wafDto.WafHosts = wafHostsDtos
+	}
+
 	return result.SuccessData(wafDtos, total, row)
 
 }
@@ -83,7 +95,7 @@ func (wafService *WafService) GetWafs(ctx iris.Context) result.ResultDto {
 */
 func (wafService *WafService) SaveWafs(ctx iris.Context) result.ResultDto {
 	var (
-		err       error
+		err    error
 		wafDto waf.WafDto
 	)
 	if err = ctx.ReadJSON(&wafDto); err != nil {
@@ -106,7 +118,7 @@ func (wafService *WafService) SaveWafs(ctx iris.Context) result.ResultDto {
 */
 func (wafService *WafService) UpdateWafs(ctx iris.Context) result.ResultDto {
 	var (
-		err       error
+		err    error
 		wafDto waf.WafDto
 	)
 	if err = ctx.ReadJSON(&wafDto); err != nil {
@@ -122,6 +134,25 @@ func (wafService *WafService) UpdateWafs(ctx iris.Context) result.ResultDto {
 		return result.Error(err.Error())
 	}
 
+	if utils.IsEmpty(wafDto.HostIds) {
+		return result.SuccessData(wafDto)
+	}
+
+	wafHostsDto := waf.WafHostsDto{
+		WafId: wafDto.WafId,
+	}
+	wafService.wafHostsDao.DeleteWafHosts(wafHostsDto)
+
+	for _, hostId := range strings.Split(wafDto.HostIds, ",") {
+
+		wafHostsDto = waf.WafHostsDto{
+			WafId:     wafDto.WafId,
+			WafHostId: seq.Generator(),
+			HostId:    hostId,
+		}
+		wafService.wafHostsDao.SaveWafHosts(wafHostsDto)
+	}
+
 	return result.SuccessData(wafDto)
 
 }
@@ -131,7 +162,7 @@ func (wafService *WafService) UpdateWafs(ctx iris.Context) result.ResultDto {
 */
 func (wafService *WafService) DeleteWafs(ctx iris.Context) result.ResultDto {
 	var (
-		err       error
+		err    error
 		wafDto waf.WafDto
 	)
 	if err = ctx.ReadJSON(&wafDto); err != nil {
@@ -143,6 +174,50 @@ func (wafService *WafService) DeleteWafs(ctx iris.Context) result.ResultDto {
 		return result.Error(err.Error())
 	}
 
+	return result.SuccessData(wafDto)
+
+}
+
+func (wafService *WafService) StartWaff(ctx iris.Context) interface{} {
+	var (
+		err    error
+		wafDto waf.WafDto
+	)
+	if err = ctx.ReadJSON(&wafDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	tmpWafDto:= waf.WafDto{
+		WafId: wafDto.WafId,
+		State:waf.Waf_state_start,
+	}
+
+	err = wafService.wafDao.UpdateWaf(tmpWafDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	return result.SuccessData(wafDto)
+
+}
+
+func (wafService *WafService) StopWaff(ctx iris.Context) interface{} {
+	var (
+		err    error
+		wafDto waf.WafDto
+	)
+	if err = ctx.ReadJSON(&wafDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	tmpWafDto:= waf.WafDto{
+		WafId: wafDto.WafId,
+		State:waf.Waf_state_stop,
+	}
+
+	err = wafService.wafDao.UpdateWaf(tmpWafDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
 	return result.SuccessData(wafDto)
 
 }

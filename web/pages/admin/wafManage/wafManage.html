@@ -19,8 +19,6 @@
                                 <th class="text-center">端口</th>
                                 <th class="text-center">状态</th>
                                 <th class="text-center">操作</th>
-
-
                             </tr>
                         </thead>
                         <tbody>
@@ -35,7 +33,7 @@
                                     停止</span>
                                 </td>
                                 <td class="text-center">
-                                    <div class="btn-group">
+                                    <div class="btn-group" v-if="waf.state != '1001'">
                                         <button class="btn-white btn btn-xs"
                                             v-on:click="_openEditWafModel(waf)">修改</button>
                                     </div>

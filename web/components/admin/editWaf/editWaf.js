@@ -7,7 +7,8 @@
                 wafName: '',
                 port: '',
                 state: '',
-
+                hosts:[],
+                hIds:[],
             }
         },
         _initMethod: function () {
@@ -18,6 +19,19 @@
                 vc.component.refreshEditWafInfo();
                 $('#editWafModel').modal('show');
                 vc.copyObject(_params, vc.component.editWafInfo);
+                $that._listHosts();
+                let _wafHosts = _params.wafHosts;
+
+                if(!_wafHosts){
+                    return;
+                }
+
+                _wafHosts.forEach(item => {
+                   $that.editWafInfo.hIds.push(item.hostId);
+                });
+
+
+               
             });
         },
         methods: {
@@ -76,6 +90,8 @@
                     return;
                 }
 
+                $that.editWafInfo.hostIds = $that.editWafInfo.hIds.join(',')
+
                 vc.http.apiPost(
                     '/firewall/updateWaf',
                     JSON.stringify(vc.component.editWafInfo),
@@ -105,9 +121,29 @@
                     wafName: '',
                     port: '',
                     state: '',
-
+                    hosts:[],
+                    hIds:[],
                 }
-            }
+            },
+            _listHosts: function (_page, _rows) {
+
+                let param = {
+                    params: {
+                        page:1,
+                        row:50
+                    }
+                };
+                //发送get请求
+                vc.http.apiGet('/host/getHosts',
+                    param,
+                    function (json, res) {
+                        let _hostManageInfo = JSON.parse(json);
+                        vc.component.editWafInfo.hosts = _hostManageInfo.data;
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 
