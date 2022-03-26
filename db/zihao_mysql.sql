@@ -1261,6 +1261,7 @@ create table waf
         primary key,
     waf_name varchar(64) not null,
     port         varchar(64) not null,
+    https_port varchar(64) not null,
     state varchar(12) not null,
     create_time  timestamp  default CURRENT_TIMESTAMP not null,
     status_cd    varchar(2) default '0' not null
@@ -1278,14 +1279,15 @@ create table waf_hosts
 
 create table waf_route
 (
-    route_id           varchar(64) not null
+    route_id    varchar(64)  not null
         primary key,
-    waf_id varchar(64) not null,
-    hostname varchar(128) not null,
-    ip varchar(128) not null,
-    port         varchar(64) not null,
-    create_time  timestamp  default CURRENT_TIMESTAMP not null,
-    status_cd    varchar(2) default '0' not null
+    waf_id      varchar(64)  not null,
+    scheme varchar(64) not null,
+    hostname    varchar(128) not null,
+    ip          varchar(128) not null,
+    port        varchar(64)  not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
 );
 
 create table waf_access_log
@@ -1307,4 +1309,14 @@ create table waf_access_log
     message varchar(512) not null,
     create_time  timestamp  default CURRENT_TIMESTAMP not null,
     status_cd    varchar(2) default '0' not null
+);
+
+create table waf_hostname_cert
+(
+    cert_id    varchar(64)  not null primary key,
+    hostname    varchar(128) not null,
+    cert_content      longtext  not null,
+    priv_key_content     longtext  not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
 );

@@ -30,6 +30,8 @@ func FirewallControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/stopWaf", hero.Handler(aus.stopWaf))
 
+	adinMenu.Post("/refreshWafConfig", hero.Handler(aus.refreshWafConfig))
+
 	//query platform data
 	adinMenu.Get("/getWafRoute", hero.Handler(aus.getWafRoute))
 
@@ -99,6 +101,16 @@ func (aus *FirewallController) stopWaf(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+/**
+delete waf
+*/
+func (aus *FirewallController) refreshWafConfig(ctx iris.Context) {
+	reslut := aus.wafService.RefreshWafConfig(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
 
 /**
 query waf

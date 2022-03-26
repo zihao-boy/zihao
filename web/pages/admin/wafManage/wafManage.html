@@ -1,12 +1,12 @@
 <div>
-    
+
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-title">
                     <h5>网站防火墙（waf）</h5>
                     <div class="ibox-tools" style="top:10px;">
-                        
+
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -16,7 +16,8 @@
                             <tr>
                                 <!-- <th class="text-center">编号</th> -->
                                 <th class="text-center">名称</th>
-                                <th class="text-center">端口</th>
+                                <th class="text-center">http端口</th>
+                                <th class="text-center">https端口</th>
                                 <th class="text-center">状态</th>
                                 <th class="text-center">操作</th>
                             </tr>
@@ -26,24 +27,22 @@
                                 <!-- <td class="text-center">{{waf.wafId}}</td> -->
                                 <td class="text-center">{{waf.wafName}}</td>
                                 <td class="text-center">{{waf.port}}</td>
+                                <td class="text-center">{{waf.httpsPort}}</td>
                                 <td class="text-center" style="color: #FFF;">
-                                <span class="badge bg-success" v-if="waf.state == '1001'">
+                                    <span class="badge bg-success" v-if="waf.state == '1001'">
                                     运行</span>
-                                <span class="badge bg-warning" v-else>
+                                    <span class="badge bg-warning" v-else>
                                     停止</span>
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group" v-if="waf.state != '1001'">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openEditWafModel(waf)">修改</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openEditWafModel(waf)">修改</button>
                                     </div>
                                     <div class="btn-group" v-if="waf.state == '1001'">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openStopWafModel(waf)">停止</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openStopWafModel(waf)">停止</button>
                                     </div>
                                     <div class="btn-group" v-else>
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openStartWafModel(waf)">启动</button>
+                                        <button class="btn-white btn btn-xs" v-on:click="_openStartWafModel(waf)">启动</button>
                                     </div>
                                 </td>
 

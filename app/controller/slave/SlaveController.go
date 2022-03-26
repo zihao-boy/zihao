@@ -48,8 +48,11 @@ func SlaveControllerRouter(party iris.Party) {
 	adinUser.Post("/execShell", hero.Handler(aus.execShell))
 
 
+	adinUser.Post("/startWaf", hero.Handler(aus.startWaf))
 
+	adinUser.Post("/stopWaf", hero.Handler(aus.stopWaf))
 
+	adinUser.Post("/refreshWafConfig", hero.Handler(aus.refreshWafConfig))
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -130,6 +133,27 @@ func (aus *SlaveController) execShell(ctx iris.Context) {
 	relustDto,_:=aus.systenInfoService.ExecShell(ctx)
 	ctx.JSON(relustDto)
 }
+
+//开启容器
+func (aus *SlaveController) startWaf(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StartWaf(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+
+//停止容器
+func (aus *SlaveController) stopWaf(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StopWaf(ctx)
+	ctx.JSON(relustDto)
+}
+
+//开启容器
+func (aus *SlaveController) refreshWafConfig(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.RefreshWafConfig(ctx)
+	ctx.JSON(relustDto)
+}
+
 
 
 

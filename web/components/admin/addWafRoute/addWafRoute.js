@@ -1,4 +1,4 @@
-(function (vc) {
+(function(vc) {
 
     vc.extends({
         propTypes: {
@@ -9,17 +9,20 @@
             addWafRouteInfo: {
                 routeId: '',
                 wafId: '',
+                scheme: '',
                 hostname: '',
                 ip: '',
                 port: '80',
+                privKeyContent: '',
+                certContent: '',
                 wafs: []
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('addWafRoute', 'openAddWafRouteModal', function () {
+        _initEvent: function() {
+            vc.on('addWafRoute', 'openAddWafRouteModal', function() {
                 $that._loadWaf();
                 $('#addWafRouteModel').modal('show');
             });
@@ -29,8 +32,7 @@
                 return vc.validate.validate({
                     addWafRouteInfo: vc.component.addWafRouteInfo
                 }, {
-                    'addWafRouteInfo.wafId': [
-                        {
+                    'addWafRouteInfo.wafId': [{
                             limit: "required",
                             param: "",
                             errInfo: "Waf编号不能为空"
@@ -41,8 +43,7 @@
                             errInfo: "Waf编号不能超过64"
                         },
                     ],
-                    'addWafRouteInfo.hostname': [
-                        {
+                    'addWafRouteInfo.hostname': [{
                             limit: "required",
                             param: "",
                             errInfo: "域名不能为空"
@@ -53,8 +54,7 @@
                             errInfo: "域名不能超过128"
                         },
                     ],
-                    'addWafRouteInfo.ip': [
-                        {
+                    'addWafRouteInfo.ip': [{
                             limit: "required",
                             param: "",
                             errInfo: "应用IP不能为空"
@@ -65,8 +65,7 @@
                             errInfo: "应用IP不能超过128"
                         },
                     ],
-                    'addWafRouteInfo.port': [
-                        {
+                    'addWafRouteInfo.port': [{
                             limit: "required",
                             param: "",
                             errInfo: "应用端口不能为空"
@@ -83,7 +82,7 @@
 
                 });
             },
-            saveWafRouteInfo: function () {
+            saveWafRouteInfo: function() {
                 if (!vc.component.addWafRouteValidate()) {
                     vc.toast(vc.validate.errInfo);
 
@@ -99,11 +98,10 @@
 
                 vc.http.apiPost(
                     '/firewall/saveWafRoute',
-                    JSON.stringify(vc.component.addWafRouteInfo),
-                    {
+                    JSON.stringify(vc.component.addWafRouteInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
@@ -117,24 +115,27 @@
                         vc.message(_json.msg);
 
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.message(errInfo);
 
                     });
             },
-            clearAddWafRouteInfo: function () {
+            clearAddWafRouteInfo: function() {
                 vc.component.addWafRouteInfo = {
                     wafId: '',
                     hostname: '',
+                    scheme: '',
                     ip: '',
+                    privKeyContent: '',
+                    certContent: '',
                     port: '80',
                     wafs: []
 
                 };
             },
-            _loadWaf: function () {
+            _loadWaf: function() {
 
                 var param = {
                     params: {
@@ -146,11 +147,12 @@
                 //发送get请求
                 vc.http.apiGet('/firewall/getWaf',
                     param,
-                    function (json, res) {
+                    function(json, res) {
                         var _wafManageInfo = JSON.parse(json);
                         vc.component.addWafRouteInfo.wafs = _wafManageInfo.data;
 
-                    }, function (errInfo, error) {
+                    },
+                    function(errInfo, error) {
                         console.log('请求失败处理');
                     }
                 );

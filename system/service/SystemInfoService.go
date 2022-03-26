@@ -9,12 +9,14 @@ import (
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
+	wafServer "github.com/zihao-boy/zihao/common/waf"
 	"github.com/zihao-boy/zihao/common/zips"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
+	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"io"
 	"io/ioutil"
 	"os"
@@ -478,4 +480,54 @@ func (s *SystemInfoService) DownloadDir(ctx iris.Context) {
 	responseWriter.Flush()
 
 	os.Remove(distFileName)
+}
+
+// start waf
+func (s *SystemInfoService) StartWaf(ctx iris.Context) (result.ResultDto, error) {
+	var (
+		err       error
+		wafDataDto waf.SlaveWafDataDto
+		wafServer wafServer.WafServer
+	)
+
+	if err = ctx.ReadJSON(&wafDataDto); err != nil {
+		fmt.Print(err)
+		return result.Error(err.Error()), nil
+	}
+	err = wafServer.StartWaf(wafDataDto)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+// stop waf
+func (s *SystemInfoService) StopWaf(ctx iris.Context) (result.ResultDto, error) {
+	var (
+		err       error
+		wafServer wafServer.WafServer
+	)
+	err = wafServer.StopWaf()
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) RefreshWafConfig(ctx iris.Context)  (result.ResultDto, error){
+	var (
+		err       error
+		wafDataDto waf.SlaveWafDataDto
+		wafServer wafServer.WafServer
+	)
+
+	if err = ctx.ReadJSON(&wafDataDto); err != nil {
+		fmt.Print(err)
+		return result.Error(err.Error()), nil
+	}
+	err = wafServer.InitWafConfig(wafDataDto)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
 }

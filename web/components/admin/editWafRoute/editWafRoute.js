@@ -1,4 +1,4 @@
-(function (vc, vm) {
+(function(vc, vm) {
 
     vc.extends({
         data: {
@@ -6,28 +6,30 @@
                 routeId: '',
                 wafId: '',
                 hostname: '',
+                scheme: '',
                 ip: '',
                 port: '',
+                privKeyContent: '',
+                certContent: '',
 
             }
         },
-        _initMethod: function () {
+        _initMethod: function() {
 
         },
-        _initEvent: function () {
-            vc.on('editWafRoute', 'openEditWafRouteModal', function (_params) {
+        _initEvent: function() {
+            vc.on('editWafRoute', 'openEditWafRouteModal', function(_params) {
                 vc.component.refreshEditWafRouteInfo();
                 $('#editWafRouteModel').modal('show');
                 vc.copyObject(_params, vc.component.editWafRouteInfo);
             });
         },
         methods: {
-            editWafRouteValidate: function () {
+            editWafRouteValidate: function() {
                 return vc.validate.validate({
                     editWafRouteInfo: vc.component.editWafRouteInfo
                 }, {
-                    'editWafRouteInfo.wafId': [
-                        {
+                    'editWafRouteInfo.wafId': [{
                             limit: "required",
                             param: "",
                             errInfo: "Waf编号不能为空"
@@ -38,8 +40,7 @@
                             errInfo: "Waf编号不能超过64"
                         },
                     ],
-                    'editWafRouteInfo.hostname': [
-                        {
+                    'editWafRouteInfo.hostname': [{
                             limit: "required",
                             param: "",
                             errInfo: "域名不能为空"
@@ -50,8 +51,7 @@
                             errInfo: "域名不能超过128"
                         },
                     ],
-                    'editWafRouteInfo.ip': [
-                        {
+                    'editWafRouteInfo.ip': [{
                             limit: "required",
                             param: "",
                             errInfo: "应用IP不能为空"
@@ -62,8 +62,7 @@
                             errInfo: "应用IP不能超过128"
                         },
                     ],
-                    'editWafRouteInfo.port': [
-                        {
+                    'editWafRouteInfo.port': [{
                             limit: "required",
                             param: "",
                             errInfo: "应用端口不能为空"
@@ -74,16 +73,15 @@
                             errInfo: "应用端口不能超过64"
                         },
                     ],
-                    'editWafRouteInfo.routeId': [
-                        {
-                            limit: "required",
-                            param: "",
-                            errInfo: "编号不能为空"
-                        }]
+                    'editWafRouteInfo.routeId': [{
+                        limit: "required",
+                        param: "",
+                        errInfo: "编号不能为空"
+                    }]
 
                 });
             },
-            editWafRoute: function () {
+            editWafRoute: function() {
                 if (!vc.component.editWafRouteValidate()) {
                     vc.toast(vc.validate.errInfo);
                     return;
@@ -91,11 +89,10 @@
 
                 vc.http.apiPost(
                     '/firewall/updateWafRoute',
-                    JSON.stringify(vc.component.editWafRouteInfo),
-                    {
+                    JSON.stringify(vc.component.editWafRouteInfo), {
                         emulateJSON: true
                     },
-                    function (json, res) {
+                    function(json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
@@ -106,17 +103,20 @@
                         }
                         vc.message(_json.msg);
                     },
-                    function (errInfo, error) {
+                    function(errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.message(errInfo);
                     });
             },
-            refreshEditWafRouteInfo: function () {
+            refreshEditWafRouteInfo: function() {
                 vc.component.editWafRouteInfo = {
                     routeId: '',
                     wafId: '',
+                    scheme: '',
                     hostname: '',
+                    privKeyContent: '',
+                    certContent: '',
                     ip: '',
                     port: '',
 

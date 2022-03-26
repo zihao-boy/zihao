@@ -50,8 +50,8 @@ from waf t
 	`
 
 	insert_waf string = `
-	insert into waf(waf_id, waf_name, port, state)
-VALUES(#WafId#,#WafName#,#Port#,#State#)
+	insert into waf(waf_id, waf_name, port,https_port, state)
+VALUES(#WafId#,#WafName#,#Port#,#HttpsPort#,#State#)
 `
 
 	update_waf string = `
@@ -61,6 +61,9 @@ VALUES(#WafId#,#WafName#,#Port#,#State#)
 		$endif
 		$if Port != '' then
 		port = #Port#,
+		$endif
+		$if HttpsPort != '' then
+		https_port = #HttpsPort#,
 		$endif
         $if State != '' then
 		state = #State#,

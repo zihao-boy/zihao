@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
@@ -77,12 +78,12 @@ func (wafService *WafService) GetWafs(ctx iris.Context) result.ResultDto {
 		return result.Error(err.Error())
 	}
 
-	for _,wafDto := range wafDtos{
+	for _, wafDto := range wafDtos {
 
 		wafHostsDto := waf.WafHostsDto{
 			WafId: wafDto.WafId,
 		}
-		wafHostsDtos ,_ :=wafService.wafHostsDao.GetWafHostss(wafHostsDto)
+		wafHostsDtos, _ := wafService.wafHostsDao.GetWafHostss(wafHostsDto)
 		wafDto.WafHosts = wafHostsDtos
 	}
 
@@ -187,9 +188,27 @@ func (wafService *WafService) StartWaff(ctx iris.Context) interface{} {
 		return result.Error("解析入参失败")
 	}
 
-	tmpWafDto:= waf.WafDto{
+	// start waf
+	tmpWafDto := waf.WafDto{
 		WafId: wafDto.WafId,
-		State:waf.Waf_state_start,
+	}
+	wafDtos, err := wafService.wafDao.GetWafs(tmpWafDto)
+
+	if err != nil || len(wafDtos) < 1 {
+		return result.Error(err.Error())
+	}
+
+
+
+	resultDto, _ := shell.ExecStartWaf(wafService.getWafConfig(*wafDtos[0]))
+
+	if resultDto.Code != result.CODE_SUCCESS {
+		return resultDto
+	}
+
+	tmpWafDto = waf.WafDto{
+		WafId: wafDto.WafId,
+		State: waf.Waf_state_start,
 	}
 
 	err = wafService.wafDao.UpdateWaf(tmpWafDto)
@@ -209,9 +228,25 @@ func (wafService *WafService) StopWaff(ctx iris.Context) interface{} {
 		return result.Error("解析入参失败")
 	}
 
-	tmpWafDto:= waf.WafDto{
+	// start waf
+	tmpWafDto := waf.WafDto{
 		WafId: wafDto.WafId,
-		State:waf.Waf_state_stop,
+	}
+	wafDtos, err := wafService.wafDao.GetWafs(tmpWafDto)
+
+	if err != nil || len(wafDtos) < 1 {
+		return result.Error(err.Error())
+	}
+
+	resultDto, _ := shell.ExecStopWaf(wafService.getWafConfig(*wafDtos[0]))
+
+	if resultDto.Code != result.CODE_SUCCESS {
+		return resultDto
+	}
+
+	tmpWafDto = waf.WafDto{
+		WafId: wafDto.WafId,
+		State: waf.Waf_state_stop,
 	}
 
 	err = wafService.wafDao.UpdateWaf(tmpWafDto)
@@ -220,4 +255,50 @@ func (wafService *WafService) StopWaff(ctx iris.Context) interface{} {
 	}
 	return result.SuccessData(wafDto)
 
+}
+
+func (wafService *WafService) RefreshWafConfig(ctx iris.Context) interface{} {
+	var (
+		err    error
+		wafDto waf.WafDto
+	)
+	if err = ctx.ReadJSON(&wafDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+	// start waf
+	tmpWafDto := waf.WafDto{
+		WafId: wafDto.WafId,
+	}
+	wafDtos, err := wafService.wafDao.GetWafs(tmpWafDto)
+
+	if err != nil || len(wafDtos) < 1 {
+		return result.Error(err.Error())
+	}
+
+	resultDto, _ := shell.ExecRefreshWafConfig(wafService.getWafConfig(*wafDtos[0]))
+
+	if resultDto.Code != result.CODE_SUCCESS {
+		return resultDto
+	}
+	return result.SuccessData(wafDto)
+}
+
+func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDto {
+	var (
+		wafRouteDao wafDao.WafRouteDao
+		wafHostnameCertDao wafDao.WafHostnameCertDao
+	)
+	// start waf
+	tmpWafRouteDto := waf.WafRouteDto{
+		WafId: wafDto.WafId,
+	}
+	routes, _ := wafRouteDao.GetWafRoutes(tmpWafRouteDto)
+	tmpWafHostnameCertDto := waf.WafHostnameCertDto{
+	}
+	certs , _ := wafHostnameCertDao.GetWafHostnameCerts(tmpWafHostnameCertDto)
+	return waf.SlaveWafDataDto{
+		Waf: wafDto,
+		Routes: routes,
+		Certs: certs,
+	}
 }

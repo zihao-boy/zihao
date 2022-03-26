@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/kataras/iris/v12/context"
+	hostDao "github.com/zihao-boy/zihao/assets/dao"
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
+	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -22,13 +24,13 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-func ExecLocalShell(jobShell string) (string,error)  {
+func ExecLocalShell(jobShell string) (string, error) {
 	cmd := exec.Command("bash", "-c", jobShell)
 	fmt.Println(jobShell)
 	//cmd := exec.Command("nohup echo 1")
 	paramOut, err := cmd.Output()
-	fmt.Print("cmd 结果",string(paramOut))
-	return string(paramOut),err
+	fmt.Print("cmd 结果", string(paramOut))
+	return string(paramOut), err
 }
 
 func ExecShell(host host.HostDto, cmd string) error {
@@ -275,8 +277,7 @@ func ExecDownloadFile(host host.HostDto, resWriter context.ResponseWriter) {
 	//return data, resp.Header
 }
 
-
-func ExecDownloadFileAndSave(host host.HostDto, path string) error{
+func ExecDownloadFileAndSave(host host.HostDto, path string) error {
 	ip := host.Ip
 	appServiceDtoData, _ := json.Marshal(&host)
 	body := bytes.NewReader(appServiceDtoData)
@@ -290,11 +291,11 @@ func ExecDownloadFileAndSave(host host.HostDto, path string) error{
 		_ = resp.Body.Close()
 	}()
 
-	if utils.IsFile(path){
+	if utils.IsFile(path) {
 		os.Remove(path)
 	}
 
-	file ,err := os.Create(path)
+	file, err := os.Create(path)
 	defer func() {
 		file.Close()
 	}()
@@ -314,3 +315,119 @@ func ExecDownloadFileAndSave(host host.HostDto, path string) error{
 	return nil
 	//return data, resp.Header
 }
+
+func ExecStartWaf(waf waf.SlaveWafDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&waf)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, wafHost := range waf.Waf.WafHosts {
+		tmpHostDto := host.HostDto{
+			HostId: wafHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/startWaf", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+
+func ExecStopWaf(waf waf.SlaveWafDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&waf)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, wafHost := range waf.Waf.WafHosts {
+		tmpHostDto := host.HostDto{
+			HostId: wafHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/stopWaf", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+func ExecRefreshWafConfig(waf waf.SlaveWafDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&waf)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, wafHost := range waf.Waf.WafHosts {
+		tmpHostDto := host.HostDto{
+			HostId: wafHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshWafConfig", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+

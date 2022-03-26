@@ -22,6 +22,9 @@ from waf_route t
 					$if Hostname != '' then
 					and t.hostname = #Hostname#
 					$endif
+					$if Scheme != '' then
+					and t.scheme = #Scheme#
+					$endif
 					$if Ip != '' then
 					and t.ip = #Ip#
 					$endif
@@ -43,6 +46,9 @@ from waf_route t
 					$if Hostname != '' then
 					and t.hostname = #Hostname#
 					$endif
+					$if Scheme != '' then
+					and t.scheme = #Scheme#
+					$endif
 					$if Ip != '' then
 					and t.ip = #Ip#
 					$endif
@@ -52,8 +58,8 @@ from waf_route t
 	`
 
 	insert_wafRoute string = `
-	insert into waf_route(route_id, waf_id, hostname,ip,port)
-VALUES(#RouteId#,#WafId#,#Hostname#,#Ip#,#Port#)
+	insert into waf_route(route_id, waf_id, hostname,ip,port,scheme)
+VALUES(#RouteId#,#WafId#,#Hostname#,#Ip#,#Port#,#Scheme#)
 `
 
 	update_wafRoute string = `
@@ -66,6 +72,9 @@ VALUES(#RouteId#,#WafId#,#Hostname#,#Ip#,#Port#)
 		$endif
 		$if Port != '' then
 		port = #Port#,
+		$endif
+		$if Scheme != '' then
+        scheme = #Scheme#,
 		$endif
 		status_cd = '0'
 		where status_cd = '0'

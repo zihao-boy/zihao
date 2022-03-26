@@ -1,35 +1,137 @@
 package waf
 
 import (
-	"context"
+	"crypto/tls"
+	"errors"
+	"fmt"
+	"github.com/zihao-boy/zihao/entity/dto/waf"
+	"net"
 	"net/http"
-	"time"
+	"os"
 )
 
 // waf server
 // author wuxw
 type WafServer struct {
-	server http.Server
+	httpListener   net.Listener
+	httpListeners  net.Listener
+	wafHandleRoute WafHandleRoute
 }
 
 // start waf
-func (waf *WafServer) StartWaf(port string)  error{
+func (waf *WafServer) StartWaf(wafDataDto waf.SlaveWafDataDto) error {
+	waf.InitWafConfig(wafDataDto)
 
-	//root handle
-	http.HandleFunc("/", RootHandle)
+	gateMux := http.NewServeMux()
+	gateMux.HandleFunc("/", RootHandle)
+	ctxGateMux := AddContextHandler(gateMux)
+	// start http port server
+	go waf.startHttpServer(wafDataDto.Waf.Port, ctxGateMux)
+	go waf.startHttpsServer(wafDataDto.Waf.HttpsPort, ctxGateMux)
+	return nil
+}
 
-	waf.server = http.Server{
-		Addr: ":"+port,
-		Handler: http.DefaultServeMux,
+func (waf *WafServer) InitWafConfig(wafDataDto waf.SlaveWafDataDto) error {
+	var tmpWafCerts []WafCert
+	wafData.wafDto = wafDataDto.Waf
+	//load route
+	wafData.routes = wafDataDto.Routes
+
+	if wafDataDto.Certs != nil && len(wafDataDto.Certs) > 0 {
+		for _, cert := range wafDataDto.Certs {
+			tlsCert, err := tls.X509KeyPair([]byte(cert.CertContent), []byte(cert.PrivKeyContent))
+			if err != nil {
+				fmt.Println("RPCSelectCertificates X509KeyPair", err)
+				continue
+			}
+			tmpWafCert := WafCert{
+				Hostname: cert.Hostname,
+				TlsCert:  &tlsCert,
+			}
+			tmpWafCerts = append(tmpWafCerts, tmpWafCert)
+		}
 	}
-	err := waf.server.ListenAndServe()
-	return err
+	wafData.wafCerts = tmpWafCerts
+
+	return nil
 }
 
 // stop waf
 func (waf *WafServer) StopWaf() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	err := waf.server.Shutdown(ctx)
+	go waf.wafHandleRoute.StopLoadWafRoute()
+	err := waf.httpListener.Close()
+	err = waf.httpListeners.Close()
 	return err
+}
+
+func (waf *WafServer) startHttpServer(httpPort string, ctxGateMux http.Handler) {
+	listen, err := net.Listen("tcp", httpPort)
+	if err != nil {
+		msg := "Port " + httpPort + " is occupied."
+		fmt.Println(msg, err)
+		os.Exit(1)
+	}
+	fmt.Println("Listen HTTP ", httpPort)
+	// err = http.Serve(listen, ctxGateMux)
+	err = http.Serve(listen, ctxGateMux)
+	if err != nil {
+		fmt.Println("http.Serve error", err)
+		os.Exit(1)
+	}
+	defer listen.Close()
+
+}
+
+func (waf *WafServer) startHttpsServer(httpsPort string, ctxGateMux http.Handler) {
+
+	tlsconfig := &tls.Config{
+		GetCertificate: func(helloInfo *tls.ClientHelloInfo) (*tls.Certificate, error) {
+			cert, err := GetCertificateByDomain(helloInfo)
+			return cert, err
+		},
+		NextProtos: []string{"h2", "http/1.1"},
+		MaxVersion: tls.VersionTLS13,
+		MinVersion: tls.VersionTLS11,
+		CipherSuites: []uint16{
+			tls.TLS_AES_128_GCM_SHA256,
+			tls.TLS_CHACHA20_POLY1305_SHA256,
+			tls.TLS_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+		},
+	}
+
+	listen, err := tls.Listen("tcp", httpsPort, tlsconfig)
+	if err != nil {
+		msg := "Port " + httpsPort + " is occupied."
+		fmt.Println(msg, err)
+		os.Exit(1)
+	}
+	//err = http.Serve(listen, ctxGateMux)
+	err = http.Serve(listen, ctxGateMux)
+	if err != nil {
+		fmt.Println("http.Serve error", err)
+		os.Exit(1)
+	}
+	defer listen.Close()
+}
+
+// GetCertificateByDomain ...
+func GetCertificateByDomain(helloInfo *tls.ClientHelloInfo) (*tls.Certificate, error) {
+	domain := helloInfo.ServerName
+
+	for _, wafCert := range wafData.wafCerts {
+		if domain == wafCert.Hostname {
+			return wafCert.TlsCert, nil
+		}
+	}
+	return nil, errors.New("Unknown Host: " + domain)
 }
