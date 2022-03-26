@@ -3,11 +3,12 @@ package wafService
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
-	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"strconv"
 )
+
+const default_access_log_count = 10000
 
 type WafAccessLogService struct {
 	wafDao wafDao.WafAccessLogDao
@@ -89,8 +90,14 @@ func (wafService *WafAccessLogService) SaveWafAccessLogs(ctx iris.Context) resul
 	if err = ctx.ReadJSON(&wafDto); err != nil {
 		return result.Error("解析入参失败")
 	}
-	wafDto.RequestId = seq.Generator()
-	//WafAccessLogDto.Path = filepath.Join(curDest, fileHeader.Filename)
+	tmpWafAccessLog := waf.WafAccessLogDto{
+
+	}
+	count ,_ := wafService.wafDao.GetWafAccessLogCount(tmpWafAccessLog)
+
+	if count > default_access_log_count{
+		wafService.wafDao.DeleteWafAccessLog(tmpWafAccessLog)
+	}
 
 	err = wafService.wafDao.SaveWafAccessLog(wafDto)
 	if err != nil {

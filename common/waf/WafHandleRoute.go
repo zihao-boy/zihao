@@ -21,7 +21,8 @@ func (route *WafHandleRoute) GetWafRoute(r *http.Request) (*waf.WafRouteDto, err
 			return tRoute,nil
 		}
 	}
-	return nil,errors.New("未找到【"+r.Host+"】路由配置，请配置路由")
+	return wafData.routes[0],nil
+	//return nil,errors.New("未找到【"+r.Host+"】路由配置，请配置路由")
 }
 
 func (route *WafHandleRoute) LoadWafRoute() {

@@ -194,11 +194,13 @@ func (wafService *WafService) StartWaff(ctx iris.Context) interface{} {
 	}
 	wafDtos, err := wafService.wafDao.GetWafs(tmpWafDto)
 
-	if err != nil || len(wafDtos) < 1 {
+	if err != nil {
 		return result.Error(err.Error())
 	}
 
-
+	if len(wafDtos) < 1 {
+		return result.Error("未查询到数据")
+	}
 
 	resultDto, _ := shell.ExecStartWaf(wafService.getWafConfig(*wafDtos[0]))
 
@@ -285,9 +287,16 @@ func (wafService *WafService) RefreshWafConfig(ctx iris.Context) interface{} {
 
 func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDto {
 	var (
-		wafRouteDao wafDao.WafRouteDao
+		wafRouteDao        wafDao.WafRouteDao
 		wafHostnameCertDao wafDao.WafHostnameCertDao
 	)
+
+	wafHostsDto := waf.WafHostsDto{
+		WafId: wafDto.WafId,
+	}
+	wafHostsDtos, _ := wafService.wafHostsDao.GetWafHostss(wafHostsDto)
+	wafDto.WafHosts = wafHostsDtos
+
 	// start waf
 	tmpWafRouteDto := waf.WafRouteDto{
 		WafId: wafDto.WafId,
@@ -295,10 +304,10 @@ func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDt
 	routes, _ := wafRouteDao.GetWafRoutes(tmpWafRouteDto)
 	tmpWafHostnameCertDto := waf.WafHostnameCertDto{
 	}
-	certs , _ := wafHostnameCertDao.GetWafHostnameCerts(tmpWafHostnameCertDto)
+	certs, _ := wafHostnameCertDao.GetWafHostnameCerts(tmpWafHostnameCertDto)
 	return waf.SlaveWafDataDto{
-		Waf: wafDto,
+		Waf:    wafDto,
 		Routes: routes,
-		Certs: certs,
+		Certs:  certs,
 	}
 }

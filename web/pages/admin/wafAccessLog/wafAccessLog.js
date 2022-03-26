@@ -48,7 +48,7 @@
                         var _wafAccessLogInfo = JSON.parse(json);
                         vc.component.wafAccessLogInfo.total = _wafAccessLogInfo.total;
                         vc.component.wafAccessLogInfo.records = _wafAccessLogInfo.records;
-                        vc.component.wafAccessLogInfo.traces = _wafAccessLogInfo.data;
+                        vc.component.wafAccessLogInfo.logs = _wafAccessLogInfo.data;
                         vc.emit('pagination', 'init', {
                             total: vc.component.wafAccessLogInfo.records,
                             currentPage: _page

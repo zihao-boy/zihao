@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -27,13 +28,20 @@ func AddContextHandler(next http.Handler) http.Handler {
 func RootHandle(w http.ResponseWriter, r *http.Request) {
 	var wafHandleRoute WafHandleRoute
 	var wafPolicyInterception WafPolicyInterception
+
+	// analysis access log
 	accessLog := analysisRequest(r)
+	defer func() {
+		go saveAccessLog(accessLog)
+	}()
 
 	tRoute, err := wafHandleRoute.GetWafRoute(r)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	refreshAccessLogByRoute(&accessLog,tRoute)
 
 	//&& (app.RedirectHTTPS || app.HSTSEnabled)
 	if r.TLS == nil && tRoute.Scheme == waf.Scheme_https {
@@ -42,7 +50,7 @@ func RootHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// firewall start
-	err = wafPolicyInterception.PolicyInterception(w,r,tRoute)
+	err = wafPolicyInterception.PolicyInterception(w, r, tRoute)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
@@ -82,11 +90,14 @@ func RootHandle(w http.ResponseWriter, r *http.Request) {
 
 	proxy := &httputil.ReverseProxy{
 		Director: func(req *http.Request) {
-			//req.URL.Scheme = app.InternalScheme
-			//req.URL.Host = r.Host
+			req.URL.Scheme = tRoute.Scheme
+			req.URL.Host = r.Host
 		},
 		Transport:      transport,
-		ModifyResponse: rewriteResponse}
+		ModifyResponse: func(response *http.Response) error {
+			return rewriteResponse(response,&accessLog)
+		},
+	}
 	//if utils.Debug {
 	//	dump, err := httputil.DumpRequest(r, true)
 	//	if err != nil {
@@ -94,31 +105,9 @@ func RootHandle(w http.ResponseWriter, r *http.Request) {
 	//	}
 	//	fmt.Println(string(dump))
 	//}
-	//r.Host = domainStr
+
 	proxy.ServeHTTP(w, r)
 
-	fmt.Println(accessLog)
-
-	//accessLog.ResponseCode = resp.Status
-	//accessLog.ResponseLength = string(resp.ContentLength)
-}
-
-// analysis
-func analysisRequest(r *http.Request) waf.WafAccessLogDto {
-	accessLog := waf.WafAccessLogDto{
-		XRealIp:        ClientIP(r),
-		Scheme:         "",
-		ResponseCode:   "200",
-		Method:         r.Method,
-		HttpHost:       r.Host,
-		UpstreamAddr:   "",
-		Url:            r.Host + r.URL.String(),
-		RequestLength:  string(r.ContentLength),
-		ResponseLength: "0",
-		State:          "",
-		Message:        "",
-	}
-	return accessLog
 }
 
 func ClientIP(r *http.Request) string {
@@ -148,9 +137,10 @@ func RedirectRequest(w http.ResponseWriter, r *http.Request, location string) {
 	http.Redirect(w, r, location, http.StatusPermanentRedirect)
 }
 
-func rewriteResponse(resp *http.Response) (err error) {
+func rewriteResponse(resp *http.Response,accessLog *waf.WafAccessLogDto) (err error) {
 	r := resp.Request
-	//app := backend.GetApplicationByDomain(r.Host)
+	accessLog.ResponseCode = strconv.Itoa(resp.StatusCode)
+	accessLog.ResponseLength = strconv.FormatInt(resp.ContentLength,10)
 	locationStr := resp.Header.Get("Location")
 	indexHTTP := strings.Index(locationStr, "http")
 	if indexHTTP == 0 {

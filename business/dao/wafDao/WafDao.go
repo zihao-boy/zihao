@@ -41,7 +41,7 @@ from waf t
 					and t.state = #State#
 					$endif
 					$if WafId != '' then
-					and t.id = #WafId#
+					and t.waf_id = #WafId#
 					$endif
 					order by t.create_time desc
 					$if Row != 0 then

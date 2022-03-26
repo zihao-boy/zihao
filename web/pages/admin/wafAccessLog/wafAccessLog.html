@@ -67,7 +67,7 @@
                         <tbody>
                             <tr v-for="log in wafAccessLogInfo.logs">
                                 <!-- <td class="text-center">{{trace.id}}</td> -->
-                                <td class="text-center">{{log.requestId}}</td>
+                                <td class="text-center"><div style="word-break:break-all;word-wrap:break-word; width:150px">{{log.requestId}}</div></td>
                                 <td class="text-center">{{log.wafIp}}</td>
                                 <td class="text-center">{{log.xRealIp}}</td>
                                 <td class="text-center">{{log.xRealName}}</td>
@@ -75,8 +75,8 @@
                                 <td class="text-center">{{log.httpHost}}</td>
                                 <td class="text-center">{{log.method}}</td>
                                 <td class="text-center">{{log.responseCode}}</td>
-                                <td class="text-center">{{log.url}}</td>
-                                <td class="text-center">{{log.upstreamAddr}}</td>
+                                <td class="text-center"><div style="word-break:break-all;word-wrap:break-word; width:150px">{{log.url}}</div></td>
+                                <td class="text-center"><div style="word-break:break-all;word-wrap:break-word; max-width:150px">{{log.upstreamAddr}}</div></td>
                                 <td class="text-center">{{log.requestLength}}</td>
                                 <td class="text-center">{{log.responseLength}}</td>
                                 <td class="text-center">{{log.state}}</td>

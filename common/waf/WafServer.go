@@ -10,6 +10,7 @@ import (
 	"os"
 )
 
+var wafServer WafServer
 // waf server
 // author wuxw
 type WafServer struct {
@@ -58,14 +59,17 @@ func (waf *WafServer) InitWafConfig(wafDataDto waf.SlaveWafDataDto) error {
 
 // stop waf
 func (waf *WafServer) StopWaf() error {
-	go waf.wafHandleRoute.StopLoadWafRoute()
-	err := waf.httpListener.Close()
-	err = waf.httpListeners.Close()
+	if wafServer.httpListener == nil  || wafServer.httpListeners == nil{
+		return nil
+	}
+	err := wafServer.httpListener.Close()
+	err = wafServer.httpListeners.Close()
 	return err
 }
 
 func (waf *WafServer) startHttpServer(httpPort string, ctxGateMux http.Handler) {
-	listen, err := net.Listen("tcp", httpPort)
+	var err error
+	wafServer.httpListener, err= net.Listen("tcp", ":"+httpPort)
 	if err != nil {
 		msg := "Port " + httpPort + " is occupied."
 		fmt.Println(msg, err)
@@ -73,17 +77,17 @@ func (waf *WafServer) startHttpServer(httpPort string, ctxGateMux http.Handler) 
 	}
 	fmt.Println("Listen HTTP ", httpPort)
 	// err = http.Serve(listen, ctxGateMux)
-	err = http.Serve(listen, ctxGateMux)
+	err = http.Serve(wafServer.httpListener, ctxGateMux)
 	if err != nil {
 		fmt.Println("http.Serve error", err)
-		os.Exit(1)
+		return
 	}
-	defer listen.Close()
+	defer wafServer.httpListener.Close()
 
 }
 
 func (waf *WafServer) startHttpsServer(httpsPort string, ctxGateMux http.Handler) {
-
+	var err error
 	tlsconfig := &tls.Config{
 		GetCertificate: func(helloInfo *tls.ClientHelloInfo) (*tls.Certificate, error) {
 			cert, err := GetCertificateByDomain(helloInfo)
@@ -109,19 +113,19 @@ func (waf *WafServer) startHttpsServer(httpsPort string, ctxGateMux http.Handler
 		},
 	}
 
-	listen, err := tls.Listen("tcp", httpsPort, tlsconfig)
+	wafServer.httpListeners, err = tls.Listen("tcp", ":"+httpsPort, tlsconfig)
 	if err != nil {
 		msg := "Port " + httpsPort + " is occupied."
 		fmt.Println(msg, err)
 		os.Exit(1)
 	}
 	//err = http.Serve(listen, ctxGateMux)
-	err = http.Serve(listen, ctxGateMux)
+	err = http.Serve(wafServer.httpListeners, ctxGateMux)
 	if err != nil {
 		fmt.Println("http.Serve error", err)
-		os.Exit(1)
+		return
 	}
-	defer listen.Close()
+	defer wafServer.httpListeners.Close()
 }
 
 // GetCertificateByDomain ...
