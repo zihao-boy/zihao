@@ -47,6 +47,7 @@
                             <tr>
                                 <!-- <th class="text-center">编号</th> -->
                                 <th class="text-center">交易流水</th>
+                                <th class="text-center">访问时间</th>
                                 <th class="text-center">waf ip</th>
                                 <th class="text-center">源ip</th>
                                 <th class="text-center">地理位置</th>
@@ -67,16 +68,25 @@
                         <tbody>
                             <tr v-for="log in wafAccessLogInfo.logs">
                                 <!-- <td class="text-center">{{trace.id}}</td> -->
-                                <td class="text-center"><div style="word-break:break-all;word-wrap:break-word; width:150px">{{log.requestId}}</div></td>
+                                <td class="text-center">
+                                    <div style="word-break:break-all;word-wrap:break-word; width:150px">{{log.requestId}}</div>
+                                </td>
+                                <td class="text-center">{{log.createTime}}</td>
                                 <td class="text-center">{{log.wafIp}}</td>
                                 <td class="text-center">{{log.xRealIp}}</td>
-                                <td class="text-center">{{log.xRealName}}</td>
+                                <td class="text-center">
+                                    <div style="word-break:break-all;word-wrap:break-word; width:150px">{{log.country}}({{log.ipAddress}})</div>
+                                </td>
                                 <td class="text-center">{{log.scheme}}</td>
                                 <td class="text-center">{{log.httpHost}}</td>
                                 <td class="text-center">{{log.method}}</td>
                                 <td class="text-center">{{log.responseCode}}</td>
-                                <td class="text-center"><div style="word-break:break-all;word-wrap:break-word; width:150px">{{log.url}}</div></td>
-                                <td class="text-center"><div style="word-break:break-all;word-wrap:break-word; max-width:150px">{{log.upstreamAddr}}</div></td>
+                                <td class="text-center">
+                                    <div style="word-break:break-all;word-wrap:break-word; width:150px">{{log.url}}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div style="word-break:break-all;word-wrap:break-word; max-width:150px">{{log.upstreamAddr}}</div>
+                                </td>
                                 <td class="text-center">{{log.requestLength}}</td>
                                 <td class="text-center">{{log.responseLength}}</td>
                                 <td class="text-center">{{log.state}}</td>

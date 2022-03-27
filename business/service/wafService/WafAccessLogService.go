@@ -3,6 +3,7 @@ package wafService
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
+	"github.com/zihao-boy/zihao/common/ip"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"strconv"
@@ -74,6 +75,8 @@ func (wafService *WafAccessLogService) GetWafAccessLogs(ctx iris.Context) result
 	if err != nil {
 		return result.Error(err.Error())
 	}
+
+	ip.GetAccessLogByIp(wafDtos)
 
 	return result.SuccessData(wafDtos, total, row)
 

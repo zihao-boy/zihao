@@ -26,5 +26,7 @@ own:
   data_path: /Users/wuxuewen
   container_scheduling: default  # k8s
   sqlite_path: ./db/zihao.db
+  ip_data: ./conf/qqwry.dat
+  qqwry_url: "http://update.cz88.net/ip/qqwry.rar"
 #  sqlite_path: D:\\hc\\db\\zihao.db
 #  sqlite_path: /Users/wuxuewen/project/go/db/zihao.db

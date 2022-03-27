@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/common/cache/factory"
 	"github.com/zihao-boy/zihao/common/crontab"
 	"github.com/zihao-boy/zihao/common/db/dbFactory"
+	"github.com/zihao-boy/zihao/common/ip"
 	"github.com/zihao-boy/zihao/common/jwt"
 	"github.com/zihao-boy/zihao/common/kafka"
 	"github.com/zihao-boy/zihao/config"
@@ -27,6 +28,9 @@ func main() {
 	factory.Init()
 	//auth.InitAuth()
 	jwt.InitJWT()
+
+	// load qqwry ip data
+	ip.InitIP()
 
 	//初始化缓存信息
 	factory.InitServiceSql()

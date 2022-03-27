@@ -66,6 +66,8 @@ type (
 		KafkaGroup      string   `yaml:"kafka_group"`
 		KafkaTopic      string   `yaml:"kafka_topic"`
 		KafkaSwitch      string   `yaml:"kafka_switch"`
+		IpData      string   `yaml:"ip_data"`
+		QqwryUrl      string   `yaml:"qqwry_url"`
 	}
 
 	// db

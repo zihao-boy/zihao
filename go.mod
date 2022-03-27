@@ -40,6 +40,7 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
+	golang.org/x/text v0.3.4
 	gopkg.in/dutchcoders/goftp.v1 v1.0.0-20170301105846-ed59a591ce14
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 	gorm.io/driver/mysql v1.2.0
