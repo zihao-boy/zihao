@@ -7,7 +7,7 @@ CREATE TABLE `app_service` (
   `as_desc` varchar(512) DEFAULT NULL ,
   `state` varchar(12) NOT NULL DEFAULT '10012' ,
   `as_count` int(11) NOT NULL DEFAULT '1' ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`as_id`)
 );
@@ -30,7 +30,7 @@ CREATE TABLE `app_var` (
   `tenant_id` varchar(64) NOT NULL,
   `var_name` varchar(128) NOT NULL ,
   `var_type` varchar(12) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   `var_spec` varchar(64) NOT NULL ,
   PRIMARY KEY (`av_id`)
@@ -54,7 +54,7 @@ CREATE TABLE `app_var_group` (
   `avg_type` varchar(12) NOT NULL ,
   `tenant_id` varchar(64) NOT NULL ,
   `avg_desc` varchar(512) DEFAULT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`avg_id`)
 );
@@ -74,7 +74,7 @@ CREATE TABLE `app_version` (
   `name` varchar(128) NOT NULL ,
   `remark` varchar(512) NOT NULL ,
   `tenant_id` varchar(64) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`av_id`)
 ) ;
@@ -92,7 +92,7 @@ CREATE TABLE `app_version_attr` (
   `av_id` varchar(64) NOT NULL,
   `version` varchar(32) NOT NULL ,
   `tenant_id` varchar(64) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`attr_id`)
 ) ;
@@ -115,7 +115,7 @@ CREATE TABLE `app_version_job` (
        `job_shell` longtext NOT NULL,
        `tenant_id` varchar(64) NOT NULL ,
        `state` varchar(12) NOT NULL DEFAULT '10012' ,
-       `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+       `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
        `status_cd` varchar(2) NOT NULL DEFAULT '0',
        `job_time` datetime NOT NULL ,
        PRIMARY KEY (`job_id`)
@@ -140,7 +140,7 @@ CREATE TABLE `app_version_job_detail` (
   `log_path` varchar(256) NOT NULL ,
   `tenant_id` varchar(64) NOT NULL ,
   `state` varchar(12) NOT NULL DEFAULT '10012' ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`detail_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -176,7 +176,7 @@ CREATE TABLE `host` (
   `mem` decimal(10,2) NOT NULL,
   `disk` int(11) NOT NULL,
   `tenant_id` varchar(64) NOT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`host_id`)
 );
@@ -201,7 +201,7 @@ CREATE TABLE `host_group` (
   `name` varchar(64) NOT NULL,
   `description` varchar(200) DEFAULT NULL,
   `tenant_id` varchar(64) NOT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`group_id`)
 );
@@ -226,7 +226,7 @@ CREATE TABLE `mapping` (
   `zkeys` varchar(100) NOT NULL ,
   `value` varchar(1000) NOT NULL ,
   `remark` varchar(200) DEFAULT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' 
 );
 
@@ -247,7 +247,7 @@ CREATE TABLE `menu` (
   `url` varchar(200) NOT NULL,
   `seq` int(11) NOT NULL,
   `description` varchar(200) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   `is_show` varchar(2) NOT NULL DEFAULT 'Y',
   PRIMARY KEY (`m_id`)
@@ -286,7 +286,7 @@ CREATE TABLE `menu_group` (
   `label` varchar(20) NOT NULL,
   `seq` int(11) NOT NULL,
   `description` varchar(200) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   `group_type` varchar(12) NOT NULL DEFAULT 'P_WEB'
 );
@@ -316,7 +316,7 @@ CREATE TABLE `monitor_event` (
   `threshold_value` decimal(10,2) NOT NULL,
   `cur_value` decimal(10,2) NOT NULL,
   `remark` longtext ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   `notice_type` varchar(12) NOT NULL ,
   `state` varchar(12) NOT NULL ,
@@ -348,7 +348,7 @@ CREATE TABLE `monitor_host` (
   `disk_threshold` decimal(10,2) NOT NULL ,
   `mon_disk` varchar(128) NOT NULL ,
   `mon_date` datetime NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`mh_id`)
 );
@@ -370,7 +370,7 @@ CREATE TABLE `monitor_host_group` (
   `state` varchar(12) NOT NULL DEFAULT '3302' ,
   `mon_date` datetime NOT NULL ,
   `notice_type` varchar(12) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   `remark` varchar(512) DEFAULT NULL,
   `tenant_id` varchar(64) NOT NULL,
@@ -393,7 +393,7 @@ CREATE TABLE `monitor_host_log` (
   `cpu_rate` decimal(10,2) NOT NULL DEFAULT '0.00' ,
   `mem_rate` decimal(10,2) NOT NULL DEFAULT '0.00' ,
   `disk_rate` decimal(10,2) NOT NULL DEFAULT '0.00' ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`log_id`)
 ) ;
@@ -411,7 +411,7 @@ CREATE TABLE `privilege` (
   `p_id` varchar(64) NOT NULL ,
   `name` varchar(10) NOT NULL ,
   `description` varchar(200) DEFAULT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   `resource` varchar(200) DEFAULT NULL ,
   `m_id` varchar(64) NOT NULL 
@@ -447,7 +447,7 @@ CREATE TABLE `privilege_group` (
   `pg_id` varchar(64) NOT NULL ,
   `name` varchar(10) NOT NULL ,
   `description` varchar(200) DEFAULT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   `tenant_id` varchar(64) NOT NULL DEFAULT '9999' 
 ) ;
@@ -466,7 +466,7 @@ CREATE TABLE `privilege_rel` (
   `rel_id` int(11) NOT NULL ,
   `p_id` varchar(64) NOT NULL ,
   `pg_id` varchar(64) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`rel_id`)
 ) ;
@@ -517,7 +517,7 @@ CREATE TABLE `privilege_user` (
   `p_id` varchar(64) NOT NULL,
   `privilege_flag` varchar(4) NOT NULL DEFAULT '0' ,
   `user_id` varchar(64) NOT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   `tenant_id` varchar(64) NOT NULL ,
   PRIMARY KEY (`pu_id`)
@@ -539,7 +539,7 @@ CREATE TABLE `service_sql` (
   `sql_code` varchar(128) NOT NULL ,
   `sql_text` longtext NOT NULL ,
   `remark` varchar(256) DEFAULT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0'
 );
 
@@ -571,7 +571,7 @@ CREATE TABLE `task` (
   `task_cron` varchar(50) NOT NULL ,
   `state` varchar(12) NOT NULL DEFAULT '001' ,
   `status_cd` varchar(12) NOT NULL DEFAULT '0',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `tenant_id` varchar(64) NOT NULL ,
   `host_id` varchar(64) NOT NULL ,
   `notice_type` varchar(12) NOT NULL DEFAULT '2002',
@@ -597,7 +597,7 @@ CREATE TABLE `task_attr` (
   `attr_id` varchar(64) NOT NULL ,
   `spec_cd` varchar(12) NOT NULL ,
   `value` varchar(50) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(12) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`task_id`)
 ) ;
@@ -617,7 +617,7 @@ CREATE TABLE `task_template` (
   `template_id` varchar(64) NOT NULL ,
   `template_name` varchar(100) NOT NULL ,
   `template_desc` varchar(200) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(12) NOT NULL DEFAULT '0' ,
   `class_bean` varchar(200) NOT NULL 
 );
@@ -638,7 +638,7 @@ CREATE TABLE `task_template_spec` (
   `spec_name` varchar(100) NOT NULL ,
   `spec_desc` varchar(200) NOT NULL ,
   `is_show` varchar(12) NOT NULL DEFAULT 'T' ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(12) NOT NULL DEFAULT '0'
 );
 
@@ -660,7 +660,7 @@ CREATE TABLE `tenant` (
   `phone` varchar(11) NOT NULL,
   `state` varchar(12) NOT NULL DEFAULT '2002' ,
   `remark` varchar(512) DEFAULT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`tenant_id`)
 );
@@ -681,7 +681,7 @@ CREATE TABLE `tenant_setting` (
   `tenant_id` varchar(64) NOT NULL,
   `spec_cd` varchar(12) NOT NULL,
   `value` varchar(1024) NOT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   PRIMARY KEY (`setting_id`)
 ) ;
@@ -701,7 +701,7 @@ CREATE TABLE `t_dict` (
   `status_cd` varchar(64) NOT NULL,
   `name` varchar(50) NOT NULL,
   `description` varchar(200) DEFAULT NULL ,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `table_name` varchar(50) DEFAULT NULL,
   `table_columns` varchar(50) DEFAULT NULL ,
   PRIMARY KEY (`id`)
@@ -741,7 +741,7 @@ CREATE TABLE `u_user` (
   `phone` varchar(11) NOT NULL,
   `email` varchar(64) DEFAULT NULL,
   `state` varchar(12) NOT NULL DEFAULT '100201',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
   `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
   `tenant_id` varchar(64) NOT NULL ,
   `user_role` varchar(12) NOT NULL,
@@ -762,7 +762,7 @@ create table business_package(
   `varsion` varchar(32) NOT NULL,
   `path` varchar(128) NOT NULL,
 	 create_user_id varchar(64) not null,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
   `status_cd` varchar(2) NOT NULL DEFAULT '0',
   `tenant_id` varchar(64) NOT NULL
 );
@@ -773,7 +773,7 @@ create table business_dockerfile(
     `version` varchar(32) NOT NULL,
     `dockerfile` longtext NOT NULL,
     create_user_id varchar(64) not null,
-    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
     `status_cd` varchar(2) NOT NULL DEFAULT '0',
     `tenant_id` varchar(64) NOT NULL
 );
@@ -787,7 +787,7 @@ CREATE TABLE business_images(
      type_url varchar(512) not null,
      images_flag varchar(12) not null,
      create_user_id varchar(64) not null,
-     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')),
      `status_cd` varchar(2) NOT NULL DEFAULT '0',
      `tenant_id` varchar(64) NOT NULL
  );
@@ -799,7 +799,7 @@ CREATE TABLE `app_service_var` (
            `var_spec` varchar(64) NOT NULL ,
            `var_name` varchar(128) NOT NULL ,
            `var_value` varchar(512) NOT NULL ,
-           `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+           `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
            `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
            PRIMARY KEY (`av_id`)
 );
@@ -810,7 +810,7 @@ CREATE TABLE `app_service_hosts` (
          `tenant_id` varchar(64) NOT NULL,
          `hostname` varchar(128) NOT NULL ,
          `ip` varchar(64) NOT NULL ,
-         `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+         `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
          `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
          PRIMARY KEY (`hosts_id`)
 );
@@ -821,7 +821,7 @@ CREATE TABLE `app_service_dir` (
        `tenant_id` varchar(64) NOT NULL,
        `src_dir` integer NOT NULL ,
        `target_dir` integer NOT NULL ,
-       `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+       `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
        `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
        PRIMARY KEY (`dir_id`)
 )
@@ -832,7 +832,7 @@ CREATE TABLE `app_service_port` (
         `tenant_id` varchar(64) NOT NULL,
         `src_port` integer NOT NULL ,
         `target_port` integer NOT NULL ,
-        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+        `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
         `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
         PRIMARY KEY (`port_id`)
 )
@@ -846,7 +846,7 @@ CREATE TABLE `app_service_container` (
         `state` varchar(12) not null ,
         `message` varchar(512) ,
         `update_time` datetime not null,
-        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+        `create_time` timestamp NOT NULL DEFAULT (datetime('now', 'localtime')) ,
         `status_cd` varchar(2) NOT NULL DEFAULT '0' ,
         PRIMARY KEY (`container_id`)
 )
@@ -857,7 +857,7 @@ create table app_version_job_images(
        package_url varchar(512) not null ,
        business_package_id varchar(64) not null ,
        business_dockerfile_id varchar(64) not null,
-       create_time timestamp not null DEFAULT CURRENT_TIMESTAMP ,
+       create_time timestamp not null DEFAULT (datetime('now', 'localtime')) ,
        status_cd varchar(2) not null DEFAULT '0',
        job_id varchar(64) not null
 );
@@ -870,7 +870,7 @@ create table faster_deploy
     tenant_id      varchar(64)  not null,
     package_id        varchar(64) not null,
     shell_package_id          varchar(64) not null,
-    create_time    timestamp    default CURRENT_TIMESTAMP not null,
+    create_time    timestamp    default (datetime('now', 'localtime')) not null,
     status_cd      varchar(2)   default 0 not null,
     as_group_id    VARCHAR(64) not null,
     as_deploy_type VARCHAR(64) not null,
@@ -889,7 +889,7 @@ create table db_link
     db_name   varchar(64) not null,
     tenant_id varchar(64) not null ,
     create_user_id varchar(64) not null,
-    create_time timestamp    default CURRENT_TIMESTAMP not null,
+    create_time timestamp    default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2)   default '0' not null
 );
 create table log_trace
@@ -904,7 +904,7 @@ create table log_trace
     service_name varchar(64) not null,
     ip           varchar(64) not null,
     port         varchar(20) not null,
-    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    create_time timestamp  default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2) default '0' not null
 );
 
@@ -918,7 +918,7 @@ create table log_trace_annotations
     port         varchar(20) not null,
     value        varchar(12) not null,
     timestamp   varchar(20) not null,
-    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    create_time  timestamp  default (datetime('now', 'localtime')) not null,
     status_cd    varchar(2) default '0' not null
 );
 
@@ -931,7 +931,7 @@ create table log_trace_param
     req_param   logtext,
     res_header   logtext,
     res_param   logtext,
-    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    create_time timestamp  default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2) default '0' not null
 );
 create table install_app
@@ -943,7 +943,7 @@ create table install_app
     ext_app_id     varchar(64) not null,
     create_user_id varchar(64) not null,
     tenant_id varchar(64) not null ,
-    create_time    timestamp  default CURRENT_TIMESTAMP not null,
+    create_time    timestamp  default (datetime('now', 'localtime')) not null,
     status_cd      varchar(2) default '0' not null
 );
 
@@ -956,7 +956,7 @@ create table app_publisher
     token        varchar(128) not null,
     phone        varchar(11)  not null,
     state        varchar(12) default '001' not null,
-    create_time  timestamp   default CURRENT_TIMESTAMP not null,
+    create_time  timestamp   default (datetime('now', 'localtime')) not null,
     status_cd    varchar(2)  default '0' not null,
     tenant_id    varchar(64)  not null,
     ext_publisher_id varchar(64) not null
@@ -971,7 +971,7 @@ create table business_images_ext
     app_name    varchar(128)  not null,
     ext_images_id       varchar(64) not null,
     ext_publisher_id    varchar(64)  not null,
-    create_time    timestamp  default CURRENT_TIMESTAMP not null,
+    create_time    timestamp  default (datetime('now', 'localtime')) not null,
     status_cd      varchar(2) default '0' not null,
     tenant_id      varchar(64)  not null
 );
@@ -986,7 +986,7 @@ create table resources_ftp
     passwd         varchar(64)    not null,
     tenant_id      varchar(64)    not null,
     path      varchar(128)    not null,
-    create_time    timestamp   default CURRENT_TIMESTAMP not null,
+    create_time    timestamp   default (datetime('now', 'localtime')) not null,
     status_cd      varchar(2)  default '0' not null
 );
 
@@ -1001,7 +1001,7 @@ create table resources_oss
     endpoint         varchar(128)    not null,
     tenant_id      varchar(64)    not null,
     path      varchar(128)    not null,
-    create_time    timestamp   default CURRENT_TIMESTAMP not null,
+    create_time    timestamp   default (datetime('now', 'localtime')) not null,
     status_cd      varchar(2)  default '0' not null
 );
 
@@ -1015,7 +1015,7 @@ create table resources_db
     password       varchar(128) not null,
     db_name        varchar(64)  not null,
     tenant_id      varchar(64)    not null,
-    create_time    timestamp   default CURRENT_TIMESTAMP not null,
+    create_time    timestamp   default (datetime('now', 'localtime')) not null,
     status_cd      varchar(2)  default '0' not null
 );
 
@@ -1033,7 +1033,7 @@ create table resources_backup
     tenant_id   varchar(64) not null,
     state       varchar(12) not null,
     back_time timestamp  not null,
-    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    create_time timestamp  default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2) default '0' not null
 );
 
@@ -1044,7 +1044,7 @@ create table business_images_ver
     images_id   varchar(64)  not null,
     version     varchar(32)  not null,
     type_url    varchar(512) not null,
-    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    create_time timestamp  default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2) default '0' not null,
     tenant_id   varchar(64)  not null
 );
@@ -1057,7 +1057,7 @@ create table log_trace_db
     db_sql  logtext,
     param   logtext,
     duration   varchar(64),
-    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    create_time timestamp  default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2) default '0' not null
 );
 
@@ -1069,7 +1069,7 @@ create table waf
     port         varchar(64) not null,
     https_port varchar(64) not null,
     state varchar(12) not null,
-    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    create_time  timestamp  default (datetime('now', 'localtime')) not null,
     status_cd    varchar(2) default '0' not null
 );
 
@@ -1079,7 +1079,7 @@ create table waf_hosts
         primary key,
     waf_id varchar(64) not null,
     host_id         varchar(64) not null,
-    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    create_time  timestamp  default (datetime('now', 'localtime')) not null,
     status_cd    varchar(2) default '0' not null
 );
 
@@ -1092,7 +1092,7 @@ create table waf_route
     hostname    varchar(128) not null,
     ip          varchar(128) not null,
     port        varchar(64)  not null,
-    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    create_time timestamp  default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2) default '0' not null
 );
 
@@ -1113,7 +1113,7 @@ create table waf_access_log
     response_length varchar(64) not null,
     state varchar(12) not null,
     message varchar(512) not null,
-    create_time  timestamp  default CURRENT_TIMESTAMP not null,
+    create_time  timestamp  default (datetime('now', 'localtime')) not null,
     status_cd    varchar(2) default '0' not null
 );
 
@@ -1123,7 +1123,12 @@ create table waf_hostname_cert
     hostname    varchar(128) not null,
     cert_content      longtext  not null,
     priv_key_content     longtext  not null,
-    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    create_time timestamp  default (datetime('now', 'localtime')) not null,
     status_cd   varchar(2) default '0' not null
 );
 
+
+INSERT INTO `menu` VALUES ('700201904037', 'waf监控', '800201904006', '/waf/index.html', '4', 'waf监控', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904034', 'waf监控', 'waf访问', '2019-04-01 02:24:53', '0', '/waf/waf.html', '700201904037');
+INSERT INTO `privilege_rel` VALUES ('64', '500201904034', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('65', '500201904034', '600201904002', '2019-04-01 08:18:29', '0');

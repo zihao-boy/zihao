@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
+	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"strconv"
@@ -306,6 +307,7 @@ func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDt
 	}
 	certs, _ := wafHostnameCertDao.GetWafHostnameCerts(tmpWafHostnameCertDto)
 	return waf.SlaveWafDataDto{
+		ServerIpUrl: config.G_AppConfig.ServerIpUrl,
 		Waf:    wafDto,
 		Routes: routes,
 		Certs:  certs,

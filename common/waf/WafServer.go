@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/zihao-boy/zihao/common/ip"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"net"
 	"net/http"
@@ -53,6 +54,8 @@ func (waf *WafServer) InitWafConfig(wafDataDto waf.SlaveWafDataDto) error {
 		}
 	}
 	wafData.wafCerts = tmpWafCerts
+
+	ip.Service_IP = ip.GetServerIp(wafDataDto.ServerIpUrl)
 
 	return nil
 }

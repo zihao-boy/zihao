@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>梓豪平台WAF网络安全监控</title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="/waf/css/base.css">
+    <link rel="stylesheet" href="/waf/css/index.css">
+
+    <style>
+        .t_title{
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 2.5em;
+            line-height: 80px;
+            color: #fff;
+        }
+        #chart_map{
+            cursor: pointer;
+        }
+        .t_show{
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-radius: 2px;
+            background: #2C58A6;
+            padding: 2px 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!--header-->
+<div class="header">
+    <div class="bg_header">
+        <div class="header_nav fl t_title">
+            WAF网络安全监控
+        </div> 
+    </div>
+</div>
+
+<!--main-->
+<div class="data_content">
+    <div class="data_main">
+        <div class="main_center fl">
+            <div class="center_text">
+                <div id="echartsMap" style="width:100%;height:610px;"></div>
+            </div>
+        </div>
+        <div class="data_bottom main_right fr">
+            <div class="right_1">
+                <div class="t_line_box">
+                    <i class="t_l_line"></i> 
+                    <i class="l_t_line"></i> 
+                </div> 
+                <!--右上边框-->
+                <div class="t_line_box">
+                    <i class="t_r_line"></i> 
+                    <i class="r_t_line"></i> 
+                </div> 
+                <!--左下边框-->
+                <div class="t_line_box">
+                    <i class="l_b_line"></i> 
+                    <i class="b_l_line"></i> 
+                </div> 
+                    <!--右下边框-->
+                    <div class="t_line_box">
+                    <i class="r_b_line"></i> 
+                    <i class="b_r_line"></i> 
+                </div>
+                <div class="main_title">
+                    <img src="img/t_7.png" alt="">
+                    今日访问统计
+                </div>
+                <div class="main_table t_btn8">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>访问位置</th>
+                            <th>ip</th>
+                            <th>访问次数</th> 
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>北京</td>
+                            <td>192.168.1.1</td>
+                            <td>184448</td>
+                        </tr>
+                        <tr>
+                            <td>北京</td>
+                            <td>192.168.1.1</td>
+                            <td>184448</td>
+                        </tr>
+                        <tr>
+                            <td>北京</td>
+                            <td>192.168.1.1</td>
+                            <td>184448</td>
+                        </tr>
+                        <tr>
+                            <td>北京</td>
+                            <td>192.168.1.1</td>
+                            <td>184448</td>
+                        </tr>
+                        <tr>
+                            <td>北京</td>
+                            <td>192.168.1.1</td>
+                            <td>184448</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="right_2 fr">
+                <div class="t_line_box">
+                    <i class="t_l_line"></i> 
+                    <i class="l_t_line"></i> 
+                </div> 
+                <!--右上边框-->
+                <div class="t_line_box">
+                    <i class="t_r_line"></i> 
+                    <i class="r_t_line"></i> 
+                </div> 
+                <!--左下边框-->
+                <div class="t_line_box">
+                    <i class="l_b_line"></i> 
+                    <i class="b_l_line"></i> 
+                </div> 
+                    <!--右下边框-->
+                    <div class="t_line_box">
+                    <i class="r_b_line"></i> 
+                    <i class="b_r_line"></i> 
+                </div>
+                <div class="main_title">
+                    <img src="img/t_7.png" alt="">
+                   实时拦截
+                </div>
+                <div class="main_table t_btn2">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>位置</th>
+                            <th>ip</th>
+                            <th>拦截方式</th>
+                            <th>日期</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>美国</td>
+                            <td>39.0.0.1</td>
+                            <td>黑名单</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>美国</td>
+                            <td>39.0.0.1</td>
+                            <td>黑名单</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>美国</td>
+                            <td>39.0.0.1</td>
+                            <td>黑名单</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>美国</td>
+                            <td>39.0.0.1</td>
+                            <td>黑名单</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>美国</td>
+                            <td>39.0.0.1</td>
+                            <td>黑名单</td>
+                            <td>10:00</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script src="/waf/js/jquery-2.2.1.min.js"></script>
+<script src="/waf/js/bootstrap.min.js"></script>
+<script src="/waf/js/common.js"></script>
+<script src="/waf/js/echarts.min.js"></script>
+<script src="/waf/js/dataTool.js"></script>
+<script src="/waf/js/index.js"></script>
+<!-- <script src="/waf/js/china.js"></script> -->
+<script src="/waf/js/world.js"></script>
+</html>

@@ -46,7 +46,18 @@ type WafAccessLogDto struct {
 	State          string    `json:"state" `
 	Message        string    `json:"message" `
 	CreateTime     time.Time `json:"createTime" sql:"-"`
-	StatusCd       string    `json:"statusCd" sql:"-"`
-	IPAddress      string    `json:"ipAddress"`
-	Country        string    `json:"country"`
+	StartTime      string    `json:"startTime" `
+
+	StatusCd  string `json:"statusCd" sql:"-"`
+	IPAddress string `json:"ipAddress"`
+	Country   string `json:"country"`
+}
+
+type WafAccessLogMapDto struct {
+	dto.PageDto
+	WafIp      string `json:"wafIp" sql:"-" `
+	WafCountry string `json:"wafCountry"`
+	XRealIp    string `json:"xRealIp"  sql:"-"`
+	IPAddress  string `json:"ipAddress"`
+	Country    string `json:"country"`
 }

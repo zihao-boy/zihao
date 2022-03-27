@@ -85,6 +85,12 @@ from waf_access_log t
 					$endif
 	`
 
+	query_wafAccessLogMap string = `
+select t.x_real_ip,t.waf_ip,count(1) total from waf_access_log t
+where t.create_time > #StartTime#
+group by t.x_real_ip,t.waf_ip
+	`
+
 	insert_wafAccessLog string = `
 	insert into waf_access_log(request_id, waf_ip, host_id,x_real_ip,scheme,response_code,method,http_host,upstream_addr,url,request_length,response_length,state,message)
 VALUES(#RequestId#,#WafIp#,#HostId#,#XRealIp#,#Scheme#,#ResponseCode#,#Method#,#HttpHost#,#UpstreamAddr#,#Url#,#RequestLength#,#ResponseLength#,#State#,#Message#)
@@ -144,6 +150,20 @@ func (*WafAccessLogDao) GetWafAccessLogs(wafAccessLogDto waf.WafAccessLogDto) ([
 
 	return wafAccessLogDtos, nil
 }
+
+/**
+查询用户
+*/
+func (*WafAccessLogDao) GetWafAccessLogMap(wafAccessLogDto waf.WafAccessLogDto) ([]*waf.WafAccessLogMapDto, error) {
+	var wafAccessLogDtos []*waf.WafAccessLogMapDto
+	sqlTemplate.SelectList(query_wafAccessLogMap, objectConvert.Struct2Map(wafAccessLogDto), func(db *gorm.DB) {
+		db.Scan(&wafAccessLogDtos)
+	}, false)
+
+	return wafAccessLogDtos, nil
+}
+
+
 
 /**
 保存服务sql

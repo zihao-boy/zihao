@@ -3,10 +3,12 @@ package wafService
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
+	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/ip"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"strconv"
+	"time"
 )
 
 const default_access_log_count = 10000
@@ -81,6 +83,29 @@ func (wafService *WafAccessLogService) GetWafAccessLogs(ctx iris.Context) result
 	return result.SuccessData(wafDtos, total, row)
 
 }
+
+/**
+查询 系统信息
+*/
+func (wafService *WafAccessLogService) GetWafAccessLogMap(ctx iris.Context) result.ResultDto {
+	var (
+		err        error
+		wafDto  = waf.WafAccessLogDto{}
+		wafDtos []*waf.WafAccessLogMapDto
+	)
+
+	wafDto.StartTime = date.GetTimeString(time.Now().Add(-time.Minute * 30))
+	wafDtos, err = wafService.wafDao.GetWafAccessLogMap(wafDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	ip.GetAccessLogMapByIp(wafDtos)
+
+	return result.SuccessData(wafDtos)
+
+}
+
 
 /**
 保存 系统信息

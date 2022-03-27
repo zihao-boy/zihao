@@ -68,6 +68,7 @@ type (
 		KafkaSwitch      string   `yaml:"kafka_switch"`
 		IpData      string   `yaml:"ip_data"`
 		QqwryUrl      string   `yaml:"qqwry_url"`
+		ServerIpUrl   string `yaml:"server_ip_url"`
 	}
 
 	// db
