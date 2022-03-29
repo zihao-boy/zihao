@@ -94,6 +94,7 @@ group by t.x_real_ip,t.waf_ip
 select t.x_real_ip,t.waf_ip,count(1) total from waf_access_log t
 where t.create_time > #StartTime#
 group by t.x_real_ip,t.waf_ip
+order by total desc
 limit 5
 	`
 

@@ -1266,7 +1266,7 @@ create table waf
     create_time  timestamp  default CURRENT_TIMESTAMP not null,
     status_cd    varchar(2) default '0' not null
 );
-
+insert into waf values (1,'waf',80,443,1001,'2020-01-01','0');
 create table waf_hosts
 (
     waf_host_id           varchar(64) not null

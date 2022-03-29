@@ -3,6 +3,12 @@ $(function () {
     getAccessLogTop5();
     getAccessLogIntercept();
 
+    setInterval(function(){
+        getAccessLogMap();
+        getAccessLogTop5();
+        getAccessLogIntercept();
+    },10000)
+
     function getAccessLogMap() {
         let xhr = new XMLHttpRequest();
         let _QData = [];
