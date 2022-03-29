@@ -90,6 +90,22 @@ select t.x_real_ip,t.waf_ip,count(1) total from waf_access_log t
 where t.create_time > #StartTime#
 group by t.x_real_ip,t.waf_ip
 	`
+	query_wafAccessLogTop5 string = `
+select t.x_real_ip,t.waf_ip,count(1) total from waf_access_log t
+where t.create_time > #StartTime#
+group by t.x_real_ip,t.waf_ip
+limit 5
+	`
+
+	query_wafAccessLogIntercept string = `
+select t.x_real_ip,t.waf_ip,state,t.create_time ,td.name state_name
+from waf_access_log t
+left join t_dict td on td.table_name = 'waf_access_log'  and td.table_columns = 'state' and td.status_cd = t.state
+where  t.state !='default'
+order by t.create_time desc
+limit 5
+	`
+
 
 	insert_wafAccessLog string = `
 	insert into waf_access_log(request_id, waf_ip, host_id,x_real_ip,scheme,response_code,method,http_host,upstream_addr,url,request_length,response_length,state,message)
@@ -163,7 +179,30 @@ func (*WafAccessLogDao) GetWafAccessLogMap(wafAccessLogDto waf.WafAccessLogDto) 
 	return wafAccessLogDtos, nil
 }
 
+/**
+查询用户
+*/
+func (*WafAccessLogDao) GetWafAccessLogTop5(wafAccessLogDto waf.WafAccessLogDto) ([]*waf.WafAccessLogMapDto, error) {
+	var wafAccessLogDtos []*waf.WafAccessLogMapDto
+	sqlTemplate.SelectList(query_wafAccessLogTop5, objectConvert.Struct2Map(wafAccessLogDto), func(db *gorm.DB) {
+		db.Scan(&wafAccessLogDtos)
+	}, false)
 
+	return wafAccessLogDtos, nil
+}
+
+
+/**
+查询用户
+*/
+func (*WafAccessLogDao) GetWafAccessLogIntercept(wafAccessLogDto waf.WafAccessLogDto) ([]*waf.WafAccessLogDto, error) {
+	var wafAccessLogDtos []*waf.WafAccessLogDto
+	sqlTemplate.SelectList(query_wafAccessLogIntercept, objectConvert.Struct2Map(wafAccessLogDto), func(db *gorm.DB) {
+		db.Scan(&wafAccessLogDtos)
+	}, false)
+
+	return wafAccessLogDtos, nil
+}
 
 /**
 保存服务sql

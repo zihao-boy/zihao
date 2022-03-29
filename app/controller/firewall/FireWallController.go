@@ -49,6 +49,12 @@ func FirewallControllerRouter(party iris.Party) {
 	//query platform data
 	adinMenu.Get("/getWafAccessLogMap", hero.Handler(aus.getWafAccessLogMap))
 
+	//query platform data
+	adinMenu.Get("/getWafAccessLogTop5", hero.Handler(aus.getWafAccessLogTop5))
+
+	adinMenu.Get("/getWafAccessLogIntercept", hero.Handler(aus.getWafAccessLogIntercept))
+
+
 }
 
 /**
@@ -170,6 +176,24 @@ func (aus *FirewallController) getWafAccessLogMap(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+/**
+query waf
+*/
+func (aus *FirewallController) getWafAccessLogTop5(ctx iris.Context) {
+	reslut := aus.wafAccessLogService.GetWafAccessLogTop5(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+query waf
+*/
+func (aus *FirewallController) getWafAccessLogIntercept(ctx iris.Context) {
+	reslut := aus.wafAccessLogService.GetWafAccessLogIntercept(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 /**
 save waf
@@ -179,3 +203,5 @@ func (aus *FirewallController) saveWafAccessLog(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+

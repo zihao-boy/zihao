@@ -106,6 +106,47 @@ func (wafService *WafAccessLogService) GetWafAccessLogMap(ctx iris.Context) resu
 
 }
 
+func (wafService *WafAccessLogService) GetWafAccessLogTop5(ctx iris.Context) result.ResultDto {
+	var (
+		err        error
+		wafDto  = waf.WafAccessLogDto{}
+		wafDtos []*waf.WafAccessLogMapDto
+	)
+
+	wafDto.StartTime = date.GetTimeString(time.Now().Add(-time.Minute * 30))
+	wafDtos, err = wafService.wafDao.GetWafAccessLogTop5(wafDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	ip.GetAccessLogMapByIp(wafDtos)
+
+	return result.SuccessData(wafDtos)
+
+}
+
+
+func (wafService *WafAccessLogService) GetWafAccessLogIntercept(ctx iris.Context) result.ResultDto {
+	var (
+		err        error
+		wafDto  = waf.WafAccessLogDto{}
+
+		wafDtos []*waf.WafAccessLogDto
+	)
+
+	wafDto.StartTime = date.GetNowDateString()
+	wafDtos, err = wafService.wafDao.GetWafAccessLogIntercept(wafDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+	ip.GetAccessLogByIp(wafDtos)
+
+	return result.SuccessData(wafDtos)
+
+}
+
+
 
 /**
 保存 系统信息

@@ -1,5 +1,7 @@
 $(function () {
     getAccessLogMap();
+    getAccessLogTop5();
+    getAccessLogIntercept();
 
     function getAccessLogMap() {
         let xhr = new XMLHttpRequest();
@@ -14,7 +16,7 @@ $(function () {
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let _data = JSON.parse(xhr.responseText);
-                if(_data.data.length<1){
+                if(!_data.data){
                     echart_map(_CData,_QData);
                     return ;
                 }
@@ -34,6 +36,74 @@ $(function () {
                 echart_map(_CData,_QData);
             }
         }
+    }
+
+    function getAccessLogTop5() {
+        let xhr = new XMLHttpRequest();
+        let _QData = [];
+        let _CData = "北京";
+
+        //第二步 打开要发送的地址
+        xhr.open("get", "/app/firewall/getWafAccessLogTop5");
+        //第三部发送
+        xhr.send();
+        //第四步
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                let _data = JSON.parse(xhr.responseText);
+                if(!_data.data){
+                    return ;
+                }
+                let _html = "";
+                   _data.data.forEach(_item=>{
+                        _html +=("<tr>"
+                        +"<td>"+_item.country+"</td>"
+                        +"<td>"+_item.xRealIp+"</td>"
+                        +"<td>"+_item.total+"</td>"
+                        +"</tr>"
+                        )
+                   });
+                document.getElementById('accessLogTop5').innerHTML = _html;
+            }
+        }
+    }
+
+    function getAccessLogIntercept() {
+        let xhr = new XMLHttpRequest();
+
+        //第二步 打开要发送的地址
+        xhr.open("get", "/app/firewall/getWafAccessLogIntercept");
+        //第三部发送
+        xhr.send();
+        //第四步
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                let _data = JSON.parse(xhr.responseText);
+                if(!_data.data){
+                    return ;
+                }
+                let _html = "";
+                   _data.data.forEach(_item=>{
+                        _html +=("<tr>"
+                        +"<td>"+_item.country+"</td>"
+                        +"<td>"+_item.xRealIp+"</td>"
+                        +"<td>"+_item.stateName+"</td>"
+                        +"<td>"+formateTime(_item.createTime)+"</td>"
+                        +"</tr>"
+                        )
+                   });
+                document.getElementById('intercept').innerHTML = _html;
+            }
+        }
+    }
+    function formateTime(_dateStr){
+       let _date =  _dateStr.replace('T',' ').replace('Z',' ');
+       let newDate = new Date(_date);
+       let m = newDate.getMonth() + 1;
+       let d = newDate.getDate();
+       let h = newDate.getHours();
+       let mm = newDate.getMinutes();
+       return  m + '-' + d + ' ' + h + ':' + mm;
     }
 
     // echart_map中国地图

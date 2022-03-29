@@ -266,3 +266,23 @@ INSERT INTO `menu` VALUES ('700201904037', 'waf监控', '800201904006', '/waf/in
 INSERT INTO `privilege` VALUES ('500201904034', 'waf监控', 'waf访问', '2019-04-01 02:24:53', '0', '/waf/waf.html', '700201904037');
 INSERT INTO `privilege_rel` VALUES ('64', '500201904034', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('65', '500201904034', '600201904002', '2019-04-01 08:18:29', '0');
+
+
+INSERT INTO `t_dict` VALUES ('35', 'sqli', 'SQL注入', 'SQL注入', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('36', 'xss', '跨站脚本', '跨站脚本', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('20', 'webshell', 'WebShell攻击', 'WebShell攻击', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('21', 'robot', '恶意爬虫', '恶意爬虫', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('22', 'cmdi', '命令注入', '命令注入', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('23', 'rfi', '远程文件', '远程文件', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('24', 'lfi', '本地文件包含', '本地文件包含', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('25', 'illegal', '非法请求', '非法请求', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('26', 'vuln', '漏洞攻击', '漏洞攻击', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('27', 'cc', '命中CC防护', '命中CC防护', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('28', 'custom_custom', '命中精准防护', '命中精准防护', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('29', 'custom_whiteip', '命中IP黑白名单', '命中IP黑白名单', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('30', 'custom_geoip', '命中地理位置控制', '命中地理位置控制', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('31', 'antitamper', '命中网页防篡改', '命中网页防篡改', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('32', 'anticrawler', '命中JS挑战反爬虫', '命中JS挑战反爬虫', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('33', 'leakage', '命中敏感信息泄露', '命中敏感信息泄露', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+INSERT INTO `t_dict` VALUES ('34', 'followed_action', '攻击惩罚', '攻击惩罚', '2021-02-24 22:49:33', 'waf_access_log', 'state');
+

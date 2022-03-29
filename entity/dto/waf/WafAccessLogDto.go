@@ -44,6 +44,7 @@ type WafAccessLogDto struct {
 	RequestLength  string    `json:"requestLength"  sql:"-"`
 	ResponseLength string    `json:"responseLength"  sql:"-"`
 	State          string    `json:"state" `
+	StateName      string    `json:"stateName" sql:"-"`
 	Message        string    `json:"message" `
 	CreateTime     time.Time `json:"createTime" sql:"-"`
 	StartTime      string    `json:"startTime" `
