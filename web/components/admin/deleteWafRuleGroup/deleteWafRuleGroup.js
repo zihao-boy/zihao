@@ -19,9 +19,8 @@
         },
         methods:{
             deleteWafRuleGroup:function(){
-                vc.component.deleteWafRuleGroupInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'wafRuleGroup.deleteWafRuleGroup',
+                    '/firewall/deleteWafRuleGroup',
                     JSON.stringify(vc.component.deleteWafRuleGroupInfo),
                     {
                         emulateJSON:true
@@ -35,11 +34,11 @@
                             vc.emit('wafRuleGroupManage','listWafRuleGroup',{});
                             return ;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
                      },
                      function(errInfo,error){
                         console.log('请求失败处理');
-                        vc.message(json);
+                        vc.toast(json);
 
                      });
             },

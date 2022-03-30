@@ -1,109 +1,103 @@
-(function(vc){
+(function (vc) {
 
     vc.extends({
         propTypes: {
-               callBackListener:vc.propTypes.string, //父组件名称
-               callBackFunction:vc.propTypes.string //父组件监听方法
+            callBackListener: vc.propTypes.string, //父组件名称
+            callBackFunction: vc.propTypes.string //父组件监听方法
         },
-        data:{
-            addWafRuleGroupInfo:{
-                groupId:'',
-                groupName:'',
-state:'',
+        data: {
+            addWafRuleGroupInfo: {
+                groupName: '',
+                state: 'F',
 
             }
         },
-         _initMethod:function(){
+        _initMethod: function () {
 
-         },
-         _initEvent:function(){
-            vc.on('addWafRuleGroup','openAddWafRuleGroupModal',function(){
+        },
+        _initEvent: function () {
+            vc.on('addWafRuleGroup', 'openAddWafRuleGroupModal', function () {
                 $('#addWafRuleGroupModel').modal('show');
             });
         },
-        methods:{
-            addWafRuleGroupValidate(){
+        methods: {
+            addWafRuleGroupValidate() {
                 return vc.validate.validate({
-                    addWafRuleGroupInfo:vc.component.addWafRuleGroupInfo
-                },{
-                    'addWafRuleGroupInfo.groupName':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"组名称不能为空"
+                    addWafRuleGroupInfo: vc.component.addWafRuleGroupInfo
+                }, {
+                    'addWafRuleGroupInfo.groupName': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "组名称不能为空"
                         },
- {
-                            limit:"maxLength",
-                            param:"64",
-                            errInfo:"组名称不能超过64"
-                        },
-                    ],
-'addWafRuleGroupInfo.state':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"组状态'不能为空"
-                        },
- {
-                            limit:"maxLength",
-                            param:"64",
-                            errInfo:"组状态'不能超过64"
+                        {
+                            limit: "maxLength",
+                            param: "64",
+                            errInfo: "组名称不能超过64"
                         },
                     ],
-
-
-
-
+                    'addWafRuleGroupInfo.state': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "组状态'不能为空"
+                        },
+                        {
+                            limit: "maxLength",
+                            param: "64",
+                            errInfo: "组状态'不能超过64"
+                        },
+                    ]
                 });
             },
-            saveWafRuleGroupInfo:function(){
-                if(!vc.component.addWafRuleGroupValidate()){
+            saveWafRuleGroupInfo: function () {
+                if (!vc.component.addWafRuleGroupValidate()) {
                     vc.toast(vc.validate.errInfo);
 
-                    return ;
+                    return;
                 }
 
-                vc.component.addWafRuleGroupInfo.communityId = vc.getCurrentCommunity().communityId;
                 //不提交数据将数据 回调给侦听处理
-                if(vc.notNull($props.callBackListener)){
-                    vc.emit($props.callBackListener,$props.callBackFunction,vc.component.addWafRuleGroupInfo);
+                if (vc.notNull($props.callBackListener)) {
+                    vc.emit($props.callBackListener, $props.callBackFunction, vc.component.addWafRuleGroupInfo);
                     $('#addWafRuleGroupModel').modal('hide');
-                    return ;
+                    return;
                 }
 
                 vc.http.apiPost(
-                    'wafRuleGroup.saveWafRuleGroup',
+                    '/firewall/saveWafRuleGroup',
                     JSON.stringify(vc.component.addWafRuleGroupInfo),
                     {
-                        emulateJSON:true
-                     },
-                     function(json,res){
+                        emulateJSON: true
+                    },
+                    function (json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
                             $('#addWafRuleGroupModel').modal('hide');
                             vc.component.clearAddWafRuleGroupInfo();
-                            vc.emit('wafRuleGroupManage','listWafRuleGroup',{});
+                            vc.emit('wafRuleGroupManage', 'listWafRuleGroup', {});
 
-                            return ;
+                            return;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
 
-                     },
-                     function(errInfo,error){
+                    },
+                    function (errInfo, error) {
                         console.log('请求失败处理');
 
-                        vc.message(errInfo);
+                        vc.toast(errInfo);
 
-                     });
+                    });
             },
-            clearAddWafRuleGroupInfo:function(){
+            clearAddWafRuleGroupInfo: function () {
                 vc.component.addWafRuleGroupInfo = {
-                                            groupName:'',
-state:'',
-
-                                        };
+                    groupName: '',
+                    state: 'F',
+    
+                };
             }
         }
     });

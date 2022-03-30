@@ -19,9 +19,8 @@
         },
         methods:{
             deleteWafRule:function(){
-                vc.component.deleteWafRuleInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'wafRule.deleteWafRule',
+                    '/firewall/deleteWafRule',
                     JSON.stringify(vc.component.deleteWafRuleInfo),
                     {
                         emulateJSON:true

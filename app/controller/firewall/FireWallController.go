@@ -10,6 +10,9 @@ type FirewallController struct {
 	wafService wafService.WafService
 	wafRouteService wafService.WafRouteService
 	wafAccessLogService wafService.WafAccessLogService
+	wafRuleGroupService wafService.WafRuleGroupService
+	wafRuleService wafService.WafRuleService
+
 }
 
 func FirewallControllerRouter(party iris.Party) {
@@ -25,6 +28,8 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateWaf", hero.Handler(aus.updateWaf))
 
 	adinMenu.Post("/deleteWaf", hero.Handler(aus.deleteWaf))
+
+
 
 	adinMenu.Post("/startWaf", hero.Handler(aus.startWaf))
 
@@ -55,6 +60,22 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Get("/getWafAccessLogIntercept", hero.Handler(aus.getWafAccessLogIntercept))
 
 
+
+	adinMenu.Get("/getWafRuleGroup", hero.Handler(aus.getWafRuleGroup))
+
+	adinMenu.Post("/saveWafRuleGroup", hero.Handler(aus.saveWafRuleGroup))
+
+	adinMenu.Post("/updateWafRuleGroup", hero.Handler(aus.updateWafRuleGroup))
+
+	adinMenu.Post("/deleteWafRuleGroup", hero.Handler(aus.deleteWafRuleGroup))
+
+	adinMenu.Get("/getWafRule", hero.Handler(aus.getWafRule))
+
+	adinMenu.Post("/saveWafRule", hero.Handler(aus.saveWafRule))
+
+	adinMenu.Post("/updateWafRule", hero.Handler(aus.updateWafRule))
+
+	adinMenu.Post("/deleteWafRule", hero.Handler(aus.deleteWafRule))
 }
 
 /**
@@ -205,3 +226,75 @@ func (aus *FirewallController) saveWafAccessLog(ctx iris.Context) {
 }
 
 
+/**
+query waf
+*/
+func (aus *FirewallController) getWafRuleGroup(ctx iris.Context) {
+	reslut := aus.wafRuleGroupService.GetWafRuleGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveWafRuleGroup(ctx iris.Context) {
+	reslut := aus.wafRuleGroupService.SaveWafRuleGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+update waf
+*/
+func (aus *FirewallController) updateWafRuleGroup(ctx iris.Context) {
+	reslut := aus.wafRuleGroupService.UpdateWafRuleGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteWafRuleGroup(ctx iris.Context) {
+	reslut := aus.wafRuleGroupService.DeleteWafRuleGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getWafRule(ctx iris.Context) {
+	reslut := aus.wafRuleService.GetWafRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveWafRule(ctx iris.Context) {
+	reslut := aus.wafRuleService.SaveWafRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+update waf
+*/
+func (aus *FirewallController) updateWafRule(ctx iris.Context) {
+	reslut := aus.wafRuleService.UpdateWafRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteWafRule(ctx iris.Context) {
+	reslut := aus.wafRuleService.DeleteWafRules(ctx)
+
+	ctx.JSON(reslut)
+}
