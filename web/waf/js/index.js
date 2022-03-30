@@ -1,13 +1,28 @@
-$(function () {
+$(function() {
+
+    $(window).resize(function() {
+        hightChange();
+    });
+
+    function hightChange() {　　
+        var h = document.documentElement.clientHeight - 160;　　
+        $("#echartsMap").height(h); // iframe id
+        $(".data_main").height(h); // iframe id
+    }
+
+    hightChange();
     getAccessLogMap();
     getAccessLogTop5();
     getAccessLogIntercept();
 
-    setInterval(function(){
+    setInterval(function() {
         getAccessLogMap();
         getAccessLogTop5();
         getAccessLogIntercept();
-    },10000)
+    }, 10000)
+
+
+    document.getElementById('echartsMap').style.height = clientHeight
 
     function getAccessLogMap() {
         let xhr = new XMLHttpRequest();
@@ -19,27 +34,27 @@ $(function () {
         //第三部发送
         xhr.send();
         //第四步
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let _data = JSON.parse(xhr.responseText);
-                if(!_data.data){
-                    echart_map(_CData,_QData);
-                    return ;
+                if (!_data.data) {
+                    echart_map(_CData, _QData);
+                    return;
                 }
 
                 let _location = getLocation();
-                for(let key in _location){
-                   _data.data.forEach(_item=>{
-                        if(_item.country.indexOf(key)> -1){
+                for (let key in _location) {
+                    _data.data.forEach(_item => {
+                        if (_item.country.indexOf(key) > -1) {
                             _item.name = key;
                             _QData.push(_item);
                         }
-                        if(_item.wafCountry.indexOf(key)>-1){
+                        if (_item.wafCountry.indexOf(key) > -1) {
                             _CData = key;
                         }
-                   })   
+                    })
                 }
-                echart_map(_CData,_QData);
+                echart_map(_CData, _QData);
             }
         }
     }
@@ -54,21 +69,21 @@ $(function () {
         //第三部发送
         xhr.send();
         //第四步
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let _data = JSON.parse(xhr.responseText);
-                if(!_data.data){
-                    return ;
+                if (!_data.data) {
+                    return;
                 }
                 let _html = "";
-                   _data.data.forEach(_item=>{
-                        _html +=("<tr>"
-                        +"<td>"+_item.country+"</td>"
-                        +"<td>"+_item.xRealIp+"</td>"
-                        +"<td>"+_item.total+"</td>"
-                        +"</tr>"
-                        )
-                   });
+                _data.data.forEach(_item => {
+                    _html += ("<tr>" +
+                        "<td>" + _item.country + "</td>" +
+                        "<td>" + _item.xRealIp + "</td>" +
+                        "<td>" + _item.total + "</td>" +
+                        "</tr>"
+                    )
+                });
                 document.getElementById('accessLogTop5').innerHTML = _html;
             }
         }
@@ -82,38 +97,39 @@ $(function () {
         //第三部发送
         xhr.send();
         //第四步
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let _data = JSON.parse(xhr.responseText);
-                if(!_data.data){
-                    return ;
+                if (!_data.data) {
+                    return;
                 }
                 let _html = "";
-                   _data.data.forEach(_item=>{
-                        _html +=("<tr>"
-                        +"<td>"+_item.country+"</td>"
-                        +"<td>"+_item.xRealIp+"</td>"
-                        +"<td>"+_item.stateName+"</td>"
-                        +"<td>"+formateTime(_item.createTime)+"</td>"
-                        +"</tr>"
-                        )
-                   });
+                _data.data.forEach(_item => {
+                    _html += ("<tr>" +
+                        "<td>" + _item.country + "</td>" +
+                        "<td>" + _item.xRealIp + "</td>" +
+                        "<td>" + _item.stateName + "</td>" +
+                        "<td>" + formateTime(_item.createTime) + "</td>" +
+                        "</tr>"
+                    )
+                });
                 document.getElementById('intercept').innerHTML = _html;
             }
         }
     }
-    function formateTime(_dateStr){
-       let _date =  _dateStr.replace('T',' ').replace('Z',' ');
-       let newDate = new Date(_date);
-       let m = newDate.getMonth() + 1;
-       let d = newDate.getDate();
-       let h = newDate.getHours();
-       let mm = newDate.getMinutes();
-       return  m + '-' + d + ' ' + h + ':' + mm;
+
+    function formateTime(_dateStr) {
+        let _date = _dateStr.replace('T', ' ').replace('Z', ' ');
+        let newDate = new Date(_date);
+        let m = newDate.getMonth() + 1;
+        let d = newDate.getDate();
+        let h = newDate.getHours();
+        let mm = newDate.getMinutes();
+        return m + '-' + d + ' ' + h + ':' + mm;
     }
 
     // echart_map中国地图
-    function echart_map(_CData,_QData) {
+    function echart_map(_CData, _QData) {
         let chart = echarts.init(document.getElementById('echartsMap'));
         /*
             图中相关城市经纬度,根据你的需求添加数据
@@ -125,28 +141,27 @@ $(function () {
             数组第一位为终点城市，数组第二位为起点城市，以及该城市的权重，就是图上圆圈的大小
          */
         // 重庆
-        let CQData = [
-        ];
+        let CQData = [];
         let _ICQData = [];
-        _QData.forEach(_item=>{
+        _QData.forEach(_item => {
             _ICQData = [];
             _ICQData.push({
-                name:_CData
+                name: _CData
             });
             _ICQData.push({
-                name:_item.name,
-                value:30
+                name: _item.name,
+                value: 30
             });
             CQData.push(_ICQData)
         });
 
-       
+
 
         // 小飞机的图标，可以用其他图形替换
         //var planePath = 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z';
         var planePath = 'image://waf/img/echart_come.png'
-        // 获取地图中起点和终点的坐标，以数组形式保存下来
-        var convertData = function (data) {
+            // 获取地图中起点和终点的坐标，以数组形式保存下来
+        var convertData = function(data) {
             var res = [];
             for (var i = 0; i < data.length; i++) {
                 var dataItem = data[i];
@@ -172,7 +187,7 @@ $(function () {
         */
         [
             [_CData, CQData]
-        ].forEach(function (item, i) {
+        ].forEach(function(item, i) {
             series.push({
                 // 白色航线特效图
                 type: 'lines',
@@ -232,7 +247,7 @@ $(function () {
                         color: color[0]
                     }
                 },
-                data: item[1].map(function (dataItem) {
+                data: item[1].map(function(dataItem) {
                     return {
                         name: dataItem[1].name,
                         value: geoCoordMap[dataItem[1].name], // 起点的位置
@@ -257,7 +272,7 @@ $(function () {
                     formatter: '{b}'
                 }
             },
-            symbolSize: function (val) {
+            symbolSize: function(val) {
                 return val[2] / 8;
             },
             itemStyle: {
@@ -268,7 +283,7 @@ $(function () {
             data: [{
                 // 这里面的数据，由于一开始就知道终点位置是什么，所以直接写死，如果通过ajax来获取数据的话，还要进行相应的处理
                 name: _CData,
-                value:  geoCoordMap[_CData],
+                value: geoCoordMap[_CData],
                 label: {
                     normal: {
                         position: 'top'
@@ -321,7 +336,7 @@ $(function () {
                 fontSize: 12
             }
         });
-        window.addEventListener("resize", function () {
+        window.addEventListener("resize", function() {
             chart.resize();
         });
     }
@@ -730,6 +745,3 @@ $(function () {
         };
     }
 });
-
-
-
