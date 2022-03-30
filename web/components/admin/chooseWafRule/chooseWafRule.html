@@ -1,0 +1,68 @@
+<div id = "chooseWafRuleModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chooseWafRuleModelLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="chooseWafRuleModelLabel">选择规则</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class=" row">
+                    <div class="col-lg-12">
+                        <div class="ibox ">
+                            <div class="row">
+
+                                <div class="col-sm-7 m-b-xs">
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="input-group">
+                                        <input placeholder="输入规则名称" type="text" v-model="chooseWafRuleInfo._currentWafRuleName" class="form-control form-control-sm">
+                                        <span class="input-group-append">
+                                                <button type="button" class="btn btn-sm btn-primary" v-on:click="queryWafRules()">查询</button>
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive" style="margin-top:15px">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                                                        <th class="text-center">编号</th>
+                            <th class="text-center">规则组</th>
+                            <th class="text-center">规则名称</th>
+                            <th class="text-center">规则范围</th>
+                            <th class="text-center">规则对象</th>
+                            <th class="text-center">规则类型</th>
+                            <th class="text-center">优先级</th>
+                            <th class="text-center">状态</th>
+                            <th class="text-center">操作</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="wafRule in chooseWafRuleInfo.wafRules">
+                                                                        <td class="text-center">{{wafRule.ruleId}}</td>
+                            <td class="text-center">{{wafRule.groupId}}</td>
+                            <td class="text-center">{{wafRule.ruleName}}</td>
+                            <td class="text-center">{{wafRule.scope}}</td>
+                            <td class="text-center">{{wafRule.objId}}</td>
+                            <td class="text-center">{{wafRule.objType}}</td>
+                            <td class="text-center">{{wafRule.seq}}</td>
+                            <td class="text-center">{{wafRule.state}}</td>
+
+                                            <td>
+                                                <button class="btn btn-primary btn-xs" v-on:click="chooseWafRule(wafRule)">选择</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
