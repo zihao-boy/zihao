@@ -56,6 +56,8 @@ https://www.bilibili.com/video/BV1BM4y1w7Ti?spm_id_from=333.999.0.0
 
  11、实现oss 客户端功能 文件操作包括上传下载 删除 等
 
+ 12、加入waf功能
+
 未来我们还会加入很多有趣的功能。
 
 ### 7.0 系统截图
@@ -63,6 +65,8 @@ https://www.bilibili.com/video/BV1BM4y1w7Ti?spm_id_from=333.999.0.0
 ![image](doc/1.png)
 
 ![image](doc/7.png)
+
+![image](doc/15.png)
 
 ![image](doc/2.png)
 
@@ -85,3 +89,5 @@ https://www.bilibili.com/video/BV1BM4y1w7Ti?spm_id_from=333.999.0.0
 ![image](doc/8.png)
 
 ![image](doc/14.png)
+
+
