@@ -1347,3 +1347,27 @@ INSERT INTO `t_dict` VALUES ('32', 'anticrawler', '命中JS挑战反爬虫', '�
 INSERT INTO `t_dict` VALUES ('33', 'leakage', '命中敏感信息泄露', '命中敏感信息泄露', '2021-02-24 22:49:33', 'waf_access_log', 'state');
 INSERT INTO `t_dict` VALUES ('34', 'followed_action', '攻击惩罚', '攻击惩罚', '2021-02-24 22:49:33', 'waf_access_log', 'state');
 
+create table waf_rule_group
+(
+    group_id      varchar(64) not null
+        primary key,
+    group_name    varchar(64) not null,
+    state varchar(64) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+create table waf_rule
+(
+    rule_id     varchar(64) not null
+        primary key,
+    group_id varchar(64) not null,
+    rule_name   varchar(64) not null,
+    scope       varchar(64) not null,
+    obj_id      varchar(64) not null,
+    obj_type    varchar(64) not null,
+    seq         int         not null,
+    state       varchar(64) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
