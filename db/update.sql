@@ -1,4 +1,28 @@
 -- 2022-02-07
+alter table app_service rename to app_service_0331 ;
+
+create table app_service
+(
+    as_id          varchar(64)  not null,
+    as_name        varchar(128) not null,
+    as_type        varchar(12)  not null,
+    tenant_id      varchar(64)  not null,
+    as_desc        varchar(512) default '''''''NULL''''''',
+    state          varchar(12)  default '''10012''' not null,
+    as_count       int(11)      default '''1''' not null,
+    create_time    timestamp    default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2)   default 0 not null,
+    as_group_id    VARCHAR(64),
+    as_deploy_type VARCHAR(64),
+    as_deploy_id   VARCHAR(64),
+    images_id      VARCHAR(64),
+    ver_id         varchar(64)
+);
+
+insert into app_service(as_id, as_name, as_type, tenant_id, as_desc, state, as_count, create_time, status_cd, as_group_id, as_deploy_type, as_deploy_id, images_id, ver_id)
+select as_id, as_name, as_type, tenant_id, as_desc, state, as_count, create_time, status_cd, as_group_id, as_deploy_type, as_deploy_id, images_id,'1' from app_service_0331
+
+
 
 INSERT INTO `menu` VALUES ('700201904027', '发布者', '800201904008', '/index.html#/pages/admin/appPublisherManage', '2', '发布者', '2019-04-09 14:50:56', '0', 'Y');
 INSERT INTO `privilege` VALUES ('500201904022', '发布者', '发布者', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904027');
