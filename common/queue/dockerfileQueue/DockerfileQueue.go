@@ -54,7 +54,6 @@ func initQueue() {
 func SendData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	defer costTime.TimeoutWarning("DockerfileQueue", "SendData", time.Now())
 	initQueue()
-	fmt.Print("build queue save data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", businessDockerfileDto.Name,len(que),&que,"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 	que <- businessDockerfileDto
 }
 
@@ -62,7 +61,6 @@ func readData(que chan *businessDockerfile.BusinessDockerfileDto) {
 	for {
 		select {
 		case data := <-que:
-			fmt.Print("build queue deal data >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", data.Name,len(que),&que,"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 			dealData(data)
 		}
 	}
@@ -179,7 +177,6 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 		fmt.Println("文件打开失败", err)
 	}
 
-	fmt.Print("构建镜像：" + shellScript + " 返回：" + string(output))
 	write.WriteString("构建镜像：" + shellScript + " 返回：" + string(output))
 	write.Flush()
 
@@ -191,7 +188,6 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 	cmd = exec.Command("bash", "-c", shellScript)
 
 	output, _ = cmd.CombinedOutput()
-	fmt.Print("登录：" + shellScript + " 返回：" + string(output))
 	write.WriteString("登录：" + shellScript + " 返回：" + string(output))
 	write.Flush()
 	//推镜像
@@ -202,7 +198,6 @@ func dealData(businessDockerfileDto *businessDockerfile.BusinessDockerfileDto) {
 
 	output, _ = cmd.CombinedOutput()
 
-	fmt.Print("推镜像：" + shellScript + " 返回：" + string(output))
 	write.WriteString("推镜像：" + shellScript + " 返回：" + string(output))
 	write.Flush()
 	//if exits docker images
