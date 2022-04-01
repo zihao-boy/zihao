@@ -1,8 +1,10 @@
 package wafService
 
 import (
+	"errors"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
+	"github.com/zihao-boy/zihao/common/objectConvert"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
@@ -260,6 +262,8 @@ func (wafService *WafService) StopWaff(ctx iris.Context) interface{} {
 
 }
 
+
+
 func (wafService *WafService) RefreshWafConfig(ctx iris.Context) interface{} {
 	var (
 		err    error
@@ -290,6 +294,7 @@ func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDt
 	var (
 		wafRouteDao        wafDao.WafRouteDao
 		wafHostnameCertDao wafDao.WafHostnameCertDao
+		wafRuleGroupDao wafDao.WafRuleGroupDao
 	)
 
 	wafHostsDto := waf.WafHostsDto{
@@ -306,10 +311,76 @@ func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDt
 	tmpWafHostnameCertDto := waf.WafHostnameCertDto{
 	}
 	certs, _ := wafHostnameCertDao.GetWafHostnameCerts(tmpWafHostnameCertDto)
+
+	// query rule group
+	tWafRuleGroupDto := waf.WafRuleGroupDto{
+		State: waf.Waf_Rule_State_T,
+	}
+	tRuleGrops, _ := wafRuleGroupDao.GetWafRuleGroups(tWafRuleGroupDto)
+	rules := wafService.getRules(tRuleGrops)
+
 	return waf.SlaveWafDataDto{
 		ServerIpUrl: config.G_AppConfig.ServerIpUrl,
 		Waf:    wafDto,
 		Routes: routes,
 		Certs:  certs,
+		Rules:rules,
 	}
+
+
+}
+
+func (wafService *WafService) getRules(grops []*waf.WafRuleGroupDto) []*waf.WafRuleDataDto {
+	if grops == nil || len(grops) < 1{
+		return nil
+	}
+	var (
+		wafRuleDao wafDao.WafRuleDao
+		rules []*waf.WafRuleDataDto
+		ruleData *waf.WafRuleDataDto
+	)
+
+
+
+	tWafRuleDto := waf.WafRuleDto{
+		GroupId: grops[0].GroupId,
+	}
+	wafRules ,_ := wafRuleDao.GetWafRules(tWafRuleDto)
+
+	if wafRules == nil || len(wafRules) < 1{
+		return nil
+	}
+
+	for _,rule:= range wafRules{
+		objectConvert.Struct2Struct(rule,ruleData)
+
+		err := wafService.getRuleObject(ruleData)
+
+		if err != nil{
+			continue
+		}
+
+		rules = append(rules,ruleData)
+	}
+
+	return rules
+}
+
+func (wafService *WafService) getRuleObject(data *waf.WafRuleDataDto) error {
+	var wafIpBlackWhiteDao wafDao.WafIpBlackWhiteDao
+	if data.ObjType == waf.Waf_obj_type_ip{
+		tWafIp := waf.WafIpBlackWhiteDto{
+			Id:data.ObjId,
+		}
+
+		wafIps ,_:= wafIpBlackWhiteDao.GetWafIpBlackWhites(tWafIp)
+
+		if wafIps == nil || len(wafIps) < 1{
+			return errors.New("未包含ip")
+		}
+		data.Ip = wafIps[0]
+	}
+
+	return nil
+
 }

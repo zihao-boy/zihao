@@ -99,12 +99,12 @@
                             vc.emit('wafManage', 'listWaf', {});
                             return;
                         }
-                        vc.message(_json.msg);
+                        vc.toast(_json.msg);
                     },
                     function (errInfo, error) {
                         console.log('请求失败处理');
 
-                        vc.message(errInfo);
+                        vc.toast(errInfo);
                     });
             },
             _queryWafMethod: function () {
@@ -117,7 +117,30 @@
                 } else {
                     vc.component.wafManageInfo.moreCondition = true;
                 }
-            }
+            },
+            _loadWafConfig: function (_waf) {
+                vc.http.apiPost(
+                    '/firewall/refreshWafConfig',
+                    JSON.stringify(_waf),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            vc.emit('wafManage', 'listWaf', {});
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+
+                        vc.toast(errInfo);
+                    });
+            },
 
 
         }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/zihao-boy/zihao/common/waf/ruleAdapt"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"golang.org/x/net/http2"
 	"net"
@@ -42,6 +43,15 @@ func RootHandle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	refreshAccessLogByRoute(&accessLog,tRoute)
+
+	// rule
+	err = ruleAdapt.Rule(w,r,accessLog,wafData.rules,tRoute)
+
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 
 	//&& (app.RedirectHTTPS || app.HSTSEnabled)
 	if r.TLS == nil && tRoute.Scheme == waf.Scheme_https {

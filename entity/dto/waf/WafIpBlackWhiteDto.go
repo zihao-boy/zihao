@@ -5,7 +5,10 @@ import (
 	"time"
 )
 
-
+const(
+	Waf_ip_black_white_type_W = "W"
+	Waf_ip_black_white_type_B = "B"
+)
 
 type WafIpBlackWhiteDto struct {
 	dto.PageDto

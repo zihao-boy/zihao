@@ -39,6 +39,9 @@ func (waf *WafServer) InitWafConfig(wafDataDto waf.SlaveWafDataDto) error {
 	//load route
 	wafData.routes = wafDataDto.Routes
 
+	// rule
+	wafData.rules = wafDataDto.Rules
+
 	if wafDataDto.Certs != nil && len(wafDataDto.Certs) > 0 {
 		for _, cert := range wafDataDto.Certs {
 			tlsCert, err := tls.X509KeyPair([]byte(cert.CertContent), []byte(cert.PrivKeyContent))

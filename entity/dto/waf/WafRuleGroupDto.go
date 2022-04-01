@@ -18,3 +18,4 @@ type WafRuleGroupDto struct {
 	CreateTime time.Time `json:"createTime" sql:"-"`
 	StatusCd   string    `json:"statusCd" sql:"-"`
 }
+

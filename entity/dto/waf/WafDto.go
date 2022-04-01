@@ -26,4 +26,5 @@ type SlaveWafDataDto struct {
 	Waf    WafDto               `json:"waf"`
 	Routes []*WafRouteDto        `json:"routes"`
 	Certs  []*WafHostnameCertDto `json:"certs"`
+	Rules []*WafRuleDataDto `json:"rules"`
 }

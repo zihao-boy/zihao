@@ -29,3 +29,8 @@ type WafRuleDto struct {
 	CreateTime time.Time `json:"createTime" sql:"-"`
 	StatusCd   string    `json:"statusCd" sql:"-"`
 }
+
+type WafRuleDataDto struct {
+	WafRuleDto
+	Ip *WafIpBlackWhiteDto `json:"ip"`
+}

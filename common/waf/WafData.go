@@ -11,6 +11,7 @@ type WafData struct {
 	wafDto   waf.WafDto
 	routes   []*waf.WafRouteDto
 	wafCerts []WafCert
+	rules []*waf.WafRuleDataDto
 }
 
 type WafCert struct {
