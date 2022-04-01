@@ -169,8 +169,6 @@ func initDbLink(dblinkDto dbLink.DbLinkDto) (*gorm.DB, error) {
 		url = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", dblinkDto.Username, dblinkDto.Password, dblinkDto.Ip, dblinkDto.Port, dblinkDto.DbName, "utf8")
 	)
 
-	fmt.Print(url)
-
 	db, err = gorm.Open(mysql.New(mysql.Config{
 		DSN:                       url,   // DSN data source name
 		DefaultStringSize:         256,   // string 类型字段的默认长度
