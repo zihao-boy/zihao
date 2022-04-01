@@ -1,0 +1,58 @@
+<div id = "chooseWafRuleGroupModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chooseWafRuleGroupModelLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="chooseWafRuleGroupModelLabel">选择安全组</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class=" row">
+                    <div class="col-lg-12">
+                        <div class="ibox ">
+                            <div class="row">
+
+                                <div class="col-sm-7 m-b-xs">
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="input-group">
+                                        <input placeholder="输入安全组名称" type="text" v-model="chooseWafRuleGroupInfo._currentWafRuleGroupName" class="form-control form-control-sm">
+                                        <span class="input-group-append">
+                                                <button type="button" class="btn btn-sm btn-primary" v-on:click="queryWafRuleGroups()">查询</button>
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive" style="margin-top:15px">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                                                        <th class="text-center">编号</th>
+                            <th class="text-center">组名称</th>
+                            <th class="text-center">组状态'</th>
+                            <th class="text-center">操作</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="wafRuleGroup in chooseWafRuleGroupInfo.wafRuleGroups">
+                                                                        <td class="text-center">{{wafRuleGroup.groupId}}</td>
+                            <td class="text-center">{{wafRuleGroup.groupName}}</td>
+                            <td class="text-center">{{wafRuleGroup.state}}</td>
+
+                                            <td>
+                                                <button class="btn btn-primary btn-xs" v-on:click="chooseWafRuleGroup(wafRuleGroup)">选择</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
