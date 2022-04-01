@@ -60,7 +60,8 @@
                 );
             },
             _openAddWafRuleModal: function () {
-                vc.emit('addWafRule', 'openAddWafRuleModal', {});
+                //vc.emit('addWafRule', 'openAddWafRuleModal', {});
+               vc.jumpToPage('/index.html#/pages/admin/wafIpBlackWhiteManage?tab=黑白名单')
             },
             _openEditWafRuleModel: function (_wafRule) {
                 vc.emit('editWafRule', 'openEditWafRuleModal', _wafRule);

@@ -25,8 +25,10 @@ from waf_ip_black_white t
 
 	`
 	query_wafIpBlackWhite string = `
-select t.*
+select t.*,wr.scope,wr.state,wr.seq,wrg.group_name,wrg.group_id
 from waf_ip_black_white t
+left join waf_rule wr on t.id = wr.obj_id and wr.obj_type = 'ip' and wr.status_cd = '0'
+left join waf_rule_group wrg on wr.group_id = wrg.group_id and wrg.status_cd = '0'
 					where t.status_cd = '0'
 					$if Id != '' then
 					and t.id = #Id#

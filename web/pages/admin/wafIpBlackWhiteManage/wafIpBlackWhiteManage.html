@@ -55,9 +55,12 @@
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                         <thead>
                             <tr>
-                                <th class="text-center">编号</th>
+                                <th class="text-center">安全组</th>
                                 <th class="text-center">类型</th>
                                 <th class="text-center">IP</th>
+                                <th class="text-center">范围</th>
+                                <th class="text-center">状态</th>
+                                <th class="text-center">顺序</th>
                                 <th class="text-center">创建时间</th>
 
                                 <th class="text-center">操作</th>
@@ -67,9 +70,13 @@
                         </thead>
                         <tbody>
                             <tr v-for="wafIpBlackWhite in wafIpBlackWhiteManageInfo.wafIpBlackWhites">
-                                <td class="text-center">{{wafIpBlackWhite.id}}</td>
+                                <td class="text-center">{{wafIpBlackWhite.groupName}}</td>
                                 <td class="text-center">{{wafIpBlackWhite.typeCd == 'B'?'黑名单':'白名单'}}</td>
                                 <td class="text-center">{{wafIpBlackWhite.ip}}</td>
+                                <td class="text-center">{{wafIpBlackWhite.scope}}</td>
+                                <td class="text-center">{{wafIpBlackWhite.state=='start'?'启用':'停用'}}</td>
+                                <td class="text-center">{{wafIpBlackWhite.seq}}</td>
+
                                 <td class="text-center">{{wafIpBlackWhite.createTime}}</td>
 
                                 <td class="text-center">

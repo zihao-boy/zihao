@@ -11,6 +11,7 @@ import (
 
 type WafIpBlackWhiteService struct {
 	wafDao             wafDao.WafIpBlackWhiteDao
+	wafRuleDao wafDao.WafRuleDao
 	wafHostnameCertDao wafDao.WafHostnameCertDao
 }
 
@@ -99,7 +100,20 @@ func (wafService *WafIpBlackWhiteService) SaveWafIpBlackWhites(ctx iris.Context)
 	if err != nil {
 		return result.Error(err.Error())
 	}
-
+	wafRuleDto := waf.WafRuleDto{
+		RuleId:seq.Generator(),
+		GroupId:wafDto.GroupId,
+		RuleName:wafDto.Ip,
+		Scope:wafDto.Scope,
+		ObjId:wafDto.Id,
+		ObjType:waf.Waf_obj_type_ip,
+		Seq:wafDto.Seq,
+		State:wafDto.State,
+	}
+	err = wafService.wafRuleDao.SaveWafRule(wafRuleDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
 	return result.SuccessData(wafDto)
 
 }
@@ -124,7 +138,28 @@ func (wafService *WafIpBlackWhiteService) UpdateWafIpBlackWhites(ctx iris.Contex
 	if err != nil {
 		return result.Error(err.Error())
 	}
+	qWafRuleDto := waf.WafRuleDto{
+		ObjId:wafDto.Id,
+		ObjType:waf.Waf_obj_type_ip,
+	}
+	qWafRuleDtos , _ := wafService.wafRuleDao.GetWafRules(qWafRuleDto)
 
+	if qWafRuleDtos == nil ||  len(qWafRuleDtos) <1{
+		return result.Success()
+	}
+
+	wafRuleDto := waf.WafRuleDto{
+		RuleId:qWafRuleDtos[0].RuleId,
+		GroupId:wafDto.GroupId,
+		RuleName:wafDto.Ip,
+		Scope:wafDto.Scope,
+		Seq:wafDto.Seq,
+		State:wafDto.State,
+	}
+	err = wafService.wafRuleDao.UpdateWafRule(wafRuleDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
 
 	return result.SuccessData(wafDto)
 
@@ -143,6 +178,24 @@ func (wafService *WafIpBlackWhiteService) DeleteWafIpBlackWhites(ctx iris.Contex
 	}
 
 	err = wafService.wafDao.DeleteWafIpBlackWhite(wafDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	qWafRuleDto := waf.WafRuleDto{
+		ObjId:wafDto.Id,
+		ObjType:waf.Waf_obj_type_ip,
+	}
+	qWafRuleDtos , _ := wafService.wafRuleDao.GetWafRules(qWafRuleDto)
+
+	if qWafRuleDtos == nil ||  len(qWafRuleDtos) <1{
+		return result.Success()
+	}
+
+	wafRuleDto := waf.WafRuleDto{
+		RuleId:qWafRuleDtos[0].RuleId,
+	}
+
+	err = wafService.wafRuleDao.DeleteWafRule(wafRuleDto)
 	if err != nil {
 		return result.Error(err.Error())
 	}

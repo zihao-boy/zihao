@@ -6,6 +6,11 @@
                 id: '',
                 typeCd: '',
                 ip: '',
+                scope:'*',
+                seq:'',
+                state:'start',
+                groupId:'',
+                wafRuleGroups:[]
 
             }
         },
@@ -15,6 +20,7 @@
         _initEvent: function() {
             vc.on('editWafIpBlackWhite', 'openEditWafIpBlackWhiteModal', function(_params) {
                 vc.component.refreshEditWafIpBlackWhiteInfo();
+                $that._listWafEditRuleGroups();
                 $('#editWafIpBlackWhiteModel').modal('show');
                 vc.copyObject(_params, vc.component.editWafIpBlackWhiteInfo);
             });
@@ -87,9 +93,36 @@
                     id: '',
                     typeCd: '',
                     ip: '',
+                    scope:'*',
+                    seq:'',
+                    state:'start',
+                    groupId:'',
+                    wafRuleGroups:[]
 
                 }
-            }
+            },
+            _listWafEditRuleGroups: function () {
+
+                var param = {
+                    params: {
+                        page:1,
+                        row:100
+                    }
+                };
+
+                //发送get请求
+                vc.http.apiGet('/firewall/getWafRuleGroup',
+                    param,
+                    function (json, res) {
+                        var _wafRuleGroupManageInfo = JSON.parse(json);
+                       
+                        vc.component.editWafIpBlackWhiteInfo.wafRuleGroups = _wafRuleGroupManageInfo.data;
+                       
+                    }, function (errInfo, error) {
+                        console.log('请求失败处理');
+                    }
+                );
+            },
         }
     });
 

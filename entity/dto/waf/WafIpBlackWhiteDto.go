@@ -9,6 +9,7 @@ import (
 
 type WafIpBlackWhiteDto struct {
 	dto.PageDto
+	WafRuleDto
 	Id    string    `json:"id"  `
 	TypeCd    string    `json:"typeCd" sql:"-" `
 	Ip  string    `json:"ip"  `

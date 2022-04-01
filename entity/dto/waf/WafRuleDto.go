@@ -11,12 +11,15 @@ const (
 	Waf_Rule_Obj_Type_Ip  = "IP"
 	Waf_Rule_Obj_Type_CC  = "CC"
 	Waf_Rule_Obj_Type_Location  = "Location"
+
+	Waf_obj_type_ip = "ip"
 )
 
 type WafRuleDto struct {
 	dto.PageDto
 	RuleId    string    `json:"ruleId" sql:"-" `
 	GroupId    string    `json:"groupId" sql:"-" `
+	GroupName    string    `json:"groupName" sql:"-" `
 	RuleName  string    `json:"ruleName" sql:"-" `
 	Scope  string    `json:"scope" `
 	ObjId  string    `json:"objId" sql:"-" `

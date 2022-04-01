@@ -48,9 +48,8 @@
                 <div class="ibox-title">
                     <h5>规则信息</h5>
                     <div class="ibox-tools" style="top:10px;">
-                        <button type="button" class="btn btn-primary btn-sm" v-on:click="_openAddWafRuleModal()">
-                            <i class="glyphicon glyphicon-plus"></i>
-                            添加
+                        <button type="button" class="btn btn-white btn-sm" v-on:click="_openAddWafRuleModal()">
+                            黑白名单
                         </button>
                     </div>
                 </div>
@@ -62,8 +61,6 @@
                                 <th class="text-center">规则名称</th>
                                 <th class="text-center">规则范围</th>
                                 <th class="text-center">规则类型</th>
-                                <th class="text-center">规则对象</th>
-                                
                                 <th class="text-center">优先级</th>
                                 <th class="text-center">创建时间</th>
                                 <th class="text-center">状态</th>
@@ -75,21 +72,15 @@
                                 <td class="text-center">{{wafRule.ruleName}}</td>
                                 <td class="text-center">{{wafRule.scope}}</td>
                                 <td class="text-center">{{wafRule.objType}}</td>
-                                <td class="text-center">{{wafRule.objId}}</td>
                                 <td class="text-center">{{wafRule.seq}}</td>
                                 <td class="text-center">{{wafRule.createTime}}</td>
                                 <td class="text-center">{{wafRule.state == 'start'?'启用':'停用'}}</td>
                                 <td class="text-center">
-                                    <div class="btn-group">
+                                    <div class="btn-group" >
                                         <button class="btn-white btn btn-xs"
-                                            v-on:click="_openEditWafRuleModel(wafRule)">修改</button>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn-white btn btn-xs"
-                                            v-on:click="_openDeleteWafRuleModel(wafRule)">删除</button>
+                                            v-on:click="_openEditWafRuleModel(wafRule)">{{wafRule.state == 'start'?'停用':'启用'}}</button>
                                     </div>
                                 </td>
-
                             </tr>
                         </tbody>
                         <tfoot>

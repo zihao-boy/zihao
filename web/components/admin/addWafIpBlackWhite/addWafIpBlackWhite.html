@@ -1,4 +1,5 @@
-<div id="addWafIpBlackWhiteModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div id="addWafIpBlackWhiteModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body">
@@ -7,25 +8,61 @@
                     <div>
                         <div>
                             <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">安全组</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="addWafIpBlackWhiteInfo.groupId">
+                                        <option selected disabled value="">必填，请选择安全组</option>
+                                        <option :value="item.groupId" v-for="(item,index) in addWafIpBlackWhiteInfo.wafRuleGroups">{{item.groupName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">规则范围</label>
+                                <div class="col-sm-10">
+                                    <input v-model="addWafIpBlackWhiteInfo.scope" type="text" placeholder="必填，请填写规则范围"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">类型</label>
                                 <div class="col-sm-10">
                                     <select class="custom-select" v-model="addWafIpBlackWhiteInfo.typeCd">
-                                            <option selected  disabled value="">必填，请选择类型</option>
-                                            <option  value="B">黑名单</option>
-                                            <option  value="W">白名单</option>
+                                        <option selected disabled value="">必填，请选择类型</option>
+                                        <option value="B">黑名单</option>
+                                        <option value="W">白名单</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">IP</label>
                                 <div class="col-sm-10">
-                                    <input v-model="addWafIpBlackWhiteInfo.ip" type="text" placeholder="必填，请填写IP" class="form-control">
+                                    <input v-model="addWafIpBlackWhiteInfo.ip" type="text" placeholder="必填，请填写IP"
+                                        class="form-control">
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">优先级</label>
+                                <div class="col-sm-10">
+                                  <input v-model="addWafIpBlackWhiteInfo.seq" type="number" placeholder="必填，请填写优先级" class="form-control">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">状态</label>
+                                <div class="col-sm-10">
+                                  <select class="custom-select" v-model="addWafIpBlackWhiteInfo.state">
+                                    <option selected disabled value="">必填，请选择状态</option>
+                                    <option value="start">启用</option>
+                                    <option value="stop">暂停</option>
+                                  </select>
+                                </div>
+                              </div>
 
                             <div class="ibox-content">
-                                <button class="btn btn-primary float-right" type="button" v-on:click="saveWafIpBlackWhiteInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
-                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;" data-dismiss="modal">取消</button>
+                                <button class="btn btn-primary float-right" type="button"
+                                    v-on:click="saveWafIpBlackWhiteInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;"
+                                    data-dismiss="modal">取消</button>
                             </div>
                         </div>
                     </div>
