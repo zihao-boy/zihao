@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>黑白名单信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewWafIpBlackWhiteInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectWafIpBlackWhiteInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择黑白名单</button>
+
+                    <button type="button" v-if="viewWafIpBlackWhiteInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddWafIpBlackWhiteInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加黑白名单</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >类型：</label>
+                            <label class="">{{viewWafIpBlackWhiteInfo.typeCd}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >IP'：</label>
+                            <label class="">{{viewWafIpBlackWhiteInfo.ip}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addWafIpBlackWhite"
+               callBackListener="viewWafIpBlackWhiteInfo"
+               callBackFunction="chooseWafIpBlackWhite"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseWafIpBlackWhite"
+               emitChooseWafIpBlackWhite="viewWafIpBlackWhiteInfo"
+               emitLoadData="viewWafIpBlackWhiteInfo"
+    ></vc:create>
+</div>

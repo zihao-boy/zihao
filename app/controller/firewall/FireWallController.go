@@ -12,6 +12,7 @@ type FirewallController struct {
 	wafAccessLogService wafService.WafAccessLogService
 	wafRuleGroupService wafService.WafRuleGroupService
 	wafRuleService wafService.WafRuleService
+	wafIpBlackWhiteService wafService.WafIpBlackWhiteService
 
 }
 
@@ -76,6 +77,14 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateWafRule", hero.Handler(aus.updateWafRule))
 
 	adinMenu.Post("/deleteWafRule", hero.Handler(aus.deleteWafRule))
+
+	adinMenu.Get("/getWafIpBlackWhite", hero.Handler(aus.getWafIpBlackWhite))
+
+	adinMenu.Post("/saveWafIpBlackWhite", hero.Handler(aus.saveWafIpBlackWhite))
+
+	adinMenu.Post("/updateWafIpBlackWhite", hero.Handler(aus.updateWafIpBlackWhite))
+
+	adinMenu.Post("/deleteWafIpBlackWhite", hero.Handler(aus.deleteWafIpBlackWhite))
 }
 
 /**
@@ -295,6 +304,43 @@ delete waf
 */
 func (aus *FirewallController) deleteWafRule(ctx iris.Context) {
 	reslut := aus.wafRuleService.DeleteWafRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getWafIpBlackWhite(ctx iris.Context) {
+	reslut := aus.wafIpBlackWhiteService.GetWafIpBlackWhites(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveWafIpBlackWhite(ctx iris.Context) {
+	reslut := aus.wafIpBlackWhiteService.SaveWafIpBlackWhites(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+update waf
+*/
+func (aus *FirewallController) updateWafIpBlackWhite(ctx iris.Context) {
+	reslut := aus.wafIpBlackWhiteService.UpdateWafIpBlackWhites(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteWafIpBlackWhite(ctx iris.Context) {
+	reslut := aus.wafIpBlackWhiteService.DeleteWafIpBlackWhites(ctx)
 
 	ctx.JSON(reslut)
 }
