@@ -37,12 +37,15 @@ func doRule(w http.ResponseWriter,
 
 	var (
 		ipRuleAdapt IpRuleAdapt
+		areaRuleAdapt AreaRuleAdapt
 	)
 	nextRule = true
 
 	switch {
 	case rule.ObjType == waf.Waf_obj_type_ip:
 		nextRule,err = ipRuleAdapt.validate(w, r, log, dto, rule)
+	case rule.ObjType == waf.Waf_obj_type_area:
+		nextRule,err = areaRuleAdapt.validate(w, r, log, dto, rule)
 	default:
 		err = nil
 		nextRule = true

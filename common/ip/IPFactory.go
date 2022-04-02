@@ -18,6 +18,13 @@ func InitIP() {
 	Service_IP = GetServerIp(config.G_AppConfig.ServerIpUrl)
 }
 
+func GetOnlyIpAddr(ip string) ResultQQwry {
+	qqWry := NewQQwry()
+
+	return qqWry.Find(ip)
+
+}
+
 func GetIpAddr(ips []string) map[string]ResultQQwry {
 	qqWry := NewQQwry()
 	rs := map[string]ResultQQwry{}

@@ -356,3 +356,19 @@ INSERT INTO `menu` VALUES ('700201904039', '黑白名单', '800201904006', '/ind
 INSERT INTO `privilege` VALUES ('500201904036', '黑白名单', '黑白名单', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/wafIpBlackWhiteManage', '700201904039');
 INSERT INTO `privilege_rel` VALUES ('68', '500201904036', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('69', '500201904036', '600201904002', '2019-04-01 08:18:29', '0');
+
+create table waf_area
+(
+    id          varchar(64) not null
+        primary key,
+    type_cd     varchar(64) not null,
+    area_name          longtext not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+
+INSERT INTO `menu` VALUES ('700201904040', '地理位置', '800201904006', '/index.html#/pages/admin/wafAreaManage', '6', '地理位置', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904040', '地理位置', '地理位置', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/wafAreaManage', '700201904040');
+INSERT INTO `privilege_rel` VALUES ('70', '500201904040', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('71', '500201904040', '600201904002', '2019-04-01 08:18:29', '0');

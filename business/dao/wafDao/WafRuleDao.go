@@ -28,6 +28,9 @@ from waf_rule t
 					$if ObjType != '' then
 					and t.obj_type = #ObjType#
 					$endif
+					$if ObjId != '' then
+					and t.obj_id = #ObjId#
+					$endif
 					$if State != '' then
 					and t.state = #State#
 					$endif
@@ -51,6 +54,9 @@ from waf_rule t
 					$endif
 					$if ObjType != '' then
 					and t.obj_type = #ObjType#
+					$endif
+					$if ObjId != '' then
+					and t.obj_id = #ObjId#
 					$endif
 					$if State != '' then
 					and t.state = #State#
