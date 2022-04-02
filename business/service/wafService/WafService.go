@@ -352,6 +352,8 @@ func (wafService *WafService) getRules(grops []*waf.WafRuleGroupDto) []*waf.WafR
 	}
 
 	for _,rule:= range wafRules{
+		ruleData = &waf.WafRuleDataDto{
+		}
 		objectConvert.Struct2Struct(rule,ruleData)
 
 		err := wafService.getRuleObject(ruleData)

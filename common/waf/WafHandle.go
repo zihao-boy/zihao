@@ -48,7 +48,7 @@ func RootHandle(w http.ResponseWriter, r *http.Request) {
 	err = ruleAdapt.Rule(w,r,accessLog,wafData.rules,tRoute)
 
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		w.Write([]byte("梓豪平台提醒您，"+err.Error()))
 		return
 	}
 

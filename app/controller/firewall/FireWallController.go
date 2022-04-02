@@ -68,6 +68,7 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/saveWafRuleGroup", hero.Handler(aus.saveWafRuleGroup))
 
 	adinMenu.Post("/updateWafRuleGroup", hero.Handler(aus.updateWafRuleGroup))
+	adinMenu.Post("/startWafRuleGroup", hero.Handler(aus.startWafRuleGroup))
 
 	adinMenu.Post("/deleteWafRuleGroup", hero.Handler(aus.deleteWafRuleGroup))
 
@@ -151,6 +152,8 @@ func (aus *FirewallController) refreshWafConfig(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+
 
 
 
@@ -264,6 +267,17 @@ func (aus *FirewallController) updateWafRuleGroup(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+
+/**
+delete waf
+*/
+func (aus *FirewallController) startWafRuleGroup(ctx iris.Context) {
+	reslut := aus.wafRuleGroupService.StartWafRuleGroup(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 /**
 delete waf

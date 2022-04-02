@@ -150,3 +150,32 @@ func (wafService *WafRuleGroupService) DeleteWafRuleGroups(ctx iris.Context) res
 	return result.SuccessData(wafDto)
 
 }
+
+func (wafService *WafRuleGroupService) StartWafRuleGroup(ctx iris.Context) interface{} {
+	var (
+		err    error
+		wafDto waf.WafRuleGroupDto
+	)
+	if err = ctx.ReadJSON(&wafDto); err != nil {
+		return result.Error("解析入参失败")
+	}
+
+	tmpWafRuleGroupDto := waf.WafRuleGroupDto{
+		State:waf.Waf_Rule_Group_State_F,
+	}
+	err = wafService.wafDao.UpdateWafRuleGroup(tmpWafRuleGroupDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+	tmpWafRuleGroupDto = waf.WafRuleGroupDto{
+		State:waf.Waf_Rule_Group_State_T,
+		GroupId: wafDto.GroupId,
+	}
+	err = wafService.wafDao.UpdateWafRuleGroup(tmpWafRuleGroupDto)
+	if err != nil {
+		return result.Error(err.Error())
+	}
+
+
+	return result.SuccessData(wafDto)
+}

@@ -80,6 +80,30 @@
             },
             _openToRulePage:function(_wafRuleGroup){
                 vc.jumpToPage('/index.html#/pages/admin/wafRuleManage?groupId='+_wafRuleGroup.groupId);
+            },
+            _openStartRuleGroupModel:function(_wafRuleGroup){
+                vc.http.apiPost(
+                    '/firewall/startWafRuleGroup',
+                    JSON.stringify(_wafRuleGroup),
+                    {
+                        emulateJSON: true
+                    },
+                    function (json, res) {
+                        //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
+                        let _json = JSON.parse(json);
+                        if (_json.code == 0) {
+                            //关闭model
+                            vc.toast('启动成功');
+                            vc.emit('wafRuleGroupManage', 'listWafRuleGroup', {});
+                            return;
+                        }
+                        vc.toast(_json.msg);
+                    },
+                    function (errInfo, error) {
+                        console.log('请求失败处理');
+
+                        vc.toast(errInfo);
+                    });
             }
 
 
