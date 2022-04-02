@@ -45,10 +45,11 @@ func RootHandle(w http.ResponseWriter, r *http.Request) {
 	refreshAccessLogByRoute(&accessLog,tRoute)
 
 	// rule
-	err = ruleAdapt.Rule(w,r,accessLog,wafData.rules,tRoute)
+	err = ruleAdapt.Rule(w,r,&accessLog,wafData.rules,tRoute)
 
 	if err != nil {
-		w.Write([]byte("梓豪平台提醒您，"+err.Error()))
+		w.Write([]byte("梓豪平台提醒您，"+err.Error()+"\n"))
+
 		return
 	}
 
