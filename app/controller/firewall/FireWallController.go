@@ -55,6 +55,8 @@ func FirewallControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/saveWafAccessLog", hero.Handler(aus.saveWafAccessLog))
 
+	adinMenu.Get("/loadIps", hero.Handler(aus.loadIps))
+
 	//query platform data
 	adinMenu.Get("/getWafAccessLogMap", hero.Handler(aus.getWafAccessLogMap))
 
@@ -250,6 +252,9 @@ func (aus *FirewallController) saveWafAccessLog(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+func (aus *FirewallController) loadIps(ctx iris.Context)  {
+	aus.wafAccessLogService.LoadIps(ctx)
+}
 
 /**
 query waf

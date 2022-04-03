@@ -4,7 +4,9 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/ip"
+	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"net"
 	"net/http"
@@ -23,6 +25,9 @@ type WafServer struct {
 // start waf
 func (waf *WafServer) StartWaf(wafDataDto waf.SlaveWafDataDto) error {
 	waf.InitWafConfig(wafDataDto)
+
+	//init ip sets
+	go waf.initIps()
 
 	gateMux := http.NewServeMux()
 	gateMux.HandleFunc("/", RootHandle)
@@ -132,6 +137,24 @@ func (waf *WafServer) startHttpsServer(httpsPort string, ctxGateMux http.Handler
 		return
 	}
 	defer wafServer.httpListeners.Close()
+}
+
+func (waf *WafServer) initIps() {
+
+	mastIp, isExist := config.Prop.Property("mastIp")
+	if !isExist {
+		mastIp = "127.0.0.1:7000"
+	}
+	url := "http://" + mastIp + "/app/firewall/loadIps"
+	data := map[string]interface{}{}
+	resp, err := httpReq.SendRequest(url, data, nil,"GET")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	ip.IPData.InitIPDataByByte(resp)
+
 }
 
 // GetCertificateByDomain ...
