@@ -1,12 +1,16 @@
 package wafService
 
 import (
+	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/ip"
+	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
+	"io"
+	"os"
 	"strconv"
 	"time"
 )
@@ -221,4 +225,29 @@ func (wafService *WafAccessLogService) DeleteWafAccessLogs(ctx iris.Context) res
 
 	return result.SuccessData(wafDto)
 
+}
+
+// load ips
+func (wafService *WafAccessLogService) LoadIps(ctx iris.Context) {
+	var (
+		err     error
+	)
+
+	file, err := os.Open(config.G_AppConfig.IpData)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+
+	stat, _ := file.Stat()
+	responseWriter := ctx.ResponseWriter()
+	responseWriter.Header().Set("Content-Type", "application/octet-stream")
+	responseWriter.Header().Set("Content-Length", strconv.FormatInt(stat.Size(), 10))
+	responseWriter.Header().Set("Content-Disposition", "attachment; filename="+file.Name())
+	//responseWriter.Write(content)
+	io.Copy(responseWriter, file)
+	responseWriter.Flush()
 }

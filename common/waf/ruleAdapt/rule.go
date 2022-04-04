@@ -6,7 +6,7 @@ import (
 )
 
 func Rule(w http.ResponseWriter, r *http.Request,
-	accessLog waf.WafAccessLogDto,
+	accessLog *waf.WafAccessLogDto,
 	rules []*waf.WafRuleDataDto,
 	tRouteDto *waf.WafRouteDto) error {
 
@@ -31,18 +31,21 @@ func Rule(w http.ResponseWriter, r *http.Request,
 
 func doRule(w http.ResponseWriter,
 	r *http.Request,
-	log waf.WafAccessLogDto,
+	log *waf.WafAccessLogDto,
 	dto *waf.WafRouteDto,
 	rule *waf.WafRuleDataDto) (nextRule bool, err error) {
 
 	var (
 		ipRuleAdapt IpRuleAdapt
+		areaRuleAdapt AreaRuleAdapt
 	)
 	nextRule = true
 
 	switch {
 	case rule.ObjType == waf.Waf_obj_type_ip:
 		nextRule,err = ipRuleAdapt.validate(w, r, log, dto, rule)
+	case rule.ObjType == waf.Waf_obj_type_area:
+		nextRule,err = areaRuleAdapt.validate(w, r, log, dto, rule)
 	default:
 		err = nil
 		nextRule = true

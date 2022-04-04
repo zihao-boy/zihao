@@ -13,6 +13,7 @@ const (
 	Waf_Rule_Obj_Type_Location  = "Location"
 
 	Waf_obj_type_ip = "ip"
+	Waf_obj_type_area = "area"
 )
 
 type WafRuleDto struct {
@@ -33,4 +34,6 @@ type WafRuleDto struct {
 type WafRuleDataDto struct {
 	WafRuleDto
 	Ip *WafIpBlackWhiteDto `json:"ip"`
+	Area *WafAreaDto `json:"area"`
+
 }

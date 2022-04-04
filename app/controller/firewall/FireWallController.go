@@ -13,6 +13,8 @@ type FirewallController struct {
 	wafRuleGroupService wafService.WafRuleGroupService
 	wafRuleService wafService.WafRuleService
 	wafIpBlackWhiteService wafService.WafIpBlackWhiteService
+	wafAreaService wafService.WafAreaService
+
 
 }
 
@@ -53,6 +55,8 @@ func FirewallControllerRouter(party iris.Party) {
 
 	adinMenu.Post("/saveWafAccessLog", hero.Handler(aus.saveWafAccessLog))
 
+	adinMenu.Get("/loadIps", hero.Handler(aus.loadIps))
+
 	//query platform data
 	adinMenu.Get("/getWafAccessLogMap", hero.Handler(aus.getWafAccessLogMap))
 
@@ -68,6 +72,7 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/saveWafRuleGroup", hero.Handler(aus.saveWafRuleGroup))
 
 	adinMenu.Post("/updateWafRuleGroup", hero.Handler(aus.updateWafRuleGroup))
+	adinMenu.Post("/startWafRuleGroup", hero.Handler(aus.startWafRuleGroup))
 
 	adinMenu.Post("/deleteWafRuleGroup", hero.Handler(aus.deleteWafRuleGroup))
 
@@ -86,6 +91,14 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateWafIpBlackWhite", hero.Handler(aus.updateWafIpBlackWhite))
 
 	adinMenu.Post("/deleteWafIpBlackWhite", hero.Handler(aus.deleteWafIpBlackWhite))
+
+	adinMenu.Get("/getWafArea", hero.Handler(aus.getWafArea))
+
+	adinMenu.Post("/saveWafArea", hero.Handler(aus.saveWafArea))
+
+	adinMenu.Post("/updateWafArea", hero.Handler(aus.updateWafArea))
+
+	adinMenu.Post("/deleteWafArea", hero.Handler(aus.deleteWafArea))
 }
 
 /**
@@ -151,6 +164,8 @@ func (aus *FirewallController) refreshWafConfig(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+
 
 
 
@@ -237,6 +252,9 @@ func (aus *FirewallController) saveWafAccessLog(ctx iris.Context) {
 	ctx.JSON(reslut)
 }
 
+func (aus *FirewallController) loadIps(ctx iris.Context)  {
+	aus.wafAccessLogService.LoadIps(ctx)
+}
 
 /**
 query waf
@@ -264,6 +282,17 @@ func (aus *FirewallController) updateWafRuleGroup(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+
+/**
+delete waf
+*/
+func (aus *FirewallController) startWafRuleGroup(ctx iris.Context) {
+	reslut := aus.wafRuleGroupService.StartWafRuleGroup(ctx)
+
+	ctx.JSON(reslut)
+}
+
 
 /**
 delete waf
@@ -344,6 +373,43 @@ delete waf
 */
 func (aus *FirewallController) deleteWafIpBlackWhite(ctx iris.Context) {
 	reslut := aus.wafIpBlackWhiteService.DeleteWafIpBlackWhites(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getWafArea(ctx iris.Context) {
+	reslut := aus.wafAreaService.GetWafAreas(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveWafArea(ctx iris.Context) {
+	reslut := aus.wafAreaService.SaveWafAreas(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+update waf
+*/
+func (aus *FirewallController) updateWafArea(ctx iris.Context) {
+	reslut := aus.wafAreaService.UpdateWafAreas(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteWafArea(ctx iris.Context) {
+	reslut := aus.wafAreaService.DeleteWafAreas(ctx)
 
 	ctx.JSON(reslut)
 }

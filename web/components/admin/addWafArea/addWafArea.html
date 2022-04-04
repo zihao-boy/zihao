@@ -1,0 +1,103 @@
+<div id="addWafAreaModel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 class="m-t-none m-b ">添加</h3>
+                <div class="ibox-content">
+                    <div>
+                        <div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">安全组</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="addWafAreaInfo.groupId">
+                                        <option selected disabled value="">必填，请选择安全组</option>
+                                        <option :value="item.groupId"
+                                            v-for="(item,index) in addWafAreaInfo.wafRuleGroups">{{item.groupName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">规则范围</label>
+                                <div class="col-sm-10">
+                                    <input v-model="addWafAreaInfo.scope" type="text" placeholder="必填，请填写规则范围"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">类型</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="addWafAreaInfo.typeCd">
+                                        <option selected disabled value="">必填，请选择类型</option>
+                                        <option value="B">限制</option>
+                                        <option value="W">放行</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">地区</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="addWafAreaInfo.china">
+                                        <option selected disabled value="">必填，请选择类型</option>
+                                        <option value="Y">国内</option>
+                                        <option value="N">国外</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row" v-if="addWafAreaInfo.china == 'Y'">
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <div class="checkbox custom-control-inline"
+                                        v-for="(item,index) in addWafAreaInfo.chinaAreas">
+                                        <label>
+                                            <input type="checkbox" v-model="addWafAreaInfo.areaNames" :value="item">
+                                            {{item}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row" v-else>
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <div class="checkbox custom-control-inline"
+                                        v-for="(item,index) in addWafAreaInfo.foreignAreas">
+                                        <label>
+                                            <input type="checkbox" v-model="addWafAreaInfo.areaNames" :value="item">
+                                            {{item}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">优先级</label>
+                                <div class="col-sm-10">
+                                    <input v-model="addWafAreaInfo.seq" type="number" placeholder="必填，请填写优先级"
+                                        class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">状态</label>
+                                <div class="col-sm-10">
+                                    <select class="custom-select" v-model="addWafAreaInfo.state">
+                                        <option selected disabled value="">必填，请选择状态</option>
+                                        <option value="start">启用</option>
+                                        <option value="stop">暂停</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="ibox-content">
+                                <button class="btn btn-primary float-right" type="button"
+                                    v-on:click="saveWafAreaInfo()"><i class="fa fa-check"></i>&nbsp;保存</button>
+                                <button type="button" class="btn btn-warning float-right" style="margin-right:20px;"
+                                    data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -352,6 +352,8 @@ func (wafService *WafService) getRules(grops []*waf.WafRuleGroupDto) []*waf.WafR
 	}
 
 	for _,rule:= range wafRules{
+		ruleData = &waf.WafRuleDataDto{
+		}
 		objectConvert.Struct2Struct(rule,ruleData)
 
 		err := wafService.getRuleObject(ruleData)
@@ -368,6 +370,8 @@ func (wafService *WafService) getRules(grops []*waf.WafRuleGroupDto) []*waf.WafR
 
 func (wafService *WafService) getRuleObject(data *waf.WafRuleDataDto) error {
 	var wafIpBlackWhiteDao wafDao.WafIpBlackWhiteDao
+	var wafAreaDao wafDao.WafAreaDao
+
 	if data.ObjType == waf.Waf_obj_type_ip{
 		tWafIp := waf.WafIpBlackWhiteDto{
 			Id:data.ObjId,
@@ -379,6 +383,17 @@ func (wafService *WafService) getRuleObject(data *waf.WafRuleDataDto) error {
 			return errors.New("未包含ip")
 		}
 		data.Ip = wafIps[0]
+	}else if data.ObjType == waf.Waf_obj_type_area{
+		tWafArea := waf.WafAreaDto{
+			Id:data.ObjId,
+		}
+
+		wafAreas ,_:= wafAreaDao.GetWafAreas(tWafArea)
+
+		if wafAreas == nil || len(wafAreas) < 1{
+			return errors.New("未包含ip")
+		}
+		data.Area = wafAreas[0]
 	}
 
 	return nil

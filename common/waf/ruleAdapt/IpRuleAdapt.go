@@ -14,7 +14,7 @@ type IpRuleAdapt struct {
 
 func (ip *IpRuleAdapt)validate(w http.ResponseWriter,
 	r *http.Request,
-	log waf.WafAccessLogDto,
+	log *waf.WafAccessLogDto,
 	dto *waf.WafRouteDto,
 	rule *waf.WafRuleDataDto) (nextRule bool,err error) {
 
@@ -22,16 +22,22 @@ func (ip *IpRuleAdapt)validate(w http.ResponseWriter,
 		nextRule,err = ip.whiteValidate(w,r,log,dto,rule)
 	}else{
 		nextRule,err = ip.blackValidate(w,r,log,dto,rule)
-
 	}
 
-	return false,nil;
+	if err != nil{
+		log.State = waf.State_custom_whiteip
+		log.Message = "黑白名单"
+	}
+
+
+
+	return nextRule,err;
 }
 
 // white ip
 func (ip *IpRuleAdapt) whiteValidate(w http.ResponseWriter,
 	r *http.Request,
-	log waf.WafAccessLogDto,
+	log *waf.WafAccessLogDto,
 	dto *waf.WafRouteDto,
 	rule *waf.WafRuleDataDto) (bool,error) {
 	srcIp := log.XRealIp
@@ -41,6 +47,9 @@ func (ip *IpRuleAdapt) whiteValidate(w http.ResponseWriter,
 		return false,errors.New("您当前没有权限访问")
 	}
 
+	if rule.Ip == nil{
+		return true,nil
+	}
 	ruleIp := rule.Ip.Ip
 
 	ruleIps := strings.Split(ruleIp,".")
@@ -88,7 +97,7 @@ func (ip *IpRuleAdapt) whiteValidate(w http.ResponseWriter,
 // black ip
 func (ip *IpRuleAdapt) blackValidate(w http.ResponseWriter,
 	r *http.Request,
-	log waf.WafAccessLogDto,
+	log *waf.WafAccessLogDto,
 	dto *waf.WafRouteDto,
 	rule *waf.WafRuleDataDto) (bool,error) {
 	srcIp := log.XRealIp

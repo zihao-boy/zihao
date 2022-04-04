@@ -14,6 +14,15 @@ import (
 // IPData IP库的数据
 var IPData fileData
 
+func (f *fileData) InitIPDataByByte(tmpData []byte)  {
+	f.Data = tmpData
+	buf := f.Data[0:8]
+	start := binary.LittleEndian.Uint32(buf[:4])
+	end := binary.LittleEndian.Uint32(buf[4:])
+
+	f.IPNum = int64((end-start)/IndexLen + 1)
+}
+
 // InitIPData 初始化ip库数据到内存中
 func (f *fileData) InitIPData() (rs interface{}) {
 	var tmpData []byte
