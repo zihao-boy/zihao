@@ -1406,3 +1406,21 @@ INSERT INTO `menu` VALUES ('700201904040', '地理位置', '800201904006', '/ind
 INSERT INTO `privilege` VALUES ('500201904040', '地理位置', '地理位置', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/wafAreaManage', '700201904040');
 INSERT INTO `privilege_rel` VALUES ('70', '500201904040', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('71', '500201904040', '600201904002', '2019-04-01 08:18:29', '0');
+
+create table waf_cc
+(
+    id          varchar(64) not null
+        primary key,
+    path     varchar(512) not null,
+    visit_count   varchar(12)    not null,
+    visit_sec   varchar(12)    not null,
+    block_sec   varchar(12)    not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+
+INSERT INTO `menu` VALUES ('700201904041', 'CC防护', '800201904006', '/index.html#/pages/admin/wafCCManage', '7', 'CC防护', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904041', '地理位置', '地理位置', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/wafCCManage', '700201904041');
+INSERT INTO `privilege_rel` VALUES ('72', '500201904041', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('73', '500201904041', '600201904002', '2019-04-01 08:18:29', '0');

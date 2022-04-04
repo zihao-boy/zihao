@@ -14,6 +14,7 @@ const (
 
 	Waf_obj_type_ip = "ip"
 	Waf_obj_type_area = "area"
+	Waf_obj_type_cc = "cc"
 )
 
 type WafRuleDto struct {

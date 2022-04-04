@@ -14,6 +14,7 @@ type FirewallController struct {
 	wafRuleService wafService.WafRuleService
 	wafIpBlackWhiteService wafService.WafIpBlackWhiteService
 	wafAreaService wafService.WafAreaService
+	wafCCService wafService.WafCCService
 
 
 }
@@ -99,6 +100,14 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateWafArea", hero.Handler(aus.updateWafArea))
 
 	adinMenu.Post("/deleteWafArea", hero.Handler(aus.deleteWafArea))
+
+	adinMenu.Get("/getWafCC", hero.Handler(aus.getWafCC))
+
+	adinMenu.Post("/saveWafCC", hero.Handler(aus.saveWafCC))
+
+	adinMenu.Post("/updateWafCC", hero.Handler(aus.updateWafCC))
+
+	adinMenu.Post("/deleteWafCC", hero.Handler(aus.deleteWafCC))
 }
 
 /**
@@ -410,6 +419,43 @@ delete waf
 */
 func (aus *FirewallController) deleteWafArea(ctx iris.Context) {
 	reslut := aus.wafAreaService.DeleteWafAreas(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getWafCC(ctx iris.Context) {
+	reslut := aus.wafCCService.GetWafCCs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveWafCC(ctx iris.Context) {
+	reslut := aus.wafCCService.SaveWafCCs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+update waf
+*/
+func (aus *FirewallController) updateWafCC(ctx iris.Context) {
+	reslut := aus.wafCCService.UpdateWafCCs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteWafCC(ctx iris.Context) {
+	reslut := aus.wafCCService.DeleteWafCCs(ctx)
 
 	ctx.JSON(reslut)
 }
