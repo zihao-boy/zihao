@@ -36,5 +36,6 @@ type WafRuleDataDto struct {
 	WafRuleDto
 	Ip *WafIpBlackWhiteDto `json:"ip"`
 	Area *WafAreaDto `json:"area"`
+	CC *WafCCDto `json:"cc"`
 
 }

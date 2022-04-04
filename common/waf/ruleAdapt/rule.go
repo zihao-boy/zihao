@@ -38,6 +38,7 @@ func doRule(w http.ResponseWriter,
 	var (
 		ipRuleAdapt IpRuleAdapt
 		areaRuleAdapt AreaRuleAdapt
+		ccRuleAdapt CCRuleAdapt
 	)
 	nextRule = true
 
@@ -46,6 +47,8 @@ func doRule(w http.ResponseWriter,
 		nextRule,err = ipRuleAdapt.validate(w, r, log, dto, rule)
 	case rule.ObjType == waf.Waf_obj_type_area:
 		nextRule,err = areaRuleAdapt.validate(w, r, log, dto, rule)
+	case rule.ObjType == waf.Waf_obj_type_cc:
+		nextRule,err = ccRuleAdapt.validate(w, r, log, dto, rule)
 	default:
 		err = nil
 		nextRule = true
