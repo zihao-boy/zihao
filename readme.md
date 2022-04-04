@@ -27,7 +27,7 @@ https://www.bilibili.com/video/BV1BM4y1w7Ti?spm_id_from=333.999.0.0
 
 ### 5.0 文档
 
-[梓豪相关文档](https://github.com/zihao-boy/zihao/wiki)
+[梓豪相关文档](http://bbs.homecommunity.cn/document.html?docId=102022040475300252)
 
 ### 6.0 功能列表
  
