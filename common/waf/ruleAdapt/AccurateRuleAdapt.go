@@ -24,8 +24,8 @@ func (accurate *AccurateRuleAdapt) validate(w http.ResponseWriter,
 	}
 
 	if err != nil {
-		log.State = waf.State_cc
-		log.Message = "Accurate防护"
+		log.State = waf.State_custom_custom
+		log.Message = "精准防护"
 	}
 
 	return nextRule, err

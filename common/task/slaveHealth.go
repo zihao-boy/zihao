@@ -131,7 +131,7 @@ func SlaveHealth() {
 		select {
 		// … do some stuff
 		case <-heartbeat:
-			fmt.Println("*")
+			//fmt.Println("*")
 			//… do heartbeat stuff
 			doSlaveHealth()
 		}
