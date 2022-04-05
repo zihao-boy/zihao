@@ -391,4 +391,17 @@ INSERT INTO `privilege` VALUES ('500201904041', '地理位置', '地理位置', 
 INSERT INTO `privilege_rel` VALUES ('72', '500201904041', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('73', '500201904041', '600201904002', '2019-04-01 08:18:29', '0');
 
+create table waf_accurate
+(
+    id          varchar(64)  not null
+        primary key,
+    action varchar(12) not null ,
+    type_cd        varchar(12) not null,
+    include varchar(512)  not null,
+    include_value   varchar(512)  not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+
 
