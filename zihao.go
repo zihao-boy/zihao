@@ -15,6 +15,7 @@ import (
 
 /**
  * project address：https://github.com/zihao-boy/zihao.git
+ * doc address: http://bbs.homecommunity.cn/document.html?docId=102022040475300252
  * author ：wuxw
  * email: 928255095@qq.com
  */

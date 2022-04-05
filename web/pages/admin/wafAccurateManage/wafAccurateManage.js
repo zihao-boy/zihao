@@ -6,8 +6,8 @@
     var DEFAULT_ROWS = 10;
     vc.extends({
         data: {
-            wafCCManageInfo: {
-                wafCCs: [],
+            wafAccurateManageInfo: {
+                wafAccurates: [],
                 total: 0,
                 records: 1,
                 moreCondition: false,
@@ -21,36 +21,36 @@
             }
         },
         _initMethod: function() {
-            vc.component._listWafCCs(DEFAULT_PAGE, DEFAULT_ROWS);
+            vc.component._listWafAccurates(DEFAULT_PAGE, DEFAULT_ROWS);
         },
         _initEvent: function() {
 
-            vc.on('wafCCManage', 'listWafCC', function(_param) {
-                vc.component._listWafCCs(DEFAULT_PAGE, DEFAULT_ROWS);
+            vc.on('wafAccurateManage', 'listWafAccurate', function(_param) {
+                vc.component._listWafAccurates(DEFAULT_PAGE, DEFAULT_ROWS);
             });
             vc.on('pagination', 'page_event', function(_currentPage) {
-                vc.component._listWafCCs(_currentPage, DEFAULT_ROWS);
+                vc.component._listWafAccurates(_currentPage, DEFAULT_ROWS);
             });
         },
         methods: {
-            _listWafCCs: function(_page, _rows) {
+            _listWafAccurates: function(_page, _rows) {
 
-                vc.component.wafCCManageInfo.conditions.page = _page;
-                vc.component.wafCCManageInfo.conditions.row = _rows;
+                vc.component.wafAccurateManageInfo.conditions.page = _page;
+                vc.component.wafAccurateManageInfo.conditions.row = _rows;
                 var param = {
-                    params: vc.component.wafCCManageInfo.conditions
+                    params: vc.component.wafAccurateManageInfo.conditions
                 };
 
                 //发送get请求
-                vc.http.apiGet('/firewall/getWafCC',
+                vc.http.apiGet('/firewall/getWafAccurate',
                     param,
                     function(json, res) {
-                        var _wafCCManageInfo = JSON.parse(json);
-                        vc.component.wafCCManageInfo.total = _wafCCManageInfo.total;
-                        vc.component.wafCCManageInfo.records = _wafCCManageInfo.records;
-                        vc.component.wafCCManageInfo.wafCCs = _wafCCManageInfo.data;
+                        var _wafAccurateManageInfo = JSON.parse(json);
+                        vc.component.wafAccurateManageInfo.total = _wafAccurateManageInfo.total;
+                        vc.component.wafAccurateManageInfo.records = _wafAccurateManageInfo.records;
+                        vc.component.wafAccurateManageInfo.wafAccurates = _wafAccurateManageInfo.data;
                         vc.emit('pagination', 'init', {
-                            total: vc.component.wafCCManageInfo.records,
+                            total: vc.component.wafAccurateManageInfo.records,
                             currentPage: _page
                         });
                     },
@@ -59,24 +59,24 @@
                     }
                 );
             },
-            _openAddWafCCModal: function() {
-                vc.emit('addWafCC', 'openAddWafCCModal', {});
+            _openAddWafAccurateModal: function() {
+                vc.emit('addWafAccurate', 'openAddWafAccurateModal', {});
             },
-            _openEditWafCCModel: function(_wafCC) {
-                vc.emit('editWafCC', 'openEditWafCCModal', _wafCC);
+            _openEditWafAccurateModel: function(_wafAccurate) {
+                vc.emit('editWafAccurate', 'openEditWafAccurateModal', _wafAccurate);
             },
-            _openDeleteWafCCModel: function(_wafCC) {
-                vc.emit('deleteWafCC', 'openDeleteWafCCModal', _wafCC);
+            _openDeleteWafAccurateModel: function(_wafAccurate) {
+                vc.emit('deleteWafAccurate', 'openDeleteWafAccurateModal', _wafAccurate);
             },
-            _queryWafCCMethod: function() {
-                vc.component._listWafCCs(DEFAULT_PAGE, DEFAULT_ROWS);
+            _queryWafAccurateMethod: function() {
+                vc.component._listWafAccurates(DEFAULT_PAGE, DEFAULT_ROWS);
 
             },
             _moreCondition: function() {
-                if (vc.component.wafCCManageInfo.moreCondition) {
-                    vc.component.wafCCManageInfo.moreCondition = false;
+                if (vc.component.wafAccurateManageInfo.moreCondition) {
+                    vc.component.wafAccurateManageInfo.moreCondition = false;
                 } else {
-                    vc.component.wafCCManageInfo.moreCondition = true;
+                    vc.component.wafAccurateManageInfo.moreCondition = true;
                 }
             }
 

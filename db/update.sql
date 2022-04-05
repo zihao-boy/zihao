@@ -403,5 +403,9 @@ create table waf_accurate
     status_cd   varchar(2) default '0' not null
 );
 
+INSERT INTO `menu` VALUES ('700201904042', '精准防护', '800201904006', '/index.html#/pages/admin/wafAccurateManage', '7', 'CC防护', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904042', '精准防护', '精准防护', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/wafAccurateManage', '700201904042');
+INSERT INTO `privilege_rel` VALUES ('74', '500201904042', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('75', '500201904042', '600201904002', '2019-04-01 08:18:29', '0');
 
 
