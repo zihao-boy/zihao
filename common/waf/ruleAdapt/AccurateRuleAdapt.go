@@ -11,16 +11,16 @@ import (
 type AccurateRuleAdapt struct {
 }
 
-func (acurate *AccurateRuleAdapt) validate(w http.ResponseWriter,
+func (accurate *AccurateRuleAdapt) validate(w http.ResponseWriter,
 	r *http.Request,
 	log *waf.WafAccessLogDto,
 	dto *waf.WafRouteDto,
 	rule *waf.WafRuleDataDto) (nextRule bool, err error) {
 
 	if rule.Accurate.Action == waf.Waf_ip_black_white_type_W {
-		nextRule, err = acurate.whiteValidate(w, r, log, dto, rule)
+		nextRule, err = accurate.whiteValidate(w, r, log, dto, rule)
 	} else {
-		nextRule, err = acurate.blackValidate(w, r, log, dto, rule)
+		nextRule, err = accurate.blackValidate(w, r, log, dto, rule)
 	}
 
 	if err != nil {
@@ -32,7 +32,7 @@ func (acurate *AccurateRuleAdapt) validate(w http.ResponseWriter,
 }
 
 // white accurate
-func (acurate *AccurateRuleAdapt) whiteValidate(w http.ResponseWriter,
+func (accurate *AccurateRuleAdapt) whiteValidate(w http.ResponseWriter,
 	r *http.Request,
 	log *waf.WafAccessLogDto,
 	dto *waf.WafRouteDto,
@@ -45,7 +45,7 @@ func (acurate *AccurateRuleAdapt) whiteValidate(w http.ResponseWriter,
 	)
 
 	// has in
-	includeFlag = acurate.hasMatch(rule, log, headerKey, headerValue, r)
+	includeFlag = accurate.hasMatch(rule, log, headerKey, headerValue, r)
 
 	if rule.Accurate.Include == "Y" && includeFlag {
 		return true, nil
@@ -58,7 +58,7 @@ func (acurate *AccurateRuleAdapt) whiteValidate(w http.ResponseWriter,
 }
 
 // black ip
-func (acurate *AccurateRuleAdapt) blackValidate(w http.ResponseWriter,
+func (accurate *AccurateRuleAdapt) blackValidate(w http.ResponseWriter,
 	r *http.Request,
 	log *waf.WafAccessLogDto,
 	dto *waf.WafRouteDto,
@@ -70,7 +70,7 @@ func (acurate *AccurateRuleAdapt) blackValidate(w http.ResponseWriter,
 	)
 
 	// has in
-	includeFlag = acurate.hasMatch(rule, log, headerKey, headerValue, r)
+	includeFlag = accurate.hasMatch(rule, log, headerKey, headerValue, r)
 
 	if rule.Accurate.Include == "Y" && includeFlag {
 		return false, errors.New("该资源无法访问")
@@ -82,7 +82,7 @@ func (acurate *AccurateRuleAdapt) blackValidate(w http.ResponseWriter,
 	return true, nil
 }
 
-func (acurate *AccurateRuleAdapt) hasMatch(rule *waf.WafRuleDataDto, log *waf.WafAccessLogDto, headerKey string, headerValue string, r *http.Request) bool {
+func (accurate *AccurateRuleAdapt) hasMatch(rule *waf.WafRuleDataDto, log *waf.WafAccessLogDto, headerKey string, headerValue string, r *http.Request) bool {
 	var includeFlag bool
 	if rule.Accurate.TypeCd == waf.Waf_accurate_type_url {
 		includeFlag = strings.Contains(log.Url, rule.Accurate.IncludeValue)
