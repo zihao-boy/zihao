@@ -262,8 +262,6 @@ func (wafService *WafService) StopWaff(ctx iris.Context) interface{} {
 
 }
 
-
-
 func (wafService *WafService) RefreshWafConfig(ctx iris.Context) interface{} {
 	var (
 		err    error
@@ -290,11 +288,12 @@ func (wafService *WafService) RefreshWafConfig(ctx iris.Context) interface{} {
 	return result.SuccessData(wafDto)
 }
 
+// get waf config
 func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDto {
 	var (
 		wafRouteDao        wafDao.WafRouteDao
 		wafHostnameCertDao wafDao.WafHostnameCertDao
-		wafRuleGroupDao wafDao.WafRuleGroupDao
+		wafRuleGroupDao    wafDao.WafRuleGroupDao
 	)
 
 	wafHostsDto := waf.WafHostsDto{
@@ -321,48 +320,45 @@ func (wafService *WafService) getWafConfig(wafDto waf.WafDto) waf.SlaveWafDataDt
 
 	return waf.SlaveWafDataDto{
 		ServerIpUrl: config.G_AppConfig.ServerIpUrl,
-		Waf:    wafDto,
-		Routes: routes,
-		Certs:  certs,
-		Rules:rules,
+		Waf:         wafDto,
+		Routes:      routes,
+		Certs:       certs,
+		Rules:       rules,
 	}
-
 
 }
 
 func (wafService *WafService) getRules(grops []*waf.WafRuleGroupDto) []*waf.WafRuleDataDto {
-	if grops == nil || len(grops) < 1{
+	if grops == nil || len(grops) < 1 {
 		return nil
 	}
 	var (
 		wafRuleDao wafDao.WafRuleDao
-		rules []*waf.WafRuleDataDto
-		ruleData *waf.WafRuleDataDto
+		rules      []*waf.WafRuleDataDto
+		ruleData   *waf.WafRuleDataDto
 	)
-
-
 
 	tWafRuleDto := waf.WafRuleDto{
 		GroupId: grops[0].GroupId,
 	}
-	wafRules ,_ := wafRuleDao.GetWafRules(tWafRuleDto)
+	wafRules, _ := wafRuleDao.GetWafRules(tWafRuleDto)
 
-	if wafRules == nil || len(wafRules) < 1{
+	if wafRules == nil || len(wafRules) < 1 {
 		return nil
 	}
 
-	for _,rule:= range wafRules{
+	for _, rule := range wafRules {
 		ruleData = &waf.WafRuleDataDto{
 		}
-		objectConvert.Struct2Struct(rule,ruleData)
+		objectConvert.Struct2Struct(rule, ruleData)
 
 		err := wafService.getRuleObject(ruleData)
 
-		if err != nil{
+		if err != nil {
 			continue
 		}
 
-		rules = append(rules,ruleData)
+		rules = append(rules, ruleData)
 	}
 
 	return rules
@@ -372,39 +368,51 @@ func (wafService *WafService) getRuleObject(data *waf.WafRuleDataDto) error {
 	var wafIpBlackWhiteDao wafDao.WafIpBlackWhiteDao
 	var wafAreaDao wafDao.WafAreaDao
 	var wafCCDao wafDao.WafCCDao
-	if data.ObjType == waf.Waf_obj_type_ip{
+	var wafAccurateDao wafDao.WafAccurateDao
+	if data.ObjType == waf.Waf_obj_type_ip {
 		tWafIp := waf.WafIpBlackWhiteDto{
-			Id:data.ObjId,
+			Id: data.ObjId,
 		}
 
-		wafIps ,_:= wafIpBlackWhiteDao.GetWafIpBlackWhites(tWafIp)
+		wafIps, _ := wafIpBlackWhiteDao.GetWafIpBlackWhites(tWafIp)
 
-		if wafIps == nil || len(wafIps) < 1{
+		if wafIps == nil || len(wafIps) < 1 {
 			return errors.New("未包含ip")
 		}
 		data.Ip = wafIps[0]
-	}else if data.ObjType == waf.Waf_obj_type_area{
+	} else if data.ObjType == waf.Waf_obj_type_area {
 		tWafArea := waf.WafAreaDto{
-			Id:data.ObjId,
+			Id: data.ObjId,
 		}
 
-		wafAreas ,_:= wafAreaDao.GetWafAreas(tWafArea)
+		wafAreas, _ := wafAreaDao.GetWafAreas(tWafArea)
 
-		if wafAreas == nil || len(wafAreas) < 1{
+		if wafAreas == nil || len(wafAreas) < 1 {
 			return errors.New("未包含ip")
 		}
 		data.Area = wafAreas[0]
-	}else if data.ObjType == waf.Waf_obj_type_cc{
+	} else if data.ObjType == waf.Waf_obj_type_cc {
 		tWafCC := waf.WafCCDto{
-			Id:data.ObjId,
+			Id: data.ObjId,
 		}
 
-		wafCCs ,_:= wafCCDao.GetWafCCs(tWafCC)
+		wafCCs, _ := wafCCDao.GetWafCCs(tWafCC)
 
-		if wafCCs == nil || len(wafCCs) < 1{
+		if wafCCs == nil || len(wafCCs) < 1 {
 			return errors.New("未包含ip")
 		}
 		data.CC = wafCCs[0]
+	} else if data.ObjType == waf.Waf_obj_type_accurate {
+		tWafAccurate := waf.WafAccurateDto{
+			Id: data.ObjId,
+		}
+
+		wafAccurates, _ := wafAccurateDao.GetWafAccurates(tWafAccurate)
+
+		if wafAccurates == nil || len(wafAccurates) < 1 {
+			return errors.New("未包含ip")
+		}
+		data.Accurate = wafAccurates[0]
 	}
 
 	return nil

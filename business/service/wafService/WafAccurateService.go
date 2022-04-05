@@ -106,7 +106,7 @@ func (wafService *WafAccurateService) SaveWafAccurates(ctx iris.Context) result.
 		RuleName:wafDto.Action,
 		Scope:wafDto.Scope,
 		ObjId:wafDto.Id,
-		ObjType:waf.Waf_obj_type_cc,
+		ObjType:waf.Waf_obj_type_accurate,
 		Seq:wafDto.Seq,
 		State:wafDto.State,
 	}
@@ -140,7 +140,7 @@ func (wafService *WafAccurateService) UpdateWafAccurates(ctx iris.Context) resul
 	}
 	qWafRuleDto := waf.WafRuleDto{
 		ObjId:wafDto.Id,
-		ObjType:waf.Waf_obj_type_cc,
+		ObjType:waf.Waf_obj_type_accurate,
 	}
 	qWafRuleDtos , _ := wafService.wafRuleDao.GetWafRules(qWafRuleDto)
 

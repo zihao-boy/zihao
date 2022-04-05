@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	Waf_accurate_type_url = "url"
+	Waf_accurate_type_header = "header"
+
+)
 
 type WafAccurateDto struct {
 	dto.PageDto

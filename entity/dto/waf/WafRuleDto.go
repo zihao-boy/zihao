@@ -15,6 +15,7 @@ const (
 	Waf_obj_type_ip = "ip"
 	Waf_obj_type_area = "area"
 	Waf_obj_type_cc = "cc"
+	Waf_obj_type_accurate = "accurate"
 )
 
 type WafRuleDto struct {
@@ -37,5 +38,6 @@ type WafRuleDataDto struct {
 	Ip *WafIpBlackWhiteDto `json:"ip"`
 	Area *WafAreaDto `json:"area"`
 	CC *WafCCDto `json:"cc"`
+	Accurate *WafAccurateDto `json:"accurate"`
 
 }
