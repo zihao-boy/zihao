@@ -35,6 +35,8 @@ require (
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/shopspring/decimal v1.3.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
+	github.com/songgao/packets v0.0.0-20160404182456-549a10cd4091
+	github.com/songgao/water v0.0.0-20200317203138-2b4b6d7c09d8
 	github.com/tklauser/go-sysconf v0.3.9 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
