@@ -119,6 +119,8 @@ func (ts *TunServer) Stop() {
 		recover()
 	}()
 
+	ts.TunConn.Close()
+
 	close(ts.InputChan)
 	ts.RouteMap.Clear()
 }
