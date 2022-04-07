@@ -53,6 +53,12 @@ func SlaveControllerRouter(party iris.Party) {
 	adinUser.Post("/stopWaf", hero.Handler(aus.stopWaf))
 
 	adinUser.Post("/refreshWafConfig", hero.Handler(aus.refreshWafConfig))
+
+	adinUser.Post("/startVpn", hero.Handler(aus.startVpn))
+
+	adinUser.Post("/stopVpn", hero.Handler(aus.stopVpn))
+
+	adinUser.Post("/refreshVpnConfig", hero.Handler(aus.refreshVpnConfig))
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -154,6 +160,27 @@ func (aus *SlaveController) refreshWafConfig(ctx iris.Context) {
 	ctx.JSON(relustDto)
 }
 
+
+
+//开启容器
+func (aus *SlaveController) startVpn(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StartVpn(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+
+//停止容器
+func (aus *SlaveController) stopVpn(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StopVpn(ctx)
+	ctx.JSON(relustDto)
+}
+
+//开启容器
+func (aus *SlaveController) refreshVpnConfig(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.RefreshVpnConfig(ctx)
+	ctx.JSON(relustDto)
+}
 
 
 

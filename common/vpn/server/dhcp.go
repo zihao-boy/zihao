@@ -2,24 +2,24 @@ package server
 
 import (
 	"fmt"
-	"github.com/zihao-boy/zihao/common/vpn/config"
 	"github.com/zihao-boy/zihao/common/vpn/header"
+	"github.com/zihao-boy/zihao/entity/dto/vpn"
 )
 
 type Dhcp struct {
-	Cfg     *config.Config
-	Ip      uint32
-	Mask    uint32
-	UsedIps map[uint32]bool
+	VpnDataDto *vpn.SlaveVpnDataDto
+	Ip         uint32
+	Mask       uint32
+	UsedIps    map[uint32]bool
 }
 
-func NewDhcp(cfg *config.Config) *Dhcp {
-	ip, mask := header.ParseNet(cfg.Tun)
+func NewDhcp(vpnDataDto *vpn.SlaveVpnDataDto) *Dhcp {
+	ip, mask := header.ParseNet(vpnDataDto.Vpn.Tun)
 	return &Dhcp{
-		Cfg:     cfg,
-		Ip:      header.Str2IP(ip),
-		Mask:    header.MaskNumber2Mask(mask),
-		UsedIps: map[uint32]bool{},
+		VpnDataDto: vpnDataDto,
+		Ip:         header.Str2IP(ip),
+		Mask:       header.MaskNumber2Mask(mask),
+		UsedIps:    map[uint32]bool{},
 	}
 }
 

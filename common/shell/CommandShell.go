@@ -10,6 +10,7 @@ import (
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
+	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"io"
 	"io/ioutil"
@@ -431,3 +432,121 @@ func ExecRefreshWafConfig(waf waf.SlaveWafDataDto) (result.ResultDto, error) {
 	return resultDto, nil
 }
 
+
+
+
+
+func ExecStartVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&vpn)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, vpnHost := range vpn.Vpn.VpnHosts {
+		tmpHostDto := host.HostDto{
+			HostId: vpnHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/startVpn", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+
+func ExecStopVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&vpn)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, vpnHost := range vpn.Vpn.VpnHosts {
+		tmpHostDto := host.HostDto{
+			HostId: vpnHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/stopVpn", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+func ExecRefreshVpnConfig(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&vpn)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, vpnHost := range vpn.Vpn.VpnHosts {
+		tmpHostDto := host.HostDto{
+			HostId: vpnHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshVpnConfig", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}

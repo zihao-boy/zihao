@@ -1249,3 +1249,57 @@ INSERT INTO `menu` VALUES ('700201904042', '精准防护', '800201904006', '/ind
 INSERT INTO `privilege` VALUES ('500201904042', '精准防护', '精准防护', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/wafAccurateManage', '700201904042');
 INSERT INTO `privilege_rel` VALUES ('74', '500201904042', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('75', '500201904042', '600201904002', '2019-04-01 08:18:29', '0');
+
+create table vpn
+(
+    vpn_id      varchar(64) not null
+        primary key,
+    vpn_port    varchar(64) not null,
+    tun        varchar(64) not null,
+    tun_name  varchar(64) not null,
+    dns  varchar(64) not null,
+    protocol  varchar(64) not null,
+    state       varchar(12) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+insert into vpn(vpn_id, vpn_port, tun, tun_name, dns, protocol, state) VALUES ('1','5555','192.168.1.0/24','virName','8.8.8.8','tcp','2002');
+
+create table vpn_hosts
+(
+    vpn_host_id varchar(64) not null
+        primary key,
+    vpn_id      varchar(64) not null,
+    host_id     varchar(64) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+create table vpn_users
+(
+    user_id varchar(64) not null
+        primary key,
+    username      varchar(64) not null,
+    password     varchar(64) not null,
+    tel varchar(64) not null,
+    ip     varchar(64) not null,
+    login_time datetime not null ,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+
+INSERT INTO `menu_group` VALUES ('800201904014', '虚拟组网', 'fa fa-globe', '', '8', '虚拟组网', '2019-04-01 07:55:51', '0', 'P_WEB');
+
+
+INSERT INTO `menu` VALUES ('700201904043', '中心节点', '800201904014', '/index.html#/pages/admin/vpnManage', '1', '中心节点', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904043', '中心节点', '中心节点', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/vpnManage', '700201904043');
+INSERT INTO `privilege_rel` VALUES ('76', '500201904043', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('77', '500201904043', '600201904002', '2019-04-01 08:18:29', '0');
+
+
+INSERT INTO `menu` VALUES ('700201904044', '组网电脑', '800201904014', '/index.html#/pages/admin/vpnUserManage', '1', '组网电脑', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904044', '组网电脑', '组网电脑', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/vpnUserManage', '700201904044');
+INSERT INTO `privilege_rel` VALUES ('78', '500201904044', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('79', '500201904044', '600201904002', '2019-04-01 08:18:29', '0');

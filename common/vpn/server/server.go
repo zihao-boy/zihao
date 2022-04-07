@@ -1,19 +1,25 @@
 package server
 
 import (
-	"github.com/zihao-boy/zihao/common/vpn/config"
+	"github.com/zihao-boy/zihao/entity/dto/vpn"
 )
 // start server
 
-func StartServer(cfg *config.Config) error {
+var (
+	loginManager  *LoginManager
 
-	loginManager, err := NewLoginManager(cfg)
+	tcpServer *TcpServer
+)
+
+func StartServer(vpnDataDto vpn.SlaveVpnDataDto) (err error) {
+
+	loginManager, err = NewLoginManager(vpnDataDto)
 
 	if err != nil {
 		return err
 	}
 
-	tcpServer, err := NewTcpServer(cfg, loginManager)
+	tcpServer, err = NewTcpServer(vpnDataDto, loginManager)
 	if err != nil {
 		return err
 	}
@@ -21,5 +27,17 @@ func StartServer(cfg *config.Config) error {
 	loginManager.Start()
 	tcpServer.Start()
 
+	return nil
+}
+
+func StopServer() error {
+	if loginManager == nil{
+		return nil
+	}
+	if tcpServer == nil{
+		return nil
+	}
+	loginManager.Stop()
+	tcpServer.Stop()
 	return nil
 }

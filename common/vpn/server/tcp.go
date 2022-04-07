@@ -1,28 +1,27 @@
 package server
 
 import (
-	"github.com/zihao-boy/zihao/common/vpn/config"
 	"github.com/zihao-boy/zihao/common/vpn/io"
+	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"net"
-
 )
 
 type TcpServer struct {
 	Addr         string
-	Cfg          *config.Config
+	VpnDataDto   *vpn.SlaveVpnDataDto
 	TcpListener  net.Listener
 	LoginManager *LoginManager
 }
 
-func NewTcpServer(cfg *config.Config, loginManager *LoginManager) (*TcpServer, error) {
-	tcpListener, err := net.Listen("tcp", cfg.ServerAddr)
+func NewTcpServer(vpnDataDto vpn.SlaveVpnDataDto, loginManager *LoginManager) (*TcpServer, error) {
+	tcpListener, err := net.Listen("tcp", ":"+vpnDataDto.Vpn.VpnPort)
 	if err != nil {
 		return nil, err
 	}
 
 	return &TcpServer{
-		Addr:         cfg.ServerAddr,
-		Cfg:          cfg,
+		Addr:         ":" + vpnDataDto.Vpn.VpnPort,
+		VpnDataDto:   &vpnDataDto,
 		TcpListener:  tcpListener,
 		LoginManager: loginManager,
 	}, nil

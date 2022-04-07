@@ -5,13 +5,12 @@ import (
 	"github.com/songgao/water"
 	"github.com/zihao-boy/zihao/common/vpn/cache"
 	"github.com/zihao-boy/zihao/common/vpn/header"
-	"github.com/zihao-boy/zihao/common/vpn/server"
 	"runtime"
 	"time"
 )
 
 var TUNCHANBUFFSIZE = 1024
-
+var READBUFFERSIZE = 65535
 type TunServer struct {
 	TunConn *water.Interface
 	//Key: clientProtocol:clientIP:clientPort  Value: chan string
@@ -36,6 +35,10 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 		iface, err = water.New(water.Config{
 			DeviceType: water.TAP,
 		})
+	}else if(sysType == "darwin"){
+		iface, err = water.New(water.Config{
+			DeviceType: water.TUN,
+		})
 	} else {
 		config := water.Config{
 			DeviceType: water.TAP,
@@ -59,7 +62,7 @@ func (ts *TunServer) Start() {
 		}()
 
 		for {
-			data := make([]byte, server.READBUFFERSIZE)
+			data := make([]byte, READBUFFERSIZE)
 			if n, err := ts.TunConn.Read(data); err == nil && n > 0 {
 				if proto, src, dst, err := header.GetBase(data); err == nil {
 					key := proto + ":" + dst + ":" + src

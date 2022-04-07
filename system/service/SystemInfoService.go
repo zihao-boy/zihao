@@ -9,6 +9,7 @@ import (
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
+	"github.com/zihao-boy/zihao/common/vpn/server"
 	wafServer "github.com/zihao-boy/zihao/common/waf"
 	"github.com/zihao-boy/zihao/common/zips"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
@@ -16,6 +17,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/ls"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
+	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"io"
 	"io/ioutil"
@@ -515,6 +517,55 @@ func (s *SystemInfoService) StopWaf(ctx iris.Context) (result.ResultDto, error) 
 }
 
 func (s *SystemInfoService) RefreshWafConfig(ctx iris.Context)  (result.ResultDto, error){
+	var (
+		err       error
+		wafDataDto waf.SlaveWafDataDto
+		wafServer wafServer.WafServer
+	)
+
+	if err = ctx.ReadJSON(&wafDataDto); err != nil {
+		fmt.Print(err)
+		return result.Error(err.Error()), nil
+	}
+	err = wafServer.InitWafConfig(wafDataDto)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+
+// start waf
+func (s *SystemInfoService) StartVpn(ctx iris.Context) (result.ResultDto, error) {
+	var (
+		err       error
+		vpnDataDto vpn.SlaveVpnDataDto
+	)
+
+	if err = ctx.ReadJSON(&vpnDataDto); err != nil {
+		fmt.Print(err)
+		return result.Error(err.Error()), nil
+	}
+	err = server.StartServer(vpnDataDto)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+// stop waf
+func (s *SystemInfoService) StopVpn(ctx iris.Context) (result.ResultDto, error) {
+	var (
+		err       error
+	)
+	err = server.StopServer()
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) RefreshVpnConfig(ctx iris.Context)  (result.ResultDto, error){
 	var (
 		err       error
 		wafDataDto waf.SlaveWafDataDto
