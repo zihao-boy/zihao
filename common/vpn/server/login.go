@@ -2,7 +2,9 @@ package server
 
 import (
 	"fmt"
+	"github.com/zihao-boy/zihao/common/vpn/encrypt"
 	"github.com/zihao-boy/zihao/common/vpn/iface"
+	"github.com/zihao-boy/zihao/common/vpn/io"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"net"
 	"sync"
@@ -12,7 +14,7 @@ const Mtu = 1500
 type LoginManager struct {
 	//key: clientProtocol:clientIP:clientPort  value: key for AES
 	Users    map[string]*User
-	Tokens   map[string]bool
+	Tokens   map[string]vpn.VpnUserDto
 	VpnDataDto      *vpn.SlaveVpnDataDto
 	TunServer  *iface.TunServer
 	DhcpServer *Dhcp
@@ -27,32 +29,46 @@ func NewLoginManager(vpnDataDto vpn.SlaveVpnDataDto) (*LoginManager, error) {
 
 	lm := &LoginManager{
 		Users:      map[string]*User{},
-		Tokens:     map[string]bool{},
+		Tokens:     map[string]vpn.VpnUserDto{},
 		VpnDataDto:       & vpnDataDto,
 		TunServer:  tunServer,
 		DhcpServer: NewDhcp(&vpnDataDto),
 	}
 
 	for _, user := range vpnDataDto.Users {
-		lm.Tokens[user.Token] = true
+		lm.Tokens[user.Token] = *user
 	}
 	return lm, nil
 }
 
-func (lm *LoginManager) Login(client string, protocol string, token string) error {
+func (lm *LoginManager) Login(client string, protocol string, token string,conn net.Conn) error {
 	defer lm.Mutex.Unlock()
 	lm.Mutex.Lock()
-	if _, ok := lm.Tokens[token]; ok {
+	if vpnUser, ok := lm.Tokens[token]; ok {
 		if user, ok := lm.Users[client]; ok {
 			user.Close()
 		}
-		localTunIp, err := lm.DhcpServer.ApplyIp()
+		var localTunIp string
+		var  err error
+		if vpnUser.Ip == "0.0.0.0"{
+			localTunIp, err = lm.DhcpServer.ApplyIp()
+		}else{
+			localTunIp,err = vpnUser.Ip,nil
+		}
 		if err != nil {
 			return err
 		}
 
 		user := NewUser(client, protocol, localTunIp, token, nil, lm.Logout)
 		lm.Users[client] = user
+		encryptKey := encrypt.GetAESKey([]byte(user.Token))
+
+		if endata, err := encrypt.EncryptAES([]byte("ip="+localTunIp), encryptKey); err == nil {
+			if user.Protocol == "tcp" {
+				_, err = io.WritePacket(user.Conn, endata)
+
+			}
+		}
 
 		return nil
 	}

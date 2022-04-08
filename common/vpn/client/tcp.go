@@ -10,6 +10,9 @@ import (
 	"github.com/zihao-boy/zihao/common/vpn/io"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"net"
+	"os/exec"
+	"runtime"
+	"strings"
 )
 
 type TcpClient struct {
@@ -45,12 +48,15 @@ func NewTcpClient(vpnClientDto *vpn.VpnClientDto) (*TcpClient, error) {
 }
 
 func (tc *TcpClient) writeToServer() {
-	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username+tc.VpnClientDto.Password)))
-	data := make([]byte, 1500*2)
+	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username + tc.VpnClientDto.Password)))
+	data := make([]byte, 1500)
 	for {
-		if n, err := tc.TunConn.Read(data); err == nil && n > 0 {
-			if protocol, src, dst, err := header.GetBase(data); err == nil {
-				if endata, err := encrypt.EncryptAES(data[:n], encryptKey); err == nil {
+		n, err := tc.TunConn.Read(data)
+		if err == nil && n > 0 {
+			protocol, src, dst, err := header.GetBase(data)
+			if err == nil {
+				endata, err := encrypt.EncryptAES(data[:n], encryptKey)
+				if err == nil {
 					io.WritePacket(tc.TcpConn, endata)
 					fmt.Println("ToServer: protocol:%v, len:%v, src:%v, dst:%v", protocol, n, src, dst)
 				}
@@ -59,15 +65,50 @@ func (tc *TcpClient) writeToServer() {
 	}
 }
 
+// sudo ifconfig utun7 192.168.2.4 255.255.255.0 up
+// sudo route -n add -net 192.168.2.0 -netmask 255.255.255.0 192.168.2.4
 func (tc *TcpClient) readFromServer() error {
-	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username+tc.VpnClientDto.Password)))
+	var (
+		cmd *exec.Cmd
+	)
+	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username + tc.VpnClientDto.Password)))
 	for {
 		if data, err := io.ReadPacket(tc.TcpConn); err == nil {
 			if data, err = encrypt.DecryptAES(data, encryptKey); err == nil {
 				if protocol, src, dst, err := header.GetBase(data); err == nil {
 					tc.TunConn.Write(data)
 					fmt.Println("FromServer: protocol:%v, len:%v, src:%v, dst:%v", protocol, len(data), src, dst)
+					continue
 				}
+				ipData := string(data)
+				if !strings.HasPrefix(ipData, "ip=") {
+					continue
+				}
+				fmt.Println("ipData",ipData)
+				ipData = ipData[2:]
+				fmt.Println("ipData2",ipData)
+
+				//setting tun
+
+				sysType := runtime.GOOS
+				if sysType == "windows" {
+					cmd = exec.Command("cmd", "/C", "ipconfig "+tc.TunConn.Name()+" "+ipData+" 255.255.255.0 up")
+					cmd.CombinedOutput()
+					ipDatas := strings.Split(ipData, ".")
+					ipDatas[3] = "0"
+					nIpData := strings.Join(ipDatas, ".")
+					cmd = exec.Command("cmd", "-c", "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData)
+					cmd.CombinedOutput()
+				} else {
+					cmd = exec.Command("bash", "-c", "ifconfig "+tc.TunConn.Name()+" "+ipData+" 255.255.255.0 up")
+					cmd.CombinedOutput()
+					ipDatas := strings.Split(ipData, ".")
+					ipDatas[3] = "0"
+					nIpData := strings.Join(ipDatas, ".")
+					cmd = exec.Command("bash", "-c", "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData)
+					cmd.CombinedOutput()
+				}
+
 			}
 		}
 	}
@@ -77,7 +118,7 @@ func (tc *TcpClient) login() error {
 	//if len(tc.Cfg.Tokens) <= 0 {
 	//	return fmt.Errorf("no token provided")
 	//}
-	data := []byte(encrypt2.Md5(tc.VpnClientDto.Username+tc.VpnClientDto.Password))
+	data := []byte(encrypt2.Md5(tc.VpnClientDto.Username + tc.VpnClientDto.Password))
 	if _, err := io.WritePacket(tc.TcpConn, data); err != nil {
 		return err
 	}

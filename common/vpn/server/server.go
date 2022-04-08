@@ -56,7 +56,7 @@ func InitVpnConfig(vpnDataDto vpn.SlaveVpnDataDto) error {
 		}
 	}
 	for _, user := range vpnDataDto.Users {
-		loginManager.Tokens[user.Token] = true
+		loginManager.Tokens[user.Token] = *user
 	}
 	return nil
 }
