@@ -85,7 +85,7 @@ func (tc *TcpClient) readFromServer() error {
 					continue
 				}
 				fmt.Println("ipData",ipData)
-				ipData = ipData[2:]
+				ipData = ipData[3:]
 				fmt.Println("ipData2",ipData)
 
 				//setting tun
@@ -100,12 +100,16 @@ func (tc *TcpClient) readFromServer() error {
 					cmd = exec.Command("cmd", "-c", "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData)
 					cmd.CombinedOutput()
 				} else {
-					cmd = exec.Command("bash", "-c", "ifconfig "+tc.TunConn.Name()+" "+ipData+" 255.255.255.0 up")
+					shellCmd := "ifconfig "+tc.TunConn.Name()+" "+ipData+" 255.255.255.0 up"
+					cmd = exec.Command("bash", "-c", shellCmd)
+					fmt.Println(shellCmd)
 					cmd.CombinedOutput()
 					ipDatas := strings.Split(ipData, ".")
 					ipDatas[3] = "0"
 					nIpData := strings.Join(ipDatas, ".")
-					cmd = exec.Command("bash", "-c", "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData)
+					shellCmd = "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData
+					fmt.Println(shellCmd)
+					cmd = exec.Command("bash", "-c", shellCmd)
 					cmd.CombinedOutput()
 				}
 
