@@ -568,15 +568,14 @@ func (s *SystemInfoService) StopVpn(ctx iris.Context) (result.ResultDto, error) 
 func (s *SystemInfoService) RefreshVpnConfig(ctx iris.Context)  (result.ResultDto, error){
 	var (
 		err       error
-		wafDataDto waf.SlaveWafDataDto
-		wafServer wafServer.WafServer
+		vpnDataDto vpn.SlaveVpnDataDto
 	)
 
-	if err = ctx.ReadJSON(&wafDataDto); err != nil {
+	if err = ctx.ReadJSON(&vpnDataDto); err != nil {
 		fmt.Print(err)
 		return result.Error(err.Error()), nil
 	}
-	err = wafServer.InitWafConfig(wafDataDto)
+	err = server.InitVpnConfig(vpnDataDto)
 	if err != nil {
 		return result.Error(err.Error()), nil
 	}

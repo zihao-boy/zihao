@@ -28,3 +28,11 @@ type SlaveVpnDataDto struct {
 	Vpn         VpnDto `json:"vpn"`
 	Users      []*VpnUserDto
 }
+
+type VpnClientDto struct {
+	ServerAddr string `json:"serverAddr"`
+	TunName      string `json:"tunName"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+
+}

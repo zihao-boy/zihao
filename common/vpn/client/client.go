@@ -1,11 +1,11 @@
 package client
 
-import "github.com/zihao-boy/zihao/common/vpn/config"
+import "github.com/zihao-boy/zihao/entity/dto/vpn"
 
-func StartClient(cfg *config.Config) error {
+func StartClient(vpnClientDto *vpn.VpnClientDto) error {
 	var tcpClient *TcpClient
 	var err error
-	if tcpClient, err = NewTcpClient(cfg); err != nil {
+	if tcpClient, err = NewTcpClient(vpnClientDto); err != nil {
 		return err;
 	}
 	err = tcpClient.Start()

@@ -36,9 +36,11 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 			DeviceType: water.TAP,
 		})
 	}else if(sysType == "darwin"){
-		iface, err = water.New(water.Config{
+		config := water.Config{
 			DeviceType: water.TUN,
-		})
+		}
+		config.Name = tname
+		iface, err = water.New(config)
 	} else {
 		config := water.Config{
 			DeviceType: water.TUN,

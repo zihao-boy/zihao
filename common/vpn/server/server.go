@@ -1,6 +1,7 @@
 package server
 
 import (
+	encrypt2 "github.com/zihao-boy/zihao/common/encrypt"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
 )
 // start server
@@ -12,6 +13,12 @@ var (
 )
 
 func StartServer(vpnDataDto vpn.SlaveVpnDataDto) (err error) {
+
+	if vpnDataDto.Users != nil && len(vpnDataDto.Users)>0{
+		for _,user:= range vpnDataDto.Users{
+			user.Token = encrypt2.Md5(user.Username+user.Password)
+		}
+	}
 
 	loginManager, err = NewLoginManager(vpnDataDto)
 
@@ -39,5 +46,17 @@ func StopServer() error {
 	}
 	loginManager.Stop()
 	tcpServer.Stop()
+	return nil
+}
+
+func InitVpnConfig(vpnDataDto vpn.SlaveVpnDataDto) error {
+	if vpnDataDto.Users != nil && len(vpnDataDto.Users)>0{
+		for _,user:= range vpnDataDto.Users{
+			user.Token = encrypt2.Md5(user.Username+user.Password)
+		}
+	}
+	for _, user := range vpnDataDto.Users {
+		loginManager.Tokens[user.Token] = true
+	}
 	return nil
 }

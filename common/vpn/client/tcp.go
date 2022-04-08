@@ -3,23 +3,24 @@ package client
 import (
 	"fmt"
 	"github.com/songgao/water"
-	"github.com/zihao-boy/zihao/common/vpn/config"
+	encrypt2 "github.com/zihao-boy/zihao/common/encrypt"
 	"github.com/zihao-boy/zihao/common/vpn/encrypt"
 	"github.com/zihao-boy/zihao/common/vpn/header"
 	"github.com/zihao-boy/zihao/common/vpn/iface"
 	"github.com/zihao-boy/zihao/common/vpn/io"
+	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"net"
 )
 
 type TcpClient struct {
-	ServerAdd string
-	Cfg       *config.Config
-	TcpConn   *net.TCPConn
-	TunConn   *water.Interface
+	ServerAdd    string
+	VpnClientDto *vpn.VpnClientDto
+	TcpConn      *net.TCPConn
+	TunConn      *water.Interface
 }
 
-func NewTcpClient(cfg *config.Config) (*TcpClient, error) {
-	saddr, tname, mtu := cfg.ServerAddr, cfg.TunName, cfg.Mtu
+func NewTcpClient(vpnClientDto *vpn.VpnClientDto) (*TcpClient, error) {
+	saddr, tname, mtu := vpnClientDto.ServerAddr, vpnClientDto.TunName, 1500
 	addr, err := net.ResolveTCPAddr("", saddr)
 	if err != nil {
 		return nil, err
@@ -36,15 +37,15 @@ func NewTcpClient(cfg *config.Config) (*TcpClient, error) {
 	}
 
 	return &TcpClient{
-		ServerAdd: saddr,
-		Cfg:       cfg,
-		TcpConn:   conn,
-		TunConn:   tun.TunConn,
+		ServerAdd:    saddr,
+		VpnClientDto: vpnClientDto,
+		TcpConn:      conn,
+		TunConn:      tun.TunConn,
 	}, nil
 }
 
 func (tc *TcpClient) writeToServer() {
-	encryptKey := encrypt.GetAESKey([]byte(tc.Cfg.Tokens[0]))
+	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username+tc.VpnClientDto.Password)))
 	data := make([]byte, 1500*2)
 	for {
 		if n, err := tc.TunConn.Read(data); err == nil && n > 0 {
@@ -59,7 +60,7 @@ func (tc *TcpClient) writeToServer() {
 }
 
 func (tc *TcpClient) readFromServer() error {
-	encryptKey := encrypt.GetAESKey([]byte(tc.Cfg.Tokens[0]))
+	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username+tc.VpnClientDto.Password)))
 	for {
 		if data, err := io.ReadPacket(tc.TcpConn); err == nil {
 			if data, err = encrypt.DecryptAES(data, encryptKey); err == nil {
@@ -73,10 +74,10 @@ func (tc *TcpClient) readFromServer() error {
 }
 
 func (tc *TcpClient) login() error {
-	if len(tc.Cfg.Tokens) <= 0 {
-		return fmt.Errorf("no token provided")
-	}
-	data := []byte(tc.Cfg.Tokens[0])
+	//if len(tc.Cfg.Tokens) <= 0 {
+	//	return fmt.Errorf("no token provided")
+	//}
+	data := []byte(encrypt2.Md5(tc.VpnClientDto.Username+tc.VpnClientDto.Password))
 	if _, err := io.WritePacket(tc.TcpConn, data); err != nil {
 		return err
 	}

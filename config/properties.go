@@ -13,9 +13,9 @@ import (
 var Prop *Properties
 
 //初始化配置文件
-func InitProp() {
+func InitProp(filePath string ) {
 	p := NewProperties()
-	p.LoadFromFile("conf/zihao.properties")
+	p.LoadFromFile(filePath)
 	Prop = p
 }
 
