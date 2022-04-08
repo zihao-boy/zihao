@@ -57,7 +57,7 @@ func NewLoginManager(vpnDataDto vpn.SlaveVpnDataDto) (*LoginManager, error) {
 		nIpData := strings.Join(ipDatas, ".")
 		cmd = exec.Command("cmd", "-c", "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData)
 		cmd.CombinedOutput()
-	} else {
+	} else if(sysType == "darwin") {
 		shellCmd := "ifconfig "+tunServer.TunConn.Name()+" "+ipData+" 255.255.255.0 up"
 		cmd = exec.Command("bash", "-c", shellCmd)
 		fmt.Println(shellCmd)
@@ -66,6 +66,18 @@ func NewLoginManager(vpnDataDto vpn.SlaveVpnDataDto) (*LoginManager, error) {
 		ipDatas[3] = "0"
 		nIpData := strings.Join(ipDatas, ".")
 		shellCmd = "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData
+		fmt.Println(shellCmd)
+		cmd = exec.Command("bash", "-c", shellCmd)
+		cmd.CombinedOutput()
+	}else{
+		shellCmd := "ifconfig "+tunServer.TunConn.Name()+" "+ipData+" 255.255.255.0 up"
+		cmd = exec.Command("bash", "-c", shellCmd)
+		fmt.Println(shellCmd)
+		cmd.CombinedOutput()
+		ipDatas := strings.Split(ipData, ".")
+		ipDatas[3] = "0"
+		nIpData := strings.Join(ipDatas, ".")
+		shellCmd = "route add -net "+nIpData+" netmask 255.255.255.0 gw "+ipData
 		fmt.Println(shellCmd)
 		cmd = exec.Command("bash", "-c", shellCmd)
 		cmd.CombinedOutput()

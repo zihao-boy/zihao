@@ -64,7 +64,7 @@ func (ts *TunServer) Start() {
 		}()
 
 		for {
-			data := make([]byte, READBUFFERSIZE)
+			data := make([]byte, 1500)
 			if n, err := ts.TunConn.Read(data); err == nil && n > 0 {
 				if proto, src, dst, err := header.GetBase(data); err == nil {
 					key := proto + ":" + dst + ":" + src
