@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/zihao-boy/zihao/common/vpn/client"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
@@ -12,7 +13,7 @@ func main() {
 
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
-	config.InitProp("conf/vpnClient.properties")
+	config.InitProp("../conf/vpnClient.properties")
 	serverAddr,_ := config.Prop.Property("serverAddr")
 	username,_ := config.Prop.Property("username")
 	password,_ := config.Prop.Property("password")
@@ -23,7 +24,10 @@ func main() {
 		Password: password,
 		TunName: tunName,
 	}
-	client.StartClient(&vpnClientDto)
+	err := client.StartClient(&vpnClientDto)
+	if err != nil{
+		fmt.Println(err)
+	}
 	wg.Wait()
 
 }
