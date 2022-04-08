@@ -65,8 +65,7 @@ func (lm *LoginManager) Login(client string, protocol string, token string,conn 
 
 		if endata, err := encrypt.EncryptAES([]byte("ip="+localTunIp), encryptKey); err == nil {
 			if user.Protocol == "tcp" {
-				_, err = io.WritePacket(user.Conn, endata)
-
+				_, err = io.WritePacket(conn, endata)
 			}
 		}
 
