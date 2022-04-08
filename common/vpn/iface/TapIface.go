@@ -41,9 +41,9 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 		})
 	} else {
 		config := water.Config{
-			DeviceType: water.TAP,
+			DeviceType: water.TUN,
 		}
-		config.Name = "O_O"
+		config.Name = tname
 		iface, err = water.New(config)
 	}
 	if err != nil {
