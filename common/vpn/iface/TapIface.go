@@ -65,8 +65,12 @@ func (ts *TunServer) Start() {
 
 		for {
 			data := make([]byte, 1500)
-			if n, err := ts.TunConn.Read(data); err == nil && n > 0 {
-				if proto, src, dst, err := header.GetBase(data); err == nil {
+			n, err := ts.TunConn.Read(data);
+			fmt.Println("网卡中读取数据",n,err,string(data))
+			if err == nil && n > 0 {
+				proto, src, dst, err := header.GetBase(data);
+				fmt.Println("解析数据",src, dst,err)
+				if  err == nil {
 					key := proto + ":" + dst + ":" + src
 					if outputChan := ts.RouteMap.Get(key); outputChan != nil {
 						go func() {
