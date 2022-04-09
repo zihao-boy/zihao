@@ -17,7 +17,7 @@ import (
 	"github.com/zihao-boy/zihao/entity/dto/ls"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"io"
 	"io/ioutil"
@@ -536,17 +536,17 @@ func (s *SystemInfoService) RefreshWafConfig(ctx iris.Context)  (result.ResultDt
 
 
 // start waf
-func (s *SystemInfoService) StartVpn(ctx iris.Context) (result.ResultDto, error) {
+func (s *SystemInfoService) StartInnerNet(ctx iris.Context) (result.ResultDto, error) {
 	var (
-		err       error
-		vpnDataDto vpn.SlaveVpnDataDto
+		err        error
+		innerNetDataDto innerNet.SlaveInnerNetDataDto
 	)
 
-	if err = ctx.ReadJSON(&vpnDataDto); err != nil {
+	if err = ctx.ReadJSON(&innerNetDataDto); err != nil {
 		fmt.Print(err)
 		return result.Error(err.Error()), nil
 	}
-	err = server.StartServer(vpnDataDto)
+	err = server.StartServer(innerNetDataDto)
 	if err != nil {
 		return result.Error(err.Error()), nil
 	}
@@ -554,7 +554,7 @@ func (s *SystemInfoService) StartVpn(ctx iris.Context) (result.ResultDto, error)
 }
 
 // stop waf
-func (s *SystemInfoService) StopVpn(ctx iris.Context) (result.ResultDto, error) {
+func (s *SystemInfoService) StopInnerNet(ctx iris.Context) (result.ResultDto, error) {
 	var (
 		err       error
 	)
@@ -565,17 +565,17 @@ func (s *SystemInfoService) StopVpn(ctx iris.Context) (result.ResultDto, error) 
 	return result.Success(), nil
 }
 
-func (s *SystemInfoService) RefreshVpnConfig(ctx iris.Context)  (result.ResultDto, error){
+func (s *SystemInfoService) RefreshInnerNetConfig(ctx iris.Context)  (result.ResultDto, error){
 	var (
-		err       error
-		vpnDataDto vpn.SlaveVpnDataDto
+		err        error
+		innerNetDataDto innerNet.SlaveInnerNetDataDto
 	)
 
-	if err = ctx.ReadJSON(&vpnDataDto); err != nil {
+	if err = ctx.ReadJSON(&innerNetDataDto); err != nil {
 		fmt.Print(err)
 		return result.Error(err.Error()), nil
 	}
-	err = server.InitVpnConfig(vpnDataDto)
+	err = server.InitInnerNetConfig(innerNetDataDto)
 	if err != nil {
 		return result.Error(err.Error()), nil
 	}

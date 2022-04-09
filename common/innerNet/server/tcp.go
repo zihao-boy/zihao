@@ -2,26 +2,26 @@ package server
 
 import (
 	"github.com/zihao-boy/zihao/common/innerNet/io"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"net"
 )
 
 type TcpServer struct {
 	Addr         string
-	VpnDataDto   *vpn.SlaveVpnDataDto
+	InnerNetDataDto   *innerNet.SlaveInnerNetDataDto
 	TcpListener  net.Listener
 	LoginManager *LoginManager
 }
 
-func NewTcpServer(vpnDataDto vpn.SlaveVpnDataDto, loginManager *LoginManager) (*TcpServer, error) {
-	tcpListener, err := net.Listen("tcp", ":"+vpnDataDto.Vpn.VpnPort)
+func NewTcpServer(innerNetDataDto innerNet.SlaveInnerNetDataDto, loginManager *LoginManager) (*TcpServer, error) {
+	tcpListener, err := net.Listen("tcp", ":"+innerNetDataDto.InnerNet.InnerNetPort)
 	if err != nil {
 		return nil, err
 	}
 
 	return &TcpServer{
-		Addr:         ":" + vpnDataDto.Vpn.VpnPort,
-		VpnDataDto:   &vpnDataDto,
+		Addr:         ":" + innerNetDataDto.InnerNet.InnerNetPort,
+		InnerNetDataDto:   &innerNetDataDto,
 		TcpListener:  tcpListener,
 		LoginManager: loginManager,
 	}, nil

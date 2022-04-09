@@ -17,12 +17,12 @@ import (
 
 type TcpClient struct {
 	ServerAdd    string
-	VpnClientDto *vpn.VpnClientDto
+	VpnClientDto *innerNet.VpnClientDto
 	TcpConn      *net.TCPConn
 	TunConn      *water.Interface
 }
 
-func NewTcpClient(vpnClientDto *vpn.VpnClientDto) (*TcpClient, error) {
+func NewTcpClient(vpnClientDto *innerNet.VpnClientDto) (*TcpClient, error) {
 	saddr, tname, mtu := vpnClientDto.ServerAddr, vpnClientDto.TunName, 1500
 	addr, err := net.ResolveTCPAddr("", saddr)
 	if err != nil {

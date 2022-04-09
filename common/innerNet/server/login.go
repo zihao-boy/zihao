@@ -5,7 +5,7 @@ import (
 	"github.com/zihao-boy/zihao/common/innerNet/encrypt"
 	"github.com/zihao-boy/zihao/common/innerNet/iface"
 	"github.com/zihao-boy/zihao/common/innerNet/io"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"net"
 	"os/exec"
 	"runtime"
@@ -17,31 +17,31 @@ const Mtu = 1500
 type LoginManager struct {
 	//key: clientProtocol:clientIP:clientPort  value: key for AES
 	Users    map[string]*User
-	Tokens   map[string]vpn.VpnUserDto
-	VpnDataDto      *vpn.SlaveVpnDataDto
+	Tokens   map[string]innerNet.InnerNetUserDto
+	InnerNetDataDto      *innerNet.SlaveInnerNetDataDto
 	TunServer  *iface.TunServer
 	DhcpServer *Dhcp
 	Mutex    sync.Mutex
 }
 
-func NewLoginManager(vpnDataDto vpn.SlaveVpnDataDto) (*LoginManager, error) {
+func NewLoginManager(innerNetDataDto innerNet.SlaveInnerNetDataDto) (*LoginManager, error) {
 	var (
 		cmd *exec.Cmd
 	)
-	tunServer, err := iface.NewTunServer(vpnDataDto.Vpn.TunName, Mtu)
+	tunServer, err := iface.NewTunServer(innerNetDataDto.InnerNet.TunName, Mtu)
 	if err != nil {
 		return nil, err
 	}
 
 	lm := &LoginManager{
 		Users:      map[string]*User{},
-		Tokens:     map[string]vpn.VpnUserDto{},
-		VpnDataDto:       & vpnDataDto,
+		Tokens:     map[string]innerNet.InnerNetUserDto{},
+		InnerNetDataDto:       & innerNetDataDto,
 		TunServer:  tunServer,
-		DhcpServer: NewDhcp(&vpnDataDto),
+		DhcpServer: NewDhcp(&innerNetDataDto),
 	}
 
-	for _, user := range vpnDataDto.Users {
+	for _, user := range innerNetDataDto.Users {
 		lm.Tokens[user.Token] = *user
 	}
 
@@ -90,16 +90,16 @@ func NewLoginManager(vpnDataDto vpn.SlaveVpnDataDto) (*LoginManager, error) {
 func (lm *LoginManager) Login(client string, protocol string, token string,conn net.Conn) error {
 	defer lm.Mutex.Unlock()
 	lm.Mutex.Lock()
-	if vpnUser, ok := lm.Tokens[token]; ok {
+	if innerNetUser, ok := lm.Tokens[token]; ok {
 		if user, ok := lm.Users[client]; ok {
 			user.Close()
 		}
 		var localTunIp string
 		var  err error
-		if vpnUser.Ip == "0.0.0.0"{
+		if innerNetUser.Ip == "0.0.0.0"{
 			localTunIp, err = lm.DhcpServer.ApplyIp()
 		}else{
-			localTunIp,err = vpnUser.Ip,nil
+			localTunIp,err = innerNetUser.Ip,nil
 		}
 		if err != nil {
 			return err

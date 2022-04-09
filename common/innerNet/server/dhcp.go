@@ -3,20 +3,20 @@ package server
 import (
 	"fmt"
 	"github.com/zihao-boy/zihao/common/innerNet/header"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 )
 
 type Dhcp struct {
-	VpnDataDto *vpn.SlaveVpnDataDto
+	InnerNetDataDto *innerNet.SlaveInnerNetDataDto
 	Ip         uint32
 	Mask       uint32
 	UsedIps    map[uint32]bool
 }
 
-func NewDhcp(vpnDataDto *vpn.SlaveVpnDataDto) *Dhcp {
-	ip, mask := header.ParseNet(vpnDataDto.Vpn.Tun)
+func NewDhcp(vpnDataDto *innerNet.SlaveInnerNetDataDto) *Dhcp {
+	ip, mask := header.ParseNet(vpnDataDto.InnerNet.Tun)
 	return &Dhcp{
-		VpnDataDto: vpnDataDto,
+		InnerNetDataDto: vpnDataDto,
 		Ip:         header.Str2IP(ip),
 		Mask:       header.MaskNumber2Mask(mask),
 		UsedIps:    map[uint32]bool{},

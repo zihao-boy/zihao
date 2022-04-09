@@ -9,8 +9,8 @@ import (
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/result"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"io"
 	"io/ioutil"
@@ -436,7 +436,7 @@ func ExecRefreshWafConfig(waf waf.SlaveWafDataDto) (result.ResultDto, error) {
 
 
 
-func ExecStartVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
+func ExecStartInnerNet(innerNet innerNet.SlaveInnerNetDataDto) (result.ResultDto, error) {
 	// query hostInfo
 
 	var (
@@ -444,12 +444,12 @@ func ExecStartVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 		resultDto result.ResultDto
 	)
 	data := make(map[string]interface{})
-	appServiceDtoData, _ := json.Marshal(&vpn)
+	appServiceDtoData, _ := json.Marshal(&innerNet)
 	json.Unmarshal([]byte(appServiceDtoData), &data)
 
-	for _, vpnHost := range vpn.Vpn.VpnHosts {
+	for _, innerNetHost := range innerNet.InnerNet.InnerNetHosts {
 		tmpHostDto := host.HostDto{
-			HostId: vpnHost.HostId,
+			HostId: innerNetHost.HostId,
 		}
 		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
 		if len(hostDtos) < 1 {
@@ -461,7 +461,7 @@ func ExecStartVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 		}
 		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
-		resp, err := httpReq.Post("http://"+ip+"/app/slave/startVpn", data, nil)
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/startInnerNet", data, nil)
 		if err != nil {
 			return resultDto, err
 		}
@@ -475,7 +475,7 @@ func ExecStartVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 }
 
 
-func ExecStopVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
+func ExecStopInnerNet(innerNet innerNet.SlaveInnerNetDataDto) (result.ResultDto, error) {
 	// query hostInfo
 
 	var (
@@ -483,12 +483,12 @@ func ExecStopVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 		resultDto result.ResultDto
 	)
 	data := make(map[string]interface{})
-	appServiceDtoData, _ := json.Marshal(&vpn)
+	appServiceDtoData, _ := json.Marshal(&innerNet)
 	json.Unmarshal([]byte(appServiceDtoData), &data)
 
-	for _, vpnHost := range vpn.Vpn.VpnHosts {
+	for _, innerNetHost := range innerNet.InnerNet.InnerNetHosts {
 		tmpHostDto := host.HostDto{
-			HostId: vpnHost.HostId,
+			HostId: innerNetHost.HostId,
 		}
 		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
 		if len(hostDtos) < 1 {
@@ -500,7 +500,7 @@ func ExecStopVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 		}
 		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
-		resp, err := httpReq.Post("http://"+ip+"/app/slave/stopVpn", data, nil)
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/stopInnerNet", data, nil)
 		if err != nil {
 			return resultDto, err
 		}
@@ -513,7 +513,7 @@ func ExecStopVpn(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 	return resultDto, nil
 }
 
-func ExecRefreshVpnConfig(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
+func ExecRefreshInnerNetConfig(innerNet innerNet.SlaveInnerNetDataDto) (result.ResultDto, error) {
 	// query hostInfo
 
 	var (
@@ -521,12 +521,12 @@ func ExecRefreshVpnConfig(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 		resultDto result.ResultDto
 	)
 	data := make(map[string]interface{})
-	appServiceDtoData, _ := json.Marshal(&vpn)
+	appServiceDtoData, _ := json.Marshal(&innerNet)
 	json.Unmarshal([]byte(appServiceDtoData), &data)
 
-	for _, vpnHost := range vpn.Vpn.VpnHosts {
+	for _, innerNetHost := range innerNet.InnerNet.InnerNetHosts {
 		tmpHostDto := host.HostDto{
-			HostId: vpnHost.HostId,
+			HostId: innerNetHost.HostId,
 		}
 		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
 		if len(hostDtos) < 1 {
@@ -538,7 +538,7 @@ func ExecRefreshVpnConfig(vpn vpn.SlaveVpnDataDto) (result.ResultDto, error) {
 		}
 		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
-		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshVpnConfig", data, nil)
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshInnerNetConfig", data, nil)
 		if err != nil {
 			return resultDto, err
 		}

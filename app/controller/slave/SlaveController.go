@@ -54,11 +54,11 @@ func SlaveControllerRouter(party iris.Party) {
 
 	adinUser.Post("/refreshWafConfig", hero.Handler(aus.refreshWafConfig))
 
-	adinUser.Post("/startVpn", hero.Handler(aus.startVpn))
+	adinUser.Post("/startInnerNet", hero.Handler(aus.startInnerNet))
 
-	adinUser.Post("/stopVpn", hero.Handler(aus.stopVpn))
+	adinUser.Post("/stopInnerNet", hero.Handler(aus.stopInnerNet))
 
-	adinUser.Post("/refreshVpnConfig", hero.Handler(aus.refreshVpnConfig))
+	adinUser.Post("/refreshInnerNetConfig", hero.Handler(aus.refreshInnerNetConfig))
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -163,22 +163,22 @@ func (aus *SlaveController) refreshWafConfig(ctx iris.Context) {
 
 
 //开启容器
-func (aus *SlaveController) startVpn(ctx iris.Context) {
-	relustDto,_:=aus.systenInfoService.StartVpn(ctx)
+func (aus *SlaveController) startInnerNet(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StartInnerNet(ctx)
 	ctx.JSON(relustDto)
 }
 
 
 
 //停止容器
-func (aus *SlaveController) stopVpn(ctx iris.Context) {
-	relustDto,_:=aus.systenInfoService.StopVpn(ctx)
+func (aus *SlaveController) stopInnerNet(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StopInnerNet(ctx)
 	ctx.JSON(relustDto)
 }
 
 //开启容器
-func (aus *SlaveController) refreshVpnConfig(ctx iris.Context) {
-	relustDto,_:=aus.systenInfoService.RefreshVpnConfig(ctx)
+func (aus *SlaveController) refreshInnerNetConfig(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.RefreshInnerNetConfig(ctx)
 	ctx.JSON(relustDto)
 }
 

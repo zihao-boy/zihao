@@ -2,7 +2,7 @@ package server
 
 import (
 	encrypt2 "github.com/zihao-boy/zihao/common/encrypt"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 )
 // start server
 
@@ -12,21 +12,21 @@ var (
 	tcpServer *TcpServer
 )
 
-func StartServer(vpnDataDto vpn.SlaveVpnDataDto) (err error) {
+func StartServer(innerNetDataDto innerNet.SlaveInnerNetDataDto) (err error) {
 
-	if vpnDataDto.Users != nil && len(vpnDataDto.Users)>0{
-		for _,user:= range vpnDataDto.Users{
+	if innerNetDataDto.Users != nil && len(innerNetDataDto.Users)>0{
+		for _,user:= range innerNetDataDto.Users{
 			user.Token = encrypt2.Md5(user.Username+user.Password)
 		}
 	}
 
-	loginManager, err = NewLoginManager(vpnDataDto)
+	loginManager, err = NewLoginManager(innerNetDataDto)
 
 	if err != nil {
 		return err
 	}
 
-	tcpServer, err = NewTcpServer(vpnDataDto, loginManager)
+	tcpServer, err = NewTcpServer(innerNetDataDto, loginManager)
 	if err != nil {
 		return err
 	}
@@ -49,13 +49,13 @@ func StopServer() error {
 	return nil
 }
 
-func InitVpnConfig(vpnDataDto vpn.SlaveVpnDataDto) error {
-	if vpnDataDto.Users != nil && len(vpnDataDto.Users)>0{
-		for _,user:= range vpnDataDto.Users{
+func InitInnerNetConfig(innerNetDataDto innerNet.SlaveInnerNetDataDto) error {
+	if innerNetDataDto.Users != nil && len(innerNetDataDto.Users)>0{
+		for _,user:= range innerNetDataDto.Users{
 			user.Token = encrypt2.Md5(user.Username+user.Password)
 		}
 	}
-	for _, user := range vpnDataDto.Users {
+	for _, user := range innerNetDataDto.Users {
 		loginManager.Tokens[user.Token] = *user
 	}
 	return nil
