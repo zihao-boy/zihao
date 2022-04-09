@@ -60,6 +60,14 @@ func (c *Cache) Get(key string) interface{} {
 	return res
 }
 
+func (c *Cache) Delete(key string) interface{} {
+	c.Lock.RLock()
+	var res interface{}
+	delete(c.Items,key)
+	c.Lock.RUnlock()
+	return res
+}
+
 func (c *Cache) Put(key string, value interface{}) {
 	c.Lock.Lock()
 	c.Items[key] = NewItem(value, time.Now())

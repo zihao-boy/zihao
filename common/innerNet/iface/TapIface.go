@@ -117,6 +117,10 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 
 		key := proto + ":" + localTunIp
 		fmt.Println("localTunIp", key)
+		oldConn := ts.RouteMap.Get(key)
+		if oldConn != nil{
+			ts.RouteMap.Delete(key)
+		}
 		ts.RouteMap.Put(key,tunToConnChan)
 
 		for {
