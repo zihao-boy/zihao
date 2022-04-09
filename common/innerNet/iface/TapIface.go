@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/common/innerNet/cache"
 	"github.com/zihao-boy/zihao/common/innerNet/header"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -84,7 +85,7 @@ func (ts *TunServer) Start() {
 					//	fmt.Println("key outputChan=nil ", key)
 					//}
 
-					dstClient := proto+":" + dst
+					dstClient := proto+":" + strings.Split(dst,":")[0]
 					fmt.Println("dstClient",dstClient)
 					dstTunToConnChan := ts.RouteMap.Get(dstClient)
 					if dstTunToConnChan!=nil{
@@ -127,7 +128,7 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 			if proto, src, dst, err := header.GetBase([]byte(data)); err == nil {
 				//key := proto + ":" + src + ":" + dst
 				// 检查是否目标用户是否存在
-				dstClient := "tcp:" + dst
+				dstClient := "tcp:" + strings.Split(dst,":")[0]
 				fmt.Println("dstClient",dstClient)
 				dstTunToConnChan := ts.RouteMap.Get(dstClient)
 				if dstTunToConnChan!=nil{
