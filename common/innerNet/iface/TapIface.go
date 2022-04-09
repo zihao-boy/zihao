@@ -120,6 +120,7 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 		ts.IpRouteMap[client] = tunToConnChan
 
 		for {
+			fmt.Println("读取数据到tun")
 			data, ok := <-connToTunChan
 			if !ok {
 				return
