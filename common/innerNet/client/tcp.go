@@ -8,7 +8,7 @@ import (
 	"github.com/zihao-boy/zihao/common/innerNet/header"
 	"github.com/zihao-boy/zihao/common/innerNet/iface"
 	"github.com/zihao-boy/zihao/common/innerNet/io"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"net"
 	"os/exec"
 	"runtime"
@@ -17,13 +17,13 @@ import (
 
 type TcpClient struct {
 	ServerAdd    string
-	VpnClientDto *innerNet.VpnClientDto
+	InnerNetClientDto *innerNet.InnerNetClientDto
 	TcpConn      *net.TCPConn
 	TunConn      *water.Interface
 }
 
-func NewTcpClient(vpnClientDto *innerNet.VpnClientDto) (*TcpClient, error) {
-	saddr, tname, mtu := vpnClientDto.ServerAddr, vpnClientDto.TunName, 1500
+func NewTcpClient(innerNetClientDto *innerNet.InnerNetClientDto) (*TcpClient, error) {
+	saddr, tname, mtu := innerNetClientDto.ServerAddr, innerNetClientDto.TunName, 1500
 	addr, err := net.ResolveTCPAddr("", saddr)
 	if err != nil {
 		return nil, err
@@ -41,14 +41,14 @@ func NewTcpClient(vpnClientDto *innerNet.VpnClientDto) (*TcpClient, error) {
 
 	return &TcpClient{
 		ServerAdd:    saddr,
-		VpnClientDto: vpnClientDto,
+		InnerNetClientDto: innerNetClientDto,
 		TcpConn:      conn,
 		TunConn:      tun.TunConn,
 	}, nil
 }
 
 func (tc *TcpClient) writeToServer() {
-	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username + tc.VpnClientDto.Password)))
+	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.InnerNetClientDto.Username + tc.InnerNetClientDto.Password)))
 	data := make([]byte, 1500)
 	for {
 		n, err := tc.TunConn.Read(data)
@@ -71,7 +71,7 @@ func (tc *TcpClient) readFromServer() error {
 	var (
 		cmd *exec.Cmd
 	)
-	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.VpnClientDto.Username + tc.VpnClientDto.Password)))
+	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.InnerNetClientDto.Username + tc.InnerNetClientDto.Password)))
 	for {
 		if data, err := io.ReadPacket(tc.TcpConn); err == nil {
 			if data, err = encrypt.DecryptAES(data, encryptKey); err == nil {
@@ -134,7 +134,7 @@ func (tc *TcpClient) login() error {
 	//if len(tc.Cfg.Tokens) <= 0 {
 	//	return fmt.Errorf("no token provided")
 	//}
-	data := []byte(encrypt2.Md5(tc.VpnClientDto.Username + tc.VpnClientDto.Password))
+	data := []byte(encrypt2.Md5(tc.InnerNetClientDto.Username + tc.InnerNetClientDto.Password))
 	if _, err := io.WritePacket(tc.TcpConn, data); err != nil {
 		return err
 	}

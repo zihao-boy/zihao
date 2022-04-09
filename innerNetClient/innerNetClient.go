@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/zihao-boy/zihao/common/innerNet/client"
 	"github.com/zihao-boy/zihao/config"
-	"github.com/zihao-boy/zihao/entity/dto/vpn"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"sync"
 )
 
@@ -13,18 +13,18 @@ func main() {
 
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
-	config.InitProp("../conf/vpnClient.properties")
+	config.InitProp("./conf/innerNetClient.properties")
 	serverAddr,_ := config.Prop.Property("serverAddr")
 	username,_ := config.Prop.Property("username")
 	password,_ := config.Prop.Property("password")
 	tunName,_ := config.Prop.Property("tunName")
-	vpnClientDto := innerNet.VpnClientDto{
+	innerNetClientDto := innerNet.InnerNetClientDto{
 		ServerAddr: serverAddr,
 		Username: username,
 		Password: password,
 		TunName: tunName,
 	}
-	err := client.StartClient(&vpnClientDto)
+	err := client.StartClient(&innerNetClientDto)
 	if err != nil{
 		fmt.Println(err)
 	}

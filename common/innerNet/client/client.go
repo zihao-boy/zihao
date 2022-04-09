@@ -1,11 +1,11 @@
 package client
 
-import "github.com/zihao-boy/zihao/entity/dto/vpn"
+import "github.com/zihao-boy/zihao/entity/dto/innerNet"
 
-func StartClient(vpnClientDto *innerNet.VpnClientDto) error {
+func StartClient(innerNetClientDto *innerNet.InnerNetClientDto) error {
 	var tcpClient *TcpClient
 	var err error
-	if tcpClient, err = NewTcpClient(vpnClientDto); err != nil {
+	if tcpClient, err = NewTcpClient(innerNetClientDto); err != nil {
 		return err;
 	}
 	err = tcpClient.Start()
