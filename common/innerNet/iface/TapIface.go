@@ -16,7 +16,6 @@ type TunServer struct {
 	TunConn *water.Interface
 	//Key: clientProtocol:clientIP:clientPort  Value: chan string
 	RouteMap *cache.Cache
-	IpRouteMap map[string]interface{}
 	//write to tun
 	InputChan chan string
 }
@@ -87,7 +86,7 @@ func (ts *TunServer) Start() {
 
 					dstClient := proto+":" + dst
 					fmt.Println("dstClient",dstClient)
-					dstTunToConnChan := ts.IpRouteMap[dstClient]
+					dstTunToConnChan := ts.RouteMap.Get(dstClient)
 					if dstTunToConnChan!=nil{
 						dstTunToConnChan.(chan string) <- string(data)
 					}
@@ -109,15 +108,15 @@ func (ts *TunServer) Start() {
 	}()
 }
 
-func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunToConnChan chan string) {
+func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunToConnChan chan string,localTunIp string ,proto string) {
 	go func() {
 		defer func() {
 			recover()
 		}()
 
-		//key := proto + ":" + src
-		fmt.Println("client", client)
-		ts.IpRouteMap[client] = tunToConnChan
+		key := proto + ":" + localTunIp
+		fmt.Println("localTunIp", key)
+		ts.RouteMap.Put(key,tunToConnChan)
 
 		for {
 			fmt.Println("读取数据到tun")
@@ -130,7 +129,7 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 				// 检查是否目标用户是否存在
 				dstClient := "tcp:" + dst
 				fmt.Println("dstClient",dstClient)
-				dstTunToConnChan := ts.IpRouteMap[dstClient]
+				dstTunToConnChan := ts.RouteMap.Get(dstClient)
 				if dstTunToConnChan!=nil{
 					dstTunToConnChan.(chan string) <- string(data)
 					continue

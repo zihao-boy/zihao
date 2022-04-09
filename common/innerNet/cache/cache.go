@@ -28,24 +28,24 @@ func NewCache(ttl time.Duration) *Cache {
 		TTL:   ttl,
 		Items: make(map[string]*Item),
 	}
-	go func() {
-		for {
-			time.Sleep(ttl)
-			nt := time.Now()
-			keys := []string{}
-			c.Lock.Lock()
-			for k, v := range c.Items {
-				t := v.Timestamp
-				if nt.Sub(t) > c.TTL {
-					keys = append(keys, k)
-				}
-			}
-			for _, k := range keys {
-				delete(c.Items, k)
-			}
-			c.Lock.Unlock()
-		}
-	}()
+	//go func() {
+	//	for {
+	//		time.Sleep(ttl)
+	//		nt := time.Now()
+	//		keys := []string{}
+	//		c.Lock.Lock()
+	//		for k, v := range c.Items {
+	//			t := v.Timestamp
+	//			if nt.Sub(t) > c.TTL {
+	//				keys = append(keys, k)
+	//			}
+	//		}
+	//		for _, k := range keys {
+	//			delete(c.Items, k)
+	//		}
+	//		c.Lock.Unlock()
+	//	}
+	//}()
 	return c
 }
 
