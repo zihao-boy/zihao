@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"github.com/zihao-boy/zihao/common/vpn/header"
+	"github.com/zihao-boy/zihao/common/innerNet/header"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
 )
 

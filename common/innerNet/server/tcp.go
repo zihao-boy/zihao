@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/zihao-boy/zihao/common/vpn/io"
+	"github.com/zihao-boy/zihao/common/innerNet/io"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"net"
 )

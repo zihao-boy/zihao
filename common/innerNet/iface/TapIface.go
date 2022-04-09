@@ -3,19 +3,20 @@ package iface
 import (
 	"fmt"
 	"github.com/songgao/water"
-	"github.com/zihao-boy/zihao/common/vpn/cache"
-	"github.com/zihao-boy/zihao/common/vpn/header"
-	"github.com/zihao-boy/zihao/common/vpn/users"
+	"github.com/zihao-boy/zihao/common/innerNet/cache"
+	"github.com/zihao-boy/zihao/common/innerNet/header"
 	"runtime"
 	"time"
 )
 
 var TUNCHANBUFFSIZE = 1024
 var READBUFFERSIZE = 65535
+
 type TunServer struct {
 	TunConn *water.Interface
 	//Key: clientProtocol:clientIP:clientPort  Value: chan string
 	RouteMap *cache.Cache
+	IpRouteMap map[string]interface{}
 	//write to tun
 	InputChan chan string
 }
@@ -28,7 +29,7 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 
 	var (
 		iface *water.Interface
-		err error
+		err   error
 	)
 
 	sysType := runtime.GOOS
@@ -36,7 +37,7 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 		iface, err = water.New(water.Config{
 			DeviceType: water.TAP,
 		})
-	}else if(sysType == "darwin"){
+	} else if sysType == "darwin" {
 		config := water.Config{
 			DeviceType: water.TUN,
 		}
@@ -52,7 +53,7 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 	if err != nil {
 		return nil, err
 	}
-		ts.TunConn = iface
+	ts.TunConn = iface
 
 	return ts, nil
 }
@@ -66,22 +67,29 @@ func (ts *TunServer) Start() {
 
 		for {
 			data := make([]byte, 1500)
-			n, err := ts.TunConn.Read(data);
-			fmt.Println("网卡中读取数据",n,err,string(data))
+			n, err := ts.TunConn.Read(data)
+			fmt.Println("网卡中读取数据", n, err, string(data))
 			if err == nil && n > 0 {
-				proto, src, dst, err := header.GetBase(data);
-				fmt.Println("解析数据",src, dst,err)
-				if  err == nil {
-					key := proto + ":" + dst + ":" + src
-					if outputChan := ts.RouteMap.Get(key); outputChan != nil {
-						go func() {
-							defer func() {
-								recover()
-							}()
-							outputChan.(chan string) <- string(data[:n])
-						}()
-					}else{
-						fmt.Println("key outputChan=nil ",key)
+				proto, src, dst, err := header.GetBase(data)
+				fmt.Println("解析数据", src, dst, err)
+				if err == nil {
+					//key := proto + ":" + dst + ":" + src
+					//if outputChan := ts.RouteMap.Get(key); outputChan != nil {
+					//	go func() {
+					//		defer func() {
+					//			recover()
+					//		}()
+					//		outputChan.(chan string) <- string(data[:n])
+					//	}()
+					//} else {
+					//	fmt.Println("key outputChan=nil ", key)
+					//}
+
+					dstClient := proto+":" + dst
+					fmt.Println("dstClient",dstClient)
+					dstTunToConnChan := ts.IpRouteMap[dstClient]
+					if dstTunToConnChan!=nil{
+						dstTunToConnChan.(chan string) <- string(data)
 					}
 				}
 			}
@@ -107,22 +115,23 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 			recover()
 		}()
 
+		//key := proto + ":" + src
+		fmt.Println("client", client)
+		ts.IpRouteMap[client] = tunToConnChan
+
 		for {
 			data, ok := <-connToTunChan
 			if !ok {
 				return
 			}
 			if proto, src, dst, err := header.GetBase([]byte(data)); err == nil {
-				key := proto + ":" + src + ":" + dst
-				ts.RouteMap.Put(key, tunToConnChan)
-				fmt.Println("client",client)
-
+				//key := proto + ":" + src + ":" + dst
 				// 检查是否目标用户是否存在
 				dstClient := "tcp:" + dst
 				fmt.Println("dstClient",dstClient)
-				desUser := users.Users[dstClient]
-				if desUser!=nil{
-					desUser.TunToConnChan <- data
+				dstTunToConnChan := ts.IpRouteMap[dstClient]
+				if dstTunToConnChan!=nil{
+					dstTunToConnChan.(chan string) <- string(data)
 					continue
 				}
 				ts.InputChan <- data
@@ -143,4 +152,3 @@ func (ts *TunServer) Stop() {
 	close(ts.InputChan)
 	ts.RouteMap.Clear()
 }
-

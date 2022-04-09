@@ -1,11 +1,10 @@
-package users
+package server
 
 import (
 	"fmt"
-	"github.com/zihao-boy/zihao/common/vpn/encrypt"
-	"github.com/zihao-boy/zihao/common/vpn/header"
-	"github.com/zihao-boy/zihao/common/vpn/io"
-	"github.com/zihao-boy/zihao/common/vpn/server"
+	"github.com/zihao-boy/zihao/common/innerNet/encrypt"
+	"github.com/zihao-boy/zihao/common/innerNet/header"
+	"github.com/zihao-boy/zihao/common/innerNet/io"
 	"net"
 )
 
@@ -64,7 +63,7 @@ func (user *User) Start() {
 						remoteIp, _ := header.ParseAddr(src)
 						user.RemoteTunIp = remoteIp
 						//user, ok := lm.Users[client];
-						server.Snat(data, user.LocalTunIp)
+						Snat(data, user.LocalTunIp)
 						user.ConnToTunChan <- string(data)
 						fmt.Println("From %v client: client:%v, protocol:%v, len:%v, src:%v, dst:%v", user.Protocol, user.Client, proto, ln, src, dst)
 					}
@@ -84,7 +83,7 @@ func (user *User) Start() {
 			data := []byte(datas)
 			if ln := len(data); ln > 0 {
 				if proto, src, dst, err := header.GetBase(data); err == nil {
-					server.Dnat(data, user.RemoteTunIp)
+					Dnat(data, user.RemoteTunIp)
 					if endata, err := encrypt.EncryptAES(data, encryptKey); err == nil {
 						if user.Protocol == "tcp" {
 							_, err = io.WritePacket(user.Conn, endata)
