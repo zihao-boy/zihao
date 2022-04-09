@@ -5,6 +5,7 @@ import (
 	"github.com/songgao/water"
 	"github.com/zihao-boy/zihao/common/vpn/cache"
 	"github.com/zihao-boy/zihao/common/vpn/header"
+	"github.com/zihao-boy/zihao/common/vpn/users"
 	"runtime"
 	"time"
 )
@@ -114,6 +115,16 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 			if proto, src, dst, err := header.GetBase([]byte(data)); err == nil {
 				key := proto + ":" + src + ":" + dst
 				ts.RouteMap.Put(key, tunToConnChan)
+				fmt.Println("client",client)
+
+				// 检查是否目标用户是否存在
+				dstClient := "tcp:" + dst
+				fmt.Println("dstClient",dstClient)
+				desUser := users.Users[dstClient]
+				if desUser!=nil{
+					desUser.TunToConnChan <- data
+					continue
+				}
 				ts.InputChan <- data
 				fmt.Println("ToTun: protocol:%v, src:%v, dst:%v", proto, src, dst)
 			}

@@ -5,6 +5,7 @@ import (
 	"github.com/zihao-boy/zihao/common/vpn/encrypt"
 	"github.com/zihao-boy/zihao/common/vpn/iface"
 	"github.com/zihao-boy/zihao/common/vpn/io"
+	"github.com/zihao-boy/zihao/common/vpn/users"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"net"
 	"os/exec"
@@ -16,7 +17,7 @@ const Mtu = 1500
 //todo: add sync.Mutx for Users change
 type LoginManager struct {
 	//key: clientProtocol:clientIP:clientPort  value: key for AES
-	Users    map[string]*User
+	Users    map[string]*users.User
 	Tokens   map[string]vpn.VpnUserDto
 	VpnDataDto      *vpn.SlaveVpnDataDto
 	TunServer  *iface.TunServer
@@ -34,7 +35,7 @@ func NewLoginManager(vpnDataDto vpn.SlaveVpnDataDto) (*LoginManager, error) {
 	}
 
 	lm := &LoginManager{
-		Users:      map[string]*User{},
+		Users:      map[string]*users.User{},
 		Tokens:     map[string]vpn.VpnUserDto{},
 		VpnDataDto:       & vpnDataDto,
 		TunServer:  tunServer,
@@ -105,8 +106,9 @@ func (lm *LoginManager) Login(client string, protocol string, token string,conn 
 			return err
 		}
 
-		user := NewUser(client, protocol, localTunIp, token, nil, lm.Logout)
+		user := users.NewUser(client, protocol, localTunIp, token, nil, lm.Logout)
 		lm.Users[client] = user
+		users.Users[client] = user
 		encryptKey := encrypt.GetAESKey([]byte(user.Token))
 
 		if endata, err := encrypt.EncryptAES([]byte("ip="+localTunIp), encryptKey); err == nil {
@@ -146,7 +148,7 @@ func (lm *LoginManager) StartClient(client string, conn net.Conn) {
 	}
 }
 
-func (lm *LoginManager) GetUser(client string) *User {
+func (lm *LoginManager) GetUser(client string) *users.User {
 	if user, ok := lm.Users[client]; ok {
 		return user
 	}
