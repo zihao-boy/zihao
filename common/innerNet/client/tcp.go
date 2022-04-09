@@ -92,12 +92,13 @@ func (tc *TcpClient) readFromServer() error {
 
 				sysType := runtime.GOOS
 				if sysType == "windows" {
-					cmd = exec.Command("cmd", "/C", "ipconfig "+tc.TunConn.Name()+" "+ipData+" 255.255.255.0 up")
+					cmd = exec.Command("cmd", "/C", "netsh interface ip set address name=\""+tc.TunConn.Name()+"\" source=static addr="+ipData+" mask=255.255.255.0")
+					//netsh interface ip set address name="本地连接" source=static addr=192.168.1.6 mask=255.255.255.0 gateway=192.168.0.1 1
 					cmd.CombinedOutput()
 					ipDatas := strings.Split(ipData, ".")
 					ipDatas[3] = "0"
 					nIpData := strings.Join(ipDatas, ".")
-					cmd = exec.Command("cmd", "-c", "route -n add -net "+nIpData+" -netmask 255.255.255.0 "+ipData)
+					cmd = exec.Command("cmd", "/C", "route add "+nIpData+" MASK 255.255.255.0 "+ipData)
 					cmd.CombinedOutput()
 				} else if(sysType == "darwin"){
 					shellCmd := "ifconfig "+tc.TunConn.Name()+" "+ipData+" 255.255.255.0 up"
