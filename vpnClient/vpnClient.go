@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/zihao-boy/zihao/common/vpn/client"
+	"github.com/zihao-boy/zihao/common/innerNet/client"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/vpn"
 	"sync"
