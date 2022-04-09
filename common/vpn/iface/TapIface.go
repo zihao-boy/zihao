@@ -79,6 +79,8 @@ func (ts *TunServer) Start() {
 							}()
 							outputChan.(chan string) <- string(data[:n])
 						}()
+					}else{
+						fmt.Println("key outputChan=nil ",key)
 					}
 				}
 			}
