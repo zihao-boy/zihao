@@ -1,6 +1,6 @@
 module github.com/zihao-boy/zihao
 
-go 1.18
+go 1.17
 
 require (
 	github.com/Shopify/sarama v1.19.0
