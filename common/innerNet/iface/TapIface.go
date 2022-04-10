@@ -5,6 +5,7 @@ import (
 	"github.com/songgao/water"
 	"github.com/zihao-boy/zihao/common/innerNet/cache"
 	"github.com/zihao-boy/zihao/common/innerNet/header"
+	"golang.zx2c4.com/wireguard/tun"
 	"runtime"
 	"strings"
 	"time"
@@ -14,7 +15,8 @@ var TUNCHANBUFFSIZE = 1024
 var READBUFFERSIZE = 65535
 
 type TunServer struct {
-	TunConn *water.Interface
+	TunConn    *water.Interface
+	WinTunConn tun.Device
 	//Key: clientProtocol:clientIP:clientPort  Value: chan string
 	RouteMap *cache.Cache
 	//write to tun
@@ -28,15 +30,18 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 	}
 
 	var (
-		iface *water.Interface
-		err   error
+		iface    *water.Interface
+		iwinface tun.Device
+		err      error
 	)
 
 	sysType := runtime.GOOS
 	if sysType == "windows" {
-		iface, err = water.New(water.Config{
-			DeviceType: water.TAP,
-		})
+		//iface, err = water.New(water.Config{
+		//	DeviceType: water.TUN,
+		//})
+		ifname := tname
+		iwinface, err = tun.CreateTUN(ifname, 1500)
 	} else if sysType == "darwin" {
 		config := water.Config{
 			DeviceType: water.TUN,
@@ -53,7 +58,13 @@ func NewTunServer(tname string, mtu int) (*TunServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	ts.TunConn = iface
+
+	// 保存原始设备句柄
+	if sysType == "windows" {
+		ts.WinTunConn = iwinface
+	} else {
+		ts.TunConn = iface
+	}
 
 	return ts, nil
 }
@@ -65,30 +76,29 @@ func (ts *TunServer) Start() {
 			recover()
 		}()
 
+		var (
+			n   int
+			err error
+		)
+
 		for {
 			data := make([]byte, 1500)
-			n, err := ts.TunConn.Read(data)
+			sysType := runtime.GOOS
+			if sysType == "windows" {
+				n, err = ts.WinTunConn.Read(data, 0)
+			} else {
+				n, err = ts.TunConn.Read(data)
+			}
+
 			fmt.Println("网卡中读取数据", n, err, string(data))
 			if err == nil && n > 0 {
 				proto, src, dst, err := header.GetBase(data)
 				fmt.Println("解析数据", src, dst, err)
 				if err == nil {
-					//key := proto + ":" + dst + ":" + src
-					//if outputChan := ts.RouteMap.Get(key); outputChan != nil {
-					//	go func() {
-					//		defer func() {
-					//			recover()
-					//		}()
-					//		outputChan.(chan string) <- string(data[:n])
-					//	}()
-					//} else {
-					//	fmt.Println("key outputChan=nil ", key)
-					//}
-
-					dstClient := proto+":" + strings.Split(dst,":")[0]
-					fmt.Println("dstClient",dstClient)
+					dstClient := proto + ":" + strings.Split(dst, ":")[0]
+					fmt.Println("dstClient", dstClient)
 					dstTunToConnChan := ts.RouteMap.Get(dstClient)
-					if dstTunToConnChan!=nil{
+					if dstTunToConnChan != nil {
 						dstTunToConnChan.(chan string) <- string(data)
 					}
 				}
@@ -104,12 +114,18 @@ func (ts *TunServer) Start() {
 		for {
 			if data, ok := <-ts.InputChan; ok && len(data) > 0 {
 				ts.TunConn.Write([]byte(data))
+				sysType := runtime.GOOS
+				if sysType == "windows" {
+					ts.WinTunConn.Write([]byte(data), 0)
+				} else {
+					ts.TunConn.Write([]byte(data))
+				}
 			}
 		}
 	}()
 }
 
-func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunToConnChan chan string,localTunIp string ,proto string) {
+func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunToConnChan chan string, localTunIp string, proto string) {
 	go func() {
 		defer func() {
 			recover()
@@ -118,10 +134,10 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 		key := proto + ":" + localTunIp
 		fmt.Println("localTunIp", key)
 		oldConn := ts.RouteMap.Get(key)
-		if oldConn != nil{
+		if oldConn != nil {
 			ts.RouteMap.Delete(key)
 		}
-		ts.RouteMap.Put(key,tunToConnChan)
+		ts.RouteMap.Put(key, tunToConnChan)
 
 		for {
 			fmt.Println("读取数据到tun")
@@ -132,10 +148,10 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 			if proto, src, dst, err := header.GetBase([]byte(data)); err == nil {
 				//key := proto + ":" + src + ":" + dst
 				// 检查是否目标用户是否存在
-				dstClient := "tcp:" + strings.Split(dst,":")[0]
-				fmt.Println("dstClient",dstClient)
+				dstClient := "tcp:" + strings.Split(dst, ":")[0]
+				fmt.Println("dstClient", dstClient)
 				dstTunToConnChan := ts.RouteMap.Get(dstClient)
-				if dstTunToConnChan!=nil{
+				if dstTunToConnChan != nil {
 					dstTunToConnChan.(chan string) <- string(data)
 					continue
 				}

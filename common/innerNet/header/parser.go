@@ -42,8 +42,12 @@ func GetBase(data []byte) (proto string, src string, dst string, err error) {
 		dst = fmt.Sprintf("%s:%d", IP2Str(iph.Dst), tcph.DstPort)
 
 	} else {
-		err = fmt.Errorf("Protocol Unsupported: id=%d", iph.Protocol)
+		src = fmt.Sprintf("%s:%d", IP2Str(iph.Src), tcph.SrcPort)
+		dst = fmt.Sprintf("%s:%d", IP2Str(iph.Dst), tcph.DstPort)
+		err = fmt.Errorf("Protocol Unsupported: id=%d,src=%s,dst=%s", iph.Protocol,src,dst)
 	}
+
+
 	return
 
 }
