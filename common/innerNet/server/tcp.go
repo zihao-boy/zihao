@@ -52,7 +52,6 @@ func (ts *TcpServer) handleRequest(conn net.Conn) {
 func (ts *TcpServer) login(client string, conn net.Conn) error {
 	if data, err := io.ReadPacket(conn); err != nil {
 		return err
-
 	} else {
 		return ts.LoginManager.Login(client, "tcp", string(data),conn)
 	}

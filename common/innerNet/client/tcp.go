@@ -14,6 +14,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+	"time"
 )
 
 type TcpClient struct {
@@ -22,6 +23,7 @@ type TcpClient struct {
 	TcpConn           *net.TCPConn
 	TunConn           *water.Interface
 	WinTunConn        tun.Device
+	HeartbeatTime     time.Time
 }
 
 func NewTcpClient(innerNetClientDto *innerNet.InnerNetClientDto) (*TcpClient, error) {
@@ -47,6 +49,7 @@ func NewTcpClient(innerNetClientDto *innerNet.InnerNetClientDto) (*TcpClient, er
 		TcpConn:           conn,
 		TunConn:           tun.TunConn,
 		WinTunConn:        tun.WinTunConn,
+		HeartbeatTime: time.Now().Add(10 * time.Second),
 	}, nil
 }
 
@@ -105,6 +108,10 @@ func (tc *TcpClient) readFromServer() error {
 					continue
 				}
 				ipData := string(data)
+				if strings.HasPrefix(ipData,"ping"){
+					tc.HeartbeatTime = time.Now().Add(10*time.Second)
+					continue
+				}
 				if !strings.HasPrefix(ipData, "ip=") {
 					continue
 				}
@@ -174,12 +181,50 @@ func (tc *TcpClient) Start() error {
 	}
 	go tc.writeToServer()
 	go tc.readFromServer()
+
+	//heartbeat
+	encryptKey := encrypt.GetAESKey([]byte(encrypt2.Md5(tc.InnerNetClientDto.Username + tc.InnerNetClientDto.Password)))
+	endata, _ := encrypt.EncryptAES([]byte("ping"), encryptKey)
+	go func() {
+		for{
+			endata, _ := encrypt.EncryptAES(endata, encryptKey)
+			io.WritePacket(tc.TcpConn, endata)
+			time.Sleep(5 * time.Second)
+		}
+	}()
 	return nil
 }
 
 func (tc *TcpClient) Stop() error {
 	fmt.Println("TcpClient stopped")
 	tc.TcpConn.Close()
-	tc.TunConn.Close()
+	// 保存原始设备句柄
+	sysType := runtime.GOOS
+	if sysType == "windows" {
+		tc.WinTunConn.Close()
+	} else {
+		tc.TunConn.Close()
+	}
+
 	return nil
+}
+
+func (tc *TcpClient)Recover() error {
+	tc.TcpConn.Close()
+	saddr := tc.InnerNetClientDto.ServerAddr
+	addr, err := net.ResolveTCPAddr("", saddr)
+	if err != nil {
+		return err
+	}
+
+	conn, err := net.DialTCP("tcp4", nil, addr)
+	if err != nil {
+		return err
+	}
+
+	tc.TcpConn = conn
+
+	tc.login()
+	return nil
+
 }

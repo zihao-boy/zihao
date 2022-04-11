@@ -22,7 +22,8 @@ create table app_service
 insert into app_service(as_id, as_name, as_type, tenant_id, as_desc, state, as_count, create_time, status_cd, as_group_id, as_deploy_type, as_deploy_id, images_id, ver_id)
 select as_id, as_name, as_type, tenant_id, as_desc, state, as_count, create_time, status_cd, as_group_id, as_deploy_type, as_deploy_id, images_id,'1' from app_service_0331
 
-
+-- insert into business_images_ver(id, images_id, version, type_url, tenant_id)
+-- select t.id,t.id,t.version,t.type_url,t.tenant_id from business_images t
 
 INSERT INTO `menu` VALUES ('700201904027', '发布者', '800201904008', '/index.html#/pages/admin/appPublisherManage', '2', '发布者', '2019-04-09 14:50:56', '0', 'Y');
 INSERT INTO `privilege` VALUES ('500201904022', '发布者', '发布者', '2019-04-01 02:24:53', '0', '/pages/admin/appPublisherManage', '700201904027');

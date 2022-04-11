@@ -106,6 +106,12 @@ func (lm *LoginManager) Login(client string, protocol string, token string,conn 
 		}
 
 		user := NewUser(client, protocol, localTunIp, token, nil, lm.Logout)
+		oldUser,ok := lm.Users[client] // 假如key存在,则name = 李四 ，ok = true,否则，ok = false
+		if ok{
+			oldUser.Close()
+			delete(lm.Users,client)
+		}
+
 		lm.Users[client] = user
 		encryptKey := encrypt.GetAESKey([]byte(user.Token))
 

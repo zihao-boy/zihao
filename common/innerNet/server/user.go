@@ -6,6 +6,8 @@ import (
 	"github.com/zihao-boy/zihao/common/innerNet/header"
 	"github.com/zihao-boy/zihao/common/innerNet/io"
 	"net"
+	"strings"
+	"time"
 )
 
 var USERCHANBUFFERSIZE = 1024
@@ -22,6 +24,7 @@ type User struct {
 	ConnToTunChan chan string
 	Conn          net.Conn
 	Logout        func(client string)
+	HeartbeatTime time.Time
 }
 
 func NewUser(client string, protocol string, tun string, token string, conn net.Conn, logout func(string)) *User {
@@ -37,6 +40,7 @@ func NewUser(client string, protocol string, tun string, token string, conn net.
 		ConnToTunChan: make(chan string, USERCHANBUFFERSIZE),
 		Conn:          conn,
 		Logout:        logout,
+		HeartbeatTime: time.Now().Add(10*time.Second),
 	}
 }
 
@@ -67,8 +71,15 @@ func (user *User) Start() {
 						Snat(data, user.LocalTunIp)
 						user.ConnToTunChan <- string(data)
 						fmt.Println("From %v client: client:%v, protocol:%v, len:%v, src:%v, dst:%v", user.Protocol, user.Client, proto, ln, src, dst)
+						continue
 					}
 				}
+				ipData := string(data)
+				if !strings.HasPrefix(ipData, "ping") {
+					continue
+				}
+				user.HeartbeatTime = time.Now().Add(10*time.Second)
+				_, err = io.WritePacket(user.Conn, data)
 				if err != nil{
 					fmt.Println("deal data err",err)
 				}
@@ -76,6 +87,8 @@ func (user *User) Start() {
 			}
 		}
 	}()
+
+
 
 	//read from channel, write to client
 	go func() {
@@ -104,6 +117,18 @@ func (user *User) Start() {
 				}
 			}
 		}
+	}()
+
+	//check heart beat
+	go func() {
+		for{
+			time.Sleep(10 * time.Second)
+			if user.HeartbeatTime.After(time.Now()){
+				continue
+			}
+			user.Close()
+		}
+
 	}()
 }
 
