@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/zihao-boy/zihao/common/innerNet/io"
 	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"net"
@@ -43,6 +44,8 @@ func (ts *TcpServer) Stop() {
 
 func (ts *TcpServer) handleRequest(conn net.Conn) {
 	client := "tcp:" + conn.RemoteAddr().String()
+	fmt.Println("handleRequest ",client)
+
 	if err := ts.login(client, conn); err != nil {
 		return
 	}
