@@ -187,7 +187,6 @@ func (tc *TcpClient) Start() error {
 	endata, _ := encrypt.EncryptAES([]byte("ping"), encryptKey)
 	go func() {
 		for{
-			endata, _ := encrypt.EncryptAES(endata, encryptKey)
 			n,err := io.WritePacket(tc.TcpConn, endata)
 			fmt.Println("client heart beat",n,err,endata)
 			time.Sleep(5 * time.Second)

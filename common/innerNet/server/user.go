@@ -65,7 +65,8 @@ func (user *User) Start() {
 			fmt.Println("接受到数据 data",data)
 
 			if ln := len(data); ln > 0 {
-				if data, err = encrypt.DecryptAES(data, encryptKey); err == nil {
+				data, err = encrypt.DecryptAES(data, encryptKey);
+				if err == nil {
 					if proto, src, dst, err := header.GetBase(data); err == nil {
 						remoteIp, _ := header.ParseAddr(src)
 						user.RemoteTunIp = remoteIp
