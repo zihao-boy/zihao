@@ -19,7 +19,7 @@ func StartClient(innerNetClientDto *innerNet.InnerNetClientDto) error {
 
 	go func() {
 		for{
-			time.Sleep(10 * time.Second)
+			time.Sleep(60 * time.Second)
 			if tcpClient.HeartbeatTime.After(time.Now()){
 				continue
 			}

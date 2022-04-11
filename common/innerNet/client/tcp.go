@@ -49,7 +49,7 @@ func NewTcpClient(innerNetClientDto *innerNet.InnerNetClientDto) (*TcpClient, er
 		TcpConn:           conn,
 		TunConn:           tun.TunConn,
 		WinTunConn:        tun.WinTunConn,
-		HeartbeatTime: time.Now().Add(10 * time.Second),
+		HeartbeatTime: time.Now().Add(60 * time.Second),
 	}, nil
 }
 
@@ -109,7 +109,7 @@ func (tc *TcpClient) readFromServer() error {
 				}
 				ipData := string(data)
 				if strings.HasPrefix(ipData,"ping"){
-					tc.HeartbeatTime = time.Now().Add(10*time.Second)
+					tc.HeartbeatTime = time.Now().Add(60*time.Second)
 					continue
 				}
 				if !strings.HasPrefix(ipData, "ip=") {

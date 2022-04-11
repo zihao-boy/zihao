@@ -40,7 +40,7 @@ func NewUser(client string, protocol string, tun string, token string, conn net.
 		ConnToTunChan: make(chan string, USERCHANBUFFERSIZE),
 		Conn:          conn,
 		Logout:        logout,
-		HeartbeatTime: time.Now().Add(10*time.Second),
+		HeartbeatTime: time.Now().Add(60*time.Second),
 	}
 }
 
@@ -78,7 +78,7 @@ func (user *User) Start() {
 				if !strings.HasPrefix(ipData, "ping") {
 					continue
 				}
-				user.HeartbeatTime = time.Now().Add(10*time.Second)
+				user.HeartbeatTime = time.Now().Add(60*time.Second)
 				_, err = io.WritePacket(user.Conn, data)
 				if err != nil{
 					fmt.Println("deal data err",err)
@@ -122,7 +122,7 @@ func (user *User) Start() {
 	//check heart beat
 	go func() {
 		for{
-			time.Sleep(10 * time.Second)
+			time.Sleep(60 * time.Second)
 			if user.HeartbeatTime.After(time.Now()){
 				continue
 			}
