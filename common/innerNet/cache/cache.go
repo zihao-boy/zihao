@@ -60,6 +60,24 @@ func (c *Cache) Get(key string) interface{} {
 	return res
 }
 
+
+func (c *Cache) GetAndSendData(key string,data string) bool {
+	c.Lock.RLock()
+	var res interface{}
+	var flag bool =false
+	if it, ok := c.Items[key]; ok {
+		res = it.Value
+		it.Timestamp = time.Now()
+	}
+	dstTunToConnChan := res
+	if dstTunToConnChan != nil {
+		dstTunToConnChan.(chan string) <- data
+		flag =  true;
+	}
+	c.Lock.RUnlock()
+	return flag
+}
+
 func (c *Cache) Delete(key string) interface{} {
 	c.Lock.RLock()
 	var res interface{}

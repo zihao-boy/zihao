@@ -141,6 +141,7 @@ func (user *User) Start() {
 }
 
 func (user *User) Close() {
+	user.Logout(user.Client)
 	go func() {
 		defer func() {
 			recover()
@@ -162,5 +163,5 @@ func (user *User) Close() {
 		user.Conn.Close()
 	}()
 
-	user.Logout(user.Client)
+
 }

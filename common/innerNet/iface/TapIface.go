@@ -150,9 +150,12 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 				// 检查是否目标用户是否存在
 				dstClient := "tcp:" + strings.Split(dst, ":")[0]
 				fmt.Println("dstClient", dstClient)
-				dstTunToConnChan := ts.RouteMap.Get(dstClient)
-				if dstTunToConnChan != nil {
-					dstTunToConnChan.(chan string) <- string(data)
+				//dstTunToConnChan := ts.RouteMap.Get(dstClient)
+				//if dstTunToConnChan != nil {
+				//	dstTunToConnChan.(chan string) <- string(data)
+				//	continue
+				//}
+				if(ts.RouteMap.GetAndSendData(dstClient,string(data))){
 					continue
 				}
 				ts.InputChan <- data
