@@ -5,7 +5,6 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
-	"log"
 	"reflect"
 	"strings"
 	"time"
@@ -23,38 +22,12 @@ var (
 
 
 func main(){
-	fmt.Print("Hello World\n")
-	//path := "F:/aa.pcap"
+	a:= time.Now()
 
-	devices,err := pcap.FindAllDevs()
-	if err != nil{
-		log.Panic(err)
-	}
+	b:=time.Now().Add(10*time.Second)
 
-	for _, device := range devices {
-		fmt.Println("\nName: ", device.Name)
-		fmt.Println("Description: ", device.Description)
-		fmt.Println("Devices addresses: ", device.Description)
-		for _, address := range device.Addresses {
-			fmt.Println("- IP address: ", address.IP)
-			fmt.Println("- Subnet mask: ", address.Netmask)
-		}
-	}
-
-	//handler, err := pcap.OpenOffline(path)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
-
-	handle, err = pcap.OpenLive(device,snapshot_len,promiscuous,timeout)
-	handle.SetBPFFilter("http")
-	defer handle.Close()
-
-	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
-
-	for packet := range packetSource.Packets() {
-		printPacketInfo(packet)
+	if b.After(a){
+		fmt.Println(a)
 	}
 }
 

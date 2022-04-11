@@ -126,6 +126,7 @@ func (user *User) Start() {
 			if user.HeartbeatTime.After(time.Now()){
 				continue
 			}
+			fmt.Println("检测现成",user.HeartbeatTime,time.Now())
 			user.Close()
 		}
 
