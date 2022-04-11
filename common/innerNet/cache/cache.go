@@ -51,30 +51,40 @@ func NewCache(ttl time.Duration) *Cache {
 
 func (c *Cache) Get(key string) interface{} {
 	c.Lock.RLock()
+	defer func() {
+		c.Lock.RUnlock()
+	}()
 	var res interface{}
 	if it, ok := c.Items[key]; ok {
 		res = it.Value
 		it.Timestamp = time.Now()
 	}
-	c.Lock.RUnlock()
 	return res
 }
 
 func (c *Cache) Delete(key string) interface{} {
 	c.Lock.RLock()
+	defer func() {
+		c.Lock.RUnlock()
+	}()
 	var res interface{}
 	delete(c.Items,key)
-	c.Lock.RUnlock()
 	return res
 }
 
 func (c *Cache) Put(key string, value interface{}) {
 	c.Lock.Lock()
+	defer func() {
+		c.Lock.RUnlock()
+	}()
 	c.Items[key] = NewItem(value, time.Now())
-	c.Lock.Unlock()
+
 }
 
 func (c *Cache) Clear() {
 	c.Lock.Lock()
+	defer func() {
+		c.Lock.RUnlock()
+	}()
 	c.Items = make(map[string]*Item)
 }
