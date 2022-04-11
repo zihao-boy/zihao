@@ -188,7 +188,8 @@ func (tc *TcpClient) Start() error {
 	go func() {
 		for{
 			endata, _ := encrypt.EncryptAES(endata, encryptKey)
-			io.WritePacket(tc.TcpConn, endata)
+			n,err := io.WritePacket(tc.TcpConn, endata)
+			fmt.Println("client heart beat",n,err,endata)
 			time.Sleep(5 * time.Second)
 		}
 	}()
