@@ -53,6 +53,7 @@ func (user *User) Start() {
 			}
 
 			if err != nil {
+				fmt.Println("io.ReadPacket err",err)
 				user.Close()
 				return
 			}
@@ -68,6 +69,10 @@ func (user *User) Start() {
 						fmt.Println("From %v client: client:%v, protocol:%v, len:%v, src:%v, dst:%v", user.Protocol, user.Client, proto, ln, src, dst)
 					}
 				}
+				if err != nil{
+					fmt.Println("deal data err",err)
+				}
+
 			}
 		}
 	}()
