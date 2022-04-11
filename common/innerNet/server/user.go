@@ -62,6 +62,8 @@ func (user *User) Start() {
 				return
 			}
 
+			fmt.Println("接受到数据 data",data)
+
 			if ln := len(data); ln > 0 {
 				if data, err = encrypt.DecryptAES(data, encryptKey); err == nil {
 					if proto, src, dst, err := header.GetBase(data); err == nil {
@@ -75,6 +77,7 @@ func (user *User) Start() {
 					}
 				}
 				ipData := string(data)
+				fmt.Println("接受到数据 ipData",ipData)
 				if !strings.HasPrefix(ipData, "ping") {
 					continue
 				}
