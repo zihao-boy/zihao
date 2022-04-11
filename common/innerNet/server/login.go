@@ -132,7 +132,7 @@ func (lm *LoginManager) Logout(client string) {
 	if user, ok := lm.Users[client]; ok {
 		lm.DhcpServer.ReleaseIp(user.LocalTunIp)
 		delete(lm.Users, client)
-
+		lm.TunServer.RouteMap.Delete(user.LocalTunIp)
 	}
 }
 
