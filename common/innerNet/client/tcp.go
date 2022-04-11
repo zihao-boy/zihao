@@ -108,8 +108,9 @@ func (tc *TcpClient) readFromServer() error {
 					continue
 				}
 				ipData := string(data)
-				if strings.HasPrefix(ipData,"ping"){
+				if ipData == "ping"{
 					tc.HeartbeatTime = time.Now().Add(60*time.Second)
+					fmt.Println("收到ping 包 回写时间",ipData,tc.HeartbeatTime)
 					continue
 				}
 				if !strings.HasPrefix(ipData, "ip=") {

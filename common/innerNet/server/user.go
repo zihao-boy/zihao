@@ -6,7 +6,6 @@ import (
 	"github.com/zihao-boy/zihao/common/innerNet/header"
 	"github.com/zihao-boy/zihao/common/innerNet/io"
 	"net"
-	"strings"
 	"time"
 )
 
@@ -79,11 +78,14 @@ func (user *User) Start() {
 				}
 				ipData := string(data)
 				fmt.Println("接受到数据 ipData",ipData)
-				if !strings.HasPrefix(ipData, "ping") {
+				if ipData != "ping" {
 					continue
 				}
 				user.HeartbeatTime = time.Now().Add(60*time.Second)
+				data,_ = encrypt.EncryptAES(data, encryptKey)
 				_, err = io.WritePacket(user.Conn, data)
+				fmt.Println("回写ping ipData",ipData,user.HeartbeatTime)
+
 				if err != nil{
 					fmt.Println("deal data err",err)
 				}
@@ -132,6 +134,7 @@ func (user *User) Start() {
 			}
 			fmt.Println("检测现成",user.HeartbeatTime,time.Now())
 			user.Close()
+			return
 		}
 
 	}()

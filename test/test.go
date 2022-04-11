@@ -22,12 +22,9 @@ var (
 
 
 func main(){
-	a:= time.Now()
-
-	b:=time.Now().Add(10*time.Second)
-
-	if b.After(a){
-		fmt.Println(a)
+	ipData :=" ping"
+	if !strings.HasPrefix(ipData, "ping") {
+		fmt.Println(time.Now().Add(60*time.Second))
 	}
 }
 
