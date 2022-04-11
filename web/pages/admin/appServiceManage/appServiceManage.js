@@ -160,6 +160,7 @@
             _exportYaml: function() {
                 //;
                 vc.emit('selectAppService', 'openSelectAppService', {
+                    asGroupId: $that.appServiceManageInfo.conditions.asGroupId,
                     callBack: $that._doExportYaml
                 })
             },
