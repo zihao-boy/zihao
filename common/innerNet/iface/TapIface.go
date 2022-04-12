@@ -172,6 +172,7 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 }
 
 func (ts *TunServer) pushData(q chan string, item string) error {
+	fmt.Println("开始写数据select 前")
 	select {
 	case q <- item:
 		fmt.Println("开始写数据")
