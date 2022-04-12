@@ -171,11 +171,12 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 }
 
 func (ts *TunServer) pushData(q chan string, item string, timeoutSecs int) error {
-
 	select {
 	case q <- item:
+		fmt.Println("开始写数据")
 		return nil
 	case <-time.After(time.Duration(timeoutSecs) * time.Second):
+		fmt.Println("写数据超时")
 		return errors.New("queue full, wait timeout")
 
 	}
