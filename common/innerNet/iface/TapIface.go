@@ -133,7 +133,6 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 		}()
 
 		key := proto + ":" + localTunIp
-		fmt.Println("localTunIp", key)
 		oldConn := ts.RouteMap.Get(key)
 		if oldConn != nil {
 			ts.RouteMap.Delete(key)
@@ -141,7 +140,6 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 		ts.RouteMap.Put(key, tunToConnChan)
 
 		for {
-			fmt.Println("读取数据到tun")
 			data, ok := <-connToTunChan
 			if !ok {
 				fmt.Println("data,ok=", data, ok,client)
@@ -156,9 +154,6 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 				if dstTunToConnChan != nil {
 					//dstTunToConnChan.(chan string) <- string(data)
 					err = ts.pushData(dstTunToConnChan.(chan string), string(data))
-					if err != nil {
-						fmt.Println("通道超时", err)
-					}
 					continue
 				}
 				//if ts.RouteMap.GetAndSendData(dstClient, string(data)) {
@@ -172,16 +167,13 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 }
 
 func (ts *TunServer) pushData(q chan string, item string) error {
-	fmt.Println("开始写数据select 前")
 	defer func() {
 		recover()
 	}()
 	select {
 	case q <- item:
-		fmt.Println("开始写数据")
 		return nil
 	case <-time.After(3 * time.Second):
-		fmt.Println("写数据超时")
 		return errors.New("queue full, wait timeout")
 	}
 }
