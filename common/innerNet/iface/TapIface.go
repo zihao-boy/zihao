@@ -154,7 +154,10 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 				dstTunToConnChan := ts.RouteMap.Get(dstClient)
 				if dstTunToConnChan != nil {
 					//dstTunToConnChan.(chan string) <- string(data)
-					ts.pushData(dstTunToConnChan.(chan string), string(data), 3)
+					err = ts.pushData(dstTunToConnChan.(chan string), string(data), 3)
+					if err != nil{
+						fmt.Println("通道超时",err)
+					}
 					continue
 				}
 				//if ts.RouteMap.GetAndSendData(dstClient, string(data)) {
