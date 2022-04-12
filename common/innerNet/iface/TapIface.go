@@ -1,6 +1,7 @@
 package iface
 
 import (
+	"errors"
 	"fmt"
 	"github.com/songgao/water"
 	"github.com/zihao-boy/zihao/common/innerNet/cache"
@@ -150,19 +151,31 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 				// 检查是否目标用户是否存在
 				dstClient := "tcp:" + strings.Split(dst, ":")[0]
 				fmt.Println("dstClient", dstClient)
-				//dstTunToConnChan := ts.RouteMap.Get(dstClient)
-				//if dstTunToConnChan != nil {
-				//	dstTunToConnChan.(chan string) <- string(data)
-				//	continue
-				//}
-				if(ts.RouteMap.GetAndSendData(dstClient,string(data))){
+				dstTunToConnChan := ts.RouteMap.Get(dstClient)
+				if dstTunToConnChan != nil {
+					//dstTunToConnChan.(chan string) <- string(data)
+					ts.pushData(dstTunToConnChan.(chan string), string(data), 3)
 					continue
 				}
+				//if ts.RouteMap.GetAndSendData(dstClient, string(data)) {
+				//	continue
+				//}
 				ts.InputChan <- data
 				fmt.Println("ToTun: protocol:%v, src:%v, dst:%v", proto, src, dst)
 			}
 		}
 	}()
+}
+
+func (ts *TunServer) pushData(q chan string, item string, timeoutSecs int) error {
+
+	select {
+	case q <- item:
+		return nil
+	case <-time.After(time.Duration(timeoutSecs) * time.Second):
+		return errors.New("queue full, wait timeout")
+
+	}
 }
 
 func (ts *TunServer) Stop() {

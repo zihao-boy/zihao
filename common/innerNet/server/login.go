@@ -134,6 +134,7 @@ func (lm *LoginManager) Logout(client string) {
 		delete(lm.Users, client)
 		lm.TunServer.RouteMap.Delete(user.LocalTunIp)
 	}
+
 }
 
 func (lm *LoginManager) Start() {
