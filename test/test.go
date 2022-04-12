@@ -21,13 +21,25 @@ var (
 )
 
 
-func main(){
-	ipData :=" ping"
-	if !strings.HasPrefix(ipData, "ping") {
-		fmt.Println(time.Now().Add(60*time.Second))
+func main() {
+	defer func() {
+		recover()
+	}()
+	ch := make(chan int,10)
+	for i := 0;i < 5;i++{
+		ch <- i*i
+	}
+	close(ch)
+
+
+	for i := 0;i < 5;i++{
+		ch <- i*i
+	}
+
+	for x:= range ch {
+		fmt.Println(x)
 	}
 }
-
 
 
 func printPacketInfo(packet gopacket.Packet) {
