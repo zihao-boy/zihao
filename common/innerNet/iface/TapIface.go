@@ -144,6 +144,7 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 			fmt.Println("读取数据到tun")
 			data, ok := <-connToTunChan
 			if !ok {
+				fmt.Println("data,ok=", data, ok)
 				return
 			}
 			if proto, src, dst, err := header.GetBase([]byte(data)); err == nil {
@@ -154,9 +155,9 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 				dstTunToConnChan := ts.RouteMap.Get(dstClient)
 				if dstTunToConnChan != nil {
 					//dstTunToConnChan.(chan string) <- string(data)
-					err = ts.pushData(dstTunToConnChan.(chan string), string(data), 3)
-					if err != nil{
-						fmt.Println("通道超时",err)
+					err = ts.pushData(dstTunToConnChan.(chan string), string(data))
+					if err != nil {
+						fmt.Println("通道超时", err)
 					}
 					continue
 				}
@@ -170,15 +171,14 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 	}()
 }
 
-func (ts *TunServer) pushData(q chan string, item string, timeoutSecs int) error {
+func (ts *TunServer) pushData(q chan string, item string) error {
 	select {
 	case q <- item:
 		fmt.Println("开始写数据")
 		return nil
-	case <-time.After(time.Duration(timeoutSecs) * time.Second):
+	case <-time.After(3 * time.Second):
 		fmt.Println("写数据超时")
 		return errors.New("queue full, wait timeout")
-
 	}
 }
 
