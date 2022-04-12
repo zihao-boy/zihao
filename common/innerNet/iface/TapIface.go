@@ -144,7 +144,7 @@ func (ts *TunServer) StartClient(client string, connToTunChan chan string, tunTo
 			fmt.Println("读取数据到tun")
 			data, ok := <-connToTunChan
 			if !ok {
-				fmt.Println("data,ok=", data, ok)
+				fmt.Println("data,ok=", data, ok,client)
 				return
 			}
 			if proto, src, dst, err := header.GetBase([]byte(data)); err == nil {
