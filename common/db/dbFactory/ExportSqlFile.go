@@ -307,9 +307,9 @@ func exportTableIndex(fileName string, db *gorm.DB, tableName string) error {
 		"\na.TABLE_NAME," +
 		"\na.INDEX_NAME," +
 		"\na.COLUMN_NAME," +
-		"\na.NON_UNIQUE," +
+		"\na.NON_UNIQUE" +
 		"\nFROM information_schema.STATISTICS a" +
-		"\nwhere a.TABLE_NAME=" + tableName
+		"\nwhere a.TABLE_NAME='" + tableName +"';"
 
 	recordsRs, err := ExecuteWithDbConn(db, sqlStr, make([]interface{}, 0))
 	if err != nil {
@@ -321,7 +321,7 @@ func exportTableIndex(fileName string, db *gorm.DB, tableName string) error {
 		index_name := ele["INDEX_NAME"]
 		uni := ele["NON_UNIQUE"]
 		if index_name == "PRIMARY" {
-			strExport += ("ALTER TABLE " + tableName + " ADD PRIMARY KEY(" + col.(string) + ");\n")
+			//strExport += ("ALTER TABLE " + tableName + " ADD PRIMARY KEY(" + col.(string) + ");\n")
 			continue
 		}
 
