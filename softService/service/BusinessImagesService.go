@@ -130,35 +130,57 @@ func (businessImagesService *BusinessImagesService) SaveBusinessImages(ctx iris.
 		businessImagesDto businessImages.BusinessImagesDto
 	)
 	ctx.SetMaxRequestBodySize(maxSize)
+	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
+	businessImagesDto.Id = seq.Generator()
+	businessImagesDto.TenantId = user.TenantId
+	businessImagesDto.CreateUserId = user.UserId
+	businessImagesDto.Version = "V" + date.GetNowAString()
+	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_IMPORT
+	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
+	businessImagesDto.Name = ctx.FormValue("name")
+
+	isFile := ctx.FormValue("isFile")
+	//add URL
+	if isFile == "N"{
+		typeUrl := ctx.FormValue("typeUrl")
+		businessImagesDto.TypeUrl = typeUrl
+		err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
+		if err != nil {
+			return result.Error(err.Error())
+		}
+
+		//save images version
+		businessImagesVerDto := businessImages.BusinessImagesVerDto{
+			Id:       seq.Generator(),
+			ImagesId: businessImagesDto.Id,
+			Version:  businessImagesDto.Version,
+			TypeUrl:  typeUrl,
+			TenantId: user.TenantId,
+		}
+		err = businessImagesService.businessImagesVerDao.SaveBusinessImagesVer(businessImagesVerDto)
+		if err != nil {
+			return result.Error(err.Error())
+		}
+		return result.Success()
+	}
 
 	file, fileHeader, err := ctx.FormFile("uploadFile")
 	defer file.Close()
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
-	var user *user.UserDto = ctx.Values().Get(constants.UINFO).(*user.UserDto)
-	businessImagesDto.Id = seq.Generator()
+
 	dest := filepath.Join("/businessImages", user.TenantId, businessImagesDto.Id)
 
 	if !utils.IsDir(dest) {
 		utils.CreateDir(dest)
 	}
-
 	dest = filepath.Join(dest, fileHeader.Filename)
-
 	_, err = ctx.SaveFormFile(fileHeader, config.G_AppConfig.DataPath+dest)
 	if err != nil {
 		return result.Error("上传失败" + err.Error())
 	}
-
-	businessImagesDto.TenantId = user.TenantId
-	businessImagesDto.CreateUserId = user.UserId
-	businessImagesDto.Version = "V" + date.GetNowAString()
-	businessImagesDto.ImagesType = businessImages.IMAGES_TYPE_IMPORT
-	businessImagesDto.ImagesFlag = businessImages.IMAGES_FLAG_CUSTOM
 	businessImagesDto.TypeUrl = dest
-	businessImagesDto.Name = ctx.FormValue("name")
-
 	err = businessImagesService.businessImagesDao.SaveBusinessImages(businessImagesDto)
 	if err != nil {
 		return result.Error(err.Error())

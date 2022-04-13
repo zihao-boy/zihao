@@ -60,8 +60,10 @@
                     }
                 );
             },
-            _openAddBusinessImagesModal: function() {
-                vc.emit('addBusinessImages', 'openAddBusinessImagesModal', {});
+            _openAddBusinessImagesModal: function(_isFile) {
+                vc.emit('addBusinessImages', 'openAddBusinessImagesModal', {
+                    isFile:_isFile
+                });
             },
             _openEditBusinessImagesModel: function(_businessImages) {
                 vc.emit('editBusinessImages', 'openEditBusinessImagesModal', _businessImages);

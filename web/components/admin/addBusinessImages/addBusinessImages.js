@@ -12,13 +12,15 @@
                 typeUrl: '',
                 imagesFlag: '',
                 excelTemplate: '',
+                isFile:'Y'
             }
         },
         _initMethod: function () {
 
         },
         _initEvent: function () {
-            vc.on('addBusinessImages', 'openAddBusinessImagesModal', function () {
+            vc.on('addBusinessImages', 'openAddBusinessImagesModal', function (_param) {
+                vc.copyObject(_param,$that.addBusinessImagesInfo);
                 $('#addBusinessImagesModel').modal('show');
             });
         },
@@ -55,6 +57,8 @@
                 let param = new FormData();
                 param.append("uploadFile", vc.component.addBusinessImagesInfo.excelTemplate);
                 param.append('name', vc.component.addBusinessImagesInfo.name);
+                param.append('isFile', vc.component.addBusinessImagesInfo.isFile);
+                param.append('typeUrl', vc.component.addBusinessImagesInfo.typeUrl);
 
 
                 vc.http.apiPost(
@@ -95,6 +99,7 @@
                     typeUrl: '',
                     imagesFlag: '',
                     excelTemplate: '',
+                    isFile:'Y'
                 };
             }
         }
