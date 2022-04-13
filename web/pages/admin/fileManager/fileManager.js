@@ -87,6 +87,8 @@
                 let _curPath = $that.fileManagerInfo.curPath;
                 if (!_curPath.endsWith('/')) {
                     _curPath += ('/' + _file.name);
+                }else{
+                    _curPath +=  _file.name;
                 }
                 let _data = {
                     hostId: $that.fileManagerInfo.hostId,
