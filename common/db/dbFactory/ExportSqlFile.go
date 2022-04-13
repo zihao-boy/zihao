@@ -20,13 +20,13 @@ func ExportSqlFile(dblinkDto dbLink.DbLinkDto, dbSqlDto dbLink.DbSqlDto, srcObje
 	if err != nil {
 		return result.Error(err.Error())
 	}
-	
+
 	ExportOne(db, dbSqlDto.FileName, dblinkDto, srcObject)
 
 	return result.SuccessData("已提交导出，文件保存在" + dbSqlDto.FileName + ",请导完后下载")
 }
 
-func ExportOne(db *gorm.DB, workDir string,  dblinkDto dbLink.DbLinkDto, srcObject string) error{
+func ExportOne(db *gorm.DB, workDir string, dblinkDto dbLink.DbLinkDto, srcObject string) error {
 	//var fileName string
 
 	//if flag.Tables {
@@ -281,12 +281,62 @@ func exportTables(fileName string, db *gorm.DB, dblinkDto dbLink.DbLinkDto, srcO
 
 		writeToFile(fileName, strExport, true) //表结构导出
 
+		exportTableIndex(fileName, db, tableName)
+
 		err = exportTableData(fileName, db, dblinkDto, tableName, allFields, srcObject)
 		if err != nil {
 			return err
 		}
 
 	}
+	return nil
+}
+
+/**
+exportTableIndex(fileName,db *gorm.DB,tableName string)
+SELECT a.TABLE_SCHEMA,
+a.TABLE_NAME,
+a.index_name,
+GROUP_CONCAT(column_name ORDER BY seq_in_index) AS `Columns`
+FROM information_schema.statistics a
+where a.table_name = 'account'
+GROUP BY a.TABLE_SCHEMA,a.TABLE_NAME,a.index_name
+*/
+func exportTableIndex(fileName string, db *gorm.DB, tableName string) error {
+	sqlStr := "SELECT a.TABLE_SCHEMA," +
+		"\na.TABLE_NAME," +
+		"\na.INDEX_NAME," +
+		"\na.COLUMN_NAME," +
+		"\na.NON_UNIQUE," +
+		"\nFROM information_schema.STATISTICS a" +
+		"\nwhere a.TABLE_NAME=" + tableName
+
+	recordsRs, err := ExecuteWithDbConn(db, sqlStr, make([]interface{}, 0))
+	if err != nil {
+		return err
+	}
+	var strExport string
+	for _, ele := range recordsRs {
+		col := ele["COLUMN_NAME"]
+		index_name := ele["INDEX_NAME"]
+		uni := ele["NON_UNIQUE"]
+		if index_name == "PRIMARY" {
+			strExport += ("ALTER TABLE " + tableName + " ADD PRIMARY KEY(" + col.(string) + ");\n")
+			continue
+		}
+
+		if uni != nil && uni.(string) == "1"{
+			strExport += ("ALTER TABLE " + tableName + " ADD UNIQUE(" + col.(string) + ");\n")
+			continue
+		}
+
+		if uni != nil && uni.(string) == "0"{
+			strExport += ("ALTER TABLE " + tableName + " ADD INDEX "+index_name.(string)+"(" + col.(string) + ");\n")
+			continue
+		}
+	}
+
+	writeToFile(fileName, strExport, true)
 	return nil
 }
 
