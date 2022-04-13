@@ -325,12 +325,12 @@ func exportTableIndex(fileName string, db *gorm.DB, tableName string) error {
 			continue
 		}
 
-		if uni != nil && uni.(string) == "1"{
+		if uni != nil && uni.(string) == "0"{
 			strExport += ("ALTER TABLE " + tableName + " ADD UNIQUE(" + col.(string) + ");\n")
 			continue
 		}
 
-		if uni != nil && uni.(string) == "0"{
+		if uni != nil && uni.(string) == "1"{
 			strExport += ("ALTER TABLE " + tableName + " ADD INDEX "+index_name.(string)+"(" + col.(string) + ");\n")
 			continue
 		}
