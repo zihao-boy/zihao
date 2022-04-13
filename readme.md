@@ -58,6 +58,8 @@ https://www.bilibili.com/video/BV1BM4y1w7Ti?spm_id_from=333.999.0.0
 
  12、加入waf功能
 
+ 13、加入虚拟组网功能
+
 未来我们还会加入很多有趣的功能。
 
 ### 7.0 系统截图
