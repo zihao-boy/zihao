@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>hosts信息</h5>
+                <div class="ibox-tools" style="top:10px;">
+                    <button type="button" v-if="viewDnsMapInfo.index != 2" class="btn btn-primary btn-sm" style="margin-right:10px;"  v-on:click="_openSelectDnsMapInfoModel()">
+                        <i class="glyphicon glyphicon-search"></i> 选择hosts</button>
+
+                    <button type="button" v-if="viewDnsMapInfo.index != 2" class="btn btn-primary btn-sm" v-on:click="_openAddDnsMapInfoModel()">
+                        <i class="glyphicon glyphicon-plus"></i> 添加hosts</button>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >域名：</label>
+                            <label class="">{{viewDnsMapInfo.host}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >类型：</label>
+                            <label class="">{{viewDnsMapInfo.type}}</label>
+                        </div>
+</div>
+<div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-form-label" >ip'：</label>
+                            <label class="">{{viewDnsMapInfo.value}}</label>
+                        </div>
+</div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <vc:create path="admin/addDnsMap"
+               callBackListener="viewDnsMapInfo"
+               callBackFunction="chooseDnsMap"
+    ></vc:create>
+
+
+    <vc:create path="admin/chooseDnsMap"
+               emitChooseDnsMap="viewDnsMapInfo"
+               emitLoadData="viewDnsMapInfo"
+    ></vc:create>
+</div>
