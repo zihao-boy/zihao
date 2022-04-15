@@ -1495,3 +1495,36 @@ INSERT INTO `menu` VALUES ('700201904044', '组网电脑', '800201904014', '/ind
 INSERT INTO `privilege` VALUES ('500201904044', '组网电脑', '组网电脑', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/innerNetUserManage', '700201904044');
 INSERT INTO `privilege_rel` VALUES ('78', '500201904044', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('79', '500201904044', '600201904002', '2019-04-01 08:18:29', '0');
+
+
+create table dns
+(
+    dns_id   varchar(64) not null
+        primary key,
+    dns_port varchar(64) not null,
+    dns_ip            varchar(64) not null,
+    state          varchar(12) not null,
+    create_time    timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2) default '0' not null
+);
+
+create table dns_hosts
+(
+    dns_host_id varchar(64) not null
+        primary key,
+    dns_id      varchar(64) not null,
+    host_id     varchar(64) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+create table dns_map
+(
+    dns_map_id     varchar(64) not null
+        primary key,
+    host    varchar(64) not null,
+    type    varchar(64) not null,
+    value         varchar(64) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);

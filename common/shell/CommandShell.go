@@ -9,6 +9,7 @@ import (
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
+	"github.com/zihao-boy/zihao/entity/dto/dns"
 	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
@@ -539,6 +540,123 @@ func ExecRefreshInnerNetConfig(innerNet innerNet.SlaveInnerNetDataDto) (result.R
 		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
 		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshInnerNetConfig", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+
+
+func ExecStartDns(dnsData dns.DnsDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&dnsData)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, innerNetHost := range dnsData.DnsHosts {
+		tmpHostDto := host.HostDto{
+			HostId: innerNetHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/startDns", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+
+func ExecStopDns(dnsData dns.DnsDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&dnsData)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, innerNetHost := range dnsData.DnsHosts {
+		tmpHostDto := host.HostDto{
+			HostId: innerNetHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/stopDns", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+func ExecRefreshDnsConfig(dnsData dns.DnsDataDto) (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+	)
+	data := make(map[string]interface{})
+	appServiceDtoData, _ := json.Marshal(&dnsData)
+	json.Unmarshal([]byte(appServiceDtoData), &data)
+
+	for _, innerNetHost := range dnsData.DnsHosts {
+		tmpHostDto := host.HostDto{
+			HostId: innerNetHost.HostId,
+		}
+		hostDtos, _ := hostDao.GetHosts(tmpHostDto)
+		if len(hostDtos) < 1 {
+			continue
+		}
+		ip := hostDtos[0].Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshDnsConfig", data, nil)
 		if err != nil {
 			return resultDto, err
 		}
