@@ -304,8 +304,7 @@ func (dnsService *DnsService) getDnsConfig(dnsDto dns.DnsDto) dns.DnsDataDto {
 	maps, _ := dnsMapDao.GetDnsMaps(tmpDnsMapDto)
 
 	return dns.DnsDataDto{
-		DnsIp: dnsDto.DnsIp,
-		DnsPort:  dnsDto.DnsPort,
+		Dns: dnsDto,
 		Maps:  maps,
 	}
 

@@ -2,7 +2,7 @@ package dns
 
 import (
 	"errors"
-	dnsMap2 "github.com/zihao-boy/zihao/entity/dto/dnsMap"
+	dnsMap2 "github.com/zihao-boy/zihao/entity/dto/dns"
 	"golang.org/x/net/dns/dnsmessage"
 	"log"
 	"net"
@@ -127,7 +127,7 @@ func (s *DnsServer) GetDnsMap(hostName string) (*dnsmessage.Resource, error) {
 refresh config
  */
 func FreshDnsConfig(dnsDataDto dnsMap2.DnsDataDto) {
-	dnsIp = dnsDataDto.DnsIp
+	dnsIp = dnsDataDto.Dns.DnsIp
 	if dnsDataDto.Maps == nil || len(dnsDataDto.Maps)<1{
 		return ;
 	}

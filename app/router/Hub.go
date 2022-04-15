@@ -7,6 +7,7 @@ import (
 	"github.com/zihao-boy/zihao/app/controller/appService"
 	"github.com/zihao-boy/zihao/app/controller/appVersion"
 	"github.com/zihao-boy/zihao/app/controller/dbClient"
+	"github.com/zihao-boy/zihao/app/controller/dns"
 	"github.com/zihao-boy/zihao/app/controller/firewall"
 	"github.com/zihao-boy/zihao/app/controller/home"
 	"github.com/zihao-boy/zihao/app/controller/host"
@@ -74,6 +75,10 @@ func Hub(app *iris.Application) {
 
 	//firewall
 	innerNet.InnerNetControllerRouter(party)
+
+
+	//firewall
+	dns.DnsControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {

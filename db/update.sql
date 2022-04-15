@@ -494,3 +494,10 @@ create table dns_map
     create_time timestamp  default CURRENT_TIMESTAMP not null,
     status_cd   varchar(2) default '0' not null
 );
+
+insert into dns(dns_id, dns_ip, dns_port, state) VALUES ('1','8.8.8.8','53','2002');
+
+INSERT INTO `menu` VALUES ('700201904045', 'dns', '800201904014', '/index.html#/pages/admin/dnsManage', '1', 'dns', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904045', 'dns', 'dns', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/dnsManage', '700201904045');
+INSERT INTO `privilege_rel` VALUES ('80', '500201904045', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('81', '500201904045', '600201904002', '2019-04-01 08:18:29', '0');

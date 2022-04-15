@@ -565,7 +565,7 @@ func ExecStartDns(dnsData dns.DnsDataDto) (result.ResultDto, error) {
 	appServiceDtoData, _ := json.Marshal(&dnsData)
 	json.Unmarshal([]byte(appServiceDtoData), &data)
 
-	for _, innerNetHost := range dnsData.DnsHosts {
+	for _, innerNetHost := range dnsData.Dns.DnsHosts {
 		tmpHostDto := host.HostDto{
 			HostId: innerNetHost.HostId,
 		}
@@ -604,7 +604,7 @@ func ExecStopDns(dnsData dns.DnsDataDto) (result.ResultDto, error) {
 	appServiceDtoData, _ := json.Marshal(&dnsData)
 	json.Unmarshal([]byte(appServiceDtoData), &data)
 
-	for _, innerNetHost := range dnsData.DnsHosts {
+	for _, innerNetHost := range dnsData.Dns.DnsHosts {
 		tmpHostDto := host.HostDto{
 			HostId: innerNetHost.HostId,
 		}
@@ -642,7 +642,7 @@ func ExecRefreshDnsConfig(dnsData dns.DnsDataDto) (result.ResultDto, error) {
 	appServiceDtoData, _ := json.Marshal(&dnsData)
 	json.Unmarshal([]byte(appServiceDtoData), &data)
 
-	for _, innerNetHost := range dnsData.DnsHosts {
+	for _, innerNetHost := range dnsData.Dns.DnsHosts {
 		tmpHostDto := host.HostDto{
 			HostId: innerNetHost.HostId,
 		}

@@ -12,7 +12,7 @@ type DnsDto struct {
 	dto.PageDto
 	DnsId      string         `json:"dnsId" sql:"-" `
 	DnsIp string `json:"dnsIp" sql:"-"`
-	DnsPort int `json:"dnsPort"`
+	DnsPort string `json:"dnsPort"`
 	CreateTime time.Time      `json:"createTime" sql:"-"`
 	StatusCd   string         `json:"statusCd" sql:"-"`
 	State      string         `json:"state"`
@@ -21,7 +21,6 @@ type DnsDto struct {
 }
 
 type DnsDataDto struct {
-	DnsIp string `json:"dnsIp" sql:"-"`
-	DnsPort int `json:"dnsPort"`
+	Dns         DnsDto `json:"dns"`
 	Maps []*DnsMapDto
 }

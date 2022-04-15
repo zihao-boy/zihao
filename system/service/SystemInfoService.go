@@ -14,7 +14,7 @@ import (
 	wafServer "github.com/zihao-boy/zihao/common/waf"
 	"github.com/zihao-boy/zihao/common/zips"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
-	dnsMap2 "github.com/zihao-boy/zihao/entity/dto/dnsMap"
+	dnsMap2 "github.com/zihao-boy/zihao/entity/dto/dns"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
