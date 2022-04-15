@@ -90,6 +90,7 @@ func (s *DnsServer) Query(p Packet) {
 	val, err := s.GetDnsMap(reqNameStr)
 
 	if err == nil {
+		p.message.Response=true
 		p.message.Answers = append(p.message.Answers, *val)
 		go sendPacket(s.conn, p.message, p.addr)
 	} else {
