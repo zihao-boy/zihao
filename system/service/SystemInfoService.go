@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/common/date"
+	"github.com/zihao-boy/zihao/common/dns"
 	"github.com/zihao-boy/zihao/common/innerNet/server"
 	"github.com/zihao-boy/zihao/common/seq"
 	"github.com/zihao-boy/zihao/common/shell"
@@ -13,11 +14,12 @@ import (
 	wafServer "github.com/zihao-boy/zihao/common/waf"
 	"github.com/zihao-boy/zihao/common/zips"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
+	dnsMap2 "github.com/zihao-boy/zihao/entity/dto/dnsMap"
 	"github.com/zihao-boy/zihao/entity/dto/host"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/system"
-	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"io"
 	"io/ioutil"
@@ -576,6 +578,54 @@ func (s *SystemInfoService) RefreshInnerNetConfig(ctx iris.Context)  (result.Res
 		return result.Error(err.Error()), nil
 	}
 	err = server.InitInnerNetConfig(innerNetDataDto)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+
+// start waf
+func (s *SystemInfoService) StartDns(ctx iris.Context) (result.ResultDto, error) {
+	var (
+		err        error
+		dnsDataDto dnsMap2.DnsDataDto
+	)
+
+	if err = ctx.ReadJSON(&dnsDataDto); err != nil {
+		fmt.Print(err)
+		return result.Error(err.Error()), nil
+	}
+	err = dns.StartDns(dnsDataDto)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+// stop waf
+func (s *SystemInfoService) StopDns(ctx iris.Context) (result.ResultDto, error) {
+	var (
+		err       error
+	)
+	err = dns.StopDns()
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) RefreshDns(ctx iris.Context)  (result.ResultDto, error){
+	var (
+		err        error
+		dnsDataDto dnsMap2.DnsDataDto
+	)
+
+	if err = ctx.ReadJSON(&dnsDataDto); err != nil {
+		fmt.Print(err)
+		return result.Error(err.Error()), nil
+	}
+	err = dns.RefreshDns(dnsDataDto)
 	if err != nil {
 		return result.Error(err.Error()), nil
 	}

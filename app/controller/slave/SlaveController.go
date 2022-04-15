@@ -59,6 +59,13 @@ func SlaveControllerRouter(party iris.Party) {
 	adinUser.Post("/stopInnerNet", hero.Handler(aus.stopInnerNet))
 
 	adinUser.Post("/refreshInnerNetConfig", hero.Handler(aus.refreshInnerNetConfig))
+
+	adinUser.Post("/startDns", hero.Handler(aus.startDns))
+
+	adinUser.Post("/stopDns", hero.Handler(aus.stopDns))
+
+	adinUser.Post("/refreshDnsConfig", hero.Handler(aus.refreshDnsConfig))
+
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -181,6 +188,30 @@ func (aus *SlaveController) refreshInnerNetConfig(ctx iris.Context) {
 	relustDto,_:=aus.systenInfoService.RefreshInnerNetConfig(ctx)
 	ctx.JSON(relustDto)
 }
+
+
+
+
+//开启容器
+func (aus *SlaveController) startDns(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StartDns(ctx)
+	ctx.JSON(relustDto)
+}
+
+
+
+//停止容器
+func (aus *SlaveController) stopDns(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.StopDns(ctx)
+	ctx.JSON(relustDto)
+}
+
+//开启容器
+func (aus *SlaveController) refreshDnsConfig(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.RefreshDns(ctx)
+	ctx.JSON(relustDto)
+}
+
 
 
 
