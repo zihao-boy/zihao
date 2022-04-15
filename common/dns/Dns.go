@@ -10,12 +10,16 @@ func StartDns(dto dnsMap2.DnsDataDto) error  {
 		memo:       addrBag{data: make(map[string][]net.UDPAddr)},
 		forwarders: []net.UDPAddr{{IP: net.ParseIP(dto.Dns.DnsIp), Port:53}},
 	}
+	FreshDnsConfig(dto)
 
 	go dnsService.Listen()
 	return nil
 }
 
 func StopDns() error {
+	if dnsService.conn == nil{
+		return nil
+	}
 	return dnsService.conn.Close()
 }
 

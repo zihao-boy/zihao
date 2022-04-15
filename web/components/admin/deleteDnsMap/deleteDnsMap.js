@@ -19,9 +19,8 @@
         },
         methods:{
             deleteDnsMap:function(){
-                vc.component.deleteDnsMapInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'dnsMap.deleteDnsMap',
+                    '/dns/deleteDnsMap',
                     JSON.stringify(vc.component.deleteDnsMapInfo),
                     {
                         emulateJSON:true

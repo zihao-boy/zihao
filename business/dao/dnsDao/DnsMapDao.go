@@ -57,13 +57,13 @@ VALUES(#DnsMapId#,#Host#,#Type#,#Value#)
 	update_dnsMap string = `
 	update dns_map set
 					$if Host != '' then
-					 t.host = #Host#,
+					 host = #Host#,
 					$endif
 					$if Type != '' then
-					 t.type = #Type#,
+					 type = #Type#,
 					$endif
 					$if Value != '' then
-					 t.value = #Value#,
+					 value = #Value#,
 					$endif
 		status_cd = '0'
 		where status_cd = '0'

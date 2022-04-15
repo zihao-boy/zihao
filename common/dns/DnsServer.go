@@ -2,6 +2,7 @@ package dns
 
 import (
 	"errors"
+	"fmt"
 	dnsMap2 "github.com/zihao-boy/zihao/entity/dto/dns"
 	"golang.org/x/net/dns/dnsmessage"
 	"log"
@@ -45,7 +46,7 @@ func (s *DnsServer) Listen() {
 		_, addr, err := s.conn.ReadFromUDP(buf)
 		if err != nil {
 			log.Println(err)
-			continue
+			return
 		}
 		var m dnsmessage.Message
 		err = m.Unpack(buf)
@@ -63,8 +64,12 @@ func (s *DnsServer) Listen() {
 // Query lookup answers for DNS message.
 func (s *DnsServer) Query(p Packet) {
 	// got response from forwarder, send it back to client
+	q := p.message.Questions[0]
+	var reqTypeStr = q.Type.String()
+	var reqNameStr = q.Name.String()
+
 	if p.message.Header.Response {
-		pKey := pString(p)
+		pKey := reqNameStr
 		if addrs, ok := s.memo.get(pKey); ok {
 			for _, addr := range addrs {
 				go sendPacket(s.conn, p.message, addr)
@@ -74,13 +79,15 @@ func (s *DnsServer) Query(p Packet) {
 		return
 	}
 
-	// was checked before entering this routine
-	q := p.message.Questions[0]
+	var reqType = q.Type
+
+	fmt.Printf("[%s] reqName: [%s] clientip: [%s]:[%d]\n",
+		reqTypeStr, reqNameStr, reqType)
 
 	// answer the question
 	//val := dnsMap[qString(q)]
 
-	val, err := s.GetDnsMap(qString(q))
+	val, err := s.GetDnsMap(reqNameStr)
 
 	if err == nil {
 		p.message.Answers = append(p.message.Answers, *val)
@@ -88,7 +95,7 @@ func (s *DnsServer) Query(p Packet) {
 	} else {
 		// forwarding
 		for i := 0; i < len(s.forwarders); i++ {
-			s.memo.set(pString(p), p.addr)
+			s.memo.set(reqNameStr, p.addr)
 			go sendPacket(s.conn, p.message, s.forwarders[i])
 		}
 	}
@@ -107,15 +114,9 @@ func (s *DnsServer) GetDnsMap(hostName string) (*dnsmessage.Resource, error) {
 		if !strings.HasPrefix(k,"*."){
 			continue
 		}
-		kPos := strings.Index(k,"*.")
-		k = k[kPos:]
-		if k == hostName{
-			resource,err := toResource(hostName,*v)
-			return &resource,err
-		}
-		hostNamePos := strings.Index(hostName,".")
-		tmpHostName := hostName[hostNamePos:]
-		if k == tmpHostName{
+		kPos := strings.Index(k,".")
+		k = k[kPos+1:]
+		if strings.HasSuffix(hostName,k){
 			resource,err := toResource(hostName,*v)
 			return &resource,err
 		}
@@ -133,7 +134,7 @@ func FreshDnsConfig(dnsDataDto dnsMap2.DnsDataDto) {
 	}
 	dnsMap = map[string]*dnsMap2.DnsMapDto{}
 	for _,tmpDnsMap := range dnsDataDto.Maps{
-		dnsMap[tmpDnsMap.Host] = tmpDnsMap
+		dnsMap[tmpDnsMap.Host+"."] = tmpDnsMap
 	}
 }
 

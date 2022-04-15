@@ -1,66 +1,66 @@
-(function(vc){
+(function (vc) {
 
     vc.extends({
         propTypes: {
-               callBackListener:vc.propTypes.string, //父组件名称
-               callBackFunction:vc.propTypes.string //父组件监听方法
+            callBackListener: vc.propTypes.string, //父组件名称
+            callBackFunction: vc.propTypes.string //父组件监听方法
         },
-        data:{
-            addDnsMapInfo:{
-                dnsMapId:'',
-                host:'',
-type:'',
-value:'',
+        data: {
+            addDnsMapInfo: {
+                dnsMapId: '',
+                host: '',
+                type: '',
+                value: '',
 
             }
         },
-         _initMethod:function(){
+        _initMethod: function () {
 
-         },
-         _initEvent:function(){
-            vc.on('addDnsMap','openAddDnsMapModal',function(){
+        },
+        _initEvent: function () {
+            vc.on('addDnsMap', 'openAddDnsMapModal', function () {
                 $('#addDnsMapModel').modal('show');
             });
         },
-        methods:{
-            addDnsMapValidate(){
+        methods: {
+            addDnsMapValidate() {
                 return vc.validate.validate({
-                    addDnsMapInfo:vc.component.addDnsMapInfo
-                },{
-                    'addDnsMapInfo.host':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"域名不能为空"
+                    addDnsMapInfo: vc.component.addDnsMapInfo
+                }, {
+                    'addDnsMapInfo.host': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "域名不能为空"
                         },
- {
-                            limit:"maxLength",
-                            param:"64",
-                            errInfo:"域名不能超过64"
-                        },
-                    ],
-'addDnsMapInfo.type':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"类型不能为空"
-                        },
- {
-                            limit:"maxLength",
-                            param:"64",
-                            errInfo:"类型不能超过64"
+                        {
+                            limit: "maxLength",
+                            param: "64",
+                            errInfo: "域名不能超过64"
                         },
                     ],
-'addDnsMapInfo.value':[
-{
-                            limit:"required",
-                            param:"",
-                            errInfo:"ip'不能为空"
+                    'addDnsMapInfo.type': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "类型不能为空"
                         },
- {
-                            limit:"maxLength",
-                            param:"64",
-                            errInfo:"ip'不能超过64"
+                        {
+                            limit: "maxLength",
+                            param: "64",
+                            errInfo: "类型不能超过64"
+                        },
+                    ],
+                    'addDnsMapInfo.value': [
+                        {
+                            limit: "required",
+                            param: "",
+                            errInfo: "ip'不能为空"
+                        },
+                        {
+                            limit: "maxLength",
+                            param: "64",
+                            errInfo: "ip'不能超过64"
                         },
                     ],
 
@@ -69,55 +69,54 @@ value:'',
 
                 });
             },
-            saveDnsMapInfo:function(){
-                if(!vc.component.addDnsMapValidate()){
+            saveDnsMapInfo: function () {
+                if (!vc.component.addDnsMapValidate()) {
                     vc.toast(vc.validate.errInfo);
 
-                    return ;
+                    return;
                 }
 
-                vc.component.addDnsMapInfo.communityId = vc.getCurrentCommunity().communityId;
                 //不提交数据将数据 回调给侦听处理
-                if(vc.notNull($props.callBackListener)){
-                    vc.emit($props.callBackListener,$props.callBackFunction,vc.component.addDnsMapInfo);
+                if (vc.notNull($props.callBackListener)) {
+                    vc.emit($props.callBackListener, $props.callBackFunction, vc.component.addDnsMapInfo);
                     $('#addDnsMapModel').modal('hide');
-                    return ;
+                    return;
                 }
 
                 vc.http.apiPost(
-                    'dnsMap.saveDnsMap',
+                    '/dns/saveDnsMap',
                     JSON.stringify(vc.component.addDnsMapInfo),
                     {
-                        emulateJSON:true
-                     },
-                     function(json,res){
+                        emulateJSON: true
+                    },
+                    function (json, res) {
                         //vm.menus = vm.refreshMenuActive(JSON.parse(json),0);
                         let _json = JSON.parse(json);
                         if (_json.code == 0) {
                             //关闭model
                             $('#addDnsMapModel').modal('hide');
                             vc.component.clearAddDnsMapInfo();
-                            vc.emit('dnsMapManage','listDnsMap',{});
+                            vc.emit('dnsMapManage', 'listDnsMap', {});
 
-                            return ;
+                            return;
                         }
                         vc.message(_json.msg);
 
-                     },
-                     function(errInfo,error){
+                    },
+                    function (errInfo, error) {
                         console.log('请求失败处理');
 
                         vc.message(errInfo);
 
-                     });
+                    });
             },
-            clearAddDnsMapInfo:function(){
+            clearAddDnsMapInfo: function () {
                 vc.component.addDnsMapInfo = {
-                                            host:'',
-type:'',
-value:'',
+                    host: '',
+                    type: '',
+                    value: '',
 
-                                        };
+                };
             }
         }
     });
