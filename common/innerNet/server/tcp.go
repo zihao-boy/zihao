@@ -43,6 +43,9 @@ func (ts *TcpServer) Stop() {
 
 func (ts *TcpServer) handleRequest(conn net.Conn) {
 	client := "tcp:" + conn.RemoteAddr().String()
+	//defer func() {
+	//	ts.saveLoginLog(conn.RemoteAddr().String())
+	//}()
 	if err := ts.login(client, conn); err != nil {
 		return
 	}
