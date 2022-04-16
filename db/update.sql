@@ -506,3 +506,14 @@ INSERT INTO `menu` VALUES ('700201904046', 'hosts', '800201904014', '/index.html
 INSERT INTO `privilege` VALUES ('500201904046', 'dns', 'dns', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/dnsMapManage', '700201904046');
 INSERT INTO `privilege_rel` VALUES ('82', '500201904046', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('83', '500201904046', '600201904002', '2019-04-01 08:18:29', '0');
+
+create table inner_net_privilege
+(
+    p_id     varchar(64) not null
+        primary key,
+    src_user_id    varchar(64) not null,
+    target_user_id   varchar(64) not null,
+    target_port varchar(64) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);

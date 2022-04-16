@@ -9,9 +9,7 @@ import (
 type InnerNetController struct {
 	innerNetService innerNetService.InnerNetService
 	innerNetUserService innerNetService.InnerNetUserService
-
-
-
+	innerNetPrivilegeService innerNetService.InnerNetPrivilegeService
 }
 
 func InnerNetControllerRouter(party iris.Party) {
@@ -45,6 +43,15 @@ func InnerNetControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateInnerNetUser", hero.Handler(aus.updateInnerNetUser))
 
 	adinMenu.Post("/deleteInnerNetUser", hero.Handler(aus.deleteInnerNetUser))
+
+	//query platform data
+	adinMenu.Get("/getInnerNetPrivilege", hero.Handler(aus.getInnerNetPrivilege))
+
+	adinMenu.Post("/saveInnerNetPrivilege", hero.Handler(aus.saveInnerNetPrivilege))
+
+	adinMenu.Post("/updateInnerNetPrivilege", hero.Handler(aus.updateInnerNetPrivilege))
+
+	adinMenu.Post("/deleteInnerNetPrivilege", hero.Handler(aus.deleteInnerNetPrivilege))
 }
 
 /**
@@ -147,6 +154,43 @@ delete innerNet
 */
 func (aus *InnerNetController) deleteInnerNetUser(ctx iris.Context) {
 	reslut := aus.innerNetUserService.DeleteInnerNetUsers(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query innerNet
+*/
+func (aus *InnerNetController) getInnerNetPrivilege(ctx iris.Context) {
+	reslut := aus.innerNetPrivilegeService.GetInnerNetPrivileges(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save innerNet
+*/
+func (aus *InnerNetController) saveInnerNetPrivilege(ctx iris.Context) {
+	reslut := aus.innerNetPrivilegeService.SaveInnerNetPrivileges(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+update innerNet
+*/
+func (aus *InnerNetController) updateInnerNetPrivilege(ctx iris.Context) {
+	reslut := aus.innerNetPrivilegeService.UpdateInnerNetPrivileges(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete innerNet
+*/
+func (aus *InnerNetController) deleteInnerNetPrivilege(ctx iris.Context) {
+	reslut := aus.innerNetPrivilegeService.DeleteInnerNetPrivileges(ctx)
 
 	ctx.JSON(reslut)
 }
