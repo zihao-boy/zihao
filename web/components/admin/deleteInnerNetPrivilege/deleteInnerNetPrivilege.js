@@ -19,9 +19,8 @@
         },
         methods:{
             deleteInnerNetPrivilege:function(){
-                vc.component.deleteInnerNetPrivilegeInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'innerNetPrivilege.deleteInnerNetPrivilege',
+                    '/innerNet/deleteInnerNetPrivilege',
                     JSON.stringify(vc.component.deleteInnerNetPrivilegeInfo),
                     {
                         emulateJSON:true

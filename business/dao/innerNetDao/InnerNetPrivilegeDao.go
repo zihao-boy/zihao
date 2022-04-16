@@ -25,8 +25,9 @@ from inner_net_privilege t
 
 	`
 	query_innerNetPrivilege string = `
-select t.*
+select t.*,inu.username src_user_name,inu.password src_password
 from inner_net_privilege t
+left join inner_net_users inu on t.src_user_id = inu.user_id and inu.status_cd = '0'
 					where t.status_cd = '0'
 					$if PId != '' then
 					and t.p_id = #PId#
