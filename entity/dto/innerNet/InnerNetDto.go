@@ -27,6 +27,7 @@ type SlaveInnerNetDataDto struct {
 	ServerIpUrl string `json:"serverIpUrl"`
 	InnerNet         InnerNetDto `json:"innerNet"`
 	Users      []*InnerNetUserDto
+	Privileges []*InnerNetPrivilegeDto
 }
 
 type InnerNetClientDto struct {

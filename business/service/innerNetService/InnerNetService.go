@@ -7,8 +7,8 @@ import (
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
-	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/innerNet"
+	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
 	"strings"
 )
@@ -290,6 +290,7 @@ func (innerNetService *InnerNetService) RefreshInnerNetConfig(ctx iris.Context) 
 func (innerNetService *InnerNetService) getInnerNetConfig(innerNetDto innerNet.InnerNetDto) innerNet.SlaveInnerNetDataDto {
 	var (
 		innerNetUserDao        innerNetDao.InnerNetUserDao
+		innerNetPrivilageDao innerNetDao.InnerNetPrivilegeDao
 	)
 
 	innerNetHostsDto := innerNet.InnerNetHostsDto{
@@ -304,11 +305,16 @@ func (innerNetService *InnerNetService) getInnerNetConfig(innerNetDto innerNet.I
 	}
 	users, _ := innerNetUserDao.GetInnerNetUsers(tmpInnerNetUserDto)
 
+	innerNetPrivilageDto := innerNet.InnerNetPrivilegeDto{
+
+	}
+	innerNetPrivilageDtos ,_ := innerNetPrivilageDao.GetInnerNetPrivileges(innerNetPrivilageDto)
 
 	return innerNet.SlaveInnerNetDataDto{
 		ServerIpUrl: config.G_AppConfig.ServerIpUrl,
 		InnerNet:         innerNetDto,
 		Users:      users,
+		Privileges: innerNetPrivilageDtos,
 	}
 
 }

@@ -1,16 +1,21 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"github.com/zihao-boy/zihao/common/innerNet/encrypt"
 	"github.com/zihao-boy/zihao/common/innerNet/header"
 	"github.com/zihao-boy/zihao/common/innerNet/io"
+	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"net"
+	"strings"
 	"time"
 )
 
 var USERCHANBUFFERSIZE = 1024
 var READBUFFERSIZE = 65535
+
+var UserPrivileges []*innerNet.InnerNetPrivilegeDto
 
 type User struct {
 	Client        string
@@ -24,10 +29,19 @@ type User struct {
 	Conn          net.Conn
 	Logout        func(client string)
 	HeartbeatTime time.Time
+	Privileges    []*innerNet.InnerNetPrivilegeDto
 }
 
 func NewUser(client string, protocol string, tun string, token string, conn net.Conn, logout func(string)) *User {
 	key := string(encrypt.GetAESKey([]byte(token)))
+	var privs []*innerNet.InnerNetPrivilegeDto
+	for _, privilege := range UserPrivileges {
+		if privilege.Token != token {
+			continue
+		}
+		privs = append(privs, privilege)
+	}
+
 	return &User{
 		Client:        client,
 		Protocol:      protocol,
@@ -39,7 +53,8 @@ func NewUser(client string, protocol string, tun string, token string, conn net.
 		ConnToTunChan: make(chan string, USERCHANBUFFERSIZE),
 		Conn:          conn,
 		Logout:        logout,
-		HeartbeatTime: time.Now().Add(60*time.Second),
+		HeartbeatTime: time.Now().Add(60 * time.Second),
+		Privileges:    privs,
 	}
 }
 
@@ -56,7 +71,7 @@ func (user *User) Start() {
 			}
 
 			if err != nil {
-				fmt.Println("io.ReadPacket err",err)
+				fmt.Println("io.ReadPacket err", err)
 				user.Close()
 				return
 			}
@@ -64,9 +79,13 @@ func (user *User) Start() {
 			//fmt.Println("接受到数据 data",data)
 
 			if ln := len(data); ln > 0 {
-				data, err = encrypt.DecryptAES(data, encryptKey);
+				data, err = encrypt.DecryptAES(data, encryptKey)
 				if err == nil {
 					if proto, src, dst, err := header.GetBase(data); err == nil {
+						err = user.checkSrcHostPrivilege(dst)
+						if err != nil {
+							continue
+						}
 						remoteIp, _ := header.ParseAddr(src)
 						user.RemoteTunIp = remoteIp
 						//user, ok := lm.Users[client];
@@ -81,20 +100,18 @@ func (user *User) Start() {
 				if ipData != "ping" {
 					continue
 				}
-				user.HeartbeatTime = time.Now().Add(60*time.Second)
-				data,_ = encrypt.EncryptAES(data, encryptKey)
+				user.HeartbeatTime = time.Now().Add(60 * time.Second)
+				data, _ = encrypt.EncryptAES(data, encryptKey)
 				_, err = io.WritePacket(user.Conn, data)
 				//fmt.Println("回写ping ipData",ipData,user.HeartbeatTime)
 
-				if err != nil{
-					fmt.Println("deal data err",err)
+				if err != nil {
+					fmt.Println("deal data err", err)
 				}
 
 			}
 		}
 	}()
-
-
 
 	//read from channel, write to client
 	go func() {
@@ -127,12 +144,12 @@ func (user *User) Start() {
 
 	//check heart beat
 	go func() {
-		for{
+		for {
 			time.Sleep(60 * time.Second)
-			if user.HeartbeatTime.After(time.Now()){
+			if user.HeartbeatTime.After(time.Now()) {
 				continue
 			}
-			fmt.Println("检测现成",user.HeartbeatTime,time.Now())
+			fmt.Println("检测现成", user.HeartbeatTime, time.Now())
 			user.Close()
 			return
 		}
@@ -163,5 +180,28 @@ func (user *User) Close() {
 		user.Conn.Close()
 	}()
 
+}
+
+func (user *User) checkSrcHostPrivilege(dst string) error {
+	if user.Privileges == nil || len(user.Privileges) < 1 {
+		return nil
+	}
+	if !strings.Contains(dst, ":") {
+		return nil
+	}
+
+	dsts := strings.Split(dst, ":")
+	dstIp := dsts[0]
+	dstPort := dsts[1]
+	for _, privilege := range user.Privileges {
+		if privilege.TargetUserId == dstIp && privilege.TargetPort == dstPort {
+			return nil
+		}
+		if privilege.TargetUserId == dstIp && privilege.TargetPort == "*" {
+			return nil
+		}
+	}
+
+	return errors.New("no privilege")
 
 }

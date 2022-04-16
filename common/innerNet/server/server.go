@@ -19,6 +19,10 @@ func StartServer(innerNetDataDto innerNet.SlaveInnerNetDataDto) (err error) {
 			user.Token = encrypt2.Md5(user.Username+user.Password)
 		}
 	}
+	for _,privilege:= range innerNetDataDto.Privileges{
+		privilege.Token = encrypt2.Md5(privilege.SrcUserName+privilege.SrcPassword)
+	}
+	UserPrivileges = innerNetDataDto.Privileges
 
 	loginManager, err = NewLoginManager(innerNetDataDto)
 
@@ -58,5 +62,9 @@ func InitInnerNetConfig(innerNetDataDto innerNet.SlaveInnerNetDataDto) error {
 	for _, user := range innerNetDataDto.Users {
 		loginManager.Tokens[user.Token] = *user
 	}
+	for _,privilege:= range innerNetDataDto.Privileges{
+		privilege.Token = encrypt2.Md5(privilege.SrcUserName+privilege.SrcPassword)
+	}
+	UserPrivileges = innerNetDataDto.Privileges
 	return nil
 }
