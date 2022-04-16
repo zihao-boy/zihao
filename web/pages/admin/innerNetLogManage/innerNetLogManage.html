@@ -1,0 +1,93 @@
+<div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox ">
+                <div class="ibox-title">
+                    <h5>查询条件</h5>
+                    <div class="ibox-tools" style="top:10px;">
+
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <input type="text" placeholder="请输入用户"
+                                    v-model="innerNetLogManageInfo.conditions.srcUserId" class=" form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <input type="text" placeholder="请输入分配IP"
+                                    v-model="innerNetLogManageInfo.conditions.ip" class=" form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <input type="text" placeholder="请输入状态'"
+                                    v-model="innerNetLogManageInfo.conditions.state" class=" form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="button" class="btn btn-primary btn-sm"
+                                v-on:click="_queryInnerNetLogMethod()">
+                                <i class="glyphicon glyphicon-search"></i> 查询
+                            </button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>组网日志</h5>
+                    <div class="ibox-tools" style="top:10px;">
+                        
+                    </div>
+                </div>
+                <div class="ibox-content">
+
+                    <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+                        <thead>
+                            <tr>
+                                <th class="text-center">用户</th>
+                                <th class="text-center">地理位置</th>
+                                <th class="text-center">分配IP</th>
+                                <th class="text-center">状态</th>
+                                <th class="text-center">登录时间</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="innerNetLog in innerNetLogManageInfo.innerNetLogs">
+                                <td class="text-center">{{innerNetLog.srcUserName}}</td>
+                                <td class="text-center">{{innerNetLog.srcIpName}}</td>
+                                <td class="text-center">{{innerNetLog.ip}}</td>
+                                <td class="text-center">{{innerNetLog.state}}</td>
+                                <td class="text-center">{{innerNetLog.createTime}}</td>
+                                
+
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <ul class="pagination float-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- 分页 -->
+                    <vc:create path="frame/pagination"></vc:create>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

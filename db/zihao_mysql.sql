@@ -1571,3 +1571,9 @@ create table inner_net_log
     create_time    timestamp  default CURRENT_TIMESTAMP not null,
     status_cd      varchar(2) default '0' not null
 );
+
+
+INSERT INTO `menu` VALUES ('700201904048', '组网日志', '800201904014', '/index.html#/pages/admin/innerNetLogManage', '4', 'hosts', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904048', 'dns', 'dns', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/innerNetLogManage', '700201904048');
+INSERT INTO `privilege_rel` VALUES ('86', '500201904048', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('87', '500201904048', '600201904002', '2019-04-01 08:18:29', '0');

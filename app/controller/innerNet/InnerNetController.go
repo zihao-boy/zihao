@@ -10,6 +10,7 @@ type InnerNetController struct {
 	innerNetService innerNetService.InnerNetService
 	innerNetUserService innerNetService.InnerNetUserService
 	innerNetPrivilegeService innerNetService.InnerNetPrivilegeService
+	innerNetLogService innerNetService.InnerNetLogService
 }
 
 func InnerNetControllerRouter(party iris.Party) {
@@ -52,6 +53,13 @@ func InnerNetControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateInnerNetPrivilege", hero.Handler(aus.updateInnerNetPrivilege))
 
 	adinMenu.Post("/deleteInnerNetPrivilege", hero.Handler(aus.deleteInnerNetPrivilege))
+
+	//query platform data
+	adinMenu.Get("/getInnerNetLog", hero.Handler(aus.getInnerNetLog))
+
+	adinMenu.Post("/saveInnerNetLog", hero.Handler(aus.saveInnerNetLog))
+
+
 }
 
 /**
@@ -194,3 +202,22 @@ func (aus *InnerNetController) deleteInnerNetPrivilege(ctx iris.Context) {
 
 	ctx.JSON(reslut)
 }
+
+/**
+query innerNet
+*/
+func (aus *InnerNetController) getInnerNetLog(ctx iris.Context) {
+	reslut := aus.innerNetLogService.GetInnerNetLogs(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save innerNet
+*/
+func (aus *InnerNetController) saveInnerNetLog(ctx iris.Context) {
+	reslut := aus.innerNetLogService.SaveInnerNetLogs(ctx)
+
+	ctx.JSON(reslut)
+}
+
