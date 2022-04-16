@@ -523,3 +523,15 @@ INSERT INTO `menu` VALUES ('700201904047', '组网访问', '800201904014', '/ind
 INSERT INTO `privilege` VALUES ('500201904047', 'dns', 'dns', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/innerNetPrivilegeManage', '700201904047');
 INSERT INTO `privilege_rel` VALUES ('84', '500201904047', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('85', '500201904047', '600201904002', '2019-04-01 08:18:29', '0');
+
+create table inner_net_log
+(
+    log_id   varchar(64) not null
+        primary key,
+    username varchar(64) not null,
+    ip            varchar(64) not null,
+    src_ip       varchar(64) not null,
+    state varchar(64) not null,
+    create_time    timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd      varchar(2) default '0' not null
+);
