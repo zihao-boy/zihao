@@ -541,3 +541,14 @@ INSERT INTO `menu` VALUES ('700201904048', '组网日志', '800201904014', '/ind
 INSERT INTO `privilege` VALUES ('500201904048', 'dns', 'dns', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/innerNetLogManage', '700201904048');
 INSERT INTO `privilege_rel` VALUES ('86', '500201904048', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('87', '500201904048', '600201904002', '2019-04-01 08:18:29', '0');
+
+create table host_attr
+(
+    attr_id     varchar(64) not null  primary key,
+    host_id     varchar(64) not null ,
+    spec_cd     varchar(12) not null,
+    value       varchar(50) not null,
+    create_time timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(12) default '0' not null
+);
+

@@ -9,7 +9,8 @@
                 ip: '',
                 username: '',
                 passwd: '',
-                hostGroups: []
+                hostGroups: [],
+                osName:''
 
             }
         },
@@ -128,7 +129,8 @@
                     ip: '',
                     username: '',
                     passwd: '',
-                    hostGroups: []
+                    hostGroups: [],
+                    osName:''
                 }
             },
             loadEditHostHostGroup: function() {

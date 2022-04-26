@@ -15,7 +15,31 @@ const (
 	delete_service_sql string = "hostDao.DeleteHostGroup"
 
 	get_host_count string = "hostDao.GetHostCount"
-	get_hosts      string = "hostDao.GetHosts"
+	get_hosts      string = `
+select t.*,hg.name group_name ,ha.value os_name
+from host t 
+left join host_group hg on t.group_id = hg.group_id 
+left join host_attr ha on t.host_id = ha.host_id and ha.spec_cd = '1'
+where t.status_cd = '0'  
+$if HostId != '' then 
+and t.host_id = #HostId# 
+$endif 
+$if Name != '' then 
+and t.name = #Name# 
+$endif
+$if GroupId != '' then 
+and t.group_id = #GroupId# 
+$endif
+$if TenantId != '' then 
+and t.tenant_id = #TenantId#
+$endif
+$if Ip != '' then
+and t.ip = #Ip#
+$endif 
+$if Row != 0 then
+limit #Page#,#Row# 
+$endif
+`
 	save_host      string = "hostDao.SaveHost"
 	update_host    string = "hostDao.UpdateHost"
 	delete_host    string = "hostDao.DeleteHost"
@@ -109,7 +133,7 @@ func (*HostDao) GetHosts(hostDto host.HostDto) ([]*host.HostDto, error) {
 
 	sqlTemplate.SelectList(get_hosts, objectConvert.Struct2Map(hostDto), func(db *gorm.DB) {
 		err = db.Scan(&hostDtos).Error
-	}, true)
+	}, false)
 
 	return hostDtos, err
 }

@@ -23,6 +23,16 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">操作系统</label>
+                                <div class="col-sm-10">
+                                  <select class="custom-select" v-model="editHostInfo.osName" >
+                                    <option selected disabled value="">必填，请选择操作系统</option>
+                                    <option  value="linux">linux</option>
+                                    <option  value="window">window</option>
+                                  </select>
+                                </div>
+                              </div>
+                            <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">主机IP</label>
                                 <div class="col-sm-10">
                                     <input v-model="editHostInfo.ip" type="text" placeholder="必填，请填写主机IP" class="form-control">

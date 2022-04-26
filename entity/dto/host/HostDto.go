@@ -42,5 +42,6 @@ type HostDto struct {
 	NewFileName   string `json:"newFileName"`
 	FileContext   string `json:"fileContext"`
 	Shell         string `json:"shell"`
+	OsName string `json:"osName" sql:"-"`
 	Containers    []docker.Container
 }

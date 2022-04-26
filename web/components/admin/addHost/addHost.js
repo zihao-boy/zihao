@@ -16,6 +16,7 @@
                 cpu: '0',
                 mem: '0',
                 disk: '0',
+                osName:'linux',
                 hostGroups:[]
 
             }
@@ -177,13 +178,23 @@
                     groupId: '',
                     name: '',
                     ip: '',
-                    username: '',
+                    username: 'root',
                     passwd: '',
                     cpu: '',
                     mem: '',
                     disk: '',
-                    hostGroups:[]
+                    hostGroups:[],
+                    osName:'linux',
+
                 };
+            },
+            _changeOs:function(){
+                let _osName = $that.addHostInfo.osName;
+                if(_osName == 'linux'){
+                    $that.addHostInfo.username = 'root';
+                }else{
+                    $that.addHostInfo.username = 'administrator';
+                }
             },
             loadAddHostHostGroup:function(){
                 var param = {

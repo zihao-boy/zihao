@@ -3,7 +3,9 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	dao3 "github.com/zihao-boy/zihao/business/dao/host"
 	"github.com/zihao-boy/zihao/common/queue/monitorHostQueue"
+	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	dao2 "github.com/zihao-boy/zihao/monitor/dao"
 	"path"
@@ -31,6 +33,7 @@ const maxSize = 1000 * iris.MB // 第二种方法
 type HostService struct {
 	hostDao dao.HostDao
 	appServiceDao appServiceDao.AppServiceDao
+	hostAttrDao dao3.HostAttrDao
 
 }
 
@@ -243,6 +246,16 @@ func (hostService *HostService) SaveHost(ctx iris.Context) result.ResultDto {
 		return result.Error(err.Error())
 	}
 
+	if !utils.IsEmpty(hostDto.OsName){
+		hostAttrDto := host.HostAttrDto{
+			AttrId: seq.Generator(),
+			SpecCd: host.Spec_cd_osName,
+			Value: hostDto.OsName,
+			HostId: hostDto.HostId,
+		}
+		hostService.hostAttrDao.SaveHostAttr(hostAttrDto)
+	}
+
 	return result.SuccessData(hostDto)
 
 }
@@ -263,6 +276,31 @@ func (hostService *HostService) UpdateHost(ctx iris.Context) result.ResultDto {
 	err = hostService.hostDao.UpdateHost(hostDto)
 	if err != nil {
 		return result.Error(err.Error())
+	}
+
+	if !utils.IsEmpty(hostDto.OsName){
+		hostAttrDto := host.HostAttrDto{
+			SpecCd: host.Spec_cd_osName,
+			HostId: hostDto.HostId,
+		}
+		attrs ,_:= hostService.hostAttrDao.GetHostAttrs(hostAttrDto)
+		if attrs != nil && len(attrs)> 0{
+			hostAttrDto = host.HostAttrDto{
+				SpecCd: host.Spec_cd_osName,
+				Value: hostDto.OsName,
+				HostId: hostDto.HostId,
+			}
+			hostService.hostAttrDao.UpdateHostAttr(hostAttrDto)
+		}else{
+			hostAttrDto = host.HostAttrDto{
+				AttrId: seq.Generator(),
+				SpecCd: host.Spec_cd_osName,
+				Value: hostDto.OsName,
+				HostId: hostDto.HostId,
+			}
+			hostService.hostAttrDao.SaveHostAttr(hostAttrDto)
+		}
+
 	}
 
 	return result.SuccessData(hostDto)
