@@ -193,7 +193,7 @@
                 if(_osName == 'linux'){
                     $that.addHostInfo.username = 'root';
                 }else{
-                    $that.addHostInfo.username = 'administrator';
+                    $that.addHostInfo.username = 'Administrator';
                 }
             },
             loadAddHostHostGroup:function(){

@@ -131,11 +131,11 @@
 
                 return "离线"
             },
-            _openHostShell:function(_hostId){
+            _openHostShell:function(_host){
                 //获取主机访问token
                 let param = {
                     params: {
-                        hostId: _hostId.hostId
+                        hostId: _host.hostId
                     }
                 };
 
@@ -145,7 +145,11 @@
                     function(json, res) {
                         let _hostManageInfo = JSON.parse(json);
                         let _zihaoToken = _hostManageInfo.data;
-                        window.open("/webshell/console.html?hostId=" +_hostId.hostId + "&zihaoToken=" + _zihaoToken, '_blank')
+                        if(_host.osName == 'window'){
+                            window.open("/webWindow/window.html?hostId=" +_host.hostId + "&zihaoToken=" + _zihaoToken, '_blank')
+                            return ;
+                        }
+                        window.open("/webshell/console.html?hostId=" +_host.hostId + "&zihaoToken=" + _zihaoToken, '_blank')
                     },
                     function(errInfo, error) {
                         console.log('请求失败处理');

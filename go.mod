@@ -27,6 +27,7 @@ require (
 	github.com/songgao/water v0.0.0-20200317203138-2b4b6d7c09d8
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f
+	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	golang.org/x/text v0.3.7
 	golang.zx2c4.com/wireguard v0.0.0-20220318042302-193cf8d6a5d6
 	gopkg.in/dutchcoders/goftp.v1 v1.0.0-20170301105846-ed59a591ce14

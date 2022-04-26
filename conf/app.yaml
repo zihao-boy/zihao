@@ -29,5 +29,6 @@ own:
   ip_data: ./conf/qqwry.dat
   qqwry_url: "http://update.cz88.net/ip/qqwry.rar"
   server_ip_url: "http://ip.dhcp.cn/?ip"
+  guacad_addr: "127.0.0.1:4822"
 #  sqlite_path: D:\\hc\\db\\zihao.db
 #  sqlite_path: /Users/wuxuewen/project/go/db/zihao.db

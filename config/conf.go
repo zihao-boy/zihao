@@ -69,6 +69,7 @@ type (
 		IpData      string   `yaml:"ip_data"`
 		QqwryUrl      string   `yaml:"qqwry_url"`
 		ServerIpUrl   string `yaml:"server_ip_url"`
+		GuacadAddr  string `yaml:"guacad_addr"`
 	}
 
 	// db

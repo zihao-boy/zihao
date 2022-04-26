@@ -29,6 +29,9 @@ func Hub(app *iris.Application) {
 	//处理websocket
 	defaultWebsocket.InitWebsocket(app)
 
+	defaultWebsocket.InitWebsocketWindow(app)
+
+
 	defaultWebsocket.InitLogWebsocket(app)
 
 	party := preSettring(app)
