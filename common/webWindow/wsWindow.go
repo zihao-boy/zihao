@@ -56,6 +56,7 @@ func WebSocketConn(req Request, connId string, nsConn *websocket.Conn) {
 	}
 	channel, err := windowConnect(loginInfo)
 	if err != nil {
+		fmt.Println("连接错误",err)
 		return
 	}
 	channels[connId] = channel
@@ -82,6 +83,7 @@ func WebSocketHandler(data []byte, connId string, nsConn *websocket.NSConn) {
 
 func windowConnect(arg ReqArg) (s *guac.SimpleTunnel, err error) {
 	uid := ""
+	fmt.Println("参数：",arg.GuacadAddr, arg.AssetProtocol, arg.AssetHost, arg.AssetPort, arg.AssetUser, arg.AssetPassword, uid, arg.ScreenWidth, arg.ScreenHeight, arg.ScreenDpi)
 	pipeTunnel, err := guac.NewGuacamoleTunnel(arg.GuacadAddr, arg.AssetProtocol, arg.AssetHost, arg.AssetPort, arg.AssetUser, arg.AssetPassword, uid, arg.ScreenWidth, arg.ScreenHeight, arg.ScreenDpi)
 	if err != nil {
 		return nil, err
@@ -107,7 +109,10 @@ func ioCopy(nsConn *websocket.Conn, tunnl *guac.SimpleTunnel) {
 
 		for {
 			ins, err := reader.ReadSome()
+			fmt.Println("读取数据")
+
 			if err != nil {
+				fmt.Println("读取数据失败",err.Error())
 				return err
 			}
 
@@ -117,6 +122,8 @@ func ioCopy(nsConn *websocket.Conn, tunnl *guac.SimpleTunnel) {
 			}
 
 			if _, err = buf.Write(ins); err != nil {
+				fmt.Println("写数据失败",err.Error())
+
 				return err
 			}
 
@@ -133,7 +140,7 @@ func ioCopy(nsConn *websocket.Conn, tunnl *guac.SimpleTunnel) {
 
 	})
 	if err := eg.Wait(); err != nil {
-		fmt.Println("session-err")
+		fmt.Println("session-err",err.Error())
 	}
 
 }
