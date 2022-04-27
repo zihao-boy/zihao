@@ -28,8 +28,9 @@ getParam = function (_key) {
 initWindow = function () {
     let _zihaoToken = getParam('zihaoToken');
     let _hostId = getParam('hostId');
-    let winWidth = document.documentElement.clientWidth;
-    let winHeight = document.documentElement.clientHeight;
+    let winWidth = document.body.offsetWidth;
+    let winHeight = document.body.offsetHeight;
+    //  let winHeight = window.screen.availHeight;
     let protocol = "";
     if (window.location.protocol == 'https:') {
          protocol = 'wss://';

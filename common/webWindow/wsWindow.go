@@ -88,11 +88,11 @@ func windowConnect(arg ReqArg) (s *guac.SimpleTunnel, err error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		if err = pipeTunnel.Close(); err != nil {
-			fmt.Println(err)
-		}
-	}()
+	//defer func() {
+	//	if err = pipeTunnel.Close(); err != nil {
+	//		fmt.Println(err)
+	//	}
+	//}()
 	return pipeTunnel, nil
 }
 
