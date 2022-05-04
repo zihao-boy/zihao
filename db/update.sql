@@ -588,3 +588,9 @@ create table firewall_rule
     status_cd   varchar(2) default '0' not null
 );
 
+
+
+INSERT INTO `menu` VALUES ('700201904049', '开放端口', '800201904006', '/index.html#/pages/admin/firewallRuleGroupManage', '8', 'hosts', '2019-04-09 14:50:56', '0', 'Y');
+INSERT INTO `privilege` VALUES ('500201904049', '开放端口', 'dns', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/firewallRuleGroupManage', '700201904049');
+INSERT INTO `privilege_rel` VALUES ('88', '500201904049', '600201904000', '2019-04-01 08:18:29', '0');
+INSERT INTO `privilege_rel` VALUES ('89', '500201904049', '600201904002', '2019-04-01 08:18:29', '0');

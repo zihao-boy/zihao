@@ -11,17 +11,14 @@
          },
          _initEvent:function(){
              vc.on('deleteFirewallRuleGroup','openDeleteFirewallRuleGroupModal',function(_params){
-
                 vc.component.deleteFirewallRuleGroupInfo = _params;
                 $('#deleteFirewallRuleGroupModel').modal('show');
-
             });
         },
         methods:{
             deleteFirewallRuleGroup:function(){
-                vc.component.deleteFirewallRuleGroupInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'firewallRuleGroup.deleteFirewallRuleGroup',
+                    '/firewall/deleteFirewallRuleGroup',
                     JSON.stringify(vc.component.deleteFirewallRuleGroupInfo),
                     {
                         emulateJSON:true
