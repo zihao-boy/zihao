@@ -1,5 +1,7 @@
 package header
 
+import "math"
+
 func BuildUdpPacket(ipHeader *IPv4, udpHeader *UDP, data []byte) []byte {
 	ipHeader.Len = uint16(20 + 8 + len(data))
 	udpHeader.Len = uint16(8 + len(data))
@@ -72,10 +74,20 @@ func BuildUdpHeader(src, dst string) (*IPv4, *UDP) {
 		Dst: Str2IP(dstIp),
 	}
 	ipv4Header.ResetChecksum()
+	var isrcPort uint16 = 0
+	if srcPort > 0 && srcPort < math.MaxUint16{
+		isrcPort = uint16(srcPort)
+	}
+
+	var idstPort uint16 = 0
+	if dstPort > 0 && dstPort < math.MaxUint16{
+		idstPort = uint16(dstPort)
+	}
+
 
 	udpHeader := &UDP{
-		SrcPort: uint16(srcPort),
-		DstPort: uint16(dstPort),
+		SrcPort: isrcPort,
+		DstPort: idstPort,
 		Len: 0,
 		Checksum: 0,
 	}
