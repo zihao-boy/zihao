@@ -43,9 +43,19 @@ func BuildTcpHeader(src, dst string) (*IPv4, *TCP) {
 	}
 	ipv4Header.ResetChecksum()
 
+	var isrcPort uint16 = 0
+	if srcPort > 0 && srcPort < math.MaxUint16{
+		isrcPort = uint16(srcPort)
+	}
+
+	var idstPort uint16 = 0
+	if dstPort > 0 && dstPort < math.MaxUint16{
+		idstPort = uint16(dstPort)
+	}
+
 	tcpHeader := &TCP{
-		SrcPort: uint16(srcPort),
-		DstPort: uint16(dstPort),
+		SrcPort: isrcPort,
+		DstPort: idstPort,
 		Seq: 2,
 		Ack: 3,
 		Offset: 0x50,
