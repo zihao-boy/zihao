@@ -3,6 +3,7 @@ package firewall
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/hero"
+	firewallService "github.com/zihao-boy/zihao/business/service/firewallRule"
 	"github.com/zihao-boy/zihao/business/service/wafService"
 )
 
@@ -16,7 +17,7 @@ type FirewallController struct {
 	wafAreaService wafService.WafAreaService
 	wafCCService wafService.WafCCService
 	wafAccurateService wafService.WafAccurateService
-
+	firewallRuleGroupService firewallService.FirewallRuleGroupService
 
 
 }
@@ -118,6 +119,16 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateWafAccurate", hero.Handler(aus.updateWafAccurate))
 
 	adinMenu.Post("/deleteWafAccurate", hero.Handler(aus.deleteWafAccurate))
+
+
+	//query platform data
+	adinMenu.Get("/getFirewallRuleGroup", hero.Handler(aus.getFirewallRuleGroup))
+
+	adinMenu.Post("/saveFirewallRuleGroup", hero.Handler(aus.saveFirewallRuleGroup))
+
+	adinMenu.Post("/updateFirewallRuleGroup", hero.Handler(aus.updateFirewallRuleGroup))
+
+	adinMenu.Post("/deleteFirewallRuleGroup", hero.Handler(aus.deleteFirewallRuleGroup))
 }
 
 /**
@@ -503,6 +514,44 @@ delete waf
 */
 func (aus *FirewallController) deleteWafAccurate(ctx iris.Context) {
 	reslut := aus.wafAccurateService.DeleteWafAccurates(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getFirewallRuleGroup(ctx iris.Context) {
+	reslut := aus.firewallRuleGroupService.GetFirewallRuleGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveFirewallRuleGroup(ctx iris.Context) {
+	reslut := aus.firewallRuleGroupService.StartFirewallRuleGroup(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+update waf
+*/
+func (aus *FirewallController) updateFirewallRuleGroup(ctx iris.Context) {
+	reslut := aus.firewallRuleGroupService.UpdateFirewallRuleGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteFirewallRuleGroup(ctx iris.Context) {
+	reslut := aus.firewallRuleGroupService.DeleteFirewallRuleGroups(ctx)
 
 	ctx.JSON(reslut)
 }

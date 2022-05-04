@@ -552,3 +552,39 @@ create table host_attr
     status_cd   varchar(12) default '0' not null
 );
 
+create table firewall_rule_group
+(
+    group_id    varchar(64) not null
+        primary key,
+    group_name  varchar(64) not null,
+    state       varchar(64) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
+create table host_firewall_group
+(
+    hfg_id    varchar(64) not null
+        primary key,
+    group_id        varchar(64) not null,
+    host_id varchar(64) not null,
+    create_time timestamp    default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2)   default '0' not null
+);
+
+create table firewall_rule
+(
+    rule_id     varchar(64) not null
+        primary key,
+    group_id    varchar(64) not null,
+    in_out   varchar(64) not null,
+    allow_limit       varchar(64) not null,
+    seq      int not null,
+    protocol    varchar(64) not null,
+    src_obj         varchar(64)         not null,
+    dst_obj       varchar(64) not null,
+    remark varchar(512) ,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
+
