@@ -19,9 +19,8 @@
         },
         methods:{
             deleteFirewallRule:function(){
-                vc.component.deleteFirewallRuleInfo.communityId=vc.getCurrentCommunity().communityId;
                 vc.http.apiPost(
-                    'firewallRule.deleteFirewallRule',
+                    '/firewall/deleteFirewallRule',
                     JSON.stringify(vc.component.deleteFirewallRuleInfo),
                     {
                         emulateJSON:true

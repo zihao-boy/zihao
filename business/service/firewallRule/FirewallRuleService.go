@@ -58,6 +58,8 @@ func (firewallService *FirewallRuleService) GetFirewallRules(ctx iris.Context) r
 	firewallDto.Row = row * page
 
 	firewallDto.Page = (page - 1) * row
+	firewallDto.GroupId = ctx.URLParam("groupId")
+	firewallDto.Inout = ctx.URLParam("inout")
 
 	total, err = firewallService.firewallDao.GetFirewallRuleCount(firewallDto)
 

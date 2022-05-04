@@ -28,7 +28,7 @@ from firewall_rule t
 
 	`
 	query_firewallRule string = `
-select t.*
+select t.*,t.in_out inout
 from firewall_rule t
 					where t.status_cd = '0'
 					$if RuleId != '' then

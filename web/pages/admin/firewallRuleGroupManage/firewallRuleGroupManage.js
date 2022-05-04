@@ -76,6 +76,9 @@
                 } else {
                     $that.firewallRuleGroupManageInfo.moreCondition = true;
                 }
+            },
+            _openFireRulePage:function(_firewallRuleGroup){
+                vc.jumpToPage('/#/pages/admin/firewallRuleManage?groupId='+_firewallRuleGroup.groupId+"&groupName="+_firewallRuleGroup.groupName)
             }
 
 

@@ -7,14 +7,14 @@ import (
 
 type FirewallRuleDto struct {
 	dto.PageDto
-	RuleId     string    `json:"rule_id" sql:"-" `
-	GroupId    string    `json:"group_id" sql:"-" `
-	Inout      string    `json:"in_out" sql:"-"`
-	AllowLimit string    `json:"allow_limit" sql:"-"`
-	DstObj     string    `json:"dst_obj" sql:"-"`
+	RuleId     string    `json:"ruleId" sql:"-" `
+	GroupId    string    `json:"groupId" sql:"-" `
+	Inout      string    `json:"inout" `
+	AllowLimit string    `json:"allowLimit" sql:"-"`
+	DstObj     string    `json:"dstObj" sql:"-"`
 	Seq        string    `json:"seq" `
 	Protocol   string    `json:"protocol" `
-	SrcObj     string    `json:"src_obj" sql:"-"`
+	SrcObj     string    `json:"srcObj" sql:"-"`
 	Remark     string    `json:"remark" `
 	CreateTime time.Time `json:"createTime" sql:"-"`
 	StatusCd   string    `json:"statusCd" sql:"-"`
