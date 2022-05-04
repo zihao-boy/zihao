@@ -19,6 +19,7 @@ type FirewallController struct {
 	wafAccurateService wafService.WafAccurateService
 	firewallRuleGroupService firewallService.FirewallRuleGroupService
 	firewallRuleService firewallService.FirewallRuleService
+	hostFirewallGroupService firewallService.HostFirewallGroupService
 
 
 }
@@ -140,6 +141,11 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateFirewallRule", hero.Handler(aus.updateFirewallRule))
 
 	adinMenu.Post("/deleteFirewallRule", hero.Handler(aus.deleteFirewallRule))
+
+	//query platform data
+	adinMenu.Get("/getHostFirewallGroup", hero.Handler(aus.getHostFirewallGroup))
+	adinMenu.Post("/saveHostFirewallGroup", hero.Handler(aus.saveHostFirewallGroup))
+	adinMenu.Post("/deleteHostFirewallGroup", hero.Handler(aus.deleteHostFirewallGroup))
 }
 
 /**
@@ -601,6 +607,35 @@ delete waf
 */
 func (aus *FirewallController) deleteFirewallRule(ctx iris.Context) {
 	reslut := aus.firewallRuleService.DeleteFirewallRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getHostFirewallGroup(ctx iris.Context) {
+	reslut := aus.hostFirewallGroupService.GetHostFirewallGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveHostFirewallGroup(ctx iris.Context) {
+	reslut := aus.hostFirewallGroupService.SaveHostFirewallGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteHostFirewallGroup(ctx iris.Context) {
+	reslut := aus.hostFirewallGroupService.DeleteHostFirewallGroups(ctx)
 
 	ctx.JSON(reslut)
 }
