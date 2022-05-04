@@ -15,6 +15,7 @@ import (
 	"github.com/zihao-boy/zihao/common/zips"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	dnsMap2 "github.com/zihao-boy/zihao/entity/dto/dns"
+	"github.com/zihao-boy/zihao/entity/dto/firewall"
 	"github.com/zihao-boy/zihao/entity/dto/host"
 	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/ls"
@@ -489,9 +490,9 @@ func (s *SystemInfoService) DownloadDir(ctx iris.Context) {
 // start waf
 func (s *SystemInfoService) StartWaf(ctx iris.Context) (result.ResultDto, error) {
 	var (
-		err       error
+		err        error
 		wafDataDto waf.SlaveWafDataDto
-		wafServer wafServer.WafServer
+		wafServer  wafServer.WafServer
 	)
 
 	if err = ctx.ReadJSON(&wafDataDto); err != nil {
@@ -518,11 +519,11 @@ func (s *SystemInfoService) StopWaf(ctx iris.Context) (result.ResultDto, error) 
 	return result.Success(), nil
 }
 
-func (s *SystemInfoService) RefreshWafConfig(ctx iris.Context)  (result.ResultDto, error){
+func (s *SystemInfoService) RefreshWafConfig(ctx iris.Context) (result.ResultDto, error) {
 	var (
-		err       error
+		err        error
 		wafDataDto waf.SlaveWafDataDto
-		wafServer wafServer.WafServer
+		wafServer  wafServer.WafServer
 	)
 
 	if err = ctx.ReadJSON(&wafDataDto); err != nil {
@@ -536,11 +537,10 @@ func (s *SystemInfoService) RefreshWafConfig(ctx iris.Context)  (result.ResultDt
 	return result.Success(), nil
 }
 
-
 // start waf
 func (s *SystemInfoService) StartInnerNet(ctx iris.Context) (result.ResultDto, error) {
 	var (
-		err        error
+		err             error
 		innerNetDataDto innerNet.SlaveInnerNetDataDto
 	)
 
@@ -558,7 +558,7 @@ func (s *SystemInfoService) StartInnerNet(ctx iris.Context) (result.ResultDto, e
 // stop waf
 func (s *SystemInfoService) StopInnerNet(ctx iris.Context) (result.ResultDto, error) {
 	var (
-		err       error
+		err error
 	)
 	err = server.StopServer()
 	if err != nil {
@@ -567,9 +567,9 @@ func (s *SystemInfoService) StopInnerNet(ctx iris.Context) (result.ResultDto, er
 	return result.Success(), nil
 }
 
-func (s *SystemInfoService) RefreshInnerNetConfig(ctx iris.Context)  (result.ResultDto, error){
+func (s *SystemInfoService) RefreshInnerNetConfig(ctx iris.Context) (result.ResultDto, error) {
 	var (
-		err        error
+		err             error
 		innerNetDataDto innerNet.SlaveInnerNetDataDto
 	)
 
@@ -583,7 +583,6 @@ func (s *SystemInfoService) RefreshInnerNetConfig(ctx iris.Context)  (result.Res
 	}
 	return result.Success(), nil
 }
-
 
 // start waf
 func (s *SystemInfoService) StartDns(ctx iris.Context) (result.ResultDto, error) {
@@ -606,7 +605,7 @@ func (s *SystemInfoService) StartDns(ctx iris.Context) (result.ResultDto, error)
 // stop waf
 func (s *SystemInfoService) StopDns(ctx iris.Context) (result.ResultDto, error) {
 	var (
-		err       error
+		err error
 	)
 	err = dns.StopDns()
 	if err != nil {
@@ -615,7 +614,7 @@ func (s *SystemInfoService) StopDns(ctx iris.Context) (result.ResultDto, error) 
 	return result.Success(), nil
 }
 
-func (s *SystemInfoService) RefreshDns(ctx iris.Context)  (result.ResultDto, error){
+func (s *SystemInfoService) RefreshDns(ctx iris.Context) (result.ResultDto, error) {
 	var (
 		err        error
 		dnsDataDto dnsMap2.DnsDataDto
@@ -626,6 +625,62 @@ func (s *SystemInfoService) RefreshDns(ctx iris.Context)  (result.ResultDto, err
 		return result.Error(err.Error()), nil
 	}
 	err = dns.RefreshDns(dnsDataDto)
+	if err != nil {
+		return result.Error(err.Error()), nil
+	}
+	return result.Success(), nil
+}
+
+func (s *SystemInfoService) RefreshFirewallRule(ctx iris.Context) (result.ResultDto, error) {
+
+	var (
+		err              error
+		firewallRuleDtos []*firewall.FirewallRuleDto
+	)
+
+	if err = ctx.ReadJSON(&firewallRuleDtos); err != nil {
+		fmt.Print(err)
+		return result.Error(err.Error()), nil
+	}
+
+	if firewallRuleDtos == nil || len(firewallRuleDtos) < 1 {
+		return result.Success(), nil
+	}
+	//先调整为接受模式
+	shell.ExecLocalShell("/sbin/iptables -P INPUT ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -F INPUT")
+	shell.ExecLocalShell("/sbin/iptables -I INPUT -p tcp --dport 22 -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -I INPUT -p tcp --dport 7000 -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -I INPUT -p tcp --dport 7001 -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -P INPUT DROP")
+
+	shell.ExecLocalShell("/sbin/iptables -P OUTPUT ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -F OUTPUT")
+
+	var (
+		shellStr string
+	)
+	for _, rule := range firewallRuleDtos {
+		if rule.Inout == "in" {
+			shellStr = "/sbin/iptables -A INPUT -p " + rule.Protocol + " -s " + rule.SrcObj + " --dport " + rule.DstObj + " -j "
+			if rule.AllowLimit == "allow" {
+				shellStr += "ACCEPT"
+			} else {
+				shellStr += "DROP"
+			}
+		}else{
+			shellStr = "/sbin/iptables -A OUTPUT -p " + rule.Protocol + " -d " + rule.SrcObj + " --dport " + rule.DstObj + " -j "
+			if rule.AllowLimit == "allow" {
+				shellStr += "ACCEPT"
+			} else {
+				shellStr += "DROP"
+			}
+		}
+
+		shell.ExecLocalShell(shellStr)
+	}
+
 	if err != nil {
 		return result.Error(err.Error()), nil
 	}

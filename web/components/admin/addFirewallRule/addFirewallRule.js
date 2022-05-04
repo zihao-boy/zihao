@@ -13,7 +13,7 @@
                 allowLimit: '',
                 seq: '',
                 protocol: '',
-                srcObj: '',
+                srcObj: '0.0.0.0/0',
                 dstObj: '',
                 remark: '',
 

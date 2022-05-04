@@ -49,6 +49,16 @@ from firewall_rule t
 					$endif
 	`
 
+	query_FirewallRulesByHost string = `
+select t.*,t.in_out inout
+from firewall_rule t
+left join firewall_rule_group frg on t.group_id = frg.group_id and frg.status_cd = '0'
+left join host_firewall_group hfg on frg.group_id = hfg.group_id and hfg.status_cd = '0'
+where t.status_cd = '0'
+and hfg.host_id = #HostId#
+order by t.seq
+`
+
 	insert_firewallRule string = `
 	insert into firewall_rule(rule_id, group_id, in_out,allow_limit,seq,protocol,src_obj,dst_obj,remark)
 VALUES(#RuleId#,#GroupId#,#Inout#,#AllowLimit#,#Seq#,#Protocol#,#SrcObj#,#DstObj#,#Remark#)
@@ -140,4 +150,13 @@ func (*FirewallRuleDao) UpdateFirewallRule(firewallRuleDto firewall.FirewallRule
 */
 func (*FirewallRuleDao) DeleteFirewallRule(firewallRuleDto firewall.FirewallRuleDto) error {
 	return sqlTemplate.Delete(delete_firewallRule, objectConvert.Struct2Map(firewallRuleDto), false)
+}
+
+func (d *FirewallRuleDao) GetFirewallRulesByHost(groupDto firewall.HostFirewallGroupDto) ([]*firewall.FirewallRuleDto, error){
+	var firewallRuleDtos []*firewall.FirewallRuleDto
+	sqlTemplate.SelectList(query_FirewallRulesByHost, objectConvert.Struct2Map(groupDto), func(db *gorm.DB) {
+		db.Scan(&firewallRuleDtos)
+	}, false)
+
+	return firewallRuleDtos, nil
 }

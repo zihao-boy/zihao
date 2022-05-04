@@ -66,6 +66,10 @@ func SlaveControllerRouter(party iris.Party) {
 
 	adinUser.Post("/refreshDnsConfig", hero.Handler(aus.refreshDnsConfig))
 
+	adinUser.Post("/refreshFirewallRule", hero.Handler(aus.refreshFirewallRule))
+
+
+
 }
 
 func (aus *SlaveController) info(ctx iris.Context) {
@@ -209,6 +213,12 @@ func (aus *SlaveController) stopDns(ctx iris.Context) {
 //开启容器
 func (aus *SlaveController) refreshDnsConfig(ctx iris.Context) {
 	relustDto,_:=aus.systenInfoService.RefreshDns(ctx)
+	ctx.JSON(relustDto)
+}
+
+//开启容器
+func (aus *SlaveController) refreshFirewallRule(ctx iris.Context) {
+	relustDto,_:=aus.systenInfoService.RefreshFirewallRule(ctx)
 	ctx.JSON(relustDto)
 }
 

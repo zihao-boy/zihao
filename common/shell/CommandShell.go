@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12/context"
 	hostDao "github.com/zihao-boy/zihao/assets/dao"
+	"github.com/zihao-boy/zihao/business/dao/firewallRuleDao"
 	"github.com/zihao-boy/zihao/common/httpReq"
 	"github.com/zihao-boy/zihao/common/utils"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/dns"
+	"github.com/zihao-boy/zihao/entity/dto/firewall"
 	"github.com/zihao-boy/zihao/entity/dto/innerNet"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
@@ -657,6 +659,64 @@ func ExecRefreshDnsConfig(dnsData dns.DnsDataDto) (result.ResultDto, error) {
 		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
 		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshDnsConfig", data, nil)
+		if err != nil {
+			return resultDto, err
+		}
+		json.Unmarshal([]byte(resp), &resultDto)
+
+		if resultDto.Code != result.CODE_SUCCESS{
+			return resultDto, nil
+		}
+	}
+	return resultDto, nil
+}
+
+
+
+func ExecFirewallRule() (result.ResultDto, error) {
+	// query hostInfo
+
+	var (
+		hostDao hostDao.HostDao
+		resultDto result.ResultDto
+		firewallRuleDao firewallRuleDao.FirewallRuleDao
+
+	)
+
+	hostDto := host.HostDto{
+		State:host.State_N,
+	}
+	hostDtos,_ := hostDao.GetHosts(hostDto)
+
+	if hostDtos == nil || len(hostDtos)<1{
+		return result.Success(),nil
+	}
+
+
+
+	for _, host := range hostDtos {
+
+		// query rule
+		hostFirewallGroupDto :=firewall.HostFirewallGroupDto{
+			HostId: host.HostId,
+		}
+		firewallRuleDtos,_ :=firewallRuleDao.GetFirewallRulesByHost(hostFirewallGroupDto)
+
+		if firewallRuleDtos == nil || len(firewallRuleDtos) < 1{
+			continue
+		}
+
+		data := make(map[string]interface{})
+		appServiceDtoData, _ := json.Marshal(&firewallRuleDtos)
+		json.Unmarshal([]byte(appServiceDtoData), &data)
+
+		ip := host.Ip
+		if strings.Contains(ip, ":") {
+			ip = ip[0:strings.Index(ip, ":")]
+		}
+		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
+
+		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshFirewallRule", data, nil)
 		if err != nil {
 			return resultDto, err
 		}
