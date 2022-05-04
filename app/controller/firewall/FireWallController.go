@@ -18,6 +18,7 @@ type FirewallController struct {
 	wafCCService wafService.WafCCService
 	wafAccurateService wafService.WafAccurateService
 	firewallRuleGroupService firewallService.FirewallRuleGroupService
+	firewallRuleService firewallService.FirewallRuleService
 
 
 }
@@ -129,6 +130,16 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Post("/updateFirewallRuleGroup", hero.Handler(aus.updateFirewallRuleGroup))
 
 	adinMenu.Post("/deleteFirewallRuleGroup", hero.Handler(aus.deleteFirewallRuleGroup))
+
+
+	//query platform data
+	adinMenu.Get("/getFirewallRule", hero.Handler(aus.getFirewallRule))
+
+	adinMenu.Post("/saveFirewallRule", hero.Handler(aus.saveFirewallRule))
+
+	adinMenu.Post("/updateFirewallRule", hero.Handler(aus.updateFirewallRule))
+
+	adinMenu.Post("/deleteFirewallRule", hero.Handler(aus.deleteFirewallRule))
 }
 
 /**
@@ -533,7 +544,7 @@ func (aus *FirewallController) getFirewallRuleGroup(ctx iris.Context) {
 save waf
 */
 func (aus *FirewallController) saveFirewallRuleGroup(ctx iris.Context) {
-	reslut := aus.firewallRuleGroupService.StartFirewallRuleGroup(ctx)
+	reslut := aus.firewallRuleGroupService.SaveFirewallRuleGroups(ctx)
 
 	ctx.JSON(reslut)
 }
@@ -552,6 +563,44 @@ delete waf
 */
 func (aus *FirewallController) deleteFirewallRuleGroup(ctx iris.Context) {
 	reslut := aus.firewallRuleGroupService.DeleteFirewallRuleGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+query waf
+*/
+func (aus *FirewallController) getFirewallRule(ctx iris.Context) {
+	reslut := aus.firewallRuleService.GetFirewallRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+save waf
+*/
+func (aus *FirewallController) saveFirewallRule(ctx iris.Context) {
+	reslut := aus.firewallRuleService.SaveFirewallRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+
+/**
+update waf
+*/
+func (aus *FirewallController) updateFirewallRule(ctx iris.Context) {
+	reslut := aus.firewallRuleService.UpdateFirewallRules(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+delete waf
+*/
+func (aus *FirewallController) deleteFirewallRule(ctx iris.Context) {
+	reslut := aus.firewallRuleService.DeleteFirewallRules(ctx)
 
 	ctx.JSON(reslut)
 }
