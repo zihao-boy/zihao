@@ -8,7 +8,6 @@ import (
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shopspring/decimal"
 	"github.com/zihao-boy/zihao/common/docker"
-	"github.com/zihao-boy/zihao/common/objectConvert"
 	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
 	"github.com/zihao-boy/zihao/entity/dto/firewall"
@@ -148,7 +147,6 @@ func SlaveFireWall(){
 	var (
 		resultDto result.ResultDto
 		firewallRuleDtos []*firewall.FirewallRuleDto
-		firewallRuleDto *firewall.FirewallRuleDto
 	)
 	mastIp, isExist := config.Prop.Property("mastIp")
 	if !isExist {
@@ -174,19 +172,10 @@ func SlaveFireWall(){
 	if resultDto.Data == nil{
 		return
 	}
-	resultImages := resultDto.Data.([]interface{})
 
-	if len(resultImages) >0 {
-		for _, tmpImages := range resultImages {
-			tImages := tmpImages.(map[string]interface{})
-			err = objectConvert.Map2Struct(tImages, firewallRuleDto)
-			if err != nil{
-				fmt.Println(err.Error())
-				continue
-			}
-			firewallRuleDtos = append(firewallRuleDtos, firewallRuleDto)
-		}
-	}
+	data,_ :=json.Marshal(resultDto.Data)
+
+	json.Unmarshal(data,firewallRuleDtos)
 
 	shell.ExecLocalShell("/sbin/iptables -P INPUT ACCEPT")
 	shell.ExecLocalShell("/sbin/iptables -F INPUT")
