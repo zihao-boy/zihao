@@ -706,9 +706,9 @@ func ExecFirewallRule() (result.ResultDto, error) {
 		//	continue
 		//}
 
-		data := make(map[string]interface{})
-		appServiceDtoData, _ := json.Marshal(&firewallRuleDtos)
-		json.Unmarshal([]byte(appServiceDtoData), &data)
+		//data := make(map[string]interface{})
+		//appServiceDtoData, _ := json.Marshal(&firewallRuleDtos)
+		//json.Unmarshal([]byte(appServiceDtoData), &data)
 
 		ip := host.Ip
 		if strings.Contains(ip, ":") {
@@ -716,7 +716,7 @@ func ExecFirewallRule() (result.ResultDto, error) {
 		}
 		ip += (":" + strconv.FormatInt(int64(config.Slave), 10))
 
-		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshFirewallRule", data, nil)
+		resp, err := httpReq.SendRequest("http://"+ip+"/app/slave/refreshFirewallRule", firewallRuleDtos, nil,"POST")
 		if err != nil {
 			continue
 		}

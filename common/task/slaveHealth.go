@@ -175,7 +175,7 @@ func SlaveFireWall(){
 
 	data,_ :=json.Marshal(resultDto.Data)
 
-	json.Unmarshal(data,firewallRuleDtos)
+	json.Unmarshal(data,&firewallRuleDtos)
 
 	shell.ExecLocalShell("/sbin/iptables -P INPUT ACCEPT")
 	shell.ExecLocalShell("/sbin/iptables -F INPUT")
