@@ -166,6 +166,10 @@ func (firewallService *FirewallRuleService) GetFirewallRulesByHost(ctx iris.Cont
 	}
 	firewallRuleDtos,_ :=firewallService.firewallDao.GetFirewallRulesByHost(hostFirewallGroupDto)
 
+	if firewallRuleDtos == nil{
+		firewallRuleDtos = []*firewall.FirewallRuleDto{}
+	}
+
 	return result.SuccessData(firewallRuleDtos)
 
 }
