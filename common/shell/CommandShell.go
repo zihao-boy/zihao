@@ -718,12 +718,12 @@ func ExecFirewallRule() (result.ResultDto, error) {
 
 		resp, err := httpReq.Post("http://"+ip+"/app/slave/refreshFirewallRule", data, nil)
 		if err != nil {
-			return resultDto, err
+			continue
 		}
 		json.Unmarshal([]byte(resp), &resultDto)
 
 		if resultDto.Code != result.CODE_SUCCESS{
-			return resultDto, nil
+			continue
 		}
 	}
 	return resultDto, nil
