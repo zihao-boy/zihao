@@ -166,8 +166,12 @@ func SlaveFireWall(){
 		fmt.Print(err.Error(), url)
 	}
 	json.Unmarshal([]byte(resp), &resultDto)
+
 	if resultDto.Code != result.CODE_SUCCESS {
 		fmt.Print(resultDto)
+		return
+	}
+	if resultDto.Data == nil{
 		return
 	}
 	resultImages := resultDto.Data.([]interface{})
