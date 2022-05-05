@@ -12,6 +12,8 @@ func main() {
 
 	config.InitProp("conf/zihao.properties")
 	go task.SlaveHealth()
+
+	go task.SlaveFireWall()
 	app := iris.New()
 	router.HubSlave(app)
 	app.Get("/", func(ctx iris.Context) {

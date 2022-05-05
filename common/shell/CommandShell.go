@@ -702,9 +702,9 @@ func ExecFirewallRule() (result.ResultDto, error) {
 		}
 		firewallRuleDtos,_ :=firewallRuleDao.GetFirewallRulesByHost(hostFirewallGroupDto)
 
-		if firewallRuleDtos == nil || len(firewallRuleDtos) < 1{
-			continue
-		}
+		//if firewallRuleDtos == nil || len(firewallRuleDtos) < 1{
+		//	continue
+		//}
 
 		data := make(map[string]interface{})
 		appServiceDtoData, _ := json.Marshal(&firewallRuleDtos)

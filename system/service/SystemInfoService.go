@@ -643,9 +643,9 @@ func (s *SystemInfoService) RefreshFirewallRule(ctx iris.Context) (result.Result
 		return result.Error(err.Error()), nil
 	}
 
-	if firewallRuleDtos == nil || len(firewallRuleDtos) < 1 {
-		return result.Success(), nil
-	}
+	//if firewallRuleDtos == nil || len(firewallRuleDtos) < 1 {
+	//	return result.Success(), nil
+	//}
 	//先调整为接受模式
 	shell.ExecLocalShell("/sbin/iptables -P INPUT ACCEPT")
 	shell.ExecLocalShell("/sbin/iptables -F INPUT")
@@ -658,6 +658,9 @@ func (s *SystemInfoService) RefreshFirewallRule(ctx iris.Context) (result.Result
 	shell.ExecLocalShell("/sbin/iptables -P OUTPUT ACCEPT")
 	shell.ExecLocalShell("/sbin/iptables -F OUTPUT")
 
+	if firewallRuleDtos == nil || len(firewallRuleDtos) < 1 {
+		return result.Success(), nil
+	}
 	var (
 		shellStr string
 	)

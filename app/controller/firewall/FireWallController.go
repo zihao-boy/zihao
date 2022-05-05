@@ -146,6 +146,10 @@ func FirewallControllerRouter(party iris.Party) {
 	adinMenu.Get("/getHostFirewallGroup", hero.Handler(aus.getHostFirewallGroup))
 	adinMenu.Post("/saveHostFirewallGroup", hero.Handler(aus.saveHostFirewallGroup))
 	adinMenu.Post("/deleteHostFirewallGroup", hero.Handler(aus.deleteHostFirewallGroup))
+
+	adinMenu.Get("/getFirewallRulesByHost", hero.Handler(aus.getFirewallRulesByHost))
+
+
 }
 
 /**
@@ -636,6 +640,15 @@ delete waf
 */
 func (aus *FirewallController) deleteHostFirewallGroup(ctx iris.Context) {
 	reslut := aus.hostFirewallGroupService.DeleteHostFirewallGroups(ctx)
+
+	ctx.JSON(reslut)
+}
+
+/**
+query waf
+*/
+func (aus *FirewallController) getFirewallRulesByHost(ctx iris.Context) {
+	reslut := aus.firewallRuleService.GetFirewallRulesByHost(ctx)
 
 	ctx.JSON(reslut)
 }

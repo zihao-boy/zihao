@@ -1,13 +1,18 @@
 package task
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shopspring/decimal"
 	"github.com/zihao-boy/zihao/common/docker"
+	"github.com/zihao-boy/zihao/common/objectConvert"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/entity/dto/appService"
+	"github.com/zihao-boy/zihao/entity/dto/firewall"
+	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
 	"time"
 
@@ -136,4 +141,87 @@ func SlaveHealth() {
 			doSlaveHealth()
 		}
 	}
+}
+
+// slave firewall
+func SlaveFireWall(){
+	var (
+		resultDto result.ResultDto
+		firewallRuleDtos []*firewall.FirewallRuleDto
+		firewallRuleDto *firewall.FirewallRuleDto
+	)
+	mastIp, isExist := config.Prop.Property("mastIp")
+	if !isExist {
+		mastIp = "127.0.0.1:7000"
+	}
+	url := "http://" + mastIp + "/app/firewall/getFirewallRulesByHost"
+
+	slaveId, isExist := config.Prop.Property("slaveId")
+	if !isExist {
+		slaveId = "-1"
+	}
+	url = url+"?hostId="+slaveId
+	resp, err := httpReq.Get(url, nil)
+	if err != nil {
+		fmt.Print(err.Error(), url)
+	}
+	json.Unmarshal([]byte(resp), &resultDto)
+	if resultDto.Code != result.CODE_SUCCESS {
+		fmt.Print(resultDto)
+		return
+	}
+	resultImages := resultDto.Data.([]interface{})
+
+	if len(resultImages) >0 {
+		for _, tmpImages := range resultImages {
+			tImages := tmpImages.(map[string]interface{})
+			err = objectConvert.Map2Struct(tImages, firewallRuleDto)
+			if err != nil{
+				fmt.Println(err.Error())
+				continue
+			}
+			firewallRuleDtos = append(firewallRuleDtos, firewallRuleDto)
+		}
+	}
+
+	shell.ExecLocalShell("/sbin/iptables -P INPUT ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -F INPUT")
+	shell.ExecLocalShell("/sbin/iptables -I INPUT -p tcp --dport 22 -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -I INPUT -p tcp --dport 7000 -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -I INPUT -p tcp --dport 7001 -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -P INPUT DROP")
+
+	shell.ExecLocalShell("/sbin/iptables -P OUTPUT ACCEPT")
+	shell.ExecLocalShell("/sbin/iptables -F OUTPUT")
+
+	var (
+		shellStr string
+	)
+
+	if len(firewallRuleDtos) < 1{
+		return ;
+	}
+	for _, rule := range firewallRuleDtos {
+		if rule.Inout == "in" {
+			shellStr = "/sbin/iptables -A INPUT -p " + rule.Protocol + " -s " + rule.SrcObj + " --dport " + rule.DstObj + " -j "
+			if rule.AllowLimit == "allow" {
+				shellStr += "ACCEPT"
+			} else {
+				shellStr += "DROP"
+			}
+		}else{
+			shellStr = "/sbin/iptables -A OUTPUT -p " + rule.Protocol + " -d " + rule.SrcObj + " --dport " + rule.DstObj + " -j "
+			if rule.AllowLimit == "allow" {
+				shellStr += "ACCEPT"
+			} else {
+				shellStr += "DROP"
+			}
+		}
+
+		shell.ExecLocalShell(shellStr)
+	}
+
+
+	fmt.Print(resp)
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/zihao-boy/zihao/business/dao/firewallRuleDao"
 	"github.com/zihao-boy/zihao/common/seq"
+	"github.com/zihao-boy/zihao/common/shell"
 	"github.com/zihao-boy/zihao/entity/dto/firewall"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"strconv"
@@ -101,6 +102,8 @@ func (firewallService *HostFirewallGroupService) SaveHostFirewallGroups(ctx iris
 		return result.Error(err.Error())
 	}
 
+	go shell.ExecFirewallRule()
+
 	return result.SuccessData(firewallDto)
 
 }
@@ -126,6 +129,7 @@ func (firewallService *HostFirewallGroupService) UpdateHostFirewallGroups(ctx ir
 		return result.Error(err.Error())
 	}
 
+	go shell.ExecFirewallRule()
 
 	return result.SuccessData(firewallDto)
 
@@ -151,3 +155,5 @@ func (firewallService *HostFirewallGroupService) DeleteHostFirewallGroups(ctx ir
 	return result.SuccessData(firewallDto)
 
 }
+
+
