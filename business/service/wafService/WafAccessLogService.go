@@ -6,6 +6,7 @@ import (
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
 	"github.com/zihao-boy/zihao/common/date"
 	"github.com/zihao-boy/zihao/common/ip"
+	"github.com/zihao-boy/zihao/common/queue/wafAccessLogQueue"
 	"github.com/zihao-boy/zihao/config"
 	"github.com/zihao-boy/zihao/entity/dto/result"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
@@ -163,19 +164,8 @@ func (wafService *WafAccessLogService) SaveWafAccessLogs(ctx iris.Context) resul
 	if err = ctx.ReadJSON(&wafDto); err != nil {
 		return result.Error("解析入参失败")
 	}
-	tmpWafAccessLog := waf.WafAccessLogDto{
 
-	}
-	count ,_ := wafService.wafDao.GetWafAccessLogCount(tmpWafAccessLog)
-
-	if count > default_access_log_count{
-		wafService.wafDao.DeleteWafAccessLog(tmpWafAccessLog)
-	}
-
-	err = wafService.wafDao.SaveWafAccessLog(wafDto)
-	if err != nil {
-		return result.Error(err.Error())
-	}
+	wafAccessLogQueue.SendData(wafDto)
 
 	return result.SuccessData(wafDto)
 

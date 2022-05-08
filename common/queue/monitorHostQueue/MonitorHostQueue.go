@@ -14,12 +14,14 @@ var que chan monitor.MonitorHostDto
 初始化
 */
 func initQueue() {
-	lock.Lock()
 	if que != nil {
-		lock.Unlock()
 		return
 	}
-	que = make(chan monitor.MonitorHostDto, 1)
+	lock.Lock()
+	defer func() {
+		lock.Unlock()
+	}()
+	que = make(chan monitor.MonitorHostDto, 100)
 	lock.Unlock()
 
 	go readData(que)
