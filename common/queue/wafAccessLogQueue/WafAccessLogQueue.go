@@ -5,11 +5,14 @@ import (
 	"github.com/zihao-boy/zihao/business/dao/wafDao"
 	"github.com/zihao-boy/zihao/entity/dto/waf"
 	"sync"
+	"time"
 )
 
 var lock sync.Mutex
 var que chan waf.WafAccessLogDto
+
 const default_access_log_count = 10000
+
 /**
 初始化
 */
@@ -24,7 +27,7 @@ func initQueue() {
 	if que != nil {
 		return
 	}
-	que = make(chan waf.WafAccessLogDto, 200)
+	que = make(chan waf.WafAccessLogDto, 1000)
 
 	go readData(que)
 
@@ -33,7 +36,13 @@ func initQueue() {
 func SendData(wafDto waf.WafAccessLogDto) {
 	initQueue()
 
-	que <- wafDto
+	select {
+	case que <- wafDto:
+		break
+	case <-time.After(3 * time.Second):
+		break
+	}
+
 }
 
 func readData(que chan waf.WafAccessLogDto) {
@@ -50,9 +59,9 @@ func dealData(wafDto waf.WafAccessLogDto) {
 	tmpWafAccessLog := waf.WafAccessLogDto{
 
 	}
-	count ,_ := wafDao.GetWafAccessLogCount(tmpWafAccessLog)
+	count, _ := wafDao.GetWafAccessLogCount(tmpWafAccessLog)
 
-	if count > default_access_log_count{
+	if count > default_access_log_count {
 		wafDao.DeleteWafAccessLog(tmpWafAccessLog)
 	}
 
