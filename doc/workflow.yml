@@ -1,0 +1,61 @@
+version: '1.0'
+name: pipeline-20220508
+displayName: pipeline-20220508
+triggers:
+  trigger: auto
+  push:
+    branches:
+      exclude:
+        - ''
+stages:
+  - name: stage-b070ede2
+    displayName: apc
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@maven
+        name: build_maven
+        displayName: Maven 构建
+        jdkVersion: '8'
+        mavenVersion: 3.3.9
+        commands:
+          - mvn -B clean package -Dmaven.test.skip=true
+        settings: []
+  - name: stage-a08cfc86
+    displayName: 构建
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@docker
+        name: build_docker
+        displayName: 镜像构建
+        type: account
+        tag: ${GITEE_PIPELINE_BUILD_NUMBER}
+        dockerfile: ./Dockerfile
+        isCache: false
+      - step: build@docker
+        name: build_docker
+        displayName: 镜像构建
+        type: account
+        tag: ${GITEE_PIPELINE_BUILD_NUMBER}
+        dockerfile: ./Dockerfile
+        isCache: false
+  - name: stage-33637b58
+    displayName: 发布
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: deploy@k8s
+        name: deploy_k8s
+        displayName: K8S 部署
+        version: v1.16.4
+        namespace: default
+        yaml: ./deployment.yaml
+        isReplace: true
+        skiptls: false
+permissions:
+  - role: admin
+    members: []
