@@ -21,8 +21,10 @@ func initQueue() {
 	defer func() {
 		lock.Unlock()
 	}()
+	if que != nil {
+		return
+	}
 	que = make(chan monitor.MonitorHostDto, 100)
-	lock.Unlock()
 
 	go readData(que)
 

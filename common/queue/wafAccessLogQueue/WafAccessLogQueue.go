@@ -21,8 +21,10 @@ func initQueue() {
 	defer func() {
 		lock.Unlock()
 	}()
+	if que != nil {
+		return
+	}
 	que = make(chan waf.WafAccessLogDto, 200)
-	lock.Unlock()
 
 	go readData(que)
 
