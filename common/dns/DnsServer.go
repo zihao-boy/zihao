@@ -46,7 +46,7 @@ func (s *DnsServer) Listen() {
 		_, addr, err := s.conn.ReadFromUDP(buf)
 		if err != nil {
 			log.Println(err)
-			return
+			continue
 		}
 		var m dnsmessage.Message
 		err = m.Unpack(buf)

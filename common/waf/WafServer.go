@@ -69,12 +69,13 @@ func (waf *WafServer) InitWafConfig(wafDataDto waf.SlaveWafDataDto) error {
 }
 
 // stop waf
-func (waf *WafServer) StopWaf() error {
-	if wafServer.httpListener == nil  || wafServer.httpListeners == nil{
-		return nil
+func (waf *WafServer) StopWaf() (err error) {
+	if wafServer.httpListener != nil {
+		err = wafServer.httpListener.Close()
 	}
-	err := wafServer.httpListener.Close()
-	err = wafServer.httpListeners.Close()
+	if   wafServer.httpListeners != nil{
+		err = wafServer.httpListeners.Close()
+	}
 	return err
 }
 
@@ -84,7 +85,7 @@ func (waf *WafServer) startHttpServer(httpPort string, ctxGateMux http.Handler) 
 	if err != nil {
 		msg := "Port " + httpPort + " is occupied."
 		fmt.Println(msg, err)
-		os.Exit(1)
+		return ;
 	}
 	fmt.Println("Listen HTTP ", httpPort)
 	// err = http.Serve(listen, ctxGateMux)

@@ -49,10 +49,8 @@ func RootHandle(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.Write([]byte("梓豪平台提醒您，"+err.Error()+"\n"))
-
 		return
 	}
-
 
 	//&& (app.RedirectHTTPS || app.HSTSEnabled)
 	if r.TLS == nil && tRoute.Scheme == waf.Scheme_https {
