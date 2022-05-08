@@ -165,7 +165,7 @@ func (wafService *WafAccessLogService) SaveWafAccessLogs(ctx iris.Context) resul
 		return result.Error("解析入参失败")
 	}
 
-	wafAccessLogQueue.SendData(wafDto)
+	go wafAccessLogQueue.SendData(wafDto)
 
 	return result.SuccessData(wafDto)
 
