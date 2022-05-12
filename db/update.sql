@@ -617,3 +617,16 @@ create table workflow_step_param
     create_time timestamp  default CURRENT_TIMESTAMP not null,
     status_cd   varchar(2) default '0' not null
 );
+
+create table workflow
+(
+    workflow_id    varchar(64) not null
+        primary key,
+    name     varchar(64) not null,
+    yaml  longtext,
+    tenant_id  varchar(64) not null,
+    state varchar(12),
+    job_time     datetime     not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);

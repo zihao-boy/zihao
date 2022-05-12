@@ -19,6 +19,7 @@ import (
 	"github.com/zihao-boy/zihao/app/controller/system"
 	"github.com/zihao-boy/zihao/app/controller/tenant"
 	"github.com/zihao-boy/zihao/app/controller/user"
+	"github.com/zihao-boy/zihao/app/controller/workflow"
 	"github.com/zihao-boy/zihao/common/aop"
 	"github.com/zihao-boy/zihao/common/defaultWebsocket"
 )
@@ -82,6 +83,9 @@ func Hub(app *iris.Application) {
 
 	//firewall
 	dns.DnsControllerRouter(party)
+
+	//firewall
+	workflow.WorkflowControllerRouter(party)
 }
 
 func preSettring(app *iris.Application) (party iris.Party) {

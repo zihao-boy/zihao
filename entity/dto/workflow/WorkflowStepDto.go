@@ -5,6 +5,19 @@ import (
 	"time"
 )
 
+
+type WorkflowDto struct {
+	dto.PageDto
+	WorkflowId      string         `json:"workflowId" sql:"-" `
+	Name       string         `json:"name" `
+	Yaml       string         `json:"yaml" `
+	TenantId       string         `json:"tenantId" `
+	State       string         `json:"state" `
+	JobTime       string         `json:"jobTime" `
+	CreateTime time.Time      `json:"createTime" sql:"-"`
+	StatusCd   string         `json:"statusCd" sql:"-"`
+}
+
 type WorkflowStepDto struct {
 	dto.PageDto
 	StepId      string         `json:"stepId" sql:"-" `

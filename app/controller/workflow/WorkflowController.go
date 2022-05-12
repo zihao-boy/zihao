@@ -1,4 +1,4 @@
-package system
+package workflow
 
 import (
 	"github.com/kataras/iris/v12"
@@ -7,6 +7,8 @@ import (
 )
 
 type WorkflowController struct {
+	workflowService workflow.WorkflowService
+
 	workflowStepService workflow.WorkflowStepService
 	workflowStepParamService workflow.WorkflowStepParamService
 
@@ -17,8 +19,24 @@ func WorkflowControllerRouter(party iris.Party) {
 		adinUser = party.Party("/workflow")
 		aus      = WorkflowController{workflowStepService: workflow.WorkflowStepService{},
 			workflowStepParamService:workflow.WorkflowStepParamService{},
+			workflowService:workflow.WorkflowService{},
+
 		}
 	)
+
+	//查询sql
+	adinUser.Get("/getWorkflows", hero.Handler(aus.getWorkflows))
+
+	//保存sql
+	adinUser.Post("/saveWorkflow", hero.Handler(aus.saveWorkflow))
+
+	//保存sql
+	adinUser.Post("/updateWorkflow", hero.Handler(aus.updateWorkflow))
+
+	//保存sql
+	adinUser.Post("/deleteWorkflow", hero.Handler(aus.deleteWorkflow))
+
+
 	//查询sql
 	adinUser.Get("/getWorkflowSteps", hero.Handler(aus.getWorkflowSteps))
 
@@ -43,6 +61,37 @@ func WorkflowControllerRouter(party iris.Party) {
 	//保存sql
 	adinUser.Post("/deleteWorkflowStepParam", hero.Handler(aus.deleteWorkflowStepParam))
 
+}
+
+
+
+func (aus *WorkflowController) getWorkflows(ctx iris.Context) {
+	relustDto := aus.workflowService.GetWorkflows(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *WorkflowController) saveWorkflow(ctx iris.Context) {
+	relustDto := aus.workflowService.SaveWorkflows(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *WorkflowController) updateWorkflow(ctx iris.Context) {
+	relustDto := aus.workflowService.UpdateWorkflows(ctx)
+	ctx.JSON(relustDto)
+}
+
+/**
+保存sql信息
+*/
+func (aus *WorkflowController) deleteWorkflow(ctx iris.Context) {
+	relustDto := aus.workflowService.DeleteWorkflows(ctx)
+	ctx.JSON(relustDto)
 }
 
 
