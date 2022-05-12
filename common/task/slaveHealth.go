@@ -72,11 +72,12 @@ func doSlaveHealth() {
 		"useDisk":    fmt.Sprintf("%.2f", totalDiskUseValue),
 		"containers": relContainers,
 	}
-	resp, err := httpReq.Post(url, data, nil)
+	_, err := httpReq.Post(url, data, nil)
+	//resp, err := httpReq.Post(url, data, nil)
 	if err != nil {
 		fmt.Print(err.Error(), url, data)
 	}
-	fmt.Print(resp)
+	//fmt.Print(resp)
 	//var (
 	//	resultDto  result.ResultDto
 	//	containers []appService.AppServiceContainerDto
