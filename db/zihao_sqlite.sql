@@ -1393,3 +1393,25 @@ create table host_attr
     create_time timestamp   default CURRENT_TIMESTAMP not null,
     status_cd   varchar(12) default '0' not null
 );
+
+
+create table workflow_step
+(
+    step_id       varchar(64)  not null
+        primary key,
+    step     varchar(64) not null,
+    name      varchar(64) not null,
+    create_time  timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2)  default '0' not null
+);
+
+create table workflow_step_param
+(
+    step_id       varchar(64)  not null
+        primary key,
+    param_name      varchar(64) not null,
+    param_spec  varchar(64) not null ,
+    param_value varchar(128) ,
+    create_time  timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2)  default '0' not null
+);

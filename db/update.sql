@@ -594,3 +594,26 @@ INSERT INTO `menu` VALUES ('700201904049', '开放端口', '800201904006', '/ind
 INSERT INTO `privilege` VALUES ('500201904049', '开放端口', 'dns', '2019-04-01 02:24:53', '0', '/index.html#/pages/admin/firewallRuleGroupManage', '700201904049');
 INSERT INTO `privilege_rel` VALUES ('88', '500201904049', '600201904000', '2019-04-01 08:18:29', '0');
 INSERT INTO `privilege_rel` VALUES ('89', '500201904049', '600201904002', '2019-04-01 08:18:29', '0');
+
+
+create table workflow_step
+(
+    step_id       varchar(64)  not null
+        primary key,
+    step     varchar(64) not null,
+    name      varchar(64) not null,
+    create_time  timestamp   default CURRENT_TIMESTAMP not null,
+    status_cd    varchar(2)  default '0' not null
+);
+
+create table workflow_step_param
+(
+    param_id varchar(64) not null primary key,
+    step_id     varchar(64) not null,
+    param_name  varchar(64) not null,
+    param_spec  varchar(64) not null,
+    param_value varchar(128),
+    seq varchar(11) not null,
+    create_time timestamp  default CURRENT_TIMESTAMP not null,
+    status_cd   varchar(2) default '0' not null
+);
