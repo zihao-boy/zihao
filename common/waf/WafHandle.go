@@ -169,14 +169,14 @@ func rewriteResponse(resp *http.Response,accessLog *waf.WafAccessLogDto) (err er
 				if wafData.wafDto.HttpsPort == ":443" {
 					newHost = host
 				} else {
-					newHost = host + wafData.wafDto.HttpsPort
+					newHost = host +":"+ wafData.wafDto.HttpsPort
 				}
 			} else {
 				userScheme = "http"
 				if wafData.wafDto.Port == ":80" {
 					newHost = host
 				} else {
-					newHost = host + wafData.wafDto.Port
+					newHost = host +":"+ wafData.wafDto.Port
 				}
 			}
 			newLocation := strings.Replace(locationURL.String(), oldHost, newHost, -1)
