@@ -71,6 +71,7 @@ func getOptimalHost(hosts []*host.HostDto) (*host.HostDto, error) {
 	)
 
 	useMem, err := strconv.ParseFloat(hosts[0].UseMem, 64)
+	hostDto = hosts[0]
 	if err != nil {
 		return nil, err
 	}
