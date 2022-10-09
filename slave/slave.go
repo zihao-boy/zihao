@@ -13,7 +13,8 @@ func main() {
 	config.InitProp("conf/zihao.properties")
 	go task.SlaveHealth()
 
-	go task.SlaveFireWall()
+	//这里暂不开启 以免影响 操作比较复杂
+	//go task.SlaveFireWall()
 	app := iris.New()
 	router.HubSlave(app)
 	app.Get("/", func(ctx iris.Context) {
